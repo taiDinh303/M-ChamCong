@@ -100,4 +100,38 @@ namespace ModelViews.AttendanceModelView
 
         public string? Note { get; set; }
     }
+
+    // === Chấm công thực tế (VÀO CA / RA CA) ===
+
+    /// <summary>
+    /// Chấm công nhanh: thêm log vào/ra ca cho ngày hiện tại,
+    /// tự tạo bản ghi Attendance của ngày nếu chưa có.
+    /// </summary>
+    public class CheckInAttendanceModelView
+    {
+        [Required]
+        public Guid EmployeeId { get; set; }
+
+        [Required]
+        public AttendanceLogType Type { get; set; }
+
+        public AttendanceMethod Method { get; set; } = AttendanceMethod.Phone;
+
+        [MaxLength(500)]
+        public string? PhotoUrl { get; set; }
+
+        public string? Note { get; set; }
+    }
+
+    /// <summary>
+    /// Kết quả chấm công: Attendance cập nhật + cờ đã có log trùng.
+    /// </summary>
+    public class CheckInAttendanceResponseModelView
+    {
+        public bool AlreadyRecorded { get; set; }
+
+        public string? Message { get; set; }
+
+        public AttendanceResponseModelView? Attendance { get; set; }
+    }
 }

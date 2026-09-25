@@ -18,6 +18,16 @@ const relatedApi = {
         );
     },
 
+    // Chấm công thực tế (VÀO CA / RA CA)
+    checkin(employeeId, type, photoUrl, note) {
+        return axiosClient.post("/Attendance/checkin", {
+            employeeId,
+            type,
+            photoUrl,
+            note,
+        });
+    },
+
     leavesByEmployee(employeeId) {
         return axiosClient.get(
             `/LeaveRequest/by-employee/${employeeId}`

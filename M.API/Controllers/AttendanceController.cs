@@ -71,6 +71,25 @@ namespace M.API.Controllers
             ));
         }
 
+        /// <summary>
+        /// Chấm công thực tế (VÀO CA / RA CA) cho ngày hiện tại.
+        /// Tự tạo bản ghi Attendance của ngày nếu chưa có,
+        /// thêm log, đồng bộ ảnh và tính giờ thực tế.
+        /// </summary>
+        [HttpPost("checkin")]
+        public async Task<IActionResult> CheckIn(
+            [FromBody] CheckInAttendanceModelView model)
+        {
+            CheckInAttendanceResponseModelView result =
+                await _attendanceService.CheckInAsync(model);
+
+            return Ok(new BaseResponse<CheckInAttendanceResponseModelView>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: result
+            ));
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateAttendanceModelView model)

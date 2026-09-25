@@ -287,6 +287,28 @@
     margin-bottom: 8px;
 }
 
+.att-related-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.att-related-arrow {
+    font-size: 18px;
+    font-weight: 700;
+    color: #005b94;
+}
+
+.att-clickable {
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.att-clickable:hover {
+    border-color: #0072b9;
+    box-shadow: 0 8px 24px rgba(0, 114, 185, 0.12);
+}
+
 .att-list {
     margin: 0;
     padding: 0;

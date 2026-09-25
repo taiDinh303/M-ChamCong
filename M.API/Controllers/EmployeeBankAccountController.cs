@@ -9,11 +9,11 @@ namespace M.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     //[Authorize(Roles = "Admin")]
-    public class EmployeeBankAccouMontroller : ControllerBase
+    public class EmployeeBankAccountController : ControllerBase
     {
         private readonly IEmployeeBankAccountService _employeeBankAccountService;
 
-        public EmployeeBankAccouMontroller(
+        public EmployeeBankAccountController(
             IEmployeeBankAccountService employeeBankAccountService)
         {
             _employeeBankAccountService = employeeBankAccountService;
@@ -61,7 +61,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Retrieves records for a specific employee
         /// </summary>
-        [HttpGet(" by-employee/{employeeId} ")]
+        [HttpGet("by-employee/{employeeId}")]
         public async Task<IActionResult> ByEmployee(Guid employeeId)
         {
             List<EmployeeBankAccountResponseModelView> result =

@@ -61,7 +61,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Retrieves records for a specific employee
         /// </summary>
-        [HttpGet(" by-employee/{employeeId} ")]
+        [HttpGet("by-employee/{employeeId}")]
         public async Task<IActionResult> ByEmployee(Guid employeeId)
         {
             List<EmployeeContractResponseModelView> result =

@@ -58,7 +58,7 @@ namespace M.API.Controllers
         /// <summary>
         /// Retrieves the employee record linked to a user account
         /// </summary>
-        [HttpGet(" get-by-user/{userId} ")]
+        [HttpGet("get-by-user/{userId}")]
         public async Task<IActionResult> GetByUser(Guid userId)
         {
             EmployeeResponseModelView? result =

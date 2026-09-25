@@ -97,6 +97,179 @@ namespace M.Services.Service
             return attendances.Select(x => x.ToViewModel()).ToList();
         }
 
+        public async Task<CheckInAttendanceResponseModelView> CheckInAsync(
+            CheckInAttendanceModelView model)
+        {
+            IGenericRepository<Attendance> repo =
+                _unitOfWork.GetRepository<Attendance>();
+
+            IGenericRepository<AttendanceLog> logRepo =
+                _unitOfWork.GetRepository<AttendanceLog>();
+
+            IGenericRepository<Employee> employeeRepo =
+                _unitOfWork.GetRepository<Employee>();
+
+            // Kiểm tra nhân viên
+            bool employeeExists = await employeeRepo.Entities
+                .AnyAsync(x =>
+                    x.Id == model.EmployeeId &&
+                    !x.DeletedTime.HasValue);
+
+            if (!employeeExists)
+            {
+                throw new ErrorException(
+                    StatusCodes.Status404NotFound,
+                    "NOT_FOUND",
+                    "Employee not found");
+            }
+
+            // Giờ log hiện tại (theo múi giờ máy chủ / VN)
+            DateTime now = DateTime.Now;
+            DateTimeOffset logTime =
+                DateTimeOffset.Now;
+
+            // Tìm bản ghi Attendance của HÔM NAY (tự tạo nếu chưa có)
+            Attendance? attendance = await repo.Entities
+                .Where(x =>
+                    x.EmployeeId == model.EmployeeId &&
+                    x.AttendanceDate.Date == now.Date &&
+                    !x.DeletedTime.HasValue)
+                .Include(x => x.Employee)
+                .FirstOrDefaultAsync();
+
+            bool createdToday = false;
+
+            if (attendance == null)
+            {
+                attendance = new Attendance
+                {
+                    EmployeeId = model.EmployeeId,
+                    AttendanceDate = now.Date,
+                    ApprovalStatus =
+                        AttendanceApprovalStatus.Pending
+                };
+
+                attendance.CreatedBy =
+                    _httpContextAccessor.HttpContext?.User?.Identity?.Name
+                    ?? "System";
+                attendance.CreatedTime = CoreHelper.SystemTimeNow;
+
+                await repo.InsertAsync(attendance);
+                createdToday = true;
+            }
+
+            // Kiểm tra log trùng (chấm lại cùng loại trong 2 phút -> giữ nguyên)
+            bool alreadyRecorded = await logRepo.Entities
+                .AnyAsync(x =>
+                    x.AttendanceId == attendance.Id &&
+                    x.Type == model.Type &&
+                    x.LogTime >= logTime.AddMinutes(-2) &&
+                    !x.DeletedTime.HasValue);
+
+            if (alreadyRecorded)
+            {
+                return new CheckInAttendanceResponseModelView
+                {
+                    AlreadyRecorded = true,
+                    Message = "Đã có lần chấm cùng loại gần đây. "
+                        + "Không cần bấm lại.",
+                    Attendance = attendance.ToViewModel()
+                };
+            }
+
+            // Thêm log chấm công
+            AttendanceLog log = new AttendanceLog
+            {
+                AttendanceId = attendance.Id,
+                LogTime = logTime,
+                Type = model.Type,
+                Method = model.Method,
+                PhotoUrl = model.PhotoUrl,
+                Note = model.Note
+            };
+
+            log.CreatedBy =
+                _httpContextAccessor.HttpContext?.User?.Identity?.Name
+                ?? "System";
+            log.CreatedTime = CoreHelper.SystemTimeNow;
+
+            await logRepo.InsertAsync(log);
+
+            // Đồng bộ ảnh lên Attendance (log vào -> CheckInPhoto, ra -> CheckOutPhoto)
+            if (!string.IsNullOrWhiteSpace(model.PhotoUrl))
+            {
+                if (model.Type == AttendanceLogType.CheckIn)
+                    attendance.CheckInPhoto = model.PhotoUrl;
+                else
+                    attendance.CheckOutPhoto = model.PhotoUrl;
+            }
+
+            // Tự đánh trạng thái: có cặp vào/ra -> tính ActualHours;
+            // chưa về -> Present
+            List<AttendanceLog> logs = await logRepo.Entities
+                .Where(x =>
+                    x.AttendanceId == attendance.Id &&
+                    !x.DeletedTime.HasValue)
+                .ToListAsync();
+
+            DateTime? checkIn = logs
+                .Where(x => x.Type == AttendanceLogType.CheckIn)
+                .Select(x => (DateTime?)x.LogTime.UtcDateTime)
+                .Min();
+
+            DateTime? checkOut = logs
+                .Where(x => x.Type == AttendanceLogType.CheckOut)
+                .Select(x => (DateTime?)x.LogTime.UtcDateTime)
+                .Max();
+
+            if (checkIn.HasValue && checkOut.HasValue)
+            {
+                attendance.ActualHours =
+                    (int)Math.Round(
+                        (checkOut.Value - checkIn.Value).TotalHours);
+
+                // Đã về công: giữ Present nếu chưa bị đánh khác
+                if (attendance.Status == null)
+                {
+                    attendance.Status =
+                        AttendanceStatus.Present;
+                }
+            }
+            else if (attendance.Status == null)
+            {
+                // Chưa đủ cặp -> xem như có mặt (đang làm việc)
+                attendance.Status = AttendanceStatus.Present;
+            }
+
+            if (!createdToday)
+            {
+                attendance.LastUpdatedBy =
+                    _httpContextAccessor.HttpContext?.User?.Identity?.Name
+                    ?? "System";
+                attendance.LastUpdatedTime = CoreHelper.SystemTimeNow;
+                await repo.UpdateAsync(attendance);
+            }
+
+            await _unitOfWork.SaveAsync();
+
+            // Trả về bản ghi mới nhất (nạp lại các điều hướng)
+            Attendance refreshed = await repo.Entities
+                .Where(x => x.Id == attendance.Id)
+                .Include(x => x.Employee)
+                .Include(x => x.PlannedShift)
+                .Include(x => x.Approver)
+                .FirstAsync();
+
+            return new CheckInAttendanceResponseModelView
+            {
+                AlreadyRecorded = false,
+                Message = model.Type == AttendanceLogType.CheckIn
+                    ? "Đã ghi nhận VÀO CA."
+                    : "Đã ghi nhận RA CA.",
+                Attendance = refreshed.ToViewModel()
+            };
+        }
+
         public async Task CreateAsync(CreateAttendanceModelView model)
         {
             IGenericRepository<Attendance> repo =

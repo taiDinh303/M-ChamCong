@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getAuth } from "../../../services/auth/auth";
 import ProfileCard from "../components/ProfileCard";
 import AttendanceCard from "../components/AttendanceCard";
@@ -23,6 +23,23 @@ const AttendancePage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    // Bản ghi chấm công của HÔM NAY (để card chấm công + lịch sử đồng bộ)
+    const todayRecord =
+        history.find(
+            (r) =>
+                r.attendanceDate &&
+                new Date(r.attendanceDate).toDateString() ===
+                    new Date().toDateString()
+        ) || null;
+
+    const loadAttendance = useCallback(async () => {
+        if (!employeeId) return [];
+        const res = await relatedApi.attendanceByEmployee(employeeId);
+        const data = res.data.data || [];
+        setHistory(data);
+        return data;
+    }, [employeeId]);
+
     useEffect(() => {
         const load = async () => {
             if (!userId) {
@@ -32,14 +49,11 @@ const AttendancePage = () => {
             }
 
             try {
-                const [profileRes, shiftsRes, historyRes, leavesRes, contractsRes, salariesRes, insuranceRes, accountsRes] =
+                const [profileRes, shiftsRes, leavesRes, contractsRes, salariesRes, insuranceRes, accountsRes] =
                     await Promise.allSettled([
                         relatedApi.employeeByUser(userId),
                         employeeId
                             ? relatedApi.shiftsByEmployee(employeeId)
-                            : Promise.resolve(null),
-                        employeeId
-                            ? relatedApi.attendanceByEmployee(employeeId)
                             : Promise.resolve(null),
                         employeeId
                             ? relatedApi.leavesByEmployee(employeeId)
@@ -66,12 +80,15 @@ const AttendancePage = () => {
                 const data = (r) =>
                     r && r.status === "fulfilled" ? r.value.data.data : [];
                 setShifts(data(shiftsRes) || []);
-                setHistory(data(historyRes) || []);
                 setLeaves(data(leavesRes) || []);
                 setContracts(data(contractsRes) || []);
                 setSalaries(data(salariesRes) || []);
                 setInsurance(data(insuranceRes) || []);
                 setAccounts(data(accountsRes) || []);
+
+                if (employeeId) {
+                    await loadAttendance();
+                }
             } catch (err) {
                 setError(
                     err.response?.data?.message ||
@@ -84,16 +101,25 @@ const AttendancePage = () => {
         };
 
         load();
-    }, [userId, employeeId]);
+    }, [userId, employeeId, loadAttendance]);
+
+    // Sau khi chấm công: làm mới lại lịch sử (thêm/đánh dấu đúng ngày)
+    const handleChecked = () => {
+        loadAttendance().catch(() => {});
+    };
 
     return (
         <div className="att-page">
             <header className="att-header">
                 <div>
-                    <h1>Trang cá nhân & Chấm công</h1>
+                    <h1>Trang cá nhân &amp; Chấm công</h1>
                     <p>Theo dõi thông tin nhân sự và hoạt động chấm công của bạn</p>
                 </div>
-                <button type="button" className="att-logout" onClick={() => window.location.href = "/login"}>
+                <button
+                    type="button"
+                    className="att-logout"
+                    onClick={() => (window.location.href = "/login")}
+                >
                     Đăng xuất
                 </button>
             </header>
@@ -105,9 +131,10 @@ const AttendancePage = () => {
                 <div className="att-grid">
                     <ProfileCard profile={profile} auth={auth} />
                     <AttendanceCard
-                        today={history[0] || null}
+                        employeeId={employeeId}
+                        record={todayRecord}
                         shifts={shifts}
-                        onChecked={() => {}}
+                        onChanged={handleChecked}
                     />
 
                     <div className="att-span-2">
@@ -118,10 +145,13 @@ const AttendancePage = () => {
                         title="Đơn xin nghỉ phép"
                         items={leaves}
                         empty="Chưa có đơn nghỉ phép nào."
+                        to="/leave"
                         render={(x) => (
                             <div>
                                 <strong>{x.leaveTypeName || "Nghỉ phép"}</strong>
-                                <span>{formatDate(x.fromDate)} – {formatDate(x.toDate)} · {statusLabel(x.status)}</span>
+                                <span>
+                                    {formatDate(x.fromDate)} – {formatDate(x.toDate)} · {statusLabel(x.status)}
+                                </span>
                             </div>
                         )}
                     />
@@ -129,6 +159,7 @@ const AttendancePage = () => {
                         title="Hợp đồng lao động"
                         items={contracts}
                         empty="Chưa có hợp đồng nào."
+                        to="/contracts"
                         render={(x) => (
                             <div>
                                 <strong>{x.contractNumber}</strong>
@@ -143,6 +174,7 @@ const AttendancePage = () => {
                         title="Bảng lương gần đây"
                         items={salaries}
                         empty="Chưa có dữ liệu lương."
+                        to="/salary"
                         render={(x) => (
                             <div>
                                 <strong>{formatMoney(x.basicSalary)}</strong>
@@ -153,9 +185,10 @@ const AttendancePage = () => {
                         )}
                     />
                     <RelatedList
-                        title="Bảo hiểm & thuế"
+                        title="Bảo hiểm &amp; thuế"
                         items={insurance}
                         empty="Chưa có thông tin bảo hiểm."
+                        to="/insurance"
                         render={(x) => (
                             <div>
                                 <strong>{x.socialInsuranceNumber || "Chưa có số BHXH"}</strong>
@@ -167,10 +200,13 @@ const AttendancePage = () => {
                         title="Tài khoản ngân hàng"
                         items={accounts}
                         empty="Chưa có tài khoản ngân hàng."
+                        to="/bank-accounts"
                         render={(x) => (
                             <div>
                                 <strong>{x.accountNumber}</strong>
-                                <span>{x.bankName || ""} {x.isPrimary ? "· chính" : ""}</span>
+                                <span>
+                                    {x.bankName || ""} {x.isPrimary ? "· chính" : ""}
+                                </span>
                             </div>
                         )}
                     />
@@ -199,7 +235,12 @@ const contractTypeLabel = (t) =>
     })[t] || "—";
 
 const paymentTypeLabel = (t) =>
-    ({ 1: "Theo tháng", 2: "Theo ngày", 3: "Theo giờ", 4: "Theo sản phẩm" })[t] || "—";
+    ({
+        1: "Theo tháng",
+        2: "Theo ngày",
+        3: "Theo giờ",
+        4: "Theo sản phẩm",
+    })[t] || "—";
 
 const insuranceStatusLabel = (s) =>
     ({ 1: "Đang đóng", 2: "Tạm dừng", 3: "Đã chốt sổ" })[s] || "—";

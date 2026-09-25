@@ -13,6 +13,9 @@ namespace M.Contract.Serivces.Interface
 
         Task<List<AttendanceResponseModelView>> ByEmployeeIdAsync(Guid employeeId);
 
+        Task<CheckInAttendanceResponseModelView> CheckInAsync(
+            CheckInAttendanceModelView model);
+
         Task CreateAsync(CreateAttendanceModelView model);
 
         Task UpdateAsync(UpdateAttendanceModelView model);

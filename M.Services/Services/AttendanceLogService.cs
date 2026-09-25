@@ -342,12 +342,12 @@ namespace M.Services.Service
 
             DateTime? checkIn = logs
                 .Where(x => x.Type == AttendanceLogType.CheckIn)
-                .Select(x => x.LogTime.UtcDateTime)
+                .Select(x => (DateTime?)x.LogTime.UtcDateTime)
                 .Min();
 
             DateTime? checkOut = logs
                 .Where(x => x.Type == AttendanceLogType.CheckOut)
-                .Select(x => x.LogTime.UtcDateTime)
+                .Select(x => (DateTime?)x.LogTime.UtcDateTime)
                 .Max();
 
             IGenericRepository<Attendance> attendanceRepo =
