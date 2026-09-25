@@ -18,6 +18,7 @@ namespace ModelViews.AuthModelView
         public GenderType Gender { get; set; }
 
         // Employee
+        public Guid? EmployeeId { get; set; }
         public string? EmployeeCode { get; set; }
 
         // Roles

@@ -58,6 +58,23 @@ namespace M.API.Controllers
         /// <summary>
         /// Creates a new employee bank account
         /// </summary>
+        /// <summary>
+        /// Retrieves records for a specific employee
+        /// </summary>
+        [HttpGet(" by-employee/{employeeId} ")]
+        public async Task<IActionResult> ByEmployee(Guid employeeId)
+        {
+            List<EmployeeBankAccountResponseModelView> result =
+                await _employeeBankAccountService.ByEmployeeIdAsync(employeeId);
+
+            return Ok(new BaseResponse<List<EmployeeBankAccountResponseModelView>>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: result
+            ));
+        }
+
+
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateEmployeeBankAccountModelView model)

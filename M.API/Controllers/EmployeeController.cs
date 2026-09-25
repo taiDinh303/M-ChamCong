@@ -55,6 +55,32 @@ namespace M.API.Controllers
         /// <summary>
         /// Creates a new employee
         /// </summary>
+        /// <summary>
+        /// Retrieves the employee record linked to a user account
+        /// </summary>
+        [HttpGet(" get-by-user/{userId} ")]
+        public async Task<IActionResult> GetByUser(Guid userId)
+        {
+            EmployeeResponseModelView? result =
+                await _employeeService.GetByUserIdAsync(userId);
+
+            if (result == null)
+            {
+                return NotFound(new BaseResponse<string>(
+                    statusCode: StatusCodeHelper.NotFound,
+                    code: ResponseCodeConstants.NOT_FOUND,
+                    data: "Employee not found"
+                ));
+            }
+
+            return Ok(new BaseResponse<EmployeeResponseModelView>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: result
+            ));
+        }
+
+
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateEmployeeModelView model)

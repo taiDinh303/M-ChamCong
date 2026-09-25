@@ -73,6 +73,23 @@ namespace M.Services.Service
             return insurance.ToViewModel();
         }
 
+
+        public async Task<List<EmployeeInsuranceResponseModelView>> ByEmployeeIdAsync(
+            Guid employeeId)
+        {
+            IGenericRepository<EmployeeInsurance> repo =
+                _unitOfWork.GetRepository<EmployeeInsurance>();
+
+            List<EmployeeInsurance> insurances = await repo.Entities
+                .Where(x =>
+                    x.EmployeeId == employeeId &&
+                    !x.DeletedTime.HasValue)
+                .Include(x => x.Employee)
+                .OrderByDescending(x => x.CreatedTime)
+                .ToListAsync();
+
+            return insurances.Select(x => x.ToViewModel()).ToList();
+        }
         public async Task CreateAsync(
             CreateEmployeeInsuranceModelView model)
         {

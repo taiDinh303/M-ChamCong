@@ -11,6 +11,8 @@ namespace M.Contract.Services.Interface
 
         Task<EmployeeResponseModelView> GetByIdAsync(Guid id);
 
+        Task<EmployeeResponseModelView?> GetByUserIdAsync(Guid userId);
+
         Task CreateAsync(CreateEmployeeModelView model);
 
         Task UpdateAsync(UpdateEmployeeModelView model);

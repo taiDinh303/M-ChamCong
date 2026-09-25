@@ -11,6 +11,8 @@ namespace M.Contract.Serivces.Interface
 
         Task<EmployeeBankAccountResponseModelView> GetByIdAsync(Guid id);
 
+        Task<List<EmployeeBankAccountResponseModelView>> ByEmployeeIdAsync(Guid employeeId);
+
         Task CreateAsync(CreateEmployeeBankAccountModelView model);
 
         Task UpdateAsync(UpdateEmployeeBankAccountModelView model);

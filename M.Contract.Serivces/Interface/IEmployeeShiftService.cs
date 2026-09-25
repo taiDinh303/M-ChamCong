@@ -11,6 +11,8 @@ namespace M.Contract.Services.Interface
 
         Task<EmployeeShiftResponseModelView> GetByIdAsync(Guid id);
 
+        Task<List<EmployeeShiftResponseModelView>> ByEmployeeIdAsync(Guid employeeId);
+
         Task CreateAsync(CreateEmployeeShiftModelView model);
 
         Task UpdateAsync(UpdateEmployeeShiftModelView model);

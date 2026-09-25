@@ -238,6 +238,7 @@ namespace M.Services.Service
                 UserName = user.UserName ?? string.Empty,
                 GivenName = employee?.GivenName ?? user.UserName ?? string.Empty,
                 FamilyName = employee?.FamilyName,
+                EmployeeId = employee?.Id,
                 EmployeeCode = employee?.EmployeeCode,
                 Roles = (await _userManager.GetRolesAsync(user)).ToList()
             };

@@ -11,6 +11,8 @@ namespace M.Contract.Services.Interface
 
         Task<EmployeeSalaryResponseModelView> GetByIdAsync(Guid id);
 
+        Task<List<EmployeeSalaryResponseModelView>> ByEmployeeIdAsync(Guid employeeId);
+
         Task CreateAsync(CreateEmployeeSalaryModelView model);
 
         Task UpdateAsync(UpdateEmployeeSalaryModelView model);

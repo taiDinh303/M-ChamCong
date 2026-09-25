@@ -75,6 +75,23 @@ namespace M.Services.Service
             return employee.ToViewModel();
         }
 
+
+        public async Task<EmployeeResponseModelView?> GetByUserIdAsync(Guid userId)
+        {
+            IGenericRepository<Employee> repo =
+                _unitOfWork.GetRepository<Employee>();
+
+            Employee? employee = await repo.Entities
+                .Where(x =>
+                    x.UserId == userId &&
+                    !x.DeletedTime.HasValue)
+                .Include(x => x.Department)
+                .Include(x => x.Position)
+                .Include(x => x.Manager)
+                .FirstOrDefaultAsync();
+
+            return employee?.ToViewModel();
+        }
         public async Task CreateAsync(CreateEmployeeModelView model)
         {
             IGenericRepository<Employee> repo =

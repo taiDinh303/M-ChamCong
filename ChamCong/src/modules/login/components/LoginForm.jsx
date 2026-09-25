@@ -1,5 +1,6 @@
 import { useState } from "react";
 import authApi from "../api/authApi";
+import { saveAuth } from "../../../services/auth/auth";
 
 const LoginForm = () => {
     const [form, setForm] = useState({
@@ -29,14 +30,8 @@ const LoginForm = () => {
             const response = await authApi.login(form);
             const data = response.data.data;
 
-            if (data?.token) {
-                localStorage.setItem("token", data.token);
-            }
-            if (data?.accessToken) {
-                localStorage.setItem("token", data.accessToken);
-            }
-
-            window.location.href = "/employees";
+            saveAuth(data);
+            window.location.href = "/attendance";
         } catch (err) {
             setError(
                 err.response?.data?.message ||

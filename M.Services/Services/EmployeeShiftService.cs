@@ -68,6 +68,24 @@ namespace M.Services.Service
             return item.ToViewModel();
         }
 
+        public async Task<List<EmployeeShiftResponseModelView>> ByEmployeeIdAsync(
+            Guid employeeId)
+        {
+            IGenericRepository<EmployeeShift> repo =
+                _unitOfWork.GetRepository<EmployeeShift>();
+
+            List<EmployeeShift> items = await repo.Entities
+                .Where(x =>
+                    x.EmployeeId == employeeId &&
+                    !x.DeletedTime.HasValue)
+                .Include(x => x.Employee)
+                .Include(x => x.Shift)
+                .OrderBy(x => x.EffectiveFrom)
+                .ToListAsync();
+
+            return items.Select(x => x.ToViewModel()).ToList();
+        }
+
         public async Task CreateAsync(CreateEmployeeShiftModelView model)
         {
             IGenericRepository<EmployeeShift> repo = _unitOfWork.GetRepository<EmployeeShift>();

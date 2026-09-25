@@ -49,6 +49,23 @@ namespace M.API.Controllers
             ));
         }
 
+        /// <summary>
+        /// Retrieves records for a specific employee
+        /// </summary>
+        [HttpGet(" by-employee/{employeeId} ")]
+        public async Task<IActionResult> ByEmployee(Guid employeeId)
+        {
+            List<EmployeeInsuranceResponseModelView> result =
+                await _employeeInsuranceService.ByEmployeeIdAsync(employeeId);
+
+            return Ok(new BaseResponse<List<EmployeeInsuranceResponseModelView>>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: result
+            ));
+        }
+
+
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateEmployeeInsuranceModelView model)

@@ -41,6 +41,22 @@ namespace M.API.Controllers
                 data: result));
         }
 
+        /// <summary>
+        /// Retrieves shift assignments for a specific employee
+        /// </summary>
+        [HttpGet("by-employee/{employeeId}")]
+        public async Task<IActionResult> ByEmployee(Guid employeeId)
+        {
+            List<EmployeeShiftResponseModelView> result =
+                await _employeeShiftService.ByEmployeeIdAsync(employeeId);
+
+            return Ok(new BaseResponse<List<EmployeeShiftResponseModelView>>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: result
+            ));
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateEmployeeShiftModelView model)

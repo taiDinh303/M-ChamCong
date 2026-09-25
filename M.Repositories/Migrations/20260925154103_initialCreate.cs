@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace M.Repositories.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class initialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,6 +33,35 @@ namespace M.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AttendanceRules",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StandardHours = table.Column<int>(type: "int", nullable: false),
+                    CheckInTime = table.Column<TimeOnly>(type: "time", nullable: false),
+                    CheckOutTime = table.Column<TimeOnly>(type: "time", nullable: false),
+                    LateGraceMinutes = table.Column<int>(type: "int", nullable: false),
+                    EarlyLeaveThresholdMinutes = table.Column<int>(type: "int", nullable: false),
+                    BreakMinutes = table.Column<int>(type: "int", nullable: false),
+                    PhotoRequired = table.Column<bool>(type: "bit", nullable: false),
+                    GpsRequired = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AttendanceRules", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Banks",
                 columns: table => new
                 {
@@ -51,6 +80,28 @@ namespace M.Repositories.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Banks", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "HolidayCalendars",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Year = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HolidayCalendars", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -118,6 +169,33 @@ namespace M.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Shifts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StartTime = table.Column<TimeOnly>(type: "time", nullable: false),
+                    EndTime = table.Column<TimeOnly>(type: "time", nullable: false),
+                    StandardHours = table.Column<int>(type: "int", nullable: false),
+                    BreakMinutes = table.Column<int>(type: "int", nullable: false),
+                    IsNight = table.Column<bool>(type: "bit", nullable: false),
+                    WorkDays = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Shifts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -142,6 +220,30 @@ namespace M.Repositories.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ActivationCodes",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    EmployeeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UsedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ActivatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsUsed = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ActivationCodes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -276,10 +378,15 @@ namespace M.Repositories.Migrations
                     LogTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     Method = table.Column<int>(type: "int", nullable: false),
+                    PhotoUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Latitude = table.Column<decimal>(type: "decimal(10,7)", nullable: true),
                     Longitude = table.Column<decimal>(type: "decimal(10,7)", nullable: true),
                     DeviceId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsAdjusted = table.Column<bool>(type: "bit", nullable: false),
+                    AdjustedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AdjustedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    AdjustmentNote = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -300,6 +407,14 @@ namespace M.Repositories.Migrations
                     EmployeeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AttendanceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: true),
+                    PlannedShiftId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    PlannedHours = table.Column<int>(type: "int", nullable: true),
+                    ActualHours = table.Column<int>(type: "int", nullable: true),
+                    CheckInPhoto = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    CheckOutPhoto = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    ApprovalStatus = table.Column<int>(type: "int", nullable: false),
+                    ApprovedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ApprovedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -311,6 +426,11 @@ namespace M.Repositories.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Attendances", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Attendances_Shifts_PlannedShiftId",
+                        column: x => x.PlannedShiftId,
+                        principalTable: "Shifts",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -565,6 +685,40 @@ namespace M.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EmployeeShifts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EmployeeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ShiftId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EffectiveFrom = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EffectiveTo = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeShifts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EmployeeShifts_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_EmployeeShifts_Shifts_ShiftId",
+                        column: x => x.ShiftId,
+                        principalTable: "Shifts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "LeaveRequests",
                 columns: table => new
                 {
@@ -624,6 +778,8 @@ namespace M.Repositories.Migrations
                     Deduction = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     NetSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
+                    PayDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PaymentMethod = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -641,6 +797,16 @@ namespace M.Repositories.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ActivationCodes_EmployeeId",
+                table: "ActivationCodes",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ActivationCodes_UserId",
+                table: "ActivationCodes",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -692,9 +858,19 @@ namespace M.Repositories.Migrations
                 column: "AttendanceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Attendances_ApprovedBy",
+                table: "Attendances",
+                column: "ApprovedBy");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Attendances_EmployeeId",
                 table: "Attendances",
                 column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Attendances_PlannedShiftId",
+                table: "Attendances",
+                column: "PlannedShiftId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Departments_ManagerId",
@@ -759,6 +935,16 @@ namespace M.Repositories.Migrations
                 column: "SalaryGroupId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EmployeeShifts_EmployeeId",
+                table: "EmployeeShifts",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeShifts_ShiftId",
+                table: "EmployeeShifts",
+                column: "ShiftId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LeaveRequests_ApprovedBy",
                 table: "LeaveRequests",
                 column: "ApprovedBy");
@@ -777,6 +963,22 @@ namespace M.Repositories.Migrations
                 name: "IX_Payrolls_EmployeeId",
                 table: "Payrolls",
                 column: "EmployeeId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ActivationCodes_AspNetUsers_UserId",
+                table: "ActivationCodes",
+                column: "UserId",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.SetNull);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ActivationCodes_Employees_EmployeeId",
+                table: "ActivationCodes",
+                column: "EmployeeId",
+                principalTable: "Employees",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_AspNetUserClaims_AspNetUsers_UserId",
@@ -818,6 +1020,14 @@ namespace M.Repositories.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_Attendances_Employees_ApprovedBy",
+                table: "Attendances",
+                column: "ApprovedBy",
+                principalTable: "Employees",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.SetNull);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_Attendances_Employees_EmployeeId",
                 table: "Attendances",
                 column: "EmployeeId",
@@ -846,6 +1056,9 @@ namespace M.Repositories.Migrations
                 table: "Departments");
 
             migrationBuilder.DropTable(
+                name: "ActivationCodes");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -864,6 +1077,9 @@ namespace M.Repositories.Migrations
                 name: "AttendanceLogs");
 
             migrationBuilder.DropTable(
+                name: "AttendanceRules");
+
+            migrationBuilder.DropTable(
                 name: "EmployeeBankAccounts");
 
             migrationBuilder.DropTable(
@@ -877,6 +1093,12 @@ namespace M.Repositories.Migrations
 
             migrationBuilder.DropTable(
                 name: "EmployeeSalaries");
+
+            migrationBuilder.DropTable(
+                name: "EmployeeShifts");
+
+            migrationBuilder.DropTable(
+                name: "HolidayCalendars");
 
             migrationBuilder.DropTable(
                 name: "LeaveRequests");
@@ -898,6 +1120,9 @@ namespace M.Repositories.Migrations
 
             migrationBuilder.DropTable(
                 name: "LeaveTypes");
+
+            migrationBuilder.DropTable(
+                name: "Shifts");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

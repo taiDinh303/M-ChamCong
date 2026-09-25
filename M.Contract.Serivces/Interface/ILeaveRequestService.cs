@@ -11,6 +11,8 @@ namespace M.Contract.Services.Interface
 
         Task<LeaveRequestResponseModelView> GetByIdAsync(Guid id);
 
+        Task<List<LeaveRequestResponseModelView>> ByEmployeeIdAsync(Guid employeeId);
+
         Task CreateAsync(CreateLeaveRequestModelView model);
 
         Task UpdateAsync(UpdateLeaveRequestModelView model);

@@ -17,8 +17,11 @@ namespace M.API.Controllers
             _leaveRequestService = leaveRequestService;
         }
 
+        /// <summary>
+        /// Retrieves all leave requests with pagination
+        /// </summary>
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAll(int pageNumber = 1, int pageSize = 5)
+        public async Task<IActionResult> GetAll(int pageNumber = 1, int pageSize = 10)
         {
             BasePaginatedList<LeaveRequestResponseModelView> result =
                 await _leaveRequestService.GetAllAsync(pageNumber, pageSize);
@@ -30,6 +33,9 @@ namespace M.API.Controllers
             ));
         }
 
+        /// <summary>
+        /// Retrieves a leave request by its ID
+        /// </summary>
         [HttpGet("get-by-id/{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -43,6 +49,25 @@ namespace M.API.Controllers
             ));
         }
 
+        /// <summary>
+        /// Retrieves leave requests for a specific employee
+        /// </summary>
+        [HttpGet("by-employee/{employeeId}")]
+        public async Task<IActionResult> ByEmployee(Guid employeeId)
+        {
+            List<LeaveRequestResponseModelView> result =
+                await _leaveRequestService.ByEmployeeIdAsync(employeeId);
+
+            return Ok(new BaseResponse<List<LeaveRequestResponseModelView>>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: result
+            ));
+        }
+
+        /// <summary>
+        /// Creates a new leave request
+        /// </summary>
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateLeaveRequestModelView model)
         {
@@ -55,6 +80,9 @@ namespace M.API.Controllers
             ));
         }
 
+        /// <summary>
+        /// Updates a leave request
+        /// </summary>
         [HttpPut("update")]
         public async Task<IActionResult> Update([FromBody] UpdateLeaveRequestModelView model)
         {
@@ -67,6 +95,9 @@ namespace M.API.Controllers
             ));
         }
 
+        /// <summary>
+        /// Soft deletes a leave request by ID
+        /// </summary>
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -79,6 +110,9 @@ namespace M.API.Controllers
             ));
         }
 
+        /// <summary>
+        /// Permanently deletes a leave request by ID
+        /// </summary>
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

@@ -75,6 +75,24 @@ namespace M.Services.Service
             return salary.ToViewModel();
         }
 
+
+        public async Task<List<EmployeeSalaryResponseModelView>> ByEmployeeIdAsync(
+            Guid employeeId)
+        {
+            IGenericRepository<EmployeeSalary> repo =
+                _unitOfWork.GetRepository<EmployeeSalary>();
+
+            List<EmployeeSalary> salaries = await repo.Entities
+                .Where(x =>
+                    x.EmployeeId == employeeId &&
+                    !x.DeletedTime.HasValue)
+                .Include(x => x.Employee)
+                .Include(x => x.SalaryGroup)
+                .OrderByDescending(x => x.EffectiveFrom)
+                .ToListAsync();
+
+            return salaries.Select(x => x.ToViewModel()).ToList();
+        }
         public async Task CreateAsync(
             CreateEmployeeSalaryModelView model)
         {

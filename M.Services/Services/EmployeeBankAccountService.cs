@@ -75,6 +75,24 @@ namespace M.Services.Service
             return account.ToViewModel();
         }
 
+
+        public async Task<List<EmployeeBankAccountResponseModelView>> ByEmployeeIdAsync(
+            Guid employeeId)
+        {
+            IGenericRepository<EmployeeBankAccount> repo =
+                _unitOfWork.GetRepository<EmployeeBankAccount>();
+
+            List<EmployeeBankAccount> accounts = await repo.Entities
+                .Where(x =>
+                    x.EmployeeId == employeeId &&
+                    !x.DeletedTime.HasValue)
+                .Include(x => x.Employee)
+                .Include(x => x.Bank)
+                .OrderByDescending(x => x.IsPrimary)
+                .ToListAsync();
+
+            return accounts.Select(x => x.ToViewModel()).ToList();
+        }
         public async Task CreateAsync(CreateEmployeeBankAccountModelView model)
         {
             IGenericRepository<EmployeeBankAccount> repo =

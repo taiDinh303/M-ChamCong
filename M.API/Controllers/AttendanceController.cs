@@ -55,6 +55,22 @@ namespace M.API.Controllers
         /// <summary>
         /// Creates a new attendance
         /// </summary>
+        /// <summary>
+        /// Retrieves attendance records for a specific employee
+        /// </summary>
+        [HttpGet("by-employee/{employeeId}")]
+        public async Task<IActionResult> ByEmployee(Guid employeeId)
+        {
+            List<AttendanceResponseModelView> result =
+                await _attendanceService.ByEmployeeIdAsync(employeeId);
+
+            return Ok(new BaseResponse<List<AttendanceResponseModelView>>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: result
+            ));
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateAttendanceModelView model)

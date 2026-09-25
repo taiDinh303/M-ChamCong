@@ -78,6 +78,25 @@ namespace M.Services.Service
             return attendance.ToViewModel();
         }
 
+        public async Task<List<AttendanceResponseModelView>> ByEmployeeIdAsync(
+            Guid employeeId)
+        {
+            IGenericRepository<Attendance> repo =
+                _unitOfWork.GetRepository<Attendance>();
+
+            List<Attendance> attendances = await repo.Entities
+                .Where(x =>
+                    x.EmployeeId == employeeId &&
+                    !x.DeletedTime.HasValue)
+                .Include(x => x.Employee)
+                .Include(x => x.PlannedShift)
+                .Include(x => x.Approver)
+                .OrderByDescending(x => x.AttendanceDate)
+                .ToListAsync();
+
+            return attendances.Select(x => x.ToViewModel()).ToList();
+        }
+
         public async Task CreateAsync(CreateAttendanceModelView model)
         {
             IGenericRepository<Attendance> repo =

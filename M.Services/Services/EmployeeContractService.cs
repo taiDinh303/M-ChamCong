@@ -73,6 +73,23 @@ namespace M.Services.Service
             return contract.ToViewModel();
         }
 
+
+        public async Task<List<EmployeeContractResponseModelView>> ByEmployeeIdAsync(
+            Guid employeeId)
+        {
+            IGenericRepository<EmployeeContract> repo =
+                _unitOfWork.GetRepository<EmployeeContract>();
+
+            List<EmployeeContract> contracts = await repo.Entities
+                .Where(x =>
+                    x.EmployeeId == employeeId &&
+                    !x.DeletedTime.HasValue)
+                .Include(x => x.Employee)
+                .OrderByDescending(x => x.StartDate)
+                .ToListAsync();
+
+            return contracts.Select(x => x.ToViewModel()).ToList();
+        }
         public async Task CreateAsync(
             CreateEmployeeContractModelView model)
         {

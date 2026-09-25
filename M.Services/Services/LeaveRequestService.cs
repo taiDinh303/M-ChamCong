@@ -71,6 +71,25 @@ namespace M.Services.Service
             return entity.ToViewModel();
         }
 
+
+        public async Task<List<LeaveRequestResponseModelView>> ByEmployeeIdAsync(
+            Guid employeeId)
+        {
+            IGenericRepository<LeaveRequest> repo =
+                _unitOfWork.GetRepository<LeaveRequest>();
+
+            List<LeaveRequest> entities = await repo.Entities
+                .Where(x =>
+                    x.EmployeeId == employeeId &&
+                    !x.DeletedTime.HasValue)
+                .Include(x => x.Employee)
+                .Include(x => x.LeaveType)
+                .Include(x => x.Approver)
+                .OrderByDescending(x => x.FromDate)
+                .ToListAsync();
+
+            return entities.Select(x => x.ToViewModel()).ToList();
+        }
         public async Task CreateAsync(CreateLeaveRequestModelView model)
         {
             IGenericRepository<LeaveRequest> repo = _unitOfWork.GetRepository<LeaveRequest>();
