@@ -9,11 +9,11 @@ namespace M.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     //[Authorize(Roles = "Admin")]
-    public class EmployeeDependentController : ControllerBase
+    public class EmployeeDependeMontroller : ControllerBase
     {
         private readonly IEmployeeDependentService _employeeDependentService;
 
-        public EmployeeDependentController(
+        public EmployeeDependeMontroller(
             IEmployeeDependentService employeeDependentService)
         {
             _employeeDependentService = employeeDependentService;

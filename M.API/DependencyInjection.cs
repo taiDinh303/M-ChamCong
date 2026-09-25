@@ -1,5 +1,4 @@
-﻿
-using M.Contract.Repositories.Entities;
+﻿using M.Contract.Repositories.Entity;
 using M.Contract.Serivces.Interface;
 using M.Contract.Services.Interface;
 using M.Core.Base;
@@ -11,11 +10,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Services.Service;
 using System.Text;
 
 
-namespace API
+namespace M.API
 {
     public static class DependencyInjection
     {

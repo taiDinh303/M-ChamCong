@@ -3,10 +3,10 @@ using M.Contract.Repositories.IUOW;
 using M.Contract.Services.Interface;
 using M.Core.Base;
 using M.Core.Utils;
+using M.Services.Mappings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ModelViews.SalaryGroupModelView;
-using M.Services.Mappings;
 using static M.Core.Base.BaseException;
 
 namespace M.Services.Service

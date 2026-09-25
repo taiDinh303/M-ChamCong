@@ -1,5 +1,4 @@
 ﻿using M.Contract.Serivces.Interface;
-using M.Contract.Services.Interface;
 using M.Core.Base;
 using M.Core.Store;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +9,11 @@ namespace M.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     //[Authorize(Roles = "Admin")]
-    public class DepartmentController : ControllerBase
+    public class DepartmeMontroller : ControllerBase
     {
         private readonly IDepartmentService _departmentService;
 
-        public DepartmentController(IDepartmentService departmentService)
+        public DepartmeMontroller(IDepartmentService departmentService)
         {
             _departmentService = departmentService;
         }

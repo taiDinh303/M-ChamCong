@@ -6,18 +6,22 @@ namespace M.Contract.Repositories.Entities
 {
     public class Payroll : BaseEntity
     {
+        // Khóa ngoại tới nhân viên
         [Required]
         public Guid EmployeeId { get; set; }
 
+        // Điều hướng tới Employee
         [ForeignKey(nameof(EmployeeId))]
         public virtual Employee? Employee { get; set; }
 
         /// <summary>
         /// Ví dụ: 01/09/2026 đại diện cho kỳ lương tháng 09/2026.
         /// </summary>
+        // Kỳ lương (thường lưu ngày bắt đầu tháng để đại diện tháng đó)
         [Required]
         public DateTime PayrollMonth { get; set; }
 
+        // Các thành phần lương
         [Column(TypeName = "decimal(18,2)")]
         public decimal BasicSalary { get; set; } = 0;
 
@@ -42,10 +46,12 @@ namespace M.Contract.Repositories.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal NetSalary { get; set; } = 0;
 
+        // Trạng thái bảng lương (Draft, Calculated, Approved...)
         [Required]
         public PayrollStatus Status { get; set; } = PayrollStatus.Draft;
     }
 
+    // Các trạng thái của bảng lương
     public enum PayrollStatus
     {
         Draft = 1,

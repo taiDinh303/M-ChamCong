@@ -11,8 +11,4 @@
     <ProjectReference Include="..\M.Core\M.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="AuthModelView\" />
-  </ItemGroup>
-
 </Project>
