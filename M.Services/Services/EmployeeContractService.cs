@@ -96,6 +96,7 @@ namespace M.Services.Service
                     "Employee not found");
             }
 
+            // Kiểm tra ContractNumber
             // Kiểm tra ContractNumber trùng
             bool contractNumberExists = await repo.Entities
                 .AnyAsync(x =>
@@ -110,6 +111,18 @@ namespace M.Services.Service
                     "Contract number already exists");
             }
 
+            // Kiểm tra ContractType
+            if (!Enum.IsDefined(
+                    typeof(ContractType),
+                    model.ContractType))
+            {
+                throw new ErrorException(
+                    StatusCodes.Status400BadRequest,
+                    "INVALID_INPUT",
+                    "Invalid contract type");
+            }
+
+            // Kiểm tra ngày hợp đồng
             // Kiểm tra ngày
             if (model.EndDate.HasValue &&
                 model.EndDate.Value < model.StartDate)
@@ -182,6 +195,18 @@ namespace M.Services.Service
                     "Contract number already exists");
             }
 
+            // Kiểm tra ContractType
+            if (!Enum.IsDefined(
+                    typeof(ContractType),
+                    model.ContractType))
+            {
+                throw new ErrorException(
+                    StatusCodes.Status400BadRequest,
+                    "INVALID_INPUT",
+                    "Invalid contract type");
+            }
+
+            // Kiểm tra ngày hợp đồng
             // Kiểm tra ngày
             if (model.EndDate.HasValue &&
                 model.EndDate.Value < model.StartDate)
