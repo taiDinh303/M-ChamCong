@@ -27,39 +27,13 @@ namespace M.Services.Mappings
                 Deduction = entity.Deduction,
                 NetSalary = entity.NetSalary,
                 Status = entity.Status,
+                PayDate = entity.PayDate,
+                PaymentMethod = entity.PaymentMethod,
                 CreatedTime = entity.CreatedTime,
                 LastUpdatedTime = entity.LastUpdatedTime
             };
 
             return model;
-        }
-
-        // Mapping PayrollResponseModelView -> Entity
-        public static Payroll ToEntity(
-            this PayrollResponseModelView model)
-        {
-            if (model == null)
-                throw new ArgumentNullException(nameof(model));
-
-            var entity = new Payroll
-            {
-                Id = model.Id,
-                EmployeeId = model.EmployeeId,
-                PayrollMonth = model.PayrollMonth,
-                BasicSalary = model.BasicSalary,
-                Allowance = model.Allowance,
-                Bonus = model.Bonus,
-                Overtime = model.Overtime,
-                Insurance = model.Insurance,
-                Tax = model.Tax,
-                Deduction = model.Deduction,
-                NetSalary = model.NetSalary,
-                Status = model.Status,
-                CreatedTime = model.CreatedTime,
-                LastUpdatedTime = model.LastUpdatedTime
-            };
-
-            return entity;
         }
 
         // Mapping CreatePayrollModelView -> Entity
@@ -81,7 +55,9 @@ namespace M.Services.Mappings
                 Tax = model.Tax,
                 Deduction = model.Deduction,
                 NetSalary = model.NetSalary,
-                Status = model.Status
+                Status = model.Status,
+                PayDate = model.PayDate,
+                PaymentMethod = model.PaymentMethod
             };
 
             return entity;
@@ -109,6 +85,8 @@ namespace M.Services.Mappings
             entity.Deduction = model.Deduction;
             entity.NetSalary = model.NetSalary;
             entity.Status = model.Status;
+            entity.PayDate = model.PayDate;
+            entity.PaymentMethod = model.PaymentMethod;
         }
     }
 }

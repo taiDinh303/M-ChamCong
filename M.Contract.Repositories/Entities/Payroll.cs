@@ -49,6 +49,18 @@ namespace M.Contract.Repositories.Entities
         // Trạng thái bảng lương (Draft, Calculated, Approved...)
         [Required]
         public PayrollStatus Status { get; set; } = PayrollStatus.Draft;
+
+        // =========================================================
+        // NGÀY & HÌNH THỨC TRẢ LƯƠNG
+        // =========================================================
+
+        // Ngày trả lương (mặc định null, xác định theo kỳ)
+        public DateTime? PayDate { get; set; }
+
+        // Hình thức trả lương (mặc định chuyển khoản)
+        [Required]
+        public PaymentMethod PaymentMethod { get; set; }
+            = PaymentMethod.BankTransfer;
     }
 
     // Các trạng thái của bảng lương
@@ -59,5 +71,12 @@ namespace M.Contract.Repositories.Entities
         Approved = 3,
         Paid = 4,
         Cancelled = 5
+    }
+
+    // Hình thức trả lương
+    public enum PaymentMethod
+    {
+        Cash = 1,
+        BankTransfer = 2
     }
 }

@@ -31,6 +31,10 @@ namespace ModelViews.PayrollModelView
 
         public PayrollStatus Status { get; set; }
 
+        public DateTime? PayDate { get; set; }
+
+        public PaymentMethod PaymentMethod { get; set; }
+
         public DateTimeOffset CreatedTime { get; set; }
 
         public DateTimeOffset LastUpdatedTime { get; set; }
@@ -62,6 +66,10 @@ namespace ModelViews.PayrollModelView
         public decimal NetSalary { get; set; }
 
         public PayrollStatus Status { get; set; } = PayrollStatus.Draft;
+
+        public DateTime? PayDate { get; set; }
+
+        public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.BankTransfer;
     }
 
 
@@ -93,5 +101,9 @@ namespace ModelViews.PayrollModelView
         public decimal NetSalary { get; set; }
 
         public PayrollStatus Status { get; set; }
+
+        public DateTime? PayDate { get; set; }
+
+        public PaymentMethod PaymentMethod { get; set; }
     }
 }

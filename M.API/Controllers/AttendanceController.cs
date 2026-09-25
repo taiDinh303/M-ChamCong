@@ -85,6 +85,22 @@ namespace M.API.Controllers
         }
 
         /// <summary>
+        /// Approves / rejects an attendance record (duyệt ngày công)
+        /// </summary>
+        [HttpPost("approve")]
+        public async Task<IActionResult> Approve(
+            [FromBody] ApproveAttendanceModelView model)
+        {
+            await _attendanceService.ApproveAsync(model);
+
+            return Ok(new BaseResponse<string>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: "Attendance approval status updated successfully!"
+            ));
+        }
+
+        /// <summary>
         /// Soft deletes attendance by ID
         /// </summary>
         [HttpDelete("soft-delete/{id}")]

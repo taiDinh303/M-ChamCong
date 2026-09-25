@@ -34,6 +34,7 @@ namespace M.Services.Service
             IQueryable<AttendanceLog> query = repo.Entities
                 .Where(x => !x.DeletedTime.HasValue)
                 .Include(x => x.Attendance)
+                .ThenInclude(a => a.Employee)
                 .OrderBy(x => x.CreatedTime);
 
             int totalItems = await query.CountAsync();
@@ -64,6 +65,7 @@ namespace M.Services.Service
                     x.Id == id &&
                     !x.DeletedTime.HasValue)
                 .Include(x => x.Attendance)
+                .ThenInclude(a => a.Employee)
                 .FirstOrDefaultAsync()
                 ?? throw new ErrorException(
                     StatusCodes.Status404NotFound,
@@ -123,6 +125,13 @@ namespace M.Services.Service
             attendanceLog.CreatedTime = CoreHelper.SystemTimeNow;
 
             await repo.InsertAsync(attendanceLog);
+
+            // Đồng bộ ảnh + giờ thực tế lên bản ghi Attendance cha
+            await SyncAttendanceFromLogAsync(
+                model.AttendanceId,
+                model.PhotoUrl,
+                model.Type);
+
             await _unitOfWork.SaveAsync();
         }
 
@@ -185,6 +194,60 @@ namespace M.Services.Service
             attendanceLog.LastUpdatedTime = CoreHelper.SystemTimeNow;
 
             await repo.UpdateAsync(attendanceLog);
+
+            // Đồng bộ ảnh + giờ thực tế lên bản ghi Attendance cha
+            await SyncAttendanceFromLogAsync(
+                model.AttendanceId,
+                model.PhotoUrl,
+                model.Type);
+
+            await _unitOfWork.SaveAsync();
+        }
+
+        public async Task AdjustAsync(AdjustAttendanceLogModelView model)
+        {
+            IGenericRepository<AttendanceLog> repo =
+                _unitOfWork.GetRepository<AttendanceLog>();
+
+            AttendanceLog attendanceLog = await repo.Entities
+                .FirstOrDefaultAsync(x =>
+                    x.Id == model.Id &&
+                    !x.DeletedTime.HasValue)
+                ?? throw new ErrorException(
+                    StatusCodes.Status404NotFound,
+                    "NOT_FOUND",
+                    "Attendance log not found");
+
+            string currentUser =
+                _httpContextAccessor.HttpContext?.User?.Identity?.Name
+                ?? "System";
+
+            // Xử lý ngoại lệ / điều chỉnh
+            attendanceLog.IsAdjusted = true;
+            attendanceLog.AdjustedBy = currentUser;
+            attendanceLog.AdjustedAt = CoreHelper.SystemTimeNow;
+            attendanceLog.AdjustmentNote = model.AdjustedNote;
+
+            if (!string.IsNullOrWhiteSpace(model.PhotoUrl))
+                attendanceLog.PhotoUrl = model.PhotoUrl;
+
+            if (model.Latitude.HasValue)
+                attendanceLog.Latitude = model.Latitude;
+
+            if (model.Longitude.HasValue)
+                attendanceLog.Longitude = model.Longitude;
+
+            if (!string.IsNullOrWhiteSpace(model.Note))
+                attendanceLog.Note = model.Note;
+
+            attendanceLog.LastUpdatedBy = currentUser;
+            attendanceLog.LastUpdatedTime = CoreHelper.SystemTimeNow;
+
+            await repo.UpdateAsync(attendanceLog);
+
+            // Tái tính giờ thực tế sau khi điều chỉnh
+            await RecalculateActualHoursAsync(attendanceLog.AttendanceId);
+
             await _unitOfWork.SaveAsync();
         }
 
@@ -227,6 +290,82 @@ namespace M.Services.Service
 
             await repo.DeleteAsync(attendanceLog);
             await _unitOfWork.SaveAsync();
+        }
+
+        // =========================================================
+        // Đồng bộ ảnh + giờ thực tế từ log lên Attendance cha
+        // =========================================================
+        private async Task SyncAttendanceFromLogAsync(
+            Guid attendanceId,
+            string? photoUrl,
+            AttendanceLogType type)
+        {
+            if (string.IsNullOrWhiteSpace(photoUrl))
+            {
+                await RecalculateActualHoursAsync(attendanceId);
+                return;
+            }
+
+            IGenericRepository<Attendance> attendanceRepo =
+                _unitOfWork.GetRepository<Attendance>();
+
+            Attendance? attendance = await attendanceRepo.Entities
+                .FirstOrDefaultAsync(x =>
+                    x.Id == attendanceId &&
+                    !x.DeletedTime.HasValue);
+
+            if (attendance == null)
+                return;
+
+            // Gán ảnh theo loại log (vào / ra)
+            if (type == AttendanceLogType.CheckIn)
+                attendance.CheckInPhoto = photoUrl;
+            else
+                attendance.CheckOutPhoto = photoUrl;
+
+            await RecalculateActualHoursAsync(attendanceId);
+        }
+
+        // =========================================================
+        // Tính giờ thực tế (ActualHours) từ cặp log vào/ra
+        // =========================================================
+        private async Task RecalculateActualHoursAsync(Guid attendanceId)
+        {
+            IGenericRepository<AttendanceLog> logRepo =
+                _unitOfWork.GetRepository<AttendanceLog>();
+
+            List<AttendanceLog> logs = await logRepo.Entities
+                .Where(x =>
+                    x.AttendanceId == attendanceId &&
+                    !x.DeletedTime.HasValue)
+                .ToListAsync();
+
+            DateTime? checkIn = logs
+                .Where(x => x.Type == AttendanceLogType.CheckIn)
+                .Select(x => x.LogTime.UtcDateTime)
+                .Min();
+
+            DateTime? checkOut = logs
+                .Where(x => x.Type == AttendanceLogType.CheckOut)
+                .Select(x => x.LogTime.UtcDateTime)
+                .Max();
+
+            IGenericRepository<Attendance> attendanceRepo =
+                _unitOfWork.GetRepository<Attendance>();
+
+            Attendance? attendance = await attendanceRepo.Entities
+                .FirstOrDefaultAsync(x =>
+                    x.Id == attendanceId &&
+                    !x.DeletedTime.HasValue);
+
+            if (attendance == null)
+                return;
+
+            // Chỉ tính được giờ thực tế khi có đủ cặp vào - ra
+            attendance.ActualHours =
+                checkIn.HasValue && checkOut.HasValue
+                    ? (int)Math.Round((checkOut.Value - checkIn.Value).TotalHours)
+                    : null;
         }
     }
 }

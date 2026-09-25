@@ -24,6 +24,11 @@ namespace M.Contract.Repositories.Entities
 
         // Phương thức chấm công (điện thoại, vân tay, GPS...)
         public AttendanceMethod Method { get; set; }
+
+        // Ảnh chụp tại thời điểm chấm (URL / đường dẫn lưu)
+        [MaxLength(500)]
+        public string? PhotoUrl { get; set; }
+
         // Tọa độ (nếu có) lưu ở dạng decimal với độ chính xác
         [Column(TypeName = "decimal(10,7)")]
         public decimal? Latitude { get; set; }
@@ -36,6 +41,22 @@ namespace M.Contract.Repositories.Entities
 
         // Ghi chú thêm
         public string? Note { get; set; }
+
+        // =========================================================
+        // XỬ LÝ NGOẠI LỆ (quên chấm / chấm sai được điều chỉnh)
+        // =========================================================
+
+        // Log có bị điều chỉnh / xử lý ngoại lệ hay không
+        public bool IsAdjusted { get; set; } = false;
+
+        // Người điều chỉnh (username) — khác với CreatedBy (thời điểm tạo)
+        public string? AdjustedBy { get; set; }
+
+        // Thời điểm điều chỉnh
+        public DateTimeOffset? AdjustedAt { get; set; }
+
+        // Ghi chú điều chỉnh (lý do)
+        public string? AdjustmentNote { get; set; }
     }
 
     // Kiểu log: CheckIn hoặc CheckOut

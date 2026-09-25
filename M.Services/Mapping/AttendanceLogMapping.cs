@@ -20,37 +20,19 @@ namespace M.Services.Mappings
                 LogTime = entity.LogTime,
                 Type = entity.Type,
                 Method = entity.Method,
+                PhotoUrl = entity.PhotoUrl,
                 Latitude = entity.Latitude,
                 Longitude = entity.Longitude,
                 DeviceId = entity.DeviceId,
                 Note = entity.Note,
+                IsAdjusted = entity.IsAdjusted,
+                AdjustedBy = entity.AdjustedBy,
+                AdjustedAt = entity.AdjustedAt,
+                AdjustmentNote = entity.AdjustmentNote,
                 CreatedTime = entity.CreatedTime
             };
 
             return model;
-        }
-
-        // Mapping AttendanceLogResponseModelView -> Entity
-        public static AttendanceLog ToEntity(
-            this AttendanceLogResponseModelView model)
-        {
-            if (model == null) throw new ArgumentNullException(nameof(model));
-
-            var entity = new AttendanceLog
-            {
-                Id = model.Id,
-                AttendanceId = model.AttendanceId,
-                LogTime = model.LogTime,
-                Type = model.Type,
-                Method = model.Method,
-                Latitude = model.Latitude,
-                Longitude = model.Longitude,
-                DeviceId = model.DeviceId,
-                Note = model.Note,
-                CreatedTime = model.CreatedTime
-            };
-
-            return entity;
         }
 
         // Mapping CreateAttendanceLogModelView -> Entity
@@ -65,6 +47,7 @@ namespace M.Services.Mappings
                 LogTime = model.LogTime,
                 Type = model.Type,
                 Method = model.Method,
+                PhotoUrl = model.PhotoUrl,
                 Latitude = model.Latitude,
                 Longitude = model.Longitude,
                 DeviceId = model.DeviceId,
@@ -86,6 +69,7 @@ namespace M.Services.Mappings
             entity.LogTime = model.LogTime;
             entity.Type = model.Type;
             entity.Method = model.Method;
+            entity.PhotoUrl = model.PhotoUrl;
             entity.Latitude = model.Latitude;
             entity.Longitude = model.Longitude;
 

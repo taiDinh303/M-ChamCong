@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using M.Contract.Repositories.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace ModelViews.EmployeeInsuranceModelView
 {
@@ -24,7 +25,7 @@ namespace ModelViews.EmployeeInsuranceModelView
 
         public decimal SocialInsuranceSalary { get; set; }
 
-        public int Status { get; set; }
+        public InsuranceStatus Status { get; set; }
 
         public DateTimeOffset CreatedTime { get; set; }
 
@@ -54,7 +55,7 @@ namespace ModelViews.EmployeeInsuranceModelView
 
         public decimal SocialInsuranceSalary { get; set; }
 
-        public int Status { get; set; } = 1;
+        public InsuranceStatus Status { get; set; } = InsuranceStatus.Active;
     }
 
 
@@ -83,6 +84,6 @@ namespace ModelViews.EmployeeInsuranceModelView
 
         public decimal SocialInsuranceSalary { get; set; }
 
-        public int Status { get; set; }
+        public InsuranceStatus Status { get; set; }
     }
 }

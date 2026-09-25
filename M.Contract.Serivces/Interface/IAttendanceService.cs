@@ -15,6 +15,8 @@ namespace M.Contract.Serivces.Interface
 
         Task UpdateAsync(UpdateAttendanceModelView model);
 
+        Task ApproveAsync(ApproveAttendanceModelView model);
+
         Task SoftDeleteAsync(Guid id);
 
         Task DeleteAsync(Guid id);

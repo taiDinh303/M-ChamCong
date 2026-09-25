@@ -21,6 +21,52 @@ namespace M.Contract.Repositories.Entities
         // Trạng thái chấm công (có thể null nếu chưa xác định)
         public AttendanceStatus? Status { get; set; }
 
+        // =========================================================
+        // KẾ HOẠCH (chấm công kế hoạch)
+        // =========================================================
+
+        // Ca được gán kế hoạch cho ngày này (nếu có)
+        public Guid? PlannedShiftId { get; set; }
+
+        [ForeignKey(nameof(PlannedShiftId))]
+        public virtual Shift? PlannedShift { get; set; }
+
+        // Số giờ làm kỳ vọng theo ca
+        public int? PlannedHours { get; set; }
+
+        // Số giờ làm thực tế (tính từ các log)
+        public int? ActualHours { get; set; }
+
+        // =========================================================
+        // ẢNH CHỤP (bắt buộc theo quy định)
+        // =========================================================
+
+        // Ảnh khi vào ca (URL / đường dẫn lưu)
+        [MaxLength(500)]
+        public string? CheckInPhoto { get; set; }
+
+        // Ảnh khi ra ca
+        [MaxLength(500)]
+        public string? CheckOutPhoto { get; set; }
+
+        // =========================================================
+        // PHÊ DUYỆT NGÀY CÔNG
+        // =========================================================
+
+        // Trạng thái phê duyệt (mặc định Pending)
+        [Required]
+        public AttendanceApprovalStatus ApprovalStatus { get; set; }
+            = AttendanceApprovalStatus.Pending;
+
+        // Người phê duyệt (Employee.Id)
+        public Guid? ApprovedBy { get; set; }
+
+        [ForeignKey(nameof(ApprovedBy))]
+        public virtual Employee? Approver { get; set; }
+
+        // Thời điểm phê duyệt
+        public DateTime? ApprovedAt { get; set; }
+
         // Ghi chú thêm
         public string? Note { get; set; }
 
@@ -39,5 +85,13 @@ namespace M.Contract.Repositories.Entities
         Leave = 5,
         Holiday = 6,
         Weekend = 7
+    }
+
+    // Trạng thái phê duyệt ngày công
+    public enum AttendanceApprovalStatus
+    {
+        Pending = 0,
+        Approved = 1,
+        Rejected = 2
     }
 }

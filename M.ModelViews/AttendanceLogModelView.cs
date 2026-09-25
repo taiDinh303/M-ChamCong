@@ -19,6 +19,8 @@ namespace ModelViews.AttendanceLogModelView
 
         public AttendanceMethod Method { get; set; }
 
+        public string? PhotoUrl { get; set; }
+
         public decimal? Latitude { get; set; }
 
         public decimal? Longitude { get; set; }
@@ -26,6 +28,12 @@ namespace ModelViews.AttendanceLogModelView
         public string? DeviceId { get; set; }
 
         public string? Note { get; set; }
+
+        // Điều chỉnh / ngoại lệ
+        public bool IsAdjusted { get; set; }
+        public string? AdjustedBy { get; set; }
+        public DateTimeOffset? AdjustedAt { get; set; }
+        public string? AdjustmentNote { get; set; }
 
         public DateTimeOffset CreatedTime { get; set; }
     }
@@ -44,6 +52,9 @@ namespace ModelViews.AttendanceLogModelView
 
         [Required]
         public AttendanceMethod Method { get; set; }
+
+        [MaxLength(500)]
+        public string? PhotoUrl { get; set; }
 
         public decimal? Latitude { get; set; }
 
@@ -73,6 +84,9 @@ namespace ModelViews.AttendanceLogModelView
         [Required]
         public AttendanceMethod Method { get; set; }
 
+        [MaxLength(500)]
+        public string? PhotoUrl { get; set; }
+
         public decimal? Latitude { get; set; }
 
         public decimal? Longitude { get; set; }
@@ -81,5 +95,23 @@ namespace ModelViews.AttendanceLogModelView
         public string? DeviceId { get; set; }
 
         public string? Note { get; set; }
+    }
+
+    // Bản ghi xử lý ngoại lệ (điều chỉnh quên chấm / chấm sai)
+    public class AdjustAttendanceLogModelView
+    {
+        [Required]
+        public Guid Id { get; set; }
+
+        public string? PhotoUrl { get; set; }
+
+        public decimal? Latitude { get; set; }
+
+        public decimal? Longitude { get; set; }
+
+        public string? Note { get; set; }
+
+        [Required]
+        public string AdjustedNote { get; set; } = string.Empty;
     }
 }

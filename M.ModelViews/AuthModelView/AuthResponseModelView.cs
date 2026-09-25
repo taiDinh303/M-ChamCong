@@ -17,6 +17,12 @@ namespace ModelViews.AuthModelView
         public DateTime? BirthDate { get; set; }
         public GenderType Gender { get; set; }
 
+        // Employee
+        public string? EmployeeCode { get; set; }
+
+        // Roles
+        public List<string> Roles { get; set; } = new();
+
         [NotMapped]
         public string FullName => string.IsNullOrWhiteSpace(FamilyName) ? GivenName : $"{GivenName} {FamilyName}";
     }

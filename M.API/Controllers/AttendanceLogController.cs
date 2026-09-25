@@ -88,6 +88,22 @@ namespace M.API.Controllers
         }
 
         /// <summary>
+        /// Adjusts an attendance log (xử lý ngoại lệ: quên chấm / chấm sai)
+        /// </summary>
+        [HttpPost("adjust")]
+        public async Task<IActionResult> Adjust(
+            [FromBody] AdjustAttendanceLogModelView model)
+        {
+            await _attendanceLogService.AdjustAsync(model);
+
+            return Ok(new BaseResponse<string>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: "Attendance log adjusted successfully!"
+            ));
+        }
+
+        /// <summary>
         /// Soft deletes attendance log by ID
         /// </summary>
         [HttpDelete("soft-delete/{id}")]

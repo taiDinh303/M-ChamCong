@@ -34,6 +34,8 @@ namespace M.Services.Service
             IQueryable<Attendance> query = repo.Entities
                 .Where(x => !x.DeletedTime.HasValue)
                 .Include(x => x.Employee)
+                .Include(x => x.PlannedShift)
+                .Include(x => x.Approver)
                 .OrderBy(x => x.CreatedTime);
 
             int totalItems = await query.CountAsync();
@@ -64,6 +66,8 @@ namespace M.Services.Service
                     x.Id == id &&
                     !x.DeletedTime.HasValue)
                 .Include(x => x.Employee)
+                .Include(x => x.PlannedShift)
+                .Include(x => x.Approver)
                 .Include(x => x.AttendanceLogs)
                 .FirstOrDefaultAsync()
                 ?? throw new ErrorException(
@@ -109,6 +113,26 @@ namespace M.Services.Service
                     StatusCodes.Status400BadRequest,
                     "DUPLICATE",
                     "Attendance already exists for this employee on this date");
+            }
+
+            // Kiểm tra PlannedShift (nếu có)
+            if (model.PlannedShiftId.HasValue)
+            {
+                IGenericRepository<Shift> shiftRepo =
+                    _unitOfWork.GetRepository<Shift>();
+
+                bool shiftExists = await shiftRepo.Entities
+                    .AnyAsync(x =>
+                        x.Id == model.PlannedShiftId.Value &&
+                        !x.DeletedTime.HasValue);
+
+                if (!shiftExists)
+                {
+                    throw new ErrorException(
+                        StatusCodes.Status404NotFound,
+                        "NOT_FOUND",
+                        "Planned shift not found");
+                }
             }
 
             // Kiểm tra Status
@@ -196,6 +220,60 @@ namespace M.Services.Service
                 ?? "System";
 
             model.ToEntity(attendance);
+
+            attendance.LastUpdatedBy = currentUser;
+            attendance.LastUpdatedTime = CoreHelper.SystemTimeNow;
+
+            await repo.UpdateAsync(attendance);
+            await _unitOfWork.SaveAsync();
+        }
+
+        public async Task ApproveAsync(ApproveAttendanceModelView model)
+        {
+            IGenericRepository<Attendance> repo =
+                _unitOfWork.GetRepository<Attendance>();
+
+            Attendance attendance = await repo.Entities
+                .FirstOrDefaultAsync(x =>
+                    x.Id == model.Id &&
+                    !x.DeletedTime.HasValue)
+                ?? throw new ErrorException(
+                    StatusCodes.Status404NotFound,
+                    "NOT_FOUND",
+                    "Attendance not found");
+
+            // Kiểm tra người phê duyệt tồn tại
+            IGenericRepository<Employee> employeeRepo =
+                _unitOfWork.GetRepository<Employee>();
+
+            bool approverExists = await employeeRepo.Entities
+                .AnyAsync(x =>
+                    x.Id == model.ApprovedBy &&
+                    !x.DeletedTime.HasValue);
+
+            if (!approverExists)
+            {
+                throw new ErrorException(
+                    StatusCodes.Status404NotFound,
+                    "NOT_FOUND",
+                    "Approver not found");
+            }
+
+            attendance.ApprovalStatus = model.ApprovalStatus;
+            attendance.ApprovedBy = model.ApprovedBy;
+            attendance.ApprovedAt =
+                model.ApprovalStatus == AttendanceApprovalStatus.Pending
+                    ? null
+                    : DateTime.Now;
+
+            if (model.Note != null)
+            {
+                attendance.Note = model.Note;
+            }
+
+            string currentUser =
+                _httpContextAccessor.HttpContext?.User?.Identity?.Name
+                ?? "System";
 
             attendance.LastUpdatedBy = currentUser;
             attendance.LastUpdatedTime = CoreHelper.SystemTimeNow;

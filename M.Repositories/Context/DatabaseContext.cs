@@ -81,6 +81,16 @@ namespace M.Repositories.Context
 
         public DbSet<Payroll> Payrolls { get; set; }
 
+        public DbSet<Shift> Shifts { get; set; }
+
+        public DbSet<EmployeeShift> EmployeeShifts { get; set; }
+
+        public DbSet<HolidayCalendar> HolidayCalendars { get; set; }
+
+        public DbSet<AttendanceRule> AttendanceRules { get; set; }
+
+        public DbSet<ActivationCode> ActivationCodes { get; set; }
+
 
         // =====================================================
         // RELATIONSHIPS
@@ -176,6 +186,56 @@ namespace M.Repositories.Context
                 .WithMany(a => a.AttendanceLogs)
                 .HasForeignKey(l => l.AttendanceId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // =========================================================
+            // EMPLOYEE SHIFT - EMPLOYEE
+            // =========================================================
+
+            builder.Entity<EmployeeShift>()
+                .HasOne(x => x.Employee)
+                .WithMany()
+                .HasForeignKey(x => x.EmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // =========================================================
+            // EMPLOYEE SHIFT - SHIFT
+            // =========================================================
+
+            builder.Entity<EmployeeShift>()
+                .HasOne(x => x.Shift)
+                .WithMany(s => s.EmployeeShifts)
+                .HasForeignKey(x => x.ShiftId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // =========================================================
+            // ATTENDANCE - APPROVER
+            // =========================================================
+
+            builder.Entity<Attendance>()
+                .HasOne(a => a.Approver)
+                .WithMany()
+                .HasForeignKey(a => a.ApprovedBy)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // =========================================================
+            // ACTIVATION CODE - EMPLOYEE
+            // =========================================================
+
+            builder.Entity<ActivationCode>()
+                .HasOne(a => a.Employee)
+                .WithMany()
+                .HasForeignKey(a => a.EmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // =========================================================
+            // ACTIVATION CODE - USER
+            // =========================================================
+
+            builder.Entity<ActivationCode>()
+                .HasOne(a => a.User)
+                .WithMany()
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

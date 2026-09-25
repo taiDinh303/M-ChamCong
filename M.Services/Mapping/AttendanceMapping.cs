@@ -18,31 +18,22 @@ namespace M.Services.Mappings
                 EmployeeName = entity.Employee?.FullName,
                 AttendanceDate = entity.AttendanceDate,
                 Status = entity.Status,
+                PlannedShiftId = entity.PlannedShiftId,
+                PlannedShiftName = entity.PlannedShift?.Name,
+                PlannedHours = entity.PlannedHours,
+                ActualHours = entity.ActualHours,
+                CheckInPhoto = entity.CheckInPhoto,
+                CheckOutPhoto = entity.CheckOutPhoto,
+                ApprovalStatus = entity.ApprovalStatus,
+                ApprovedBy = entity.ApprovedBy,
+                ApproverName = entity.Approver?.FullName,
+                ApprovedAt = entity.ApprovedAt,
                 Note = entity.Note,
                 CreatedTime = entity.CreatedTime,
                 LastUpdatedTime = entity.LastUpdatedTime
             };
 
             return model;
-        }
-
-        // Mapping AttendanceResponseModelView -> Entity
-        public static Attendance ToEntity(this AttendanceResponseModelView model)
-        {
-            if (model == null) throw new ArgumentNullException(nameof(model));
-
-            var entity = new Attendance
-            {
-                Id = model.Id,
-                EmployeeId = model.EmployeeId,
-                AttendanceDate = model.AttendanceDate,
-                Status = model.Status,
-                Note = model.Note,
-                CreatedTime = model.CreatedTime,
-                LastUpdatedTime = model.LastUpdatedTime
-            };
-
-            return entity;
         }
 
         // Mapping CreateAttendanceModelView -> Entity
@@ -55,7 +46,10 @@ namespace M.Services.Mappings
                 EmployeeId = model.EmployeeId,
                 AttendanceDate = model.AttendanceDate,
                 Status = model.Status,
-                Note = model.Note
+                PlannedShiftId = model.PlannedShiftId,
+                PlannedHours = model.PlannedHours,
+                Note = model.Note,
+                ApprovalStatus = AttendanceApprovalStatus.Pending
             };
 
             return entity;
@@ -72,6 +66,14 @@ namespace M.Services.Mappings
             entity.EmployeeId = model.EmployeeId;
             entity.AttendanceDate = model.AttendanceDate;
             entity.Status = model.Status;
+            entity.PlannedShiftId = model.PlannedShiftId;
+            entity.PlannedHours = model.PlannedHours;
+            entity.ActualHours = model.ActualHours;
+            entity.CheckInPhoto = model.CheckInPhoto;
+            entity.CheckOutPhoto = model.CheckOutPhoto;
+            entity.ApprovalStatus = model.ApprovalStatus;
+            entity.ApprovedBy = model.ApprovedBy;
+            entity.ApprovedAt = model.ApprovedAt;
 
             entity.Note = model.Note == string.Empty
                 ? string.Empty

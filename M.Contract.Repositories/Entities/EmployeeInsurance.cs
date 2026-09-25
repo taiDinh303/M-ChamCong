@@ -38,7 +38,18 @@ namespace M.Contract.Repositories.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal SocialInsuranceSalary { get; set; } = 0;
 
-        // Trạng thái bản ghi
-        public int Status { get; set; } = 1;
+        // Trạng thái tham gia bảo hiểm (mặc định Active)
+        [Required]
+        public InsuranceStatus Status { get; set; } = InsuranceStatus.Active;
+    }
+
+    /// <summary>
+    /// Trạng thái tham gia bảo hiểm (thay cho int cũ).
+    /// </summary>
+    public enum InsuranceStatus
+    {
+        Active = 1,       // Đang đóng
+        Suspended = 2,    // Tạm dừng
+        Closed = 3        // Đã chốt sổ
     }
 }

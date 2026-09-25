@@ -4,6 +4,7 @@ using M.Core.Base;
 using M.Core.Store;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ModelViews.ActivationCodeModelView;
 using ModelViews.AuthModelView;
 
 namespace M.API.Controllers
@@ -23,7 +24,7 @@ namespace M.API.Controllers
         }
 
         /// <summary>
-        /// Login
+        /// Login (linh hoạt: username / email / sđt / mã nhân viên)
         /// </summary>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModelView model)
@@ -51,5 +52,52 @@ namespace M.API.Controllers
             ));
         }
 
+        /// <summary>
+        /// Kích hoạt tài khoản bằng mã kích hoạt (đặt mật khẩu mới).
+        /// Quy trình bàn giao: nhân viên nhận mã kích hoạt, đặt mật khẩu, kích hoạt.
+        /// </summary>
+        [HttpPost("activate")]
+        public async Task<IActionResult> Activate([FromBody] ActivateAccountModelView model)
+        {
+            await _authService.ActivateAsync(model);
+
+            return Ok(new BaseResponse<string>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: "Account activated successfully!"
+            ));
+        }
+
+        /// <summary>
+        /// Đổi mật khẩu (đã xác thực qua token).
+        /// </summary>
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModelView model)
+        {
+            await _authService.ChangePasswordAsync(model);
+
+            return Ok(new BaseResponse<string>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: "Password changed successfully!"
+            ));
+        }
+
+        /// <summary>
+        /// Tạo mã kích hoạt cho một nhân viên (chạy trong quy trình bàn giao).
+        /// </summary>
+        [HttpPost("create-activation-code")]
+        public async Task<IActionResult> CreateActivationCode(
+            [FromBody] CreateActivationCodeModelView model)
+        {
+            ActivationCodeResponseModelView result =
+                await _authService.CreateActivationCodeAsync(model);
+
+            return Ok(new BaseResponse<ActivationCodeResponseModelView>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: result
+            ));
+        }
     }
 }

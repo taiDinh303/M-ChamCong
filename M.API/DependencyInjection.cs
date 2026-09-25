@@ -99,6 +99,11 @@ namespace M.API
                 .AddScoped<IPayrollService, PayrollService>()
                 .AddScoped<IPositionService, PositionService>()
                 .AddScoped<ISalaryGroupService, SalaryGroupService>()
+                .AddScoped<IShiftService, ShiftService>()
+                .AddScoped<IEmployeeShiftService, EmployeeShiftService>()
+                .AddScoped<IHolidayCalendarService, HolidayCalendarService>()
+                .AddScoped<IAttendanceRuleService, AttendanceRuleService>()
+                .AddScoped<IActivationCodeService, ActivationCodeService>()
                 .AddHttpContextAccessor();
         }
 
