@@ -128,16 +128,41 @@ namespace M.Services.Service
         public async Task<AuthResponseModelView> LoginAsync(
             LoginModelView loginModelView)
         {
+            string login = loginModelView.Username?.Trim() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(login))
+            {
+                throw new ErrorException(
+                    StatusCodes.Status400BadRequest,
+                    ResponseCodeConstants.BAD_REQUEST,
+                    "Username, email or phone number is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(loginModelView.Password))
+            {
+                throw new ErrorException(
+                    StatusCodes.Status400BadRequest,
+                    ResponseCodeConstants.BAD_REQUEST,
+                    "Password is required.");
+            }
+
+            // =====================================================
+            // Tìm user bằng Username / Email / PhoneNumber
+            // Không yêu cầu EmailConfirmed / PhoneNumberConfirmed
+            // =====================================================
+
             ApplicationUser? user = await _userManager.Users
                 .FirstOrDefaultAsync(x =>
-                    x.UserName == loginModelView.Username);
+                    x.UserName == login ||
+                    x.Email == login ||
+                    x.PhoneNumber == login);
 
             if (user == null)
             {
                 throw new ErrorException(
                     StatusCodes.Status404NotFound,
                     ResponseCodeConstants.NOT_FOUND,
-                    "User is not found.");
+                    "Account not found.");
             }
 
             if (user.DeletedTime.HasValue)
@@ -148,23 +173,27 @@ namespace M.Services.Service
                     "User account has been deactivated.");
             }
 
+            // =====================================================
+            // Kiểm tra password
+            // =====================================================
+
             SignInResult result =
                 await _signInManager.PasswordSignInAsync(
                     user,
                     loginModelView.Password,
                     loginModelView.RememberMe,
-                    false);
+                    lockoutOnFailure: false);
 
             if (!result.Succeeded)
             {
                 throw new ErrorException(
                     StatusCodes.Status401Unauthorized,
                     ResponseCodeConstants.UNAUTHORIZED,
-                    "UserName or Password is incorrect.");
+                    "Username, email/phone number or password is incorrect.");
             }
 
             // =====================================================
-            // Lấy Employee thay cho UserInfo
+            // Lấy Employee
             // =====================================================
 
             Employee? employee = await _dbContext.Set<Employee>()
@@ -179,6 +208,10 @@ namespace M.Services.Service
                     ResponseCodeConstants.NOT_FOUND,
                     "Employee information is not found.");
             }
+
+            // =====================================================
+            // Generate JWT
+            // =====================================================
 
             int expireMinutes = int.Parse(
                 _configuration["Jwtsettings:ExpirationMinutes"]!);
