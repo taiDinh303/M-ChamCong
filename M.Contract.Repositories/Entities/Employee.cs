@@ -14,18 +14,23 @@ namespace M.Contract.Repositories.Entities
         [MaxLength(50)]
         public string EmployeeCode { get; set; } = string.Empty;
 
+        // Tên gọi (ví dụ: tên riêng)
         [Required]
         [MaxLength(100)]
         public string GivenName { get; set; } = string.Empty;
 
+        // Họ / tên đệm
         [Required]
         [MaxLength(100)]
         public string FamilyName { get; set; } = string.Empty;
+        // FullName không lưu vào DB
         [NotMapped]
         public string FullName => $"{GivenName} {FamilyName}".Trim();
 
+        // Ngày sinh
         public DateTime? BirthDate { get; set; }
 
+        // Giới tính với giá trị mặc định là RatherNotSay
         public GenderType Gender { get; set; } = GenderType.RatherNotSay;
 
 
@@ -33,11 +38,14 @@ namespace M.Contract.Repositories.Entities
         // THÔNG TIN CCCD
         // =========================================================
 
+        // Số CCCD/CMT (có thể null)
         [MaxLength(20)]
         public string? CitizenId { get; set; }
 
+        // Ngày cấp
         public DateTime? CitizenIdIssuedDate { get; set; }
 
+        // Nơi cấp
         [MaxLength(255)]
         public string? CitizenIdIssuedPlace { get; set; }
 
@@ -67,6 +75,7 @@ namespace M.Contract.Repositories.Entities
         // TÀI KHOẢN ĐĂNG NHẬP - OPTIONAL
         // =========================================================
 
+        // Nếu nhân viên có tài khoản user trong hệ thống
         public Guid? UserId { get; set; }
 
         [ForeignKey(nameof(UserId))]
@@ -77,19 +86,21 @@ namespace M.Contract.Repositories.Entities
         // CÔNG VIỆC
         // =========================================================
 
+        // Phòng ban
         public Guid? DepartmentId { get; set; }
 
         [ForeignKey(nameof(DepartmentId))]
         public virtual Department? Department { get; set; }
 
 
+        // Chức vụ
         public Guid? PositionId { get; set; }
 
         [ForeignKey(nameof(PositionId))]
         public virtual Position? Position { get; set; }
 
 
-        // Quản lý trực tiếp
+        // Quản lý trực tiếp (nếu có)
         public Guid? ManagerId { get; set; }
 
         [ForeignKey(nameof(ManagerId))]
@@ -118,6 +129,7 @@ namespace M.Contract.Repositories.Entities
         // CHẤM CÔNG
         // =========================================================
 
+        // Sử dụng chấm công qua điện thoại hay không
         public bool UsePhoneAttendance { get; set; } = false;
 
 
@@ -132,23 +144,23 @@ namespace M.Contract.Repositories.Entities
         // QUAN HỆ
         // =========================================================
 
-        // Nhân viên cấp dưới
+        // Danh sách nhân viên trực thuộc (subordinates)
         public virtual ICollection<Employee> Subordinates { get; set; }
             = new List<Employee>();
 
-        // Hợp đồng
+        // Hợp đồng của nhân viên
         public virtual ICollection<EmployeeContract> Contracts { get; set; }
             = new List<EmployeeContract>();
 
-        // Lương
+        // Lịch sử lương
         public virtual ICollection<EmployeeSalary> Salaries { get; set; }
             = new List<EmployeeSalary>();
 
-        // Bảo hiểm
+        // Thông tin bảo hiểm
         public virtual ICollection<EmployeeInsurance> Insurances { get; set; }
             = new List<EmployeeInsurance>();
 
-        // Tài khoản ngân hàng
+        // Tài khoản ngân hàng của nhân viên
         public virtual ICollection<EmployeeBankAccount> BankAccounts { get; set; }
             = new List<EmployeeBankAccount>();
 
@@ -156,15 +168,15 @@ namespace M.Contract.Repositories.Entities
         public virtual ICollection<EmployeeDependent> Dependents { get; set; }
             = new List<EmployeeDependent>();
 
-        // Chấm công
+        // Bản ghi chấm công
         public virtual ICollection<Attendance> Attendances { get; set; }
             = new List<Attendance>();
 
-        // Nghỉ phép
+        // Yêu cầu nghỉ phép
         public virtual ICollection<LeaveRequest> LeaveRequests { get; set; }
             = new List<LeaveRequest>();
 
-        // Bảng lương
+        // Bảng lương liên quan
         public virtual ICollection<Payroll> Payrolls { get; set; }
             = new List<Payroll>();
     }
@@ -174,6 +186,7 @@ namespace M.Contract.Repositories.Entities
     // ENUMS
     // =============================================================
 
+    // Loại lao động
     public enum LaborType
     {
         FullTime = 1,      // Nhân viên chính thức
@@ -182,6 +195,7 @@ namespace M.Contract.Repositories.Entities
         Freelancer = 4     // Cộng tác viên / Freelancer
     }
 
+    // Trạng thái làm việc của nhân viên
     public enum EmployeeStatus
     {
         Probation = 1,     // Đang thử việc
@@ -191,6 +205,7 @@ namespace M.Contract.Repositories.Entities
         Terminated = 5     // Chấm dứt hợp đồng
     }
 
+    // Giới tính
     public enum GenderType
     {
         RatherNotSay = 0,
