@@ -9,27 +9,36 @@ namespace M.Contract.Repositories.Entities
         [Required]
         public Guid EmployeeId { get; set; }
 
+        // Điều hướng tới Employee
         [ForeignKey(nameof(EmployeeId))]
         public virtual Employee? Employee { get; set; }
 
+        // Số BHXH
         [MaxLength(50)]
         public string? SocialInsuranceNumber { get; set; }
 
+        // Số bảo hiểm y tế
         [MaxLength(50)]
         public string? HealthInsuranceNumber { get; set; }
 
+        // Mã số thuế cá nhân
         [MaxLength(50)]
         public string? PersonalTaxCode { get; set; }
 
+        // Có tham gia BHXH hay không
         public bool IsSocialInsuranceParticipant { get; set; } = false;
 
+        // Thời gian bắt đầu tham gia
         public DateTime? ParticipationStartDate { get; set; }
 
+        // Thời gian kết thúc tham gia
         public DateTime? ParticipationEndDate { get; set; }
 
+        // Mức lương để tính bảo hiểm
         [Column(TypeName = "decimal(18,2)")]
         public decimal SocialInsuranceSalary { get; set; } = 0;
 
+        // Trạng thái bản ghi
         public int Status { get; set; } = 1;
     }
 }
