@@ -1,0 +1,26 @@
+{
+  "kind": "webpage_snapshot",
+  "url": "https://marixa.one/",
+  "final_url": "https://marixa.one/",
+  "status": 200,
+  "read_status": "ok",
+  "content_type": "text/html; charset=utf-8",
+  "fetched_at": "2026-09-25T13:38:10.780925600+00:00",
+  "title": "MARIXA",
+  "description": "MARIXA — Hệ thống quản trị sản xuất đa ngành",
+  "site_name": "MARIXA",
+  "published_at": null,
+  "source_type": "unknown",
+  "text": "AI Command Center Đội AI của bạn đã sẵn sàng. Hãy nói điều bạn muốn tìm hiểu hôm nay. Worker Thực thi Advisor Tư vấn Orchestrator Điều phối → SX MARIXA có module nào cho sản xuất may mặc? ERP MARIXA khác ERP truyền thống ở điểm nào? AI Các cộng sự AI làm việc với nhau thế nào? BM Dữ liệu doanh nghiệp được bảo vệ ra sao? NN MARIXA có phù hợp cho nông nghiệp không? NG MARIXA có đáp ứng được những ngành nghề nào? Business Launcher Mọi module. Một hệ thống. Một sự thật kinh doanh. Production Planning Kế hoạch sản xuất Production Planning Kế hoạch sản xuất › Human Resources Nhân sự Human Resources Nhân sự › Attendance Chấm công Attendance Chấm công › Finance & Accounting Tài chính · Kế toán Finance & Accounting Tài chính · Kế toán › Merchandising Đơn hàng 360° Merchandising Đơn hàng 360° › Logistics Xuất nhập khẩu Logistics Xuất nhập khẩu › CRM Khách hàng 360° CRM Khách hàng 360° Customer Portal Cổng khách hàng Customer Portal Cổng khách hàng › Raw Material Warehouse Kho NPL Raw Material Warehouse Kho NPL › Cutting Tổ cắt Cutting Tổ cắt › Sewing Chuyền may Sewing Chuyền may › Quality QA · QC · KCS Quality QA · QC · KCS › Finishing Tổ hoàn thành Finishing Tổ hoàn thành › Finished Goods Warehouse Kho thành phẩm Finished Goods Warehouse Kho thành phẩm Subcontract Portal Cổng gia công Subcontract Portal Cổng gia công › AI Marketing Marketing AI AI Marketing Marketing AI Executive Điều hành Executive Điều hành › Business Intelligence Phân tích · Trí tuệ DN Business Intelligence Phân tích · Trí tuệ DN Business Communication Giao tiếp doanh nghiệp Business Communication Giao tiếp doanh nghiệp AI Assistant Trợ lý AI AI Assistant Trợ lý AI",
+  "quote_candidates": [
+    "AI Command Center Đội AI của bạn đã sẵn sàng.",
+    "Hãy nói điều bạn muốn tìm hiểu hôm nay.",
+    "Worker Thực thi Advisor Tư vấn Orchestrator Điều phối → SX MARIXA có module nào cho sản xuất may mặc?",
+    "ERP MARIXA khác ERP truyền thống ở điểm nào?",
+    "AI Các cộng sự AI làm việc với nhau thế nào?"
+  ],
+  "word_count": 306,
+  "truncated": false,
+  "blocked": false,
+  "source": "direct_http"
+}

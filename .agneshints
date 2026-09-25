@@ -1,0 +1,51 @@
+# Coding Rules
+
+- Write clean, concise, production-ready code.
+- Prefer simple solutions over over-engineering.
+- Inspect existing code before making changes.
+- Reuse existing code before creating new files.
+- Make the smallest necessary change.
+- Do not modify unrelated code.
+- Do not create unnecessary abstractions.
+- Do not install unnecessary packages.
+- Remove unused code.
+
+# C# / ASP.NET Core
+
+- Follow the existing project architecture.
+- Use dependency injection.
+- Keep controllers, services and repositories focused.
+- Use async/await for I/O operations.
+- Reuse existing services and repositories.
+
+# HTML / CSS
+
+- Keep short HTML elements on one line.
+- Keep attributes on the same line when practical.
+- Avoid unnecessary whitespace.
+- Do not format code with Prettier.
+
+# Workflow
+
+- Inspect relevant files before coding.
+- Understand dependencies before changing code.
+- After changes, check for compile errors.
+- Do not rewrite working code unnecessarily.
+
+# Response
+
+- Be concise.
+- Explain only important changes.
+- Show only relevant changed code.
+
+## UI/UX Style
+
+- Follow the visual style of https://www.marixa.one/.
+- Clean, minimal, modern and professional.
+- Use clear typography, generous whitespace and strong visual hierarchy.
+- Use light backgrounds, dark text, restrained accent colors and subtle borders/shadows.
+- Keep layouts, cards, forms and buttons simple, consistent and well aligned.
+- Avoid excessive colors, gradients, animations and decoration.
+- Use modern readable fonts and consistent spacing.
+- For new pages, create the necessary CSS, components, assets and folders following the existing project architecture.
+- Keep the design consistent across the entire application.
