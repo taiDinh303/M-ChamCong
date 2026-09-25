@@ -36,12 +36,6 @@ namespace M.Contract.Repositories.Entity
         public DateTimeOffset? DeletedTime { get; set; }
 
 
-        // =========================================================
-        // CONSTRUCTOR
-        // =========================================================
-        // Liên kết tới thực thể Employee (nếu user là nhân viên)
-        public virtual Employee? Employee { get; set; }
-
         // Khởi tạo thời gian mặc định khi tạo user
         public ApplicationUser()
         {
