@@ -9,7 +9,7 @@ using ModelViews.DepartmentModelView;
 using Services.Mappings;
 using static M.Core.Base.BaseException;
 
-namespace Services.Service
+namespace M.Services.Service
 {
     public class DepartmentService : IDepartmentService
     {

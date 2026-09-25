@@ -1,4 +1,5 @@
 ﻿using M.Contract.Repositories.Entities;
+using M.Contract.Repositories.Entity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

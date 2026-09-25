@@ -1,7 +1,7 @@
 ﻿using M.Core.Utils;
 using Microsoft.AspNetCore.Identity;
 
-namespace M.Contract.Repositories.Entities
+namespace M.Contract.Repositories.Entity
 {
     public class ApplicationUserClaim : IdentityUserClaim<Guid>
     {

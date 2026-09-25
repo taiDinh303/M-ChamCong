@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.13" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.13" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,7 +16,6 @@
     <ProjectReference Include="..\M.Contract.Serivces\M.Contract.Serivces.csproj" />
     <ProjectReference Include="..\M.Core\M.Core.csproj" />
     <ProjectReference Include="..\M.ModelViews\M.ModelViews.csproj" />
-    <ProjectReference Include="..\M.Repositories\M.Repositories.csproj" />
   </ItemGroup>
 
 </Project>

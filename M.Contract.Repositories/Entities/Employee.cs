@@ -1,4 +1,5 @@
-﻿using M.Core.Base;
+﻿using M.Contract.Repositories.Entity;
+using M.Core.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

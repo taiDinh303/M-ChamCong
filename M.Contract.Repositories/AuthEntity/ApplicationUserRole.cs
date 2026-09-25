@@ -1,9 +1,9 @@
 ﻿using M.Core.Utils;
 using Microsoft.AspNetCore.Identity;
 
-namespace M.Contract.Repositories.Entities
+namespace M.Contract.Repositories.Entity
 {
-    public class ApplicationRole : IdentityRole<Guid>
+    public class ApplicationUserRole : IdentityUserRole<Guid>
     {
         public string? CreatedBy { get; set; }
         public string? LastUpdatedBy { get; set; }
@@ -11,9 +11,7 @@ namespace M.Contract.Repositories.Entities
         public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset LastUpdatedTime { get; set; }
         public DateTimeOffset? DeletedTime { get; set; }
-        public string? Description { get; set; } = string.Empty;
-
-        public ApplicationRole()
+        public ApplicationUserRole()
         {
             CreatedTime = CoreHelper.SystemTimeNow;
             LastUpdatedTime = CreatedTime;
