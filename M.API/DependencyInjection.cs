@@ -1,15 +1,17 @@
 ﻿
 using M.Contract.Repositories.Entities;
+using M.Contract.Serivces.Interface;
 using M.Contract.Services.Interface;
 using M.Core.Base;
 using M.Repositories.Context;
-using M.Services.Service;
 using M.Services;
+using M.Services.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Services.Service;
 using System.Text;
 
 
@@ -75,24 +77,21 @@ namespace API
         public static void AddServices(this IServiceCollection services)
         {
             services
-
-
-
-
-
-                //.AddScoped<IAuthService, AuthService>()
-                //.AddScoped<IUserService, UserService>()
-                //.AddScoped<IRoleService, RoleService>()
-                //.AddScoped<IUserRoleService, UserRoleService>()
-                //.AddScoped<IUserInfoService, UserInfoService>()
-                //.AddScoped<IUserLoginService, UserLoginService>()
-                //.AddScoped<EmailTemplateRenderer>()
-                //.AddScoped<IEmailSender, SmtpEmailSender>()
-                //.AddScoped<IEmailService, EmailService>()
-                //.AddScoped<IOtpService, OtpService>()
-                //.AddScoped<ISmsSender, SmsSender>()
+                .AddScoped<IAttendanceLogService, AttendanceLogService>()
+                .AddScoped<IAttendanceService, AttendanceService>()
+                .AddScoped<IBankService, BankService>()
+                .AddScoped<IDepartmentService, DepartmentService>()
+                .AddScoped<IEmployeeBankAccountService, EmployeeBankAccountService>()
+                .AddScoped<IEmployeeContractService, EmployeeContractService>()
+                .AddScoped<IEmployeeDependentService, EmployeeDependentService>()
+                .AddScoped<IEmployeeInsuranceService, EmployeeInsuranceService>()
+                .AddScoped<IEmployeeSalaryService, EmployeeSalaryService>()
                 .AddScoped<IEmployeeService, EmployeeService>()
-
+                .AddScoped<ILeaveRequestService, LeaveRequestService>()
+                .AddScoped<ILeaveTypeService, LeaveTypeService>()
+                .AddScoped<IPayrollService, PayrollService>()
+                .AddScoped<IPositionService, PositionService>()
+                .AddScoped<ISalaryGroupService, SalaryGroupService>()
                 .AddHttpContextAccessor();
         }
 
