@@ -73,7 +73,8 @@ namespace M.Services.Service
             return contract.ToViewModel();
         }
 
-        public async Task CreateAsync(CreateEmployeeContractModelView model)
+        public async Task CreateAsync(
+            CreateEmployeeContractModelView model)
         {
             IGenericRepository<EmployeeContract> repo =
                 _unitOfWork.GetRepository<EmployeeContract>();
@@ -96,6 +97,7 @@ namespace M.Services.Service
             }
 
             // Kiểm tra ContractNumber
+            // Kiểm tra ContractNumber trùng
             bool contractNumberExists = await repo.Entities
                 .AnyAsync(x =>
                     x.ContractNumber == model.ContractNumber &&
@@ -121,6 +123,7 @@ namespace M.Services.Service
             }
 
             // Kiểm tra ngày hợp đồng
+            // Kiểm tra ngày
             if (model.EndDate.HasValue &&
                 model.EndDate.Value < model.StartDate)
             {
@@ -145,7 +148,8 @@ namespace M.Services.Service
             await _unitOfWork.SaveAsync();
         }
 
-        public async Task UpdateAsync(UpdateEmployeeContractModelView model)
+        public async Task UpdateAsync(
+            UpdateEmployeeContractModelView model)
         {
             IGenericRepository<EmployeeContract> repo =
                 _unitOfWork.GetRepository<EmployeeContract>();
@@ -203,6 +207,7 @@ namespace M.Services.Service
             }
 
             // Kiểm tra ngày hợp đồng
+            // Kiểm tra ngày
             if (model.EndDate.HasValue &&
                 model.EndDate.Value < model.StartDate)
             {
