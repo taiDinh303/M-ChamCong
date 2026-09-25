@@ -27,14 +27,18 @@ namespace M.API
             services.AddJwtAuthentication(configuration);
             services.AddSwaggerConfig();
             services.AddHttpContextAccessor();
-            //services.AddGoogleAuthentication(configuration);
             services.AddMemoryCache();
 
-            //services.AddSwaggerGen(options =>
-            //{
-            //    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
-            //});
-
+            services.AddCors(options =>
+            {
+                options.AddPolicy("ReactPolicy", policy =>
+                {
+                    policy
+                        .WithOrigins("http://localhost:5173")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
         }
         public static void ConfigRoute(this IServiceCollection services)
         {
