@@ -79,6 +79,11 @@ namespace M.API
         public static void AddServices(this IServiceCollection services)
         {
             services
+                .AddScoped<IAuthService, AuthService>()
+                .AddScoped<IUserService, UserService>()
+                .AddScoped<IRoleService, RoleService>()
+                .AddScoped<IUserRoleService, UserRoleService>()
+                .AddScoped<IUserLoginService, UserLoginService>()
                 .AddScoped<IAttendanceLogService, AttendanceLogService>()
                 .AddScoped<IAttendanceService, AttendanceService>()
                 .AddScoped<IBankService, BankService>()
