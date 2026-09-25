@@ -1,10 +1,102 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using M.Contract.Services.Interface;
+using M.Core.Base;
+using M.Core.Store;
+using Microsoft.AspNetCore.Mvc;
+using ModelViews.EmployeeSalaryModelView;
 
 namespace M.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize(Roles = "Admin")]
     public class EmployeeSalaryController : ControllerBase
     {
+        private readonly IEmployeeSalaryService _employeeSalaryService;
+
+        public EmployeeSalaryController(
+            IEmployeeSalaryService employeeSalaryService)
+        {
+            _employeeSalaryService = employeeSalaryService;
+        }
+
+        [HttpGet("get-all")]
+        public async Task<IActionResult> GetAll(
+            int pageNumber = 1,
+            int pageSize = 5)
+        {
+            BasePaginatedList<EmployeeSalaryResponseModelView> result =
+                await _employeeSalaryService.GetAllAsync(
+                    pageNumber,
+                    pageSize);
+
+            return Ok(new BaseResponse<BasePaginatedList<EmployeeSalaryResponseModelView>>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: result
+            ));
+        }
+
+        [HttpGet("get-by-id/{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            EmployeeSalaryResponseModelView result =
+                await _employeeSalaryService.GetByIdAsync(id);
+
+            return Ok(new BaseResponse<EmployeeSalaryResponseModelView>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: result
+            ));
+        }
+
+        [HttpPost("create")]
+        public async Task<IActionResult> Create(
+            [FromBody] CreateEmployeeSalaryModelView model)
+        {
+            await _employeeSalaryService.CreateAsync(model);
+
+            return Ok(new BaseResponse<string>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: "Employee salary created successfully!"
+            ));
+        }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> Update(
+            [FromBody] UpdateEmployeeSalaryModelView model)
+        {
+            await _employeeSalaryService.UpdateAsync(model);
+
+            return Ok(new BaseResponse<string>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: "Employee salary updated successfully!"
+            ));
+        }
+
+        [HttpDelete("soft-delete/{id}")]
+        public async Task<IActionResult> SoftDelete(Guid id)
+        {
+            await _employeeSalaryService.SoftDeleteAsync(id);
+
+            return Ok(new BaseResponse<string>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: "Employee salary deleted successfully!"
+            ));
+        }
+
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            await _employeeSalaryService.DeleteAsync(id);
+
+            return Ok(new BaseResponse<string>(
+                statusCode: StatusCodeHelper.OK,
+                code: ResponseCodeConstants.SUCCESS,
+                data: "Employee salary permanently deleted successfully!"
+            ));
+        }
     }
 }
