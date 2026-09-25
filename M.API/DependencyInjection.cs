@@ -4,6 +4,7 @@ using M.Contract.Services.Interface;
 using M.Core.Base;
 using M.Repositories.Context;
 using M.Services.Service;
+using M.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ namespace API
             services.ConfigRoute();
             services.AddDatabase(configuration);
             services.AddIdentity();
-            //services.AddInfrastructure(configuration);
+            services.AddInfrastructure(configuration);
             services.AddServices();
             services.AddJwtAuthentication(configuration);
             services.AddSwaggerConfig();
