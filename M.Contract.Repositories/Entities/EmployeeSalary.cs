@@ -64,3 +64,5 @@ namespace M.Contract.Repositories.Entities
         Product = 4
     }
 }
+
+

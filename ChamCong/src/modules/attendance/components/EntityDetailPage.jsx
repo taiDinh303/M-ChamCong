@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getAuth } from "../../../services/auth/auth";
 import relatedApi from "../api/relatedApi";
+import "../attendance.css";
 
 // Trang chi tiết chung cho các entity của nhân viên đang đăng nhập.
 // Reuse style của module attendance để giữ giao diện nhất quán.
@@ -57,42 +58,44 @@ const EntityDetailPage = ({ kind, title, subtitle, columns, emptyMessage }) => {
                 </Link>
             </header>
 
-            {error && <div className="att-error">{error}</div>}
+            <div className="att-content">
+                {error && <div className="att-error">{error}</div>}
 
-            {loading ? (
-                <div className="att-loading">Đang tải...</div>
-            ) : items.length === 0 ? (
-                <div className="att-card">
-                    <p className="att-muted">{emptyMessage}</p>
-                </div>
-            ) : (
-                <div className="att-card">
-                    <div className="att-table-wrap">
-                        <table className="att-table">
-                            <thead>
-                                <tr>
-                                    {columns.map((c) => (
-                                        <th key={c.key}>{c.label}</th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {items.map((row) => (
-                                    <tr key={row.id}>
+                {loading ? (
+                    <div className="att-loading">Đang tải...</div>
+                ) : items.length === 0 ? (
+                    <div className="att-card">
+                        <p className="att-muted">{emptyMessage}</p>
+                    </div>
+                ) : (
+                    <div className="att-card">
+                        <div className="att-table-wrap">
+                            <table className="att-table">
+                                <thead>
+                                    <tr>
                                         {columns.map((c) => (
-                                            <td key={c.key}>
-                                                {c.render
-                                                    ? c.render(row)
-                                                    : row[c.key] ?? "—"}
-                                            </td>
+                                            <th key={c.key}>{c.label}</th>
                                         ))}
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {items.map((row) => (
+                                        <tr key={row.id}>
+                                            {columns.map((c) => (
+                                                <td key={c.key}>
+                                                    {c.render
+                                                        ? c.render(row)
+                                                        : row[c.key] ?? "—"}
+                                                </td>
+                                            ))}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 };

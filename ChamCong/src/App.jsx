@@ -7,6 +7,7 @@ import ContractPage from "./modules/contracts/pages/ContractPage";
 import SalaryPage from "./modules/salary/pages/SalaryPage";
 import InsurancePage from "./modules/insurance/pages/InsurancePage";
 import BankPage from "./modules/bank-accounts/pages/BankPage";
+import StatisticsPage from "./modules/statistics/pages/StatisticsPage";
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                 <Route path="/salary" element={<SalaryPage />} />
                 <Route path="/insurance" element={<InsurancePage />} />
                 <Route path="/bank-accounts" element={<BankPage />} />
+                <Route path="/statistics" element={<StatisticsPage />} />
                 <Route path="*" element={<Navigate to="/attendance" replace />} />
             </Routes>
         </BrowserRouter>

@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { getAuth } from "../../../services/auth/auth";
 import ProfileCard from "../components/ProfileCard";
 import AttendanceCard from "../components/AttendanceCard";
@@ -8,6 +9,7 @@ import relatedApi from "../api/relatedApi";
 import "../attendance.css";
 
 const AttendancePage = () => {
+    const navigate = useNavigate();
     const auth = getAuth();
     const userId = auth?.userId;
     const employeeId = auth?.employeeId;
@@ -108,6 +110,19 @@ const AttendancePage = () => {
         loadAttendance().catch(() => {});
     };
 
+    // Số ngày đã làm của tháng hiện tại (đủ mặt / đi trễ / về sớm)
+    const monthWorked = useMemo(() => {
+        const now = new Date();
+        return history.filter((r) => {
+            const d = new Date(r.attendanceDate);
+            return (
+                d.getFullYear() === now.getFullYear() &&
+                d.getMonth() === now.getMonth() &&
+                [1, 2, 3].includes(r.status)
+            );
+        }).length;
+    }, [history]);
+
     return (
         <div className="att-page">
             <header className="att-header">
@@ -139,6 +154,49 @@ const AttendancePage = () => {
 
                     <div className="att-span-2">
                         <HistoryTable history={history} />
+                    </div>
+
+                    <div className="att-span-2">
+                        <section
+                            className="att-card att-clickable"
+                            role="link"
+                            tabIndex={0}
+                            onClick={() =>
+                                navigate("/statistics")
+                            }
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    navigate("/statistics");
+                                }
+                            }}
+                        >
+                            <div className="att-related-title">
+                                <h2>Thống kê công tháng này</h2>
+                                <span className="att-related-arrow">›</span>
+                            </div>
+                            <div className="att-stats-strip">
+                                <div>
+                                    <span className="att-stats-value">
+                                        {monthWorked}
+                                    </span>
+                                    <span className="att-stats-label">
+                                        Ngày đã làm
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="att-stats-value">
+                                        {history.length}
+                                    </span>
+                                    <span className="att-stats-label">
+                                        Bản ghi tháng
+                                    </span>
+                                </div>
+                                <div className="att-stats-cta">
+                                    Xem thống kê chi tiết
+                                </div>
+                            </div>
+                        </section>
                     </div>
 
                     <RelatedList
