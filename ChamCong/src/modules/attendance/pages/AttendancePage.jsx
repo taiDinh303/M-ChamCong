@@ -13,7 +13,6 @@ const AttendancePage = () => {
     const employeeId = auth?.employeeId;
 
     const [profile, setProfile] = useState(null);
-    const [shifts, setShifts] = useState([]);
     const [history, setHistory] = useState([]);
     const [leaves, setLeaves] = useState([]);
     const [contracts, setContracts] = useState([]);
@@ -49,12 +48,9 @@ const AttendancePage = () => {
             }
 
             try {
-                const [profileRes, shiftsRes, leavesRes, contractsRes, salariesRes, insuranceRes, accountsRes] =
+                const [profileRes, leavesRes, contractsRes, salariesRes, insuranceRes, accountsRes] =
                     await Promise.allSettled([
                         relatedApi.employeeByUser(userId),
-                        employeeId
-                            ? relatedApi.shiftsByEmployee(employeeId)
-                            : Promise.resolve(null),
                         employeeId
                             ? relatedApi.leavesByEmployee(employeeId)
                             : Promise.resolve(null),
@@ -79,7 +75,6 @@ const AttendancePage = () => {
                 );
                 const data = (r) =>
                     r && r.status === "fulfilled" ? r.value.data.data : [];
-                setShifts(data(shiftsRes) || []);
                 setLeaves(data(leavesRes) || []);
                 setContracts(data(contractsRes) || []);
                 setSalaries(data(salariesRes) || []);
@@ -133,7 +128,6 @@ const AttendancePage = () => {
                     <AttendanceCard
                         employeeId={employeeId}
                         record={todayRecord}
-                        shifts={shifts}
                         onChanged={handleChecked}
                     />
 

@@ -143,6 +143,12 @@
     font-weight: 600;
 }
 
+.att-shift-window {
+    color: #5a6b7b;
+    font-size: 13px;
+    align-self: center;
+}
+
 .att-checkin-photos {
     display: flex;
     gap: 12px;

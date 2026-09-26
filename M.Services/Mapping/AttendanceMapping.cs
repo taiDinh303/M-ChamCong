@@ -1,4 +1,4 @@
-﻿using M.Contract.Repositories.Entities;
+using M.Contract.Repositories.Entities;
 using ModelViews.AttendanceModelView;
 
 namespace M.Services.Mappings
@@ -22,6 +22,16 @@ namespace M.Services.Mappings
                 PlannedShiftName = entity.PlannedShift?.Name,
                 PlannedHours = entity.PlannedHours,
                 ActualHours = entity.ActualHours,
+                CheckInTime = entity.AttendanceLogs?
+                    .Where(x => x.Type == AttendanceLogType.CheckIn)
+                    .Select(x => x.LogTime)
+                    .Cast<DateTimeOffset?>()
+                    .Min(),
+                CheckOutTime = entity.AttendanceLogs?
+                    .Where(x => x.Type == AttendanceLogType.CheckOut)
+                    .Select(x => x.LogTime)
+                    .Cast<DateTimeOffset?>()
+                    .Max(),
                 CheckInPhoto = entity.CheckInPhoto,
                 CheckOutPhoto = entity.CheckOutPhoto,
                 ApprovalStatus = entity.ApprovalStatus,
