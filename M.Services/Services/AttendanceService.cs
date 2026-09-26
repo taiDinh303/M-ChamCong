@@ -1,4 +1,4 @@
-﻿using M.Contract.Repositories.Entities;
+using M.Contract.Repositories.Entities;
 using M.Contract.Repositories.IUOW;
 using M.Contract.Serivces.Interface;
 using M.Core.Base;
@@ -91,6 +91,7 @@ namespace M.Services.Service
                 .Include(x => x.Employee)
                 .Include(x => x.PlannedShift)
                 .Include(x => x.Approver)
+                .Include(x => x.AttendanceLogs)
                 .OrderByDescending(x => x.AttendanceDate)
                 .ToListAsync();
 
@@ -135,6 +136,7 @@ namespace M.Services.Service
                     x.AttendanceDate.Date == now.Date &&
                     !x.DeletedTime.HasValue)
                 .Include(x => x.Employee)
+                .Include(x => x.PlannedShift)
                 .FirstOrDefaultAsync();
 
             bool createdToday = false;
@@ -227,18 +229,27 @@ namespace M.Services.Service
                 attendance.ActualHours =
                     (int)Math.Round(
                         (checkOut.Value - checkIn.Value).TotalHours);
+            }
 
-                // Đã về công: giữ Present nếu chưa bị đánh khác
+            // Tự đánh trạng thái Đúng giờ / Trễ giờ theo giờ VN (UTC+7):
+            // so giờ vào ca với giờ bắt đầu ca (ca gán nếu có, nếu không dùng ca hành chính).
+            if (checkIn.HasValue)
+            {
+                DateTime checkInVn = checkIn.Value.AddHours(7);
+                TimeOnly checkInVnTime =
+                    new TimeOnly(checkInVn.Hour, checkInVn.Minute, checkInVn.Second);
+
+                TimeOnly shiftStart = attendance.PlannedShift != null
+                    ? attendance.PlannedShift.StartTime
+                    : AttendanceStatusEvaluator.AdminShift(checkInVn.Hour).Start;
+
                 if (attendance.Status == null)
                 {
                     attendance.Status =
-                        AttendanceStatus.Present;
+                        checkInVnTime > shiftStart
+                            ? AttendanceStatus.Late
+                            : AttendanceStatus.Present;
                 }
-            }
-            else if (attendance.Status == null)
-            {
-                // Chưa đủ cặp -> xem như có mặt (đang làm việc)
-                attendance.Status = AttendanceStatus.Present;
             }
 
             if (!createdToday)
@@ -258,6 +269,7 @@ namespace M.Services.Service
                 .Include(x => x.Employee)
                 .Include(x => x.PlannedShift)
                 .Include(x => x.Approver)
+                .Include(x => x.AttendanceLogs)
                 .FirstAsync();
 
             return new CheckInAttendanceResponseModelView

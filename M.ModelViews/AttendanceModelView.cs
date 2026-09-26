@@ -1,4 +1,4 @@
-﻿using M.Contract.Repositories.Entities;
+using M.Contract.Repositories.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace ModelViews.AttendanceModelView
@@ -22,6 +22,10 @@ namespace ModelViews.AttendanceModelView
         public string? PlannedShiftName { get; set; }
         public int? PlannedHours { get; set; }
         public int? ActualHours { get; set; }
+
+        // Giờ thực tế (chấm giờ nào, về giờ đó)
+        public DateTimeOffset? CheckInTime { get; set; }
+        public DateTimeOffset? CheckOutTime { get; set; }
 
         // Ảnh
         public string? CheckInPhoto { get; set; }
