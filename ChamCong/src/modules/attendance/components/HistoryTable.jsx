@@ -1,4 +1,4 @@
-import { formatVnTime, getVnHour, getAdministrativeShift } from "../../../utils/vnTime";
+import { formatVnTime } from "../../../utils/vnTime";
 
 const statusLabel = (s) =>
     ({
@@ -14,12 +14,8 @@ const statusLabel = (s) =>
 const approvalLabel = (s) =>
     ({ 0: "Chờ duyệt", 1: "Đã duyệt", 2: "Từ chối" })[s] ?? "Chờ duyệt";
 
-// Ca hành chính theo giờ vào ca (7h->sáng, 12h->chiều, 18h->tối).
-const formatShift = (row) =>
-    row.plannedShiftName ||
-    (row.checkInTime
-        ? getAdministrativeShift(getVnHour(row.checkInTime))
-        : "—");
+// Ca: chỉ hiển thị tên ca nếu được gán kế hoạch (Marixa có 1 ca duy nhất).
+const formatShift = (row) => row.plannedShiftName || "—";
 
 // Giờ thực tế: chấm giờ nào, về giờ đó (giờ vào ca / giờ ra ca).
 const formatActual = (row) => {
@@ -50,22 +46,75 @@ const HistoryTable = ({ history }) => {
                             <th>Ca</th>
                             <th>Trạng thái</th>
                             <th>Giờ thực tế</th>
+                            <th>Ảnh</th>
                             <th>Duyệt</th>
                         </tr>
                     </thead>
                     <tbody>
                         {history.map((row) => (
                             <tr key={row.id}>
-                                <td>{new Date(row.attendanceDate).toLocaleDateString("vi-VN")}</td>
+                                <td>
+                                    {new Date(row.attendanceDate).toLocaleDateString(
+                                        "vi-VN"
+                                    )}
+                                </td>
                                 <td>{formatShift(row)}</td>
                                 <td>
-                                    <span className={`att-badge ${statusClass(row.status)}`}>
+                                    <span
+                                        className={`att-badge ${statusClass(
+                                            row.status
+                                        )}`}
+                                    >
                                         {statusLabel(row.status)}
                                     </span>
                                 </td>
                                 <td>{formatActual(row)}</td>
                                 <td>
-                                    <span className={`att-badge ${approvalClass(row.approvalStatus)}`}>
+                                    <div className="att-photos-cell">
+                                        {row.checkInPhoto ? (
+                                            <a
+                                                href={row.checkInPhoto}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                title="Ảnh vào ca"
+                                            >
+                                                <img
+                                                    src={row.checkInPhoto}
+                                                    alt="Vào ca"
+                                                    className="att-photo-thumb"
+                                                />
+                                            </a>
+                                        ) : (
+                                            <span className="att-muted">
+                                                —
+                                            </span>
+                                        )}
+                                        {row.checkOutPhoto ? (
+                                            <a
+                                                href={row.checkOutPhoto}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                title="Ảnh ra ca"
+                                            >
+                                                <img
+                                                    src={row.checkOutPhoto}
+                                                    alt="Ra ca"
+                                                    className="att-photo-thumb"
+                                                />
+                                            </a>
+                                        ) : (
+                                            <span className="att-muted">
+                                                —
+                                            </span>
+                                        )}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span
+                                        className={`att-badge ${approvalClass(
+                                            row.approvalStatus
+                                        )}`}
+                                    >
                                         {approvalLabel(row.approvalStatus)}
                                     </span>
                                 </td>
@@ -78,7 +127,18 @@ const HistoryTable = ({ history }) => {
     );
 };
 
-const statusClass = (s) => ({ 1: "ok", 2: "warn", 3: "warn", 4: "bad", 5: "info", 6: "info", 7: "info" })[s] || "";
-const approvalClass = (s) => ({ 0: "warn", 1: "ok", 2: "bad" })[s] || "";
+const statusClass = (s) =>
+    ({
+        1: "ok",
+        2: "warn",
+        3: "warn",
+        4: "bad",
+        5: "info",
+        6: "info",
+        7: "info",
+    })[s] || "";
+
+const approvalClass = (s) =>
+    ({ 0: "warn", 1: "ok", 2: "bad" })[s] || "";
 
 export default HistoryTable;

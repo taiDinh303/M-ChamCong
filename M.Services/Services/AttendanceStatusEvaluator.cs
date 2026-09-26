@@ -1,23 +1,17 @@
 namespace M.Services.Service
 {
     /// <summary>
-    /// Tiện ích xác định ca hành chính theo giờ Việt Nam (UTC+7)
-    /// và đổi thời gian log chấm công về giờ VN để đánh giá đúng/trễ.
+    /// Tiện ích xác định ca hành chính chuẩn của Marixa
+    /// (08:00 - 16:30) làm mốc mặc định khi nhân viên chưa được gán ca kế hoạch.
     /// </summary>
     public static class AttendanceStatusEvaluator
     {
         /// <summary>
-        /// Ca hành chính theo giờ VN:
-        /// 7h -> Ca sáng, 12h -> Ca chiều, 18h (6h tối) -> Ca tối.
+        /// Ca hành chính duy nhất của Marixa: 08:00 - 16:30.
         /// </summary>
-        public static (TimeOnly Start, TimeOnly End, string Name) AdminShift(
-            int vnHour)
+        public static (TimeOnly Start, TimeOnly End, string Name) AdminShift()
         {
-            if (vnHour >= 18 || vnHour < 5)
-                return (new TimeOnly(18, 0), new TimeOnly(22, 0), "Ca tối");
-            if (vnHour >= 12)
-                return (new TimeOnly(12, 0), new TimeOnly(18, 0), "Ca chiều");
-            return (new TimeOnly(7, 0), new TimeOnly(12, 0), "Ca sáng");
+            return (new TimeOnly(8, 0), new TimeOnly(16, 30), "Ca hành chính");
         }
     }
 }

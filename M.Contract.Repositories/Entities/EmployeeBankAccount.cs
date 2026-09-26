@@ -1,4 +1,4 @@
-﻿using M.Core.Base;
+using M.Core.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -34,6 +34,7 @@ namespace M.Contract.Repositories.Entities
         // Có phải tài khoản chính không
         public bool IsPrimary { get; set; } = false;
 
+        // Trạng thái tài khoản: 1 = Đang dùng, 0 = Đã ngưng
         public int Status { get; set; } = 1;
     }
 }

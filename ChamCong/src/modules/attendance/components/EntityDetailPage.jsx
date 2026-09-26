@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { getAuth } from "../../../services/auth/auth";
+import Sidebar from "../../../components/layout/Sidebar";
 import relatedApi from "../api/relatedApi";
 import "../attendance.css";
 
 // Trang chi tiết chung cho các entity của nhân viên đang đăng nhập.
-// Reuse style của module attendance để giữ giao diện nhất quán.
+// Reuse layout shell + sidebar của module attendance.
 const FETCHERS = {
     leave: (id) => relatedApi.leavesByEmployee(id),
     contract: (id) => relatedApi.contractsByEmployee(id),
@@ -16,9 +16,11 @@ const FETCHERS = {
 
 const EntityDetailPage = ({ kind, title, subtitle, columns, emptyMessage }) => {
     const auth = getAuth();
+    const userId = auth?.userId;
     const employeeId = auth?.employeeId;
 
     const [items, setItems] = useState([]);
+    const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -30,8 +32,20 @@ const EntityDetailPage = ({ kind, title, subtitle, columns, emptyMessage }) => {
                     setLoading(false);
                     return;
                 }
-                const res = await FETCHERS[kind](employeeId);
-                setItems(res.data.data || []);
+                const [res, profileRes] = await Promise.allSettled([
+                    FETCHERS[kind](employeeId),
+                    userId
+                        ? relatedApi.employeeByUser(userId)
+                        : Promise.resolve(null),
+                ]);
+                if (profileRes.status === "fulfilled" && profileRes.value) {
+                    setProfile(profileRes.value.data.data || null);
+                }
+                if (res.status === "fulfilled") {
+                    setItems(res.value.data.data || []);
+                } else {
+                    setItems([]);
+                }
             } catch (err) {
                 setError(
                     err.response?.data?.message ||
@@ -44,21 +58,20 @@ const EntityDetailPage = ({ kind, title, subtitle, columns, emptyMessage }) => {
         };
 
         load();
-    }, [kind, employeeId]);
+    }, [kind, userId, employeeId]);
 
     return (
-        <div className="att-page">
-            <header className="att-header">
-                <div>
-                    <h1>{title}</h1>
-                    <p>{subtitle}</p>
-                </div>
-                <Link to="/attendance" className="att-logout">
-                    &larr; Chấm công
-                </Link>
-            </header>
+        <div className="att-shell">
+            <Sidebar profile={profile} />
 
-            <div className="att-content">
+            <main className="att-main">
+                <header className="att-main-head">
+                    <div>
+                        <h1>{title}</h1>
+                        <p>{subtitle}</p>
+                    </div>
+                </header>
+
                 {error && <div className="att-error">{error}</div>}
 
                 {loading ? (
@@ -95,7 +108,7 @@ const EntityDetailPage = ({ kind, title, subtitle, columns, emptyMessage }) => {
                         </div>
                     </div>
                 )}
-            </div>
+            </main>
         </div>
     );
 };

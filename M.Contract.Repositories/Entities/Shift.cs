@@ -13,7 +13,7 @@ namespace M.Contract.Repositories.Entities
         [MaxLength(50)]
         public string Code { get; set; } = string.Empty;
 
-        // Tên ca (ví dụ: Ca 1, Ca 2, Ca đêm)
+        // Tên ca (ví dụ: Ca hành chính 08:00 - 16:30)
         [Required]
         [MaxLength(150)]
         public string Name { get; set; } = string.Empty;

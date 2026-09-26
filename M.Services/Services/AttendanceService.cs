@@ -241,7 +241,7 @@ namespace M.Services.Service
 
                 TimeOnly shiftStart = attendance.PlannedShift != null
                     ? attendance.PlannedShift.StartTime
-                    : AttendanceStatusEvaluator.AdminShift(checkInVn.Hour).Start;
+                    : AttendanceStatusEvaluator.AdminShift().Start;
 
                 if (attendance.Status == null)
                 {

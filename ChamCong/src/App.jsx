@@ -8,6 +8,7 @@ import SalaryPage from "./modules/salary/pages/SalaryPage";
 import InsurancePage from "./modules/insurance/pages/InsurancePage";
 import BankPage from "./modules/bank-accounts/pages/BankPage";
 import StatisticsPage from "./modules/statistics/pages/StatisticsPage";
+import AttendanceHistoryPage from "./modules/attendance/pages/AttendanceHistoryPage";
 
 function App() {
     return (
@@ -16,6 +17,7 @@ function App() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/employees" element={<EmployeePage />} />
                 <Route path="/attendance" element={<AttendancePage />} />
+                <Route path="/attendance-history" element={<AttendanceHistoryPage />} />
                 <Route path="/leave" element={<LeavePage />} />
                 <Route path="/contracts" element={<ContractPage />} />
                 <Route path="/salary" element={<SalaryPage />} />

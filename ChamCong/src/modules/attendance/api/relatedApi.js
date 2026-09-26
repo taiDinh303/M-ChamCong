@@ -28,6 +28,15 @@ const relatedApi = {
         });
     },
 
+    // Upload ảnh chụp chấm công -> trả về URL lưu trong DB
+    uploadPhoto(file) {
+        const form = new FormData();
+        form.append("file", file);
+        return axiosClient.post("/Upload/photo", form, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+    },
+
     leavesByEmployee(employeeId) {
         return axiosClient.get(
             `/LeaveRequest/by-employee/${employeeId}`

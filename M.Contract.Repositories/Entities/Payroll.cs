@@ -22,27 +22,35 @@ namespace M.Contract.Repositories.Entities
         public DateTime PayrollMonth { get; set; }
 
         // Các thành phần lương
+        // Lương cơ bản
         [Column(TypeName = "decimal(18,2)")]
         public decimal BasicSalary { get; set; } = 0;
 
+        // Tổng phụ cấp
         [Column(TypeName = "decimal(18,2)")]
         public decimal Allowance { get; set; } = 0;
 
+        // Thưởng
         [Column(TypeName = "decimal(18,2)")]
         public decimal Bonus { get; set; } = 0;
 
+        // Phụ cấp làm thêm giờ
         [Column(TypeName = "decimal(18,2)")]
         public decimal Overtime { get; set; } = 0;
 
+        // Trừ bảo hiểm (BHXH + BHYT + BHTN do người lao động đóng)
         [Column(TypeName = "decimal(18,2)")]
         public decimal Insurance { get; set; } = 0;
 
+        // Trừ thuế thu nhập cá nhân
         [Column(TypeName = "decimal(18,2)")]
         public decimal Tax { get; set; } = 0;
 
+        // Trừ các khoản khác (vay, xử phạt...)
         [Column(TypeName = "decimal(18,2)")]
         public decimal Deduction { get; set; } = 0;
 
+        // Lương thực nhận = các khoản cộng - các khoản trừ
         [Column(TypeName = "decimal(18,2)")]
         public decimal NetSalary { get; set; } = 0;
 

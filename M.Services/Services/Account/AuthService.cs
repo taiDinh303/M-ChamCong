@@ -24,17 +24,20 @@ namespace M.Services.Service
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly DatabaseContext _dbContext;
 
         public AuthService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
+            RoleManager<ApplicationRole> roleManager,
             IConfiguration configuration,
             DatabaseContext dbContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _configuration = configuration;
             _dbContext = dbContext;
         }
@@ -95,7 +98,13 @@ namespace M.Services.Service
                     ?? "Unknown error occurred");
             }
 
-            await _userManager.AddToRoleAsync(user, "User");
+            // Chỉ gán role nếu tồn tại (DB chỉ có Admin/Employee)
+            bool roleExists =
+                await _roleManager.RoleExistsAsync("Employee");
+            if (roleExists)
+            {
+                await _userManager.AddToRoleAsync(user, "Employee");
+            }
 
             Employee employee = new Employee
             {

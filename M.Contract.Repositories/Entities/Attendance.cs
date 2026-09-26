@@ -38,14 +38,14 @@ namespace M.Contract.Repositories.Entities
         public int? ActualHours { get; set; }
 
         // =========================================================
-        // ẢNH CHỤP (bắt buộc theo quy định)
+        // ẢNH CHỤP KHI CHẤM CÔNG (có thể null nếu chấm không kèm ảnh)
         // =========================================================
 
         // Ảnh khi vào ca (URL / đường dẫn lưu)
         [MaxLength(500)]
         public string? CheckInPhoto { get; set; }
 
-        // Ảnh khi ra ca
+        // Ảnh khi ra ca (URL / đường dẫn lưu)
         [MaxLength(500)]
         public string? CheckOutPhoto { get; set; }
 
