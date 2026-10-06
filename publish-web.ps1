@@ -51,6 +51,30 @@ if (-not (Test-Path (Join-Path $out "wwwroot"))) {
 }
 New-Item -ItemType Directory -Force -Path (Join-Path $out "logs") | Out-Null
 
+# ---------- 4. ÉP web.config chuẩn vào output publish ----------
+# dotnet publish (Web SDK) tự sinh web.config (inprocess + %LAUNCHER_PATH%...)
+# co the ghi de bang chinh xac. Somee Free: OutOfProcess an toan hon (IIS worker
+# chiem nhat memory, 128-256MB). Buoc nay ghi de bang cua SDK:
+$webConfig = @'
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <location path="." inheritInChildApplications="false">
+    <system.webServer>
+      <handlers>
+        <add name="aspNetCore" path="*" verb="*" modules="AspNetCoreModuleV2" resourceExists="false" />
+      </handlers>
+      <aspNetCore processPath="%LAUNCHER_PATH%" arguments="." hostingModel="OutOfProcess" stdoutLogEnabled="true" stdoutLogFile=".\logs">
+        <environmentVariables>
+          <add name="ASPNETCORE_ENVIRONMENT" value="Production" />
+        </environmentVariables>
+      </aspNetCore>
+    </system.webServer>
+  </location>
+</configuration>
+'@
+Set-Content -Path (Join-Path $out "web.config") -Value $webConfig -Encoding UTF8
+Write-Host "==> web.config overwritten (OutOfProcess + Production env, no <rewrite>)" -ForegroundColor Cyan
+
 Write-Host ""
 Write-Host "DONE!" -ForegroundColor Green
 Write-Host "Upload nội dung thư mục: M.API\publish-web\" -ForegroundColor Yellow
