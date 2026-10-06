@@ -29,6 +29,7 @@ namespace M.API
             services.AddHttpContextAccessor();
             services.AddMemoryCache();
 
+            var corsAllowedOrigins = configuration.GetSection("CorsPolicy:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
             services.AddCors(options =>
             {
                 options.AddPolicy("ReactPolicy", policy =>
@@ -37,9 +38,11 @@ namespace M.API
                         .SetIsOriginAllowed(origin =>
                             origin.StartsWith("http://localhost", StringComparison.OrdinalIgnoreCase)
                             || origin.StartsWith("http://127.0.0.1", StringComparison.OrdinalIgnoreCase)
-                            || origin.StartsWith("http://[::1]", StringComparison.OrdinalIgnoreCase))
+                            || origin.StartsWith("http://[::1]", StringComparison.OrdinalIgnoreCase)
+                            || corsAllowedOrigins.Any(o => !string.IsNullOrWhiteSpace(o) && string.Equals(origin, o, StringComparison.OrdinalIgnoreCase)))
                         .AllowAnyHeader()
-                        .AllowAnyMethod();
+                        .AllowAnyMethod()
+                        .AllowCredentials();
                 });
             });
         }
