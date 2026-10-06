@@ -32,7 +32,8 @@ $uploads = Join-Path $www "uploads"
 if (Test-Path $www) {
     Get-ChildItem $www -Force | Where-Object { $_.Name -ne 'uploads' } | Remove-Item -Recurse -Force
 }
-Copy-Item $dist $www -Recurse
+# Copy NỘI DUNG của dist thẳng vào wwwroot (không nest "dist/")
+Copy-Item "$dist\*" $www -Recurse
 if (-not (Test-Path $uploads)) {
     New-Item -ItemType Directory -Force -Path $uploads | Out-Null
 }
