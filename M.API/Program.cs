@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-// File báo cáo tối đa 20MB (upload ảnh vẫn được giới hạn riêng trong API chấm công).
+// File bao cao toi da 20MB (upload anh van duoc gioi han riêng trong API cham cong).
 builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
 {
     options.MultipartBodyLengthLimit = 21 * 1024 * 1024;
@@ -24,13 +24,22 @@ builder.Services.AddConfig(builder.Configuration);
 
 var app = builder.Build();
 
-await M.API.Seed.RoleSeeder.SeedAsync(app.Services);
+// Seed default roles - BOC try/catch: loi DB luc startup khong duoc giat app
+// (neu crash o day, khong co middleware nao bat duoc -> IIS tra 500 xam).
+try
+{
+    await M.API.Seed.RoleSeeder.SeedAsync(app.Services);
+}
+catch (Exception ex)
+{
+    app.Services.GetRequiredService<ILogger>().LogWarning(
+        "RoleSeeder skipped at startup: {Reason}", ex.Message);
+}
 
 //Catch error
 //app.UseDeveloperExceptionPage();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseStaticFiles();
-    
 
 app.UseSwagger();
 app.UseSwaggerUI();
