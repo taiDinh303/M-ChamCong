@@ -482,3 +482,24 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+
+# ============================================================
+# Agnes tooling / debug junk (do NOT commit)
+# ============================================================
+.agnes/
+.agneshints
+AGENTS.md
+agneshints
+
+# Local debug / scratch scripts at repo root
+_*.cjs
+_*.js
+
+# Seed / sample data (keep out of public repo)
+SampleData.sql
+
+
+# Runtime user-uploaded media (do NOT commit)
+M.API/wwwroot/uploads/
+!M.API/wwwroot/uploads/.gitkeep
