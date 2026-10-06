@@ -60,4 +60,27 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// SPA fallback (chi chay IIS, khong dung URL Rewrite module - vi shared hosting
+// thieu module nay, dung rewrite se gay "URL Rewrite Module Error" -> 500 moi request).
+// Route frontend (React Router) khi hard-refresh (VD /employees) -> index.html;
+// /api, /uploads, /swagger khong phu hop -> 404.
+string webRoot = app.Environment.WebRootPath ?? "";
+string indexFile = System.IO.Path.Combine(webRoot, "index.html");
+app.MapFallback(async context =>
+{
+    string p = context.Request.Path.Value ?? "";
+    if (p.StartsWith("/api") || p.StartsWith("/uploads") || p.StartsWith("/swagger"))
+    {
+        context.Response.StatusCode = StatusCodes.Status404NotFound;
+        return;
+    }
+    if (System.IO.File.Exists(indexFile))
+    {
+        context.Response.ContentType = "text/html";
+        await context.Response.SendFileAsync(indexFile, context.RequestAborted);
+        return;
+    }
+    context.Response.StatusCode = StatusCodes.Status404NotFound;
+});
+
 app.Run();
