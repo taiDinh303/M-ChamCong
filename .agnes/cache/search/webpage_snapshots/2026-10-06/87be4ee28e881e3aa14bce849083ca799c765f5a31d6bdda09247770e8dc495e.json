@@ -1,0 +1,26 @@
+{
+  "kind": "webpage_snapshot",
+  "url": "https://freetier.co/directory/products/azure-app-service",
+  "final_url": "https://freetier.co/directory/products/azure-app-service",
+  "status": 200,
+  "read_status": "ok",
+  "content_type": "text/html",
+  "fetched_at": "2026-10-06T10:36:49.722942400+00:00",
+  "title": "Azure App Service 2026: Free F1 and D1 Plans | FreeTier.co",
+  "description": "Azure App Service free tier: Shared compute with 60 CPU minutes per day, 1 GB RAM included, 1 GB storage included · est. $2.00/mo value. Verified Aug 2026.",
+  "site_name": "FreeTier.co",
+  "published_at": null,
+  "source_type": "unknown",
+  "text": "Yes, Azure App Service has a permanent free tier alongside its paid plans. The free plan includes Shared compute with 60 CPU minutes per day, 1 GB RAM included, and 1 GB storage included. FreeTier.co estimates the free tier at about $2.00/mo. About Azure App Service is Microsoft’s fully managed platform as a service for building, deploying, and scaling web apps and APIs in the cloud. It is designed to help teams modernize applications without managing underlying servers, storage, networking, or routine platform maintenance. The service supports a broad range of application scenarios, including web applications, API backends, and containerized workloads. It also integrates with Azure security, identity, and deployment tooling to support enterprise application development and operations. Build and run web apps and APIs on a managed PaaS platform Support for popular languages and frameworks including .NET, Java, Node.js, Python, and PHP Automatic scaling, high availability, and deployment automation Built-in authentication, authorization, and security features Options for shared, dedicated, and isolated hosting models Free Tier Value 37 FTV score Est. value $2.00 / month Credit card Not stated Feature parity 35% This free tier has real monthly utility, but it is tightly capped: shared compute, 60 CPU minutes per day, 1 GB RAM, and 1 GB storage, with production use not supported and no SLA. Compared with the cheapest paid App Service option, it feels like a small but usable starter slice of the service, so about $2/month is a fair buyer-facing value estimate. How FTV is calculated → What's included in the free tier Verified Aug 18, 2026 Free plan for trials, experimentation, and learning the service. No SLA included for free and shared plans. Metered on a per-app basis. Shared compute with 60 CPU minutes per day. 1 GB RAM included. 1 GB storage included. See Azure App Service pricing for current limits. Paid plans Basic Custom B1 / B2 / B3 cores 1-4 ram 1.75-7 GB storage 10 GB Low-traffic workloads No advanced auto-scale No advanced traffic management Per-instance pricing Premium v4 Custom P0v4 / P1v4 / P1mv4 / P2v4 / P2mv4 / P3v4 / P3mv4 / P4mv4 / P5mv4 vcpu 1-32 ram 4-256 GB storage 250 GB High-performance managed PaaS Built-in network isolation Enhanced compliance Virtual network integration Memory-optimized tiers available Premium v3 Custom P0v3 / P1v3 / P1mv3 / P2v3 / P2mv3 / P3v3 / P3mv3 / P4mv3 / P5mv3 vcpu 1-32 ram 4-256 GB storage 250 GB High performance and scalability Automatic scaling for production Memory-optimized options Managed multi-tenant platform App Service Environment Contact sales Isolated v2 / Isolated v4 Fully isolated dedicated environment Single-customer hosting Virtual network integration Fine-grained network traffic control Secure on-premises connectivity Pricing extracted from Azure App Service's pricing page. Always verify current pricing before committing. Common questions Is Azure App Service free forever? Yes. Azure App Service has a permanent free tier alongside its paid plans, though the allowance typically resets each month. What is Azure App Service's free tier worth? Azure App Service's free tier is worth about $2.00 per month. That maps to an FTV score of 37/100. The FTV score is explained at freetier.co/ftv .",
+  "quote_candidates": [
+    "Yes, Azure App Service has a permanent free tier alongside its paid plans.",
+    "The free plan includes Shared compute with 60 CPU minutes per day, 1 GB RAM included, and 1 GB storage included.",
+    "co estimates the free tier at about $2.",
+    "About Azure App Service is Microsoft’s fully managed platform as a service for building, deploying, and scaling web apps and APIs in the cloud.",
+    "It is designed to help teams modernize applications without managing underlying servers, storage, networking, or routine platform maintenance."
+  ],
+  "word_count": 520,
+  "truncated": false,
+  "blocked": false,
+  "source": "direct_http"
+}

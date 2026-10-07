@@ -8,6 +8,7 @@ using M.Services.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -39,7 +40,9 @@ namespace M.API
                             origin.StartsWith("http://localhost", StringComparison.OrdinalIgnoreCase)
                             || origin.StartsWith("http://127.0.0.1", StringComparison.OrdinalIgnoreCase)
                             || origin.StartsWith("http://[::1]", StringComparison.OrdinalIgnoreCase)
+
                             || corsAllowedOrigins.Any(o => !string.IsNullOrWhiteSpace(o) && string.Equals(origin, o, StringComparison.OrdinalIgnoreCase)))
+
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
@@ -58,7 +61,16 @@ namespace M.API
             services.AddDbContext<DatabaseContext>(options =>
             {
                 //options.UseLazyLoadingProxies().UseSqlServer(configuration.GetConnectionString("MyCnn"));
-                options.UseSqlServer(configuration.GetConnectionString("MyCnn"));
+                string provider = configuration.GetSection("Database:Provider").Value ?? "SqlServer";
+                if (provider.Equals("PostgreSQL", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Render does not host SQL Server; production uses PostgreSQL.
+                    options.UseNpgsql(configuration.GetConnectionString("MyCnn"));
+                }
+                else
+                {
+                    options.UseSqlServer(configuration.GetConnectionString("MyCnn"));
+                }
 
             });
         }
@@ -148,7 +160,7 @@ namespace M.API
                 // ==========================
                 options.Events = new JwtBearerEvents
                 {
-                    // Không có token ho?c token sai
+                    // Khï¿½ng cï¿½ token ho?c token sai
                     OnChallenge = async context =>
                     {
                         context.HandleResponse();
@@ -170,7 +182,7 @@ namespace M.API
                     },
 
 
-                    // Có token nhung không d? quy?n Role
+                    // Cï¿½ token nhung khï¿½ng d? quy?n Role
                     OnForbidden = async context =>
                     {
                         context.Response.StatusCode = StatusCodes.Status403Forbidden;
@@ -198,14 +210,14 @@ namespace M.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
 
-                // C?u hình d? Swagger h? tr? DateOnly
+                // C?u hï¿½nh d? Swagger h? tr? DateOnly
                 c.MapType<DateOnly>(() => new OpenApiSchema
                 {
                     Type = "string",
-                    Format = "date", // Ð?m b?o Swagger hi?u r?ng dây là d?nh d?ng ngày
+                    Format = "date", // ï¿½?m b?o Swagger hi?u r?ng dï¿½y lï¿½ d?nh d?ng ngï¿½y
                 });
 
-                // C?u hình Authorization
+                // C?u hï¿½nh Authorization
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",

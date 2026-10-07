@@ -1,11 +1,11 @@
-using System.Security.Claims;
-using M.Contract.Repositories.Entities;
+﻿using M.Contract.Repositories.Entities;
 using M.Core.Base;
 using M.Core.Store;
 using M.Repositories.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace M.API.Controllers;
 
@@ -18,7 +18,6 @@ public class EmployeeReportController(DatabaseContext db, IWebHostEnvironment en
     private static readonly HashSet<string> Extensions = new(StringComparer.OrdinalIgnoreCase)
         { ".pdf", ".xls", ".xlsx", ".doc", ".docx" };
     [HttpGet("get-all")]
-    [Authorize(Roles = "Admin,Manager,HR")]
     public async Task<IActionResult> GetAll([FromQuery] string? search, [FromQuery] string? period,
         [FromQuery] Guid? departmentId, [FromQuery] Guid? employeeId, [FromQuery] int? status,
         [FromQuery] string? reportType, [FromQuery] bool? overdue)
@@ -345,11 +344,35 @@ public class EmployeeReportController(DatabaseContext db, IWebHostEnvironment en
 
     private static System.Linq.Expressions.Expression<Func<EmployeeReport, object>> ToResult() => r => new
     {
-        r.Id, r.ReportCode, r.Title, r.ReportType, r.Period, r.Deadline, r.Status, r.SubmittedAt,
-        r.ManagerComment, r.ReviewedBy, r.ReviewedAt, r.Overview, r.Results, r.Issues, r.Recommendations,
-        r.UpperFileName, r.UpperFileSize, r.UpperNote, r.UpperRecipient, r.UpperRecipientEmployeeId, r.UpperRequest, r.UpperRequestDeadline, r.SentToUpper, r.SentToUpperAt,
-        EmployeeId = r.EmployeeId, EmployeeName = r.Employee!.GivenName + " " + r.Employee.FamilyName,
-        r.Employee.EmployeeCode, DepartmentId = r.Employee.DepartmentId, DepartmentName = r.Employee.Department!.Name,
+        r.Id,
+        r.ReportCode,
+        r.Title,
+        r.ReportType,
+        r.Period,
+        r.Deadline,
+        r.Status,
+        r.SubmittedAt,
+        r.ManagerComment,
+        r.ReviewedBy,
+        r.ReviewedAt,
+        r.Overview,
+        r.Results,
+        r.Issues,
+        r.Recommendations,
+        r.UpperFileName,
+        r.UpperFileSize,
+        r.UpperNote,
+        r.UpperRecipient,
+        r.UpperRecipientEmployeeId,
+        r.UpperRequest,
+        r.UpperRequestDeadline,
+        r.SentToUpper,
+        r.SentToUpperAt,
+        EmployeeId = r.EmployeeId,
+        EmployeeName = r.Employee!.GivenName + " " + r.Employee.FamilyName,
+        r.Employee.EmployeeCode,
+        DepartmentId = r.Employee.DepartmentId,
+        DepartmentName = r.Employee.Department!.Name,
         Versions = r.Versions.OrderBy(v => v.Version).Select(v => new { v.Id, v.Version, v.FileName, v.FileSize, v.UploadedBy, v.UploadedAt, Attachments = v.Attachments.Select(a => new { a.Id, a.FileName, a.FileSize }) }),
         Events = r.Events.OrderBy(e => e.OccurredAt).Select(e => new { e.ActionName, e.Comment, e.Recipient, e.ActorId, e.ActorName, e.OccurredAt, e.Deadline })
     };
@@ -396,9 +419,11 @@ public class EmployeeReportController(DatabaseContext db, IWebHostEnvironment en
     }
     private static string MimeFor(string? name) => Path.GetExtension(name ?? "").ToLowerInvariant() switch
     {
-        ".pdf" => "application/pdf", ".xls" => "application/vnd.ms-excel",
+        ".pdf" => "application/pdf",
+        ".xls" => "application/vnd.ms-excel",
         ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        ".doc" => "application/msword", ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ".doc" => "application/msword",
+        ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         _ => "application/octet-stream"
     };
 }

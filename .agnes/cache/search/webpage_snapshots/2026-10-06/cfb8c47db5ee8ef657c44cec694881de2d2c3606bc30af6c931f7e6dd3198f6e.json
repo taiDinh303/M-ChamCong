@@ -1,0 +1,20 @@
+{
+  "kind": "webpage_snapshot",
+  "url": "https://stackoverflow.com/questions/52885048/asp-net-core-2-error-500-19-when-hosting-on-somee-com",
+  "final_url": "https://stackoverflow.com/questions/52885048/asp-net-core-2-error-500-19-when-hosting-on-somee-com",
+  "status": 403,
+  "read_status": "blocked",
+  "content_type": "text/html; charset=UTF-8",
+  "fetched_at": "2026-10-06T15:58:59.379578900+00:00",
+  "title": "Just a moment...",
+  "description": "",
+  "site_name": null,
+  "published_at": null,
+  "source_type": "unknown",
+  "text": "",
+  "quote_candidates": [],
+  "word_count": 0,
+  "truncated": false,
+  "blocked": true,
+  "source": "direct_http"
+}

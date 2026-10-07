@@ -483,10 +483,22 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
-# Publish / build output (Somee deploy pipeline) - M.API/publish-web/ - ChamCong/dist/ - .agnes/
+# Publish / build output (Somee deploy pipeline)
 M.API/publish-web/
+M.API/publish/
 ChamCong/dist/
 .agnes/
+.agneshints
+AGENTS.md
+agneshints
+
 # React build outputs copied into wwwroot by publish-web.ps1 (uploads/ stays tracked)
 M.API/wwwroot/*
 !M.API/wwwroot/uploads/
+
+# Local debug / scratch scripts at repo root
+_*.cjs
+_*.js
+
+# Seed / sample data (keep out of public repo)
+SampleData.sql

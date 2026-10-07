@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using M.Contract.Repositories.Entities;
 using M.Contract.Repositories.Entity;
 using M.Core.Base;
@@ -8,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace M.API.Controllers;
 
@@ -54,12 +54,12 @@ public class EmployeePromotionController(DatabaseContext db, UserManager<Applica
         var currentEmployeeId = CurrentEmployeeId();
         return Ok(new BaseResponse<object>(StatusCodeHelper.OK, ResponseCodeConstants.SUCCESS, new
         {
-        Employees = await employeeQuery
+            Employees = await employeeQuery
             .Select(e => new { e.Id, e.EmployeeCode, Name = e.GivenName + " " + e.FamilyName, e.DepartmentId, Department = e.Department == null ? "" : e.Department.Name, Position = e.Position == null ? "" : e.Position.Name, e.UserId }).ToListAsync(),
-        CurrentEmployee = await db.Employees.Where(e => e.Id == currentEmployeeId)
+            CurrentEmployee = await db.Employees.Where(e => e.Id == currentEmployeeId)
             .Select(e => new { e.Id, e.EmployeeCode, Name = e.GivenName + " " + e.FamilyName, Department = e.Department == null ? "" : e.Department.Name, Position = e.Position == null ? "" : e.Position.Name }).FirstOrDefaultAsync(),
-        Positions = await db.Positions.Where(p => p.IsActive).Select(p => new { p.Id, p.Code, p.Name }).ToListAsync(),
-        Roles = canNominate ? AssignableRoles : ["Employee"]
+            Positions = await db.Positions.Where(p => p.IsActive).Select(p => new { p.Id, p.Code, p.Name }).ToListAsync(),
+            Roles = canNominate ? AssignableRoles : ["Employee"]
         }));
     }
 
@@ -87,12 +87,20 @@ public class EmployeePromotionController(DatabaseContext db, UserManager<Applica
         var proposer = await db.Employees.FirstOrDefaultAsync(e => e.Id == proposerId);
         db.EmployeePromotions.Add(new EmployeePromotion
         {
-            EmployeeId = employee.Id, CurrentEmployeeCode = employee.EmployeeCode, CurrentPositionName = employee.Position?.Name,
-            NewPositionId = position.Id, NewPositionName = position.Name, NewPositionCode = position.Code,
-            TargetRoleName = targetRole, ProposedByUserId = userId, ProposedByEmployeeId = proposerId,
+            EmployeeId = employee.Id,
+            CurrentEmployeeCode = employee.EmployeeCode,
+            CurrentPositionName = employee.Position?.Name,
+            NewPositionId = position.Id,
+            NewPositionName = position.Name,
+            NewPositionCode = position.Code,
+            TargetRoleName = targetRole,
+            ProposedByUserId = userId,
+            ProposedByEmployeeId = proposerId,
             ProposedByName = proposer == null ? User.Identity?.Name ?? "Người dùng" : $"{proposer.GivenName} {proposer.FamilyName}",
             ProposalType = selfRequest ? EmployeePromotionType.EmployeeRequest : EmployeePromotionType.ManagerNomination,
-            Reason = form.Reason.Trim(), AdditionalNote = form.AdditionalNote?.Trim(), EffectiveDate = form.EffectiveDate.Date,
+            Reason = form.Reason.Trim(),
+            AdditionalNote = form.AdditionalNote?.Trim(),
+            EffectiveDate = form.EffectiveDate.Date,
             Status = EmployeePromotionStatus.Pending
         });
         await db.SaveChangesAsync();
@@ -167,22 +175,47 @@ public class EmployeePromotionController(DatabaseContext db, UserManager<Applica
         var canReviewAsManager = User.IsInRole("Manager");
         var managerId = CurrentEmployeeId();
         return from x in db.EmployeePromotions
-        join e in db.Employees on x.EmployeeId equals e.Id
-        join department in db.Departments on e.DepartmentId equals department.Id into departments
-        from department in departments.DefaultIfEmpty()
-        join position in db.Positions on e.PositionId equals position.Id into positions
-        from position in positions.DefaultIfEmpty()
-        join manager in db.Employees on e.ManagerId equals manager.Id into managers
-        from manager in managers.DefaultIfEmpty()
-        select new PromotionRow { Id = x.Id, EmployeeId = x.EmployeeId, EmployeeName = e.GivenName + " " + e.FamilyName,
-            DepartmentName = department == null ? "" : department.Name, ManagerId = e.ManagerId, DepartmentManagerId = department == null ? null : department.ManagerId,
-            PhoneNumber = e.PhoneNumber, Email = e.Email, StartDate = e.StartDate, CurrentPosition = position == null ? "" : position.Name,
-            ManagerName = manager == null ? "" : manager.GivenName + " " + manager.FamilyName,
-            CurrentEmployeeCode = x.CurrentEmployeeCode, CurrentPositionName = x.CurrentPositionName, NewEmployeeCode = x.NewEmployeeCode,
-            NewPositionId = x.NewPositionId, NewPositionName = x.NewPositionName, NewPositionCode = x.NewPositionCode, TargetRoleName = x.TargetRoleName, ProposedByName = x.ProposedByName, ProposedByEmployeeId = x.ProposedByEmployeeId,
-            CanReview = canReviewAll || (canReviewAsManager && x.TargetRoleName != "HR" && x.EmployeeId != managerId && (e.ManagerId == managerId || (department != null && department.ManagerId == managerId))),
-            ProposalType = x.ProposalType, Reason = x.Reason, AdditionalNote = x.AdditionalNote, DecisionNote = x.DecisionNote, EffectiveDate = x.EffectiveDate, Status = x.Status, ReviewedByName = x.ReviewedByName,
-            ReviewedAt = x.ReviewedAt, AppliedAt = x.AppliedAt, CreatedTime = x.CreatedTime };
+               join e in db.Employees on x.EmployeeId equals e.Id
+               join department in db.Departments on e.DepartmentId equals department.Id into departments
+               from department in departments.DefaultIfEmpty()
+               join position in db.Positions on e.PositionId equals position.Id into positions
+               from position in positions.DefaultIfEmpty()
+               join manager in db.Employees on e.ManagerId equals manager.Id into managers
+               from manager in managers.DefaultIfEmpty()
+               select new PromotionRow
+               {
+                   Id = x.Id,
+                   EmployeeId = x.EmployeeId,
+                   EmployeeName = e.GivenName + " " + e.FamilyName,
+                   DepartmentName = department == null ? "" : department.Name,
+                   ManagerId = e.ManagerId,
+                   DepartmentManagerId = department == null ? null : department.ManagerId,
+                   PhoneNumber = e.PhoneNumber,
+                   Email = e.Email,
+                   StartDate = e.StartDate,
+                   CurrentPosition = position == null ? "" : position.Name,
+                   ManagerName = manager == null ? "" : manager.GivenName + " " + manager.FamilyName,
+                   CurrentEmployeeCode = x.CurrentEmployeeCode,
+                   CurrentPositionName = x.CurrentPositionName,
+                   NewEmployeeCode = x.NewEmployeeCode,
+                   NewPositionId = x.NewPositionId,
+                   NewPositionName = x.NewPositionName,
+                   NewPositionCode = x.NewPositionCode,
+                   TargetRoleName = x.TargetRoleName,
+                   ProposedByName = x.ProposedByName,
+                   ProposedByEmployeeId = x.ProposedByEmployeeId,
+                   CanReview = canReviewAll || (canReviewAsManager && x.TargetRoleName != "HR" && x.EmployeeId != managerId && (e.ManagerId == managerId || (department != null && department.ManagerId == managerId))),
+                   ProposalType = x.ProposalType,
+                   Reason = x.Reason,
+                   AdditionalNote = x.AdditionalNote,
+                   DecisionNote = x.DecisionNote,
+                   EffectiveDate = x.EffectiveDate,
+                   Status = x.Status,
+                   ReviewedByName = x.ReviewedByName,
+                   ReviewedAt = x.ReviewedAt,
+                   AppliedAt = x.AppliedAt,
+                   CreatedTime = x.CreatedTime
+               };
     }
 
     private Guid CurrentEmployeeId() => Guid.TryParse(User.FindFirstValue("employeeId"), out var id) ? id : Guid.Empty;

@@ -1,6 +1,7 @@
 using M.API;
 using M.API.Middleware;
-using Microsoft.AspNetCore.StaticFiles;
+using M.Repositories.Context;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +25,22 @@ builder.Services.AddConfig(builder.Configuration);
 
 var app = builder.Build();
 
+// Sinh schema CSDL khi khoi dong (SQL Server: MigrateAsync; an toan/idempotent tren
+// Somee vi da co __EFMigrationsHistory). Bo try/catch de loi DB khong giat app.
+try
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+        await db.Database.MigrateAsync();
+    }
+}
+catch (Exception ex)
+{
+    app.Services.GetRequiredService<ILogger>().LogWarning(
+        "Startup DB migrate skipped: {Reason}", ex.Message);
+}
+
 // Seed default roles - BOC try/catch: loi DB luc startup khong duoc giat app
 // (neu crash o day, khong co middleware nao bat duoc -> IIS tra 500 xam).
 try
@@ -45,7 +62,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseCors("ReactPolicy");
-app.UseHttpsRedirection();
+// Render đã có HTTPS ở load balancer (không chạy Kestrel bằng SSL),
+// nên KHÔNG dùng UseHttpsRedirection để tránh vòng lặp redirect.
 
 // Ảnh chấm công đã upload -> /uploads (lưu trong wwwroot/uploads, ổn định)
 var uploadDir = PhotoStore.GetRoot(app.Environment);
