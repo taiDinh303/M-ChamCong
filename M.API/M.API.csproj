@@ -4,6 +4,12 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Shared-host resilience:
+         RollForward=LatestMajor -> neu server chua co chinh xac .NET 8.0 ma co ban moi hon,
+         app van chay duoc (khong crash boi khop ban runtime).
+         ServerGarbageCollection=false -> tat Server GC (RAM nho shared host se crash khi boot). -->
+    <RollForward>LatestMajor</RollForward>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
   </PropertyGroup>
 
   <ItemGroup>

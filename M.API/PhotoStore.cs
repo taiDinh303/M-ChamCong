@@ -3,44 +3,34 @@ using Microsoft.AspNetCore.Hosting;
 namespace M.API
 {
     /// <summary>
-    /// Thư mục lưu ảnh chấm công, DUY NHẤT 1 nơi cố định:
-    ///   &lt;thư mục project M.API&gt;/wwwroot/uploads/attendance/{checkin|checkout}
+    /// Thư mục lưu ảnh chấm công, DUY NHẤT 1 nơi: &lt;webroot&gt;/uploads/attendance/{checkin|checkout}
     ///
-    /// Neo vào thư mục có chứa file .csproj (root của project) thay vì
-    /// WebRootPath, để KHÔNG phụ thuộc cách chạy:
-    ///   - dotnet run (cwd = M.API)          -> M.API\wwwroot\uploads
-    ///   - VS Debug (cwd = bin\Debug\net8.0) -> vẫn M.API\wwwroot\uploads
-    /// trước đây ảnh bị phân vào 2 nơi nên người dùng mở folder "không thấy".
+    /// Neo vào WebRootPath (= wwwroot/ nằm NGAY trong thư mục site), không đi tìm .csproj
+    /// (thư mục dev). Nguyên nhân: dev-walk-up (.csproj) khi chạy trên IIS/Somee sẽ đi lên
+    /// thư mục cha (d:\DZHosts\LocalUser) mà IIS KHÔNG có quyền đọc -> UnauthorizedAccessException
+    /// crash boot -> 500.30. WebRootPath luôn ở trong site (IIS có quyền) nên an toàn dev lẫn prod.
     /// </summary>
     public static class PhotoStore
     {
         /// <summary>
-        /// Tìm thư mục project (chứa *.csproj) bằng cách đi lên từ ContentRootPath.
-        /// Chạy bằng VS (cwd nằm trong bin\...\net8.0) thì vẫn tìm ra M.API.
+        /// Web root của app (= wwwroot/). Dev (dotnet run/VS) và prod (IIS) đều cùng wwwroot
+        /// trong thư mục app, nên kết quả tương đương.
         /// </summary>
         public static string GetProjectRoot(IWebHostEnvironment env)
         {
-            DirectoryInfo dir = new(env.ContentRootPath);
-            while (dir != null)
-            {
-                if (dir.EnumerateFiles("*.csproj").Any())
-                {
-                    return dir.FullName;
-                }
-                dir = dir.Parent;
-            }
-            // Không tìm thấy (VD publish 1 thư mục) -> dùng chính ContentRootPath
-            return env.ContentRootPath;
+            return string.IsNullOrWhiteSpace(env.WebRootPath)
+                ? Path.Combine(env.ContentRootPath, "wwwroot")
+                : env.WebRootPath;
         }
 
         public static string GetRoot(IWebHostEnvironment env)
         {
-            string projectRoot = GetProjectRoot(env);
-            string webRoot = Path.Combine(projectRoot, "wwwroot");
-            Directory.CreateDirectory(webRoot);
-
+            string webRoot = GetProjectRoot(env);
             string uploadRoot = Path.Combine(webRoot, "uploads");
-            Directory.CreateDirectory(uploadRoot);
+            // BOC try/catch: khong duoc giat app khi boot neu chua co quyen ghi.
+            // (Chuc nang upload hinh se goi GetAttendanceFolder de tao thu muc khi can.)
+            try { Directory.CreateDirectory(uploadRoot); }
+            catch { /* IIS se tao thu muc khi upload thuc su; loi quyen chi an huan upload, khong crash boot */ }
             return uploadRoot;
         }
 
@@ -53,7 +43,8 @@ namespace M.API
         {
             string kind = type == "checkout" ? "checkout" : "checkin";
             string dir = Path.Combine(GetRoot(env), "attendance", kind);
-            Directory.CreateDirectory(dir);
+            try { Directory.CreateDirectory(dir); }
+            catch { /* bi quyen: boi duoc thong bao tai cap upload */ }
             return dir;
         }
     }
