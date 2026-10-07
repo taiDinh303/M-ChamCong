@@ -1,5 +1,8 @@
 using M.API;
 using M.API.Middleware;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 
@@ -23,6 +26,25 @@ builder.Services.AddConfig(builder.Configuration);
 
 
 var app = builder.Build();
+
+// Dev: tu dong migrate CSDL local de khua schema moi (AttendanceLogs, ChangeSummary,
+// EmployeeReports, EmployeePromotions, EmployeeHandovers...). Idempotent + chi chay
+// Development (khong dong CSDL Somee trong Production). Khua loi 500 "invalid column/table".
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    try
+    {
+        await scope.ServiceProvider
+            .GetRequiredService<M.Repositories.Context.DatabaseContext>()
+            .Database.MigrateAsync();
+    }
+    catch (Exception ex)
+    {
+        app.Services.GetRequiredService<ILogger>().LogWarning(
+            "Auto-migrate skipped at startup: {Reason}", ex.Message);
+    }
+}
 
 await M.API.Seed.RoleSeeder.SeedAsync(app.Services);
 

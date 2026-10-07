@@ -22,7 +22,6 @@ namespace M.API.Controllers
         /// <summary>
         /// Retrieves all leave requests with pagination
         /// </summary>
-        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll(int pageNumber = 1, int pageSize = 10)
         {

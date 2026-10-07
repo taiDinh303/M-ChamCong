@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using M.Contract.Repositories.Entities;
 using M.Core.Base;
 using M.Core.Store;
@@ -18,7 +18,6 @@ public class EmployeeReportController(DatabaseContext db, IWebHostEnvironment en
     private static readonly HashSet<string> Extensions = new(StringComparer.OrdinalIgnoreCase)
         { ".pdf", ".xls", ".xlsx", ".doc", ".docx" };
     [HttpGet("get-all")]
-    [Authorize(Roles = "Admin,Manager,HR")]
     public async Task<IActionResult> GetAll([FromQuery] string? search, [FromQuery] string? period,
         [FromQuery] Guid? departmentId, [FromQuery] Guid? employeeId, [FromQuery] int? status,
         [FromQuery] string? reportType, [FromQuery] bool? overdue)
