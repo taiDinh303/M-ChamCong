@@ -8,6 +8,7 @@ using M.Services.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -37,7 +38,9 @@ namespace M.API
                         .SetIsOriginAllowed(origin =>
                             origin.StartsWith("http://localhost", StringComparison.OrdinalIgnoreCase)
                             || origin.StartsWith("http://127.0.0.1", StringComparison.OrdinalIgnoreCase)
-                            || origin.StartsWith("http://[::1]", StringComparison.OrdinalIgnoreCase))
+                            || origin.StartsWith("http://[::1]", StringComparison.OrdinalIgnoreCase)
+                            || configuration.GetSection("Cors:AllowedOrigins").GetChildren().Select(o => o.Value)
+                                   .Any(v => string.Equals(v, origin, StringComparison.OrdinalIgnoreCase)))
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
@@ -55,7 +58,16 @@ namespace M.API
             services.AddDbContext<DatabaseContext>(options =>
             {
                 //options.UseLazyLoadingProxies().UseSqlServer(configuration.GetConnectionString("MyCnn"));
-                options.UseSqlServer(configuration.GetConnectionString("MyCnn"));
+                string provider = configuration.GetSection("Database:Provider").Value ?? "SqlServer";
+                if (provider.Equals("PostgreSQL", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Render does not host SQL Server; production uses PostgreSQL.
+                    options.UseNpgsql(configuration.GetConnectionString("MyCnn"));
+                }
+                else
+                {
+                    options.UseSqlServer(configuration.GetConnectionString("MyCnn"));
+                }
 
             });
         }
