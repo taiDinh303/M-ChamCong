@@ -1,0 +1,26 @@
+{
+  "kind": "webpage_snapshot",
+  "url": "http://freetier.co/directory/products/render",
+  "final_url": "https://freetier.co/directory/products/render",
+  "status": 200,
+  "read_status": "ok",
+  "content_type": "text/html",
+  "fetched_at": "2026-10-06T10:36:49.643716400+00:00",
+  "title": "Render free tier 2026 - Free Web, DB, KV Plans | FreeTier.co",
+  "description": "Render free tier: Free web service: 512 MB RAM and 0.1 CPU, 750 free instance hours per workspace per month · est. $8.00/mo value. Verified Aug 2026.",
+  "site_name": "FreeTier.co",
+  "published_at": null,
+  "source_type": "unknown",
+  "text": "Yes, Render has a permanent free tier alongside its paid plans. The free plan includes free web service: 512 MB RAM and 0.1 CPU, 750 free instance hours per workspace per month, and Spins down after 15 minutes with no inbound traffic; takes about a minute to spin back up on the next request. About Render is a cloud platform for builders that helps teams deploy and run applications, APIs, background jobs, databases, cron jobs, and workflows with minimal operational overhead. It provides managed infrastructure primitives for modern software delivery, including web services, static sites, private services, Postgres databases, key-value storage, autoscaling, preview environments, zero-downtime deploys, and integrated observability. Managed hosting for web services, static sites, and private services Fully managed Postgres and Redis-compatible key-value storage Autoscaling, preview environments, and zero-downtime deploys Infrastructure as code, Docker support, and REST API access Integrated logs, metrics, and monitoring for deployed services Free Tier Value 48 FTV score Est. value $8.00 / month Credit card Not stated Feature parity 78% This free tier is genuinely usable, but it is capped: 25 services, 5 GB of bandwidth, 500 build minutes, 5 retained builds, and only 1 workspace/seat. The cheapest paid workspace plan is Pro at $25/month, and the free offering covers a meaningful slice of that experience, so it’s worth about $8/month; a credit card is required to sign up, which adds some friction. How FTV is calculated → What's included in the free tier Verified Aug 29, 2026 Free web service: 512 MB RAM and 0.1 CPU. 750 free instance hours per workspace per month. Spins down after 15 minutes with no inbound traffic; takes about a minute to spin back up on the next request. Single instance only - no autoscaling on the free plan. No SSH access, no persistent disk, and no one-off jobs on free web services. Blocked from outbound SMTP ports 25, 465, and 587. See Render pricing for current limits. Paid plans Pro $25 / mo bandwidth 25 GB included per month custom_domains 15 included build_minutes 1K mins per month builds_retained 15 builds retained environments Unlimited team_seats Unlimited Unlimited seats & services 25 GB bandwidth included Full-stack previews Horizontal autoscaling Isolated environments OIDC authentication AWS Private Links Workspace audit logs Scale $499 / mo bandwidth 1 TB included per month custom_domains 25 included build_minutes 5K mins per workspace per mo. builds_retained 30 builds retained environments Unlimited team_seats Unlimited Multiple workspaces 1 TB bandwidth included Extended metrics retention Inbound IP rules HIPAA-compliant workspaces SAML SSO & SCIM Advanced RBAC roles Organization audit logs Enterprise Contact sales Custom pricing workspaces Unlimited team_seats Unlimited Contractual uptime SLAs Technical account manager Support Slack channel Support response SLAs Pricing extracted from Render's pricing page. Always verify current pricing before committing. Common questions Is Render free forever? Yes. Render has a permanent free tier alongside its paid plans, though the allowance typically resets each month. What happens when you exceed Render's free tier? You move to a paid plan. Render's cheapest paid plan is Pro at $25 / month. What is Render's free tier worth? Render's free tier is worth about $8.00 per month. That maps to an FTV score of 48/100. The FTV score is explained at freetier.co/ftv .",
+  "quote_candidates": [
+    "Yes, Render has a permanent free tier alongside its paid plans.",
+    "The free plan includes free web service: 512 MB RAM and 0.",
+    "1 CPU, 750 free instance hours per workspace per month, and Spins down after 15 minutes with no inbound traffic;",
+    "takes about a minute to spin back up on the next request.",
+    "About Render is a cloud platform for builders that helps teams deploy and run applications, APIs, background jobs, databases, cron jobs, and workflows with minimal operational overhead."
+  ],
+  "word_count": 536,
+  "truncated": false,
+  "blocked": false,
+  "source": "direct_http"
+}
