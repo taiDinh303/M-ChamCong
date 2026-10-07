@@ -1,0 +1,12 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.git/
+**/.gitignore
+ChamCong/
+figma-mocks/
+monica
+SampleData.sql
+.agnes/
+.agneshints
+AGENTS.md

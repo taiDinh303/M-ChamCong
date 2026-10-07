@@ -1,6 +1,9 @@
 using M.API;
 using M.API.Middleware;
+using M.Repositories.Context;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,19 +27,44 @@ builder.Services.AddConfig(builder.Configuration);
 
 var app = builder.Build();
 
+// Render đưa request qua load balancer; tin header X-Forwarded-* để Kestrel
+// thấy đúng IP và scheme của client (chạy sau khi build, trước các middleware khác).
+app.UseForwardedHeaders();
+
+// Tạo schema CSDL khi khởi động.
+// - PostgreSQL (Render): dùng EnsureCreated, vì các migration đã commit chứa
+//   T-SQL (IF COL_LENGTH...) chỉ chạy được trên SQL Server.
+// - SQL Server (dev local): chạy migration thật.
+string dbProvider = app.Configuration["Database:Provider"]
+    ?? Environment.GetEnvironmentVariable("Database__Provider")
+    ?? "SqlServer";
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+    if (dbProvider.Equals("PostgreSQL", StringComparison.OrdinalIgnoreCase))
+    {
+        await db.Database.EnsureCreatedAsync();
+    }
+    else
+    {
+        await db.Database.MigrateAsync();
+    }
+}
+
 await M.API.Seed.RoleSeeder.SeedAsync(app.Services);
 
 //Catch error
 //app.UseDeveloperExceptionPage();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseStaticFiles();
-    
 
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseCors("ReactPolicy");
-app.UseHttpsRedirection();
+// Render đã có HTTPS ở load balancer (không chạy Kestrel bằng SSL),
+// nên KHÔNG dùng UseHttpsRedirection để tránh vòng lặp redirect.
 
 // Ảnh chấm công đã upload -> /uploads (lưu trong wwwroot/uploads, ổn định)
 var uploadDir = PhotoStore.GetRoot(app.Environment);
