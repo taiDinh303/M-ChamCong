@@ -59,8 +59,7 @@ try
 
         int efTableCount = await db.Database.SqlQueryRaw<int>(
             "SELECT count(*)::int FROM information_schema.tables " +
-            "WHERE table_schema = 'public' AND lower(table_name) " +
-            "IN ('employees','aspnetroles','attendancerules')")
+            "WHERE table_schema = 'public' AND lower(table_name) = 'aspnetusers'")
             .FirstAsync();
 
         if (efTableCount == 0)
@@ -68,10 +67,46 @@ try
             // CreateTablesAsync() bi an no-i (obsolete) trong EF Core 8.
             // Dung GenerateCreateScript() (kha nang public) + ExecuteSqlRawAsync.
             // Chi chay khi chua co bang EF nao (boot dau, DB Supabase con trang bang EF).
+            // Run DDL statement-by-statement (not as one batch). If ANY statement
+            // hits an already-existing table, Postgres would stop the whole batch
+            // and later tables (e.g. AspNetUsers) would never be created. Per-statement
+            // execution tolerates those and makes the create idempotent across reboots.
             var createScript = db.Database.GenerateCreateScript();
-            await db.Database.ExecuteSqlRawAsync(createScript);
+            string[] statements = createScript
+                .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            int created = 0, skipped = 0;
+            foreach (string statement in statements)
+            {
+                if (string.IsNullOrWhiteSpace(statement))
+                {
+                    continue;
+                }
+
+                try
+                {
+                    await db.Database.ExecuteSqlRawAsync(statement);
+                    created++;
+                }
+                catch (Exception stmtEx)
+                {
+                    // "already exists" (42P07) / benign re-create / "does not exist" on
+                    // ALTER -> skip so idempotent reboots never crash startup.
+                    if (stmtEx.Message.Contains("already exists") ||
+                        stmtEx.Message.Contains("does not exist"))
+                    {
+                        skipped++;
+                        continue;
+                    }
+
+                    throw;
+                }
+            }
+
             app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup")
-                .LogInformation("PostgreSQL: created EF tables on fresh database");
+                .LogInformation(
+                    "PostgreSQL: created {Created} EF DDL statements ({Skipped} skipped)",
+                    created, skipped);
         }
 
         // Generic schema drift sync: compare EF model to actual PostgreSQL schema,
