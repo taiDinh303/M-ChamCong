@@ -51,7 +51,28 @@ try
     var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
     if (dbConfig.IsPostgres)
     {
+        // DB Supabase thuong KHONG rong (Supabase tao san table), nen EnsureCreated()
+        // se NO-OP va KHONG tao bang EF -> seeder loai "relation does not exist".
+        // -> Check co bang EF chua; neu chua co thi CreateTablesAsync (idempotent,
+        //    chi tao bang, khong can DB rong).
         await db.Database.EnsureCreatedAsync();
+
+        int efTableCount = await db.Database.SqlQueryRaw<int>(
+            "SELECT count(*)::int FROM information_schema.tables " +
+            "WHERE table_schema = 'public' AND lower(table_name) " +
+            "IN ('employees','aspnetroles','attendancerules')")
+            .FirstAsync();
+
+        if (efTableCount == 0)
+        {
+            // CreateTablesAsync() bi an no-i (obsolete) trong EF Core 8.
+            // Dung GenerateCreateScript() (kha nang public) + ExecuteSqlRawAsync.
+            // Chi chay khi chua co bang EF nao (boot dau, DB Supabase con trang bang EF).
+            var createScript = db.Database.GenerateCreateScript();
+            await db.Database.ExecuteSqlRawAsync(createScript);
+            app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup")
+                .LogInformation("PostgreSQL: created EF tables on fresh database");
+        }
 
         // Generic schema drift sync: compare EF model to actual PostgreSQL schema,
         // auto-add any missing columns (idempotent, runs every boot).
