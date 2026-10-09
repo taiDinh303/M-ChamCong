@@ -1,0 +1,43 @@
+# .dockerignore - repo root (marixa_aspnet)
+# Loại bỏ các file không cần trong Docker image -> build nhanh, image nhỏ
+
+# Git / IDE
+.git/
+.gitignore
+.idea/
+.vs/
+.vscode/
+
+# Build outputs (đã publish lại trong Docker)
+**/bin/
+**/obj/
+
+# .NET
+*.user
+*.suo
+**/[Bb]in/
+**/[Oo]bj/
+
+# Node (web/Next.js, marixa_react - không cần cho API)
+node_modules/
+web/node_modules/
+web/.next/
+marixa_react/node_modules/
+marixa_react/dist/
+**/package-lock.json
+
+# User-uploaded media (khôi phục từ external storage)
+M.API/wwwroot/uploads/
+
+# Docs / research (không cần trong runtime image)
+docs/
+.agines/
+
+# Misc
+*.mdf
+*.ldf
+*.ndf
+*.log
+*.binlog
+Thumbs.db
+.DS_Store

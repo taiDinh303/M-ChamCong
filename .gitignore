@@ -1,0 +1,45 @@
+# =====================================================================
+# Marixa M-ChamCong - Root .gitignore
+# Các sub-project (marixa_aspnet, marixa_react) có .gitignore riêng.
+# File này bảo vệ mức root.
+# =====================================================================
+
+# --- Dotfiles / IDE ---
+.agnes/
+.vs/
+.idea/
+*.code-workspace
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# --- Secret / env (KHÔNG commit giá trị thật) ---
+.env
+.env.local
+.env.production
+.env.*.local
+
+# --- Build outputs (đã ignore trong sub-project, nhưng backup) ---
+**/bin/
+**/obj/
+**/publish/
+node_modules/
+dist/
+
+# --- Log / temp ---
+*.log
+*.tmp
+*.stackdump
+
+# --- Database files ---
+*.mdf
+*.ldf
+*.ndf
+*.suo
+
+# --- User uploads (dev) ---
+marixa_aspnet/M.API/wwwroot/uploads/
+!marixa_aspnet/M.API/wwwroot/uploads/.gitkeep
+
+# --- Docker / CI local ---
+.docker/

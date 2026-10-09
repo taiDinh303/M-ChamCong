@@ -1,0 +1,36 @@
+# ============================================================
+# Render Blueprint - M.API (ASP.NET 8) -> PostgreSQL (Supabase)
+#
+# Cách dùng:
+#   Render Dashboard -> your Org -> Blueprints -> "Deploy from repo"
+#   Chọn repo này, Render đọc render.yaml ở repo root.
+#   Sau đó vào từng service đặt Environment Variables (secret DB/JWT).
+#
+# Docker build context = thư mục "marixa_aspnet" (chứa M.API, M.Core, ...)
+# Dockerfile           = marixa_aspnet/Dockerfile
+# ============================================================
+
+services:
+  # ---------- M.API backend (.NET 8, PostgreSQL/Supabase) ----------
+  - type: web
+    name: marixa-api
+    runtime: docker
+    dockerfilePath: marixa_aspnet/Dockerfile
+    dockerContext: marixa_aspnet
+    plan: standard
+    healthCheckPath: /swagger
+    autoDeploy: true
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      # Đặt SECRET (DB/JWT) trong Render Dashboard -> Environment, KHÔNG commit:
+      #   DATABASE__PROVIDER     = PostgreSQL
+      #   CONNECTIONSTRINGS__MYCNN = postgresql://postgres.REF:PASS@host:5432/postgres?sslmode=require
+      #   JWTSETTINGS__KEY       = (secret 32+ ký tự)
+
+  # ---------- (Tùy chọn) Render PostgreSQL managed DB ----------
+  # Nếu không dùng Supabase mà muốn DB trực tiếp trên Render thì bỏ comment:
+  # - type: psyc
+  #   name: marixa-db
+  #   plan: starter
+  #   ipAllowList: []
