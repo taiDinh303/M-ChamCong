@@ -55,60 +55,47 @@ try
         // se NO-OP va KHONG tao bang EF -> seeder loai "relation does not exist".
         // -> Check co bang EF chua; neu chua co thi CreateTablesAsync (idempotent,
         //    chi tao bang, khong can DB rong).
-        await db.Database.EnsureCreatedAsync();
+        // Supabase postgres DB KHONG rong (co schemas auth/storage/extensions),
+        // nen EnsureCreated() no-op, khong tao bang EF.
+        //
+        // Luon chay GenerateCreateScript() tung cau lenh (idempotent, self-healing):
+        //   - bang chua co   -> tao
+        //   - bang da co    -> "already exists" -> skip
+        //   - trang thai tan (create 1 phan) -> lan boot sau se tao them
+        var createScript = db.Database.GenerateCreateScript();
+        string[] ddlStatements = createScript
+            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-        int efTableCount = await db.Database.SqlQueryRaw<int>(
-            "SELECT count(*)::int FROM information_schema.tables " +
-            "WHERE table_schema = 'public' AND lower(table_name) = 'aspnetusers'")
-            .FirstAsync();
+        int created = 0, skipped = 0, failed = 0;
+        var ddlLogger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup");
 
-        if (efTableCount == 0)
+        foreach (string statement in ddlStatements)
         {
-            // CreateTablesAsync() bi an no-i (obsolete) trong EF Core 8.
-            // Dung GenerateCreateScript() (kha nang public) + ExecuteSqlRawAsync.
-            // Chi chay khi chua co bang EF nao (boot dau, DB Supabase con trang bang EF).
-            // Run DDL statement-by-statement (not as one batch). If ANY statement
-            // hits an already-existing table, Postgres would stop the whole batch
-            // and later tables (e.g. AspNetUsers) would never be created. Per-statement
-            // execution tolerates those and makes the create idempotent across reboots.
-            var createScript = db.Database.GenerateCreateScript();
-            string[] statements = createScript
-                .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-            int created = 0, skipped = 0;
-            foreach (string statement in statements)
+            if (string.IsNullOrWhiteSpace(statement)) continue;
+            try
             {
-                if (string.IsNullOrWhiteSpace(statement))
-                {
-                    continue;
-                }
-
-                try
-                {
-                    await db.Database.ExecuteSqlRawAsync(statement);
-                    created++;
-                }
-                catch (Exception stmtEx)
-                {
-                    // "already exists" (42P07) / benign re-create / "does not exist" on
-                    // ALTER -> skip so idempotent reboots never crash startup.
-                    if (stmtEx.Message.Contains("already exists") ||
-                        stmtEx.Message.Contains("does not exist"))
-                    {
-                        skipped++;
-                        continue;
-                    }
-
-                    throw;
-                }
+                await db.Database.ExecuteSqlRawAsync(statement);
+                created++;
             }
-
-            app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup")
-                .LogInformation(
-                    "PostgreSQL: created {Created} EF DDL statements ({Skipped} skipped)",
-                    created, skipped);
+            catch (Exception ex) when (
+                ex.Message.Contains("already exists") ||
+                ex.Message.Contains("does not exist"))
+            {
+                skipped++;
+            }
+            catch (Exception ex)
+            {
+                failed++;
+                ddlLogger.LogWarning(ex,
+                    "DDL stmt {N} failed: {Snippet}",
+                    failed,
+                    statement.Length > 120 ? statement.Substring(0, 120) + "..." : statement);
+            }
         }
 
+        ddlLogger.LogInformation(
+            "PostgreSQL DDL: {Created} created, {Skipped} existing, {Failed} failed",
+            created, skipped, failed);
         // Generic schema drift sync: compare EF model to actual PostgreSQL schema,
         // auto-add any missing columns (idempotent, runs every boot).
         // Handles ALL future model changes without hardcoding ALTER TABLE.
