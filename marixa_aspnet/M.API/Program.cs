@@ -132,6 +132,18 @@ catch (Exception ex)
 
 //Catch error
 //app.UseDeveloperExceptionPage();
+
+// Seed 8 tai khoan mau (NV / Nhan su / Quan ly / Admin / Ke toan), idempotent.
+// Khi them/sua du lieu mau: mo mang Users trong SampleDataSeeder.cs, build + push.
+try
+{
+    await M.API.Seed.SampleDataSeeder.SeedAsync(app.Services);
+}
+catch (Exception ex)
+{
+    app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup").LogWarning(
+        "SampleDataSeeder skipped at startup: {Reason}", ex.Message);
+}
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseDefaultFiles();
 app.UseStaticFiles();
