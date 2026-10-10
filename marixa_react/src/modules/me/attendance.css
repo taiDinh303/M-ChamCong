@@ -318,11 +318,13 @@
 .att-location {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 12px;
     padding: 12px 14px;
     border-radius: var(--mx-radius-sm);
     background: var(--mx-page);
     border: 1px solid var(--mx-border);
+    text-align: center;
 }
 .att-location--err { background: var(--mx-warn-bg); border-color: var(--mx-warn-border); }
 .att-location-ico {
@@ -339,8 +341,10 @@
 .att-location-info {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 1px;
     min-width: 0;
+    flex: 1;
 }
 .att-location-info span {
     font-size: 11px;
