@@ -194,6 +194,7 @@ export default function ReportsPage({ admin = false } = {}) {
         <div className="att-content hr-file-reports">
             {error && <div className="hr-report-error" role="alert">{error}<button onClick={() => setError("")}>×</button></div>}
             {success && <div className="hr-report-success" role="status">{success}<button onClick={() => setSuccess("")}>×</button></div>}
+            {!loading && <HrHero ico="📑" title="Quản lý báo cáo" sub="Báo cáo file nhân viên gửi, theo dõi luồng duyệt và phản hồi cấp trên." kpis={[{ ico: "▣", label: "Tổng báo cáo", value: counts.total, tone: "blue" }, { ico: "⇣", label: "Chờ tôi duyệt", value: counts.pending, tone: "warn" }, { ico: "⇡", label: "Chờ gửi cấp trên", value: counts.toUpper, tone: "green" }, { ico: "⚑", label: "Cấp trên yêu cầu", value: counts.upperRequest, tone: "red" }, { ico: "✓", label: "Hoàn tất", value: counts.complete, tone: "ok" }, { ico: "⚠", label: "Quá hạn", value: counts.overdue, tone: "red" }]}/>}
             <label className="admin-search hr-file-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="Tìm mã báo cáo / tên báo cáo / người gửi..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} /></label>
             <div className="hr-file-filters">
                 <label>{L("Tháng")}<select className="hr-select" value={filters.period} onChange={(e) => filter("period", e.target.value)}><option value="">{L("Tất cả tháng")}</option>{monthOptions.map((month) => <option key={month} value={month}>{new Date(`${month}-01`).toLocaleDateString(locale, { month: "2-digit", year: "numeric" })}</option>)}</select></label>
@@ -204,7 +205,6 @@ export default function ReportsPage({ admin = false } = {}) {
                 <button className="hr-file-filter-button" onClick={load}>⌕</button>
             </div>
             {loading ? <div className="att-loading">{L("Đang tải báo cáo file…")}</div> : <>
-                <HrHero ico="📑" title="Quản lý báo cáo" sub="Báo cáo file nhân viên gửi, theo dõi luồng duyệt và phản hồi cấp trên." kpis={[{ ico: "▣", label: "Tổng báo cáo", value: counts.total, tone: "blue" }, { ico: "⇣", label: "Chờ tôi duyệt", value: counts.pending, tone: "warn" }, { ico: "⇡", label: "Chờ gửi cấp trên", value: counts.toUpper, tone: "green" }, { ico: "⚑", label: "Cấp trên yêu cầu", value: counts.upperRequest, tone: "red" }, { ico: "✓", label: "Hoàn tất", value: counts.complete, tone: "ok" }, { ico: "⚠", label: "Quá hạn", value: counts.overdue, tone: "red" }]}/>
                 <ReportSection title={L("📥 1. Báo cáo cấp dưới gửi đến tôi")}>
                     <ReportTable reports={inbound} columns="inbound" open={open} onAction={startDialog} />
                 </ReportSection>
