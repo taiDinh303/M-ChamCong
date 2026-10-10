@@ -4,11 +4,11 @@ import { canAccessModule } from "../../../services/auth/permission";
 import "../home.css";
 
 const MODULES = [
-    { to: "/attendance", icon: "🕗", title: "Chấm công", detail: "Vào ca và ra ca", color: "blue" },
-    { to: "/kich-hoat", icon: "🔑", title: "Kích hoạt tài khoản", detail: "Nhập mã kích hoạt để đặt mật khẩu", color: "purple" },
-    { to: "/employees", icon: "👥", title: "Nhân sự", detail: "Hồ sơ và danh sách nhân viên", color: "pink" },
-    { to: "/admin", icon: "📊", title: "Dashboard", detail: "Điều hành và quản lý hệ thống", color: "teal" },
-    { to: "/work", icon: "📋", title: "Công việc", detail: "Tổng quan và việc cần xử lý của bạn", color: "amber" },
+    { to: "/attendance", icon: "🕗", title: "Chấm công", detail: "Vào ca · Ra ca", color: "blue" },
+    { to: "/kich-hoat", icon: "🔑", title: "Kích hoạt", detail: "Đặt mật khẩu", color: "purple" },
+    { to: "/employees", icon: "👥", title: "Nhân sự", detail: "Hồ sơ nhân viên", color: "pink" },
+    { to: "/admin", icon: "📊", title: "Dashboard", detail: "Điều hành hệ thống", color: "teal" },
+    { to: "/work", icon: "📋", title: "Công việc", detail: "Việc cần xử lý", color: "amber" },
 ];
 
 const HomePage = () => (
@@ -27,8 +27,10 @@ const HomePage = () => (
 
             <section className="home-launcher" aria-labelledby="home-title">
                 <div className="home-heading">
-                    <div><span className="home-eyebrow">BUSINESS LAUNCHER</span><h2 id="home-title">Không gian làm việc</h2></div>
-                    
+                    <div>
+                        <span className="home-eyebrow">BUSINESS LAUNCHER</span>
+                        <h2 id="home-title">Không gian làm việc</h2>
+                    </div>
                 </div>
                 <div className="home-grid">
                     {MODULES.filter((module) => canAccessModule(module.to)).map((module) => (
@@ -36,7 +38,6 @@ const HomePage = () => (
                             <span className={`home-icon home-icon--${module.color}`} aria-hidden="true">{module.icon}</span>
                             <strong>{module.title}</strong>
                             <span>{module.detail}</span>
-                            <span className="home-arrow" aria-hidden="true">↗</span>
                         </Link>
                     ))}
                 </div>
