@@ -71,7 +71,7 @@
     width: 18px;
     height: 2px;
     border-radius: 1px;
-    background: #fff;
+    background: var(--th-header-text);
 }
 
 /* Logo + slogan */
@@ -101,7 +101,7 @@
     font-size: 16px;
     font-weight: 800;
     letter-spacing: 0.04em;
-    color: #fff;
+    color: var(--th-header-text);
 }
 .app-header-slogan {
     font-size: 13px;
@@ -149,8 +149,8 @@
     height: 100%;
     display: grid;
     place-items: center;
-    background: rgba(22, 71, 200, 0.20);
-    color: #fff;
+    background: rgba(22, 71, 200, 0.10);
+    color: var(--th-header-text);
     font-family: "Montserrat", "Be Vietnam Pro", sans-serif;
     font-size: 18px;
     font-weight: 800;
@@ -280,6 +280,7 @@
     border: 1px solid var(--th-header-border);
     border-radius: 10px;
     background: var(--th-header-surface);
+    color: var(--th-header-text);
     cursor: pointer;
     font-size: 18px;
     transition: background .15s, border-color .15s;
@@ -370,15 +371,15 @@
 .app-header-bell-item-read:hover { background: #eef4ff; border-color: var(--th-primary-light); }
 .app-header-bell-item-done { color: #9aa8b8; font-size: 14px; }
 
-/* ===== Nút đổi ngôn ngữ trên header ===== */
+/* ===== Nút đổi ngôn ngữ trên header (nền sáng) ===== */
 .app-header .lang-picker {
     background: var(--th-header-surface);
     border: 1px solid var(--th-header-border);
-    color: #fff;
+    color: var(--th-header-text);
 }
 .app-header .lang-picker:hover {
     background: var(--th-header-surface-hover);
     border-color: var(--th-header-border);
 }
-.app-header .lang-toggle { color: #fff; }
-.app-header .lang-toggle .caret { color: rgba(255, 255, 255, 0.75); }
+.app-header .lang-toggle { color: var(--th-header-text); }
+.app-header .lang-toggle .caret { color: var(--th-text-3); }

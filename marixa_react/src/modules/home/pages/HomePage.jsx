@@ -28,7 +28,7 @@ const HomePage = () => (
             <section className="home-launcher" aria-labelledby="home-title">
                 <div className="home-heading">
                     <div><span className="home-eyebrow">BUSINESS LAUNCHER</span><h2 id="home-title">Không gian làm việc</h2></div>
-                    <p>Chọn một module để tiếp tục.</p>
+                    
                 </div>
                 <div className="home-grid">
                     {MODULES.filter((module) => canAccessModule(module.to)).map((module) => (
