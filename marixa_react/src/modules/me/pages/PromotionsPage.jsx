@@ -86,7 +86,7 @@ export default function PromotionsPage({ selfMode = false }) {
     };
 
     const Content = <section className={`promotion-page${selfMode ? " promotion-page--self" : " promotion-page--admin"}`}>
-        <header className="promotion-heading"><div><span className="promotion-eyebrow">PHÁT TRIỂN SỰ NGHIỆP</span><h1>{selfMode ? "Đề xuất thăng chức" : "Quản lý thăng chức"}</h1><p>{selfMode ? "Gửi nguyện vọng phát triển và theo dõi quá trình xét duyệt." : "Quản lý đề xuất từ nhân viên và đề cử trong phạm vi phụ trách."}</p></div><button className="promotion-primary" onClick={() => setFormOpen(true)}>＋ {selfMode ? "Tạo đề xuất" : "Đề cử thăng chức"}</button></header>
+        <header className="promotion-heading"><button className="promotion-primary" onClick={() => setFormOpen(true)}>＋ {selfMode ? "Tạo đề xuất" : "Đề cử thăng chức"}</button></header>
         {!selfMode && <nav className="promotion-tabs"><Link to="/employees">Nhân sự</Link><span>›</span><strong>Thăng chức</strong></nav>}
         <div className="promotion-stats">{[["Tổng đề xuất", counts[0]], ["Chờ xử lý", counts[1]], ["Đã duyệt", counts[2]], ["Từ chối", counts[3]]].map(([label, value], i) => <article className={`promotion-stat stat-${i}`} key={label}><span className="promotion-stat-icon" aria-hidden="true">{["▤", "◷", "✓", "×"][i]}</span><span>{label}</span><b>{value}</b></article>)}</div>
         {error && <div className="promotion-alert error">{String(error)}</div>}{notice && <div className="promotion-alert success">{notice}</div>}

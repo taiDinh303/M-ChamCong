@@ -128,16 +128,7 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
 
     return (
         <section className="att-hero">
-            <div className="att-hero-title">
-                <h2>Chấm công</h2>
-                {!isCheckedOut && (
-                    <p>
-                        {isCheckedIn
-                            ? "Chụp một ảnh của bạn để ra ca."
-                            : "Chụp một ảnh của bạn để vào ca."}
-                    </p>
-                )}
-            </div>
+            
 
             {!isCheckedOut && (
                 <CameraCapture

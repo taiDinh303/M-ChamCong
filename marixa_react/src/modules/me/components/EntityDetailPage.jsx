@@ -61,7 +61,7 @@ const EntityDetailPage = ({ kind, title, subtitle, columns, emptyMessage }) => {
     }, [kind, userId, employeeId]);
 
     return (
-        <AppLayout title={title} subtitle={subtitle} profile={profile}>
+        <AppLayout profile={profile}>
             <div className={`entd-page entd-page--${kind}`}>
                 {/* Hero banner */}
                 <header className={`entd-hero ${ACCENT[kind] || ""}`}>

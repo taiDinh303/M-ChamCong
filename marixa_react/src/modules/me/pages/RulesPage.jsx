@@ -47,7 +47,7 @@ const AttendanceRulesPage = () => {
     };
 
     const ruleCard = (r, idx) => {
-        const accent = ["#2f6df6", "#16a085", "#e67e22", "#8e44ad"][idx % 4];
+        const accent = ["#1647C8", "#167347", "#00BFD0", "#9A5A00"][idx % 4];
         return (
             <article
                 key={r.id}
@@ -122,11 +122,7 @@ const AttendanceRulesPage = () => {
     };
 
     return (
-        <AppLayout
-            profile={profile}
-            title="Quy định"
-            subtitle="Quy định chấm công hiện hành của công ty"
-        >
+        <AppLayout profile={profile}>
             <div className="att-content">
                 {error && (
                     <div className="att-error" role="alert">
@@ -138,20 +134,12 @@ const AttendanceRulesPage = () => {
                     <div className="att-loading">Đang tải...</div>
                 ) : rules.length === 0 ? (
                     <div className="att-card">
-                        <h2>Quy định chấm công</h2>
                         <p className="att-muted">
                             Chưa có quy định chấm công nào được công bố. Vui lòng liên hệ quản trị viên.
                         </p>
                     </div>
                 ) : (
                     <div className="rules-page">
-                        <section className="att-card">
-                            <h2>📋 Quy định chấm công</h2>
-                            <p className="att-muted">
-                                Đây là các quy tắc chấm công hiện hành áp dụng cho toàn công ty.
-                                Hãy đọc kỹ trước khi chấm công để tránh bị đánh dấu đi trễ / về sớm.
-                            </p>
-                        </section>
                         <div className="rules-grid">
                             {rules.map((r, i) => ruleCard(r, i))}
                         </div>

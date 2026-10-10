@@ -134,11 +134,7 @@ const StatisticsPage = () => {
         });
 
     return (
-        <AppLayout
-            title="Thống kê công"
-            subtitle="Theo dõi ngày công và giờ làm của bạn"
-            profile={profile}
-        >
+        <AppLayout profile={profile}>
             <div className="att-content">
                 {error && <div className="att-error">{error}</div>}
                 {loading && <div className="att-loading">Đang tải...</div>}

@@ -279,7 +279,7 @@ const LeavePage = () => {
         <AppLayout profile={profile}>
             <div className="leave-page">
                 <header className="leave-page-head">
-                    <div><h1>Đơn xin nghỉ phép</h1><p>Quản lý và theo dõi lịch nghỉ phép của bạn</p></div>
+                    
                     <button type="button" className="leave-btn primary" onClick={() => setShowForm(true)}>＋ Tạo đơn nghỉ phép</button>
                 </header>
                 {notice && <div className="leave-notice">{notice}</div>}
