@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useMemo } from "react";
 
 import { useSearchParams } from "react-router-dom";
 
@@ -372,11 +372,11 @@ const EmployeeAttendanceHistoryPage = () => {
 
             if (!time) return null;
 
-            const dateTime = new Date(`${form.attendanceDate}T${time}:00`);
+            const day = (isCheckout && form.checkInTime && time < form.checkInTime)
+                ? form.attendanceDate.slice(0, 8) + String(Number(form.attendanceDate.slice(8)) + 1).padStart(2, "0")
+                : form.attendanceDate;
 
-            if (isCheckout && form.checkInTime && time < form.checkInTime) dateTime.setDate(dateTime.getDate() + 1);
-
-            return dateTime.toISOString();
+            return new Date(`"${day}T${time}:00+07:00`).toISOString();
 
         };
 

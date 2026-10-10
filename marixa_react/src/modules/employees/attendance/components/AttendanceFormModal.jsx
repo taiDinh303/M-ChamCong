@@ -27,13 +27,59 @@ const normalizeEmployeeSearch = (value) =>
         .replace(/đ/gi, "d")
         .toLocaleLowerCase("vi-VN");
 
+// Khớp với AttendanceTimeCalculator (backend): cửa sổ nghỉ trưa 12:00–13:00
+const LUNCH_START_MIN = 720; // 12:00
+const LUNCH_END_MIN = 780;   // 13:00
+
+/**
+ * Tính actualHours (net) khớp AttendanceTimeCalculator.Compute:
+ * 1. elapsed = |out − in| (quá nửa đêm → +24h)
+ * 2. lunchOverlap = phần trùng cửa sổ 12:00–13:00 (max 60 phút)
+ * 3. net = elapsed − lunchOverlap, actualHours = round(net / 60)
+ */
+const computeActualHours = (inTime, outTime) => {
+    const [inH, inM] = inTime.split(":").map(Number);
+    const [outH, outM] = outTime.split(":").map(Number);
+    const inMin = inH * 60 + inM;
+    const outMin = outH * 60 + outM;
+
+    let elapsed = outMin - inMin;
+    if (elapsed < 0) elapsed += 24 * 60;
+
+    let lunch = 0;
+    if (inMin <= outMin) {
+        const s = Math.max(inMin, LUNCH_START_MIN);
+        const e = Math.min(outMin, LUNCH_END_MIN);
+        if (e > s) lunch = Math.min(60, e - s);
+    } else {
+        // Ca quá nửa đêm
+        if (inMin < LUNCH_END_MIN) lunch += 1440 - Math.max(inMin, LUNCH_START_MIN);
+        if (outMin > LUNCH_START_MIN) lunch += outMin - LUNCH_START_MIN;
+        lunch = Math.min(60, lunch);
+    }
+
+    const netMin = Math.max(0, elapsed - lunch);
+    return String(Math.round(netMin / 60));
+};
+
+// Chuyển ISO (UTC) → "HH:MM" VN (khớp formatVnTime / formatVnTime dùng ở bảng)
+const toVnHHMM = (iso) =>
+    iso
+        ? new Date(iso).toLocaleTimeString("en-GB", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+              timeZone: "Asia/Ho_Chi_Minh",
+          })
+        : "";
+
 const buildDraft = (row) =>
     row
         ? {
               employeeId: row.employeeId,
               attendanceDate: (row.attendanceDate || "").slice(0, 10),
-              checkInTime: row.checkInTime ? new Date(row.checkInTime).toTimeString().slice(0, 5) : "",
-              checkOutTime: row.checkOutTime ? new Date(row.checkOutTime).toTimeString().slice(0, 5) : "",
+              checkInTime: toVnHHMM(row.checkInTime),
+              checkOutTime: toVnHHMM(row.checkOutTime),
               status: row.status ?? "",
               actualHours: row.actualHours ?? "",
               approvalStatus: row.approvalStatus ?? 0,
@@ -77,11 +123,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
     const setTime = (key) => (event) => {
         const next = { ...form, [key]: event.target.value };
         if (next.checkInTime && next.checkOutTime) {
-            const [inHour, inMinute] = next.checkInTime.split(":").map(Number);
-            const [outHour, outMinute] = next.checkOutTime.split(":").map(Number);
-            let minutes = outHour * 60 + outMinute - (inHour * 60 + inMinute);
-            if (minutes < 0) minutes += 24 * 60;
-            next.actualHours = String(Math.round(minutes / 60));
+            next.actualHours = computeActualHours(next.checkInTime, next.checkOutTime);
         }
         setForm(next);
     };

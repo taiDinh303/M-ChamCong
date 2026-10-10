@@ -124,7 +124,7 @@ catch (Exception ex)
 // Dev: tu dong migrate CSDL local de khua schema moi (AttendanceLogs, ChangeSummary,
 // EmployeeReports, EmployeePromotions, EmployeeHandovers...). Idempotent + chi chay
 // Development (khong dong CSDL Somee trong Production). Khua loi 500 "invalid column/table".
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() && !dbConfig.IsPostgres)
 {
     using var scope = app.Services.CreateScope();
     try
