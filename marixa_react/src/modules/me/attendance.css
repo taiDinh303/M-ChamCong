@@ -332,6 +332,131 @@
 .att-week-day.checked .att-week-num { color: var(--mx-primary); }
 
 /* ============================================================
+   DARK HERO (attendance page — phong cách block-accounts)
+   ============================================================ */
+.att-hero--dark {
+    background: linear-gradient(120deg, #1a2332 0%, #0e1a26 100%);
+    border: 1px solid #26364a;
+    box-shadow: 0 6px 18px rgba(14, 26, 38, 0.20);
+}
+
+/* Camera capture area on dark bg */
+.att-hero--dark .att-cam video {
+    background: #0a0f16;
+}
+.att-hero--dark .att-cam-idle button {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: #e3ecff;
+}
+.att-hero--dark .att-cam-idle button:hover {
+    background: rgba(22, 71, 200, 0.25);
+    border-color: var(--mx-primary);
+    color: #fff;
+}
+.att-hero--dark .att-cam > button {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #fff;
+}
+.att-hero--dark .att-cam-done {
+    background: rgba(76, 201, 124, 0.12);
+    border-color: rgba(76, 201, 124, 0.30);
+}
+.att-hero--dark .att-cam-done strong { color: #4cc97c; }
+.att-hero--dark .att-cam-error { color: #ff6b6b; }
+
+/* CTA buttons on dark bg */
+.att-hero--dark .att-hero-actions button:first-child {
+    background: #4c9cff;
+}
+.att-hero--dark .att-hero-actions button:last-of-type {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* Hint: centered, on dark */
+.att-hero--dark .att-cam-hint {
+    background: rgba(243, 185, 40, 0.15);
+    border: 1px solid rgba(243, 185, 40, 0.30);
+    color: #f3b928;
+    text-align: center;
+}
+.att-cam-hint--center {
+    text-align: center;
+}
+
+/* 3-slot on dark hero */
+.att-hero--dark .att-hero-slot {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.att-hero--dark .att-hero-slot strong {
+    color: #fff;
+}
+.att-hero--dark .att-hero-label {
+    color: #b9c7d6;
+}
+.att-hero--dark .att-hero-status {
+    color: #4cc97c;
+}
+
+/* Slot icons */
+.att-hero-slot-ico {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex: 0 0 auto;
+}
+.att-hero-slot-ico--blue  { background: rgba(64, 156, 255, 0.22); color: #4c9cff; }
+.att-hero-slot-ico--gold  { background: rgba(243, 185, 40, 0.20); color: #f3b928; }
+.att-hero-slot-ico--green { background: rgba(76, 201, 124, 0.20); color: #4cc97c; }
+
+/* Done state on dark */
+.att-hero--dark .att-hero-done {
+    background: rgba(76, 201, 124, 0.12);
+    border: 1px solid rgba(76, 201, 124, 0.30);
+    color: #4cc97c;
+}
+
+/* Error on dark */
+.att-hero--dark .att-checkin-error {
+    color: #ff6b6b;
+}
+
+/* Week on dark hero */
+.att-hero--dark .att-week-head h2 {
+    color: #fff;
+}
+.att-hero--dark .att-week-count {
+    color: #b9c7d6;
+}
+.att-hero--dark .att-week-count strong {
+    color: #4c9cff;
+}
+.att-hero--dark .att-week-day {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.10);
+}
+.att-hero--dark .att-week-day .att-week-num {
+    color: #e3ecff;
+}
+.att-hero--dark .att-week-day .att-week-name {
+    color: #8ba3bc;
+}
+.att-hero--dark .att-week-day.today {
+    background: rgba(22, 71, 200, 0.30);
+    border-color: rgba(64, 156, 255, 0.40);
+}
+.att-hero--dark .att-week-day.checked .att-week-num {
+    color: #4c9cff;
+}
+
+/* ============================================================
    GENERIC CARDS
    ============================================================ */
 .att-card {

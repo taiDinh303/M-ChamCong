@@ -37,11 +37,8 @@ const buildWeek = (records) => {
     return { days, count: days.filter((d) => d.checked).length };
 };
 
-
-
 const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
     const [busy, setBusy] = useState(false);
-    const [done, setDone] = useState("");
     const [error, setError] = useState("");
     // Ảnh vừa chụp, chờ gửi kèm lần chấm công
     const [pendingPhoto, setPendingPhoto] = useState(null);
@@ -59,11 +56,11 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
 
     const week = buildWeek(history || []);
 
-    const todayLabel = !isCheckedIn
-        ? "Chưa chấm"
+    const statusInfo = !isCheckedIn
+        ? { label: "Chưa chấm", ico: "○" }
         : isCheckedOut
-            ? "Hoàn tất"
-            : "Đang làm";
+            ? { label: "Hoàn tất", ico: "✓" }
+            : { label: "Đang làm", ico: "●" };
 
     const check = async (type) => {
         if (!employeeId) {
@@ -81,7 +78,6 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
         }
         setBusy(true);
         setError("");
-        setDone("");
 
         try {
             let photoUrl = null;
@@ -106,11 +102,6 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
                 photoUrl
             );
             const data = response.data.data;
-            setDone(
-                data?.alreadyRecorded
-                    ? data.message || "Đã có lần chấm cùng loại gần đây."
-                    : data?.message || "Đã ghi nhận chấm công."
-            );
             // Dùng xong ảnh -> xóa luôn để lần ra/vào ca sau phải chụp mới
             setPendingPhoto(null);
             setCamKey((k) => k + 1);
@@ -127,9 +118,7 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
     };
 
     return (
-        <section className="att-hero">
-            
-
+        <section className="att-hero att-hero--dark">
             {!isCheckedOut && (
                 <CameraCapture
                     key={camKey}
@@ -148,7 +137,7 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
                         Vào ca
                     </button>
                     {!pendingPhoto && (
-                        <span className="att-cam-hint">
+                        <span className="att-cam-hint att-cam-hint--center">
                             Chụp ảnh trước khi nhấn Vào ca.
                         </span>
                     )}
@@ -163,7 +152,7 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
                         Ra ca
                     </button>
                     {!pendingPhoto && (
-                        <span className="att-cam-hint">
+                        <span className="att-cam-hint att-cam-hint--center">
                             Chụp ảnh trước khi nhấn Ra ca.
                         </span>
                     )}
@@ -176,16 +165,25 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
 
             <div className="att-hero-times">
                 <div className="att-hero-slot">
+                    <span className="att-hero-slot-ico att-hero-slot-ico--blue" aria-hidden="true">
+                        ⏱
+                    </span>
                     <span className="att-hero-label">Vào ca</span>
                     <strong>{checkInTime || "—"}</strong>
                 </div>
                 <div className="att-hero-slot">
+                    <span className="att-hero-slot-ico att-hero-slot-ico--gold" aria-hidden="true">
+                        ⏰
+                    </span>
                     <span className="att-hero-label">Ra ca</span>
                     <strong>{checkOutTime || "—"}</strong>
                 </div>
                 <div className="att-hero-slot">
-                    <span className="att-hero-label">Hôm nay</span>
-                    <strong className="att-hero-status">{todayLabel}</strong>
+                    <span className="att-hero-slot-ico att-hero-slot-ico--green" aria-hidden="true">
+                        {statusInfo.ico}
+                    </span>
+                    <span className="att-hero-label">Trạng thái</span>
+                    <strong className="att-hero-status">{statusInfo.label}</strong>
                 </div>
             </div>
 
@@ -211,12 +209,6 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
                 </div>
             </div>
 
-            {pendingPhoto && !busy && (
-                <p className="att-cam-hint">
-                    Ảnh đã sẵn sàng — nhấn Vào ca / Ra ca để lưu lại.
-                </p>
-            )}
-            {done && <p className="att-checkin-done">{done}</p>}
             {error && <p className="att-checkin-error">{error}</p>}
         </section>
     );
