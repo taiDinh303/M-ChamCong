@@ -3,6 +3,7 @@ import { getAuth } from "../../../services/auth/auth";
 import AppLayout from "../../../components/layout/AppLayout";
 import relatedApi from "../api/relatedApi";
 import "../attendance.css";
+import PageBanner from "./PageBanner";
 
 const FETCHERS = {
     contract: (id) => relatedApi.contractsByEmployee(id),
@@ -19,10 +20,17 @@ const ICONS = {
 };
 
 const ACCENT = {
-    contract: "entd--indigo",
-    salary: "entd--emerald",
-    insurance: "entd--sky",
-    bank: "entd--amber",
+    contract: "#1647C8",
+    salary: "#167347",
+    insurance: "#00BFD0",
+    bank: "#F3B928",
+};
+
+const KPI_LABEL = {
+    contract: "hợp đồng",
+    salary: "bản ghi lương",
+    insurance: "chế độ",
+    bank: "tài khoản",
 };
 
 const EntityDetailPage = ({ kind, title, subtitle, columns, emptyMessage }) => {
@@ -62,19 +70,19 @@ const EntityDetailPage = ({ kind, title, subtitle, columns, emptyMessage }) => {
 
     return (
         <AppLayout profile={profile}>
-            <div className={`entd-page entd-page--${kind}`}>
-                {/* Hero banner */}
-                <header className={`entd-hero ${ACCENT[kind] || ""}`}>
-                    <div className="entd-hero-icon">{ICONS[kind] || "📄"}</div>
-                    <div className="entd-hero-text">
-                        <h1>{title}</h1>
-                        <p>{subtitle}</p>
-                    </div>
-                    <div className="entd-hero-stat">
-                        <strong>{loading ? "…" : items.length}</strong>
-                        <span>ghi chép</span>
-                    </div>
-                </header>
+            <div className="entd-page">
+                <PageBanner
+                    icon={ICONS[kind] || "📄"}
+                    accent={ACCENT[kind]}
+                    kpis={[
+                        {
+                            icon: null,
+                            label: KPI_LABEL[kind] || "ghi chép",
+                            value: loading ? "…" : items.length,
+                            tone: "blue",
+                        },
+                    ]}
+                />
 
                 {error && <div className="att-error">{error}</div>}
 

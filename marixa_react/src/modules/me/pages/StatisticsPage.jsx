@@ -8,6 +8,7 @@ import StatCalendar from "../components/StatCalendar";
 import StatDetailTable from "../components/StatDetailTable";
 import StatWarnings from "../components/StatWarnings";
 import StatSummary from "../components/StatSummary";
+import PageBanner from "../components/PageBanner";
 import {
     dkey,
     computeStats,
@@ -141,6 +142,35 @@ const StatisticsPage = () => {
 
                 {!loading && !error && (
                     <div className="att-stat-wrap">
+                        <PageBanner
+                            icon="📊"
+                            kpis={[
+                                {
+                                    icon: "⏱",
+                                    label: "Giờ làm",
+                                    value: `${Math.round(stats.hoursWorked / 60)}h`,
+                                    tone: "blue",
+                                },
+                                {
+                                    icon: "📅",
+                                    label: "Ngày công",
+                                    value: `${stats.daysWorked}/${stats.expectedWorkdays}`,
+                                    tone: "green",
+                                },
+                                {
+                                    icon: "⚠",
+                                    label: "Đi trễ",
+                                    value: stats.late,
+                                    tone: "gold",
+                                },
+                                {
+                                    icon: "▲",
+                                    label: "Tăng ca",
+                                    value: `${Math.round((stats.otWeekday + stats.otWeekend + stats.otHoliday) / 60)}h`,
+                                    tone: "red",
+                                },
+                            ]}
+                        />
                         <div className="att-kpi-bar">
                             <button
                                 type="button"

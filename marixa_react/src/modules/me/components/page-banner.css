@@ -1,0 +1,158 @@
+/* ============================================================
+   PAGE BANNER (module me) — phong cách block-accounts
+   Nền tối gradient + icon + dải KPI trong suốt. Không tiêu đề.
+   ============================================================ */
+.page-banner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    border-radius: 16px;
+    background: linear-gradient(120deg, #1a2332 0%, #0e1a26 100%);
+    border: 1px solid #26364a;
+    box-shadow: 0 6px 18px rgba(14, 26, 38, 0.15);
+    overflow: hidden;
+}
+
+/* Vân trang trí nhẹ phía phải (giống block-accounts) */
+.page-banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        ellipse at top right,
+        rgba(0, 191, 208, 0.10) 0%,
+        transparent 55%
+    );
+    pointer-events: none;
+}
+
+.page-banner-ico {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+/* ===== Dải KPI ===== */
+.page-banner-kpis {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    min-width: 0;
+}
+.page-banner-kpi {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(2px);
+}
+.page-banner-kpi > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+.page-banner-kpi-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #b9c7d6;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.page-banner-kpi strong {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+.page-banner-kpi-ico {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex: 0 0 auto;
+}
+.page-banner-kpi--blue  .page-banner-kpi-ico { background: rgba(64, 156, 255, 0.22); }
+.page-banner-kpi--green .page-banner-kpi-ico { background: rgba(76, 201, 124, 0.22); }
+.page-banner-kpi--red   .page-banner-kpi-ico { background: rgba(255, 107, 107, 0.22); }
+.page-banner-kpi--gray  .page-banner-kpi-ico { background: rgba(148, 163, 184, 0.22); }
+.page-banner-kpi--gold  .page-banner-kpi-ico { background: rgba(243, 185, 40, 0.22); }
+
+/* ===== Slot hành động (nút CTA trong banner) ===== */
+.page-banner-action {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+.page-banner-action .page-banner-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 18px;
+    min-height: 44px;
+    border: 0;
+    border-radius: 10px;
+    background: #1647C8;
+    color: #fff;
+    font: 700 14px "Be Vietnam Pro", sans-serif;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 14px rgba(22, 71, 200, 0.4);
+}
+.page-banner-action .page-banner-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(22, 71, 200, 0.55);
+}
+
+/* ===== Responsive: mobile ===== */
+@media (max-width: 768px) {
+    .page-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px;
+        gap: 14px;
+    }
+    .page-banner-kpis {
+        flex-wrap: wrap;
+    }
+    .page-banner-kpi {
+        flex: 1 1 calc(50% - 5px);
+        padding: 10px 12px;
+    }
+    .page-banner-kpi strong { font-size: 18px; }
+    .page-banner-kpi-ico { width: 30px; height: 30px; font-size: 14px; }
+}
+
+/* ===== Nhỏ hơn nữa ===== */
+@media (max-width: 420px) {
+    .page-banner-kpi { flex: 1 1 calc(50% - 4px); }
+    .page-banner-kpi strong { font-size: 16px; }
+    .page-banner-kpi-label { font-size: 9px; }
+}

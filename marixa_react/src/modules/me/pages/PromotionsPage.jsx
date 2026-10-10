@@ -5,6 +5,7 @@ import { getAuth } from "../../../services/auth/auth";
 import HrAppLayout from "../../employees/hr/layout/HrAppLayout";
 import AppLayout from "../../../components/layout/AppLayout";
 import { localeForLanguage, useLanguage } from "../../../services/i18n/LanguageProvider";
+import PageBanner from "../components/PageBanner";
 import "../promotions.css";
 
 const unwrap = (response) => response?.data?.data;
@@ -86,6 +87,18 @@ export default function PromotionsPage({ selfMode = false }) {
     };
 
     const Content = <section className={`promotion-page${selfMode ? " promotion-page--self" : " promotion-page--admin"}`}>
+        {selfMode && (
+            <PageBanner
+                icon="🚀"
+                accent="#F3B928"
+                kpis={[
+                    { icon: "▣", label: "Tổng đề xuất", value: counts[0], tone: "blue" },
+                    { icon: "◷", label: "Chờ duyệt", value: counts[1], tone: "gold" },
+                    { icon: "✓", label: "Đã duyệt", value: counts[2], tone: "green" },
+                    { icon: "×", label: "Từ chối", value: counts[3], tone: "red" },
+                ]}
+            />
+        )}
         <header className="promotion-heading"><button className="promotion-primary" onClick={() => setFormOpen(true)}>＋ {selfMode ? "Tạo đề xuất" : "Đề cử thăng chức"}</button></header>
         {!selfMode && <nav className="promotion-tabs"><Link to="/employees">Nhân sự</Link><span>›</span><strong>Thăng chức</strong></nav>}
         <div className="promotion-stats">{[["Tổng đề xuất", counts[0]], ["Chờ xử lý", counts[1]], ["Đã duyệt", counts[2]], ["Từ chối", counts[3]]].map(([label, value], i) => <article className={`promotion-stat stat-${i}`} key={label}><span className="promotion-stat-icon" aria-hidden="true">{["▤", "◷", "✓", "×"][i]}</span><span>{label}</span><b>{value}</b></article>)}</div>

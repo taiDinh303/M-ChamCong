@@ -3,6 +3,7 @@ import { getAuth } from "../../../services/auth/auth";
 import AppLayout from "../../../components/layout/AppLayout";
 import relatedApi from "../api/relatedApi";
 import { useLanguage, localeForLanguage } from "../../../services/i18n/LanguageProvider";
+import PageBanner from "../components/PageBanner";
 import "../attendance.css";
 import "../leave.css";
 
@@ -278,20 +279,49 @@ const LeavePage = () => {
     return (
         <AppLayout profile={profile}>
             <div className="leave-page">
-                <header className="leave-page-head">
-                    
-                    <button type="button" className="leave-btn primary" onClick={() => setShowForm(true)}>＋ Tạo đơn nghỉ phép</button>
-                </header>
+                <PageBanner
+                    icon="🌴"
+                    accent="#00BFD0"
+                    action={
+                        <button
+                            type="button"
+                            className="page-banner-cta"
+                            onClick={() => setShowForm(true)}
+                        >
+                            ＋ Tạo đơn
+                        </button>
+                    }
+                    kpis={[
+                        {
+                            icon: "◇",
+                            label: "Phép năm",
+                            value: annualType ? formatDayCount(annualType.maxDays, language) : "Chưa có",
+                            tone: "blue",
+                        },
+                        {
+                            icon: "≡",
+                            label: "Đã dùng",
+                            value: annualType ? formatDayCount(used, language) : "—",
+                            tone: "gold",
+                        },
+                        {
+                            icon: "◷",
+                            label: "Chờ duyệt",
+                            value: annualType ? formatDayCount(pending, language) : "—",
+                            tone: "red",
+                        },
+                        {
+                            icon: "✓",
+                            label: "Còn lại",
+                            value: remaining == null ? "—" : formatDayCount(remaining, language),
+                            tone: "green",
+                        },
+                    ]}
+                />
                 {notice && <div className="leave-notice">{notice}</div>}
                 {error && <div className="att-error">{error}</div>}
                 {loading ? <div className="att-loading">Đang tải...</div> : (
                     <>
-                        <section className="leave-stats" aria-label="Tổng quan phép năm">
-                            <div className="leave-stat-card"><span>Phép năm</span><strong>{annualType ? formatDayCount(annualType.maxDays, language) : "Chưa cấu hình"}</strong></div>
-                            <div className="leave-stat-card"><span>Đã sử dụng</span><strong>{annualType ? formatDayCount(used, language) : "—"}</strong></div>
-                            <div className="leave-stat-card"><span>Đang chờ</span><strong>{annualType ? formatDayCount(pending, language) : "—"}</strong></div>
-                            <div className="leave-stat-card"><span>Còn lại</span><strong>{remaining == null ? "—" : formatDayCount(remaining, language)}</strong></div>
-                        </section>
                         <section className="leave-requests">
                             <div className="leave-section-head"><h2>Lịch nghỉ của tôi</h2><div className="leave-view-switch"><button type="button" className={view === "list" ? "active" : ""} onClick={() => setView("list")}>Danh sách</button><button type="button" className={view === "calendar" ? "active" : ""} onClick={() => setView("calendar")}>Lịch</button></div></div>
                             {view === "list" ? (

@@ -4,6 +4,7 @@ import { localeForLanguage, translate, useLanguage } from "../../../services/i18
 import AppLayout from "../../../components/layout/AppLayout";
 import HrAppLayout from "../../employees/hr/layout/HrAppLayout";
 import HrHero from "../../employees/hr/HrHero";
+import PageBanner from "../components/PageBanner";
 import "../handover.css";
 
 const dataOf = (response) => response?.data?.data;
@@ -566,6 +567,17 @@ export default function HandoverPage({ reviewMode = false, admin = false }) {
                 ]}
             />}
 
+            {!isReview && (
+                <PageBanner
+                    icon="📦"
+                    accent="#F3B928"
+                    kpis={[
+                        { icon: "▣", label: "Tổng yêu cầu", value: rows.length, tone: "blue" },
+                        { icon: "◷", label: "Chờ duyệt", value: rows.filter((r) => r.status === 0).length, tone: "gold" },
+                        { icon: "✓", label: "Đã duyệt", value: rows.filter((r) => r.status === 1).length, tone: "green" },
+                    ]}
+                />
+            )}
             {notice && <div className="hv-alert hv-alert--ok">{notice}</div>}
             {error && <div className="hv-alert hv-alert--error">{String(error)}</div>}
 

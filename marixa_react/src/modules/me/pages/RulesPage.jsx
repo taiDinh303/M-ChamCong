@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getAuth } from "../../../services/auth/auth";
 import AppLayout from "../../../components/layout/AppLayout";
 import relatedApi from "../api/relatedApi";
+import PageBanner from "../components/PageBanner";
 import "../attendance.css";
 
 const AttendanceRulesPage = () => {
@@ -124,6 +125,17 @@ const AttendanceRulesPage = () => {
     return (
         <AppLayout profile={profile}>
             <div className="att-content">
+                {!loading && !error && rules.length > 0 && (
+                    <PageBanner
+                        icon="📋"
+                        accent="#00BFD0"
+                        kpis={[
+                            { icon: "§", label: "Quy định", value: rules.length, tone: "blue" },
+                            { icon: "⏱", label: "Giờ vào", value: rules[0]?.checkInTime || "—", tone: "green" },
+                            { icon: "⏰", label: "Giờ ra", value: rules[0]?.checkOutTime || "—", tone: "gold" },
+                        ]}
+                    />
+                )}
                 {error && (
                     <div className="att-error" role="alert">
                         {error}
