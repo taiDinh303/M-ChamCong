@@ -365,6 +365,25 @@
 .att-photo-cell { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
 .att-photo-thumb { width: 40px; height: 40px; object-fit: cover; border-radius: 6px; border: 1px solid var(--mx-border); }
 
+/* Employee cell (mã nhỏ gray phía trên, tên bold phía dưới) */
+.att-emp-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.att-emp-code {
+    font-size: 11px;
+    color: var(--mx-text-2);
+    letter-spacing: 0.04em;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+.att-emp-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--mx-text);
+}
+
 /* Badges */
 .att-badge {
     display: inline-block;
