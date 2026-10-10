@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import relatedApi from "../api/relatedApi";
-import { formatVnTime } from "../../../utils/vnTime";
+import { formatVnTime, VN_TIMEZONE } from "../../../utils/vnTime";
 import CameraCapture from "./CameraCapture";
 
 const dayNames = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
@@ -37,6 +37,64 @@ const buildWeek = (records) => {
     return { days, count: days.filter((d) => d.checked).length };
 };
 
+// Đồng hồ giờ Việt Nam (UTC+7) cập nhật mỗi giây.
+const useVnClock = () => {
+    const [now, setNow] = useState(() => new Date());
+    useEffect(() => {
+        const id = setInterval(() => setNow(new Date()), 1000);
+        return () => clearInterval(id);
+    }, []);
+    const date = now.toLocaleDateString("vi-VN", {
+        weekday: "long",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        timeZone: VN_TIMEZONE,
+    });
+    const time = now.toLocaleTimeString("vi-VN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+        timeZone: VN_TIMEZONE,
+    });
+    return { date, time };
+};
+
+// Vị trí GPS hiện tại (vị trí chấm công thực tế).
+const useGeolocation = () => {
+    const [loc, setLoc] = useState({ status: "pending", text: "Đang xác định vị trí..." });
+    useEffect(() => {
+        if (typeof navigator === "undefined" || !navigator.geolocation) {
+            setLoc({ status: "err", text: "Trình duyệt không hỗ trợ định vị" });
+            return;
+        }
+        let alive = true;
+        navigator.geolocation.getCurrentPosition(
+            (p) => {
+                if (!alive) return;
+                setLoc({
+                    status: "ok",
+                    text: `${p.coords.latitude.toFixed(5)}, ${p.coords.longitude.toFixed(5)}`,
+                });
+            },
+            (e) => {
+                if (!alive) return;
+                const t =
+                    e.code === 1
+                        ? "Bạn chưa cấp quyền định vị cho trình duyệt"
+                        : "Chưa xác định được vị trí";
+                setLoc({ status: "err", text: t });
+            },
+            { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
+        );
+        return () => {
+            alive = false;
+        };
+    }, []);
+    return loc;
+};
+
 const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState("");
@@ -44,6 +102,9 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
     const [pendingPhoto, setPendingPhoto] = useState(null);
     // Đổi key sau mỗi lần chấm công -> camera về trạng thái "chưa chụp"
     const [camKey, setCamKey] = useState(0);
+
+    const { date: vnDate, time: vnTimeNow } = useVnClock();
+    const location = useGeolocation();
 
     const checkInTime = record?.checkInTime
         ? formatVnTime(record.checkInTime)
@@ -55,12 +116,6 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
     const isCheckedOut = !!checkOutTime;
 
     const week = buildWeek(history || []);
-
-    const statusInfo = !isCheckedIn
-        ? { label: "Chưa chấm", ico: "○" }
-        : isCheckedOut
-            ? { label: "Hoàn tất", ico: "✓" }
-            : { label: "Đang làm", ico: "●" };
 
     const check = async (type) => {
         if (!employeeId) {
@@ -118,7 +173,15 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
     };
 
     return (
-        <section className="att-hero att-hero--dark">
+        <section className="att-hero">
+            {/* ===== Đồng hồ + ngày (giờ Việt Nam) ===== */}
+            <div className="att-clock">
+                <span className="att-clock-date">{vnDate}</span>
+                <strong className="att-clock-time">{vnTimeNow}</strong>
+                <span className="att-clock-tz">Giờ Việt Nam · GMT+7</span>
+            </div>
+
+            {/* ===== Chụp ảnh (chưa ra ca) ===== */}
             {!isCheckedOut && (
                 <CameraCapture
                     key={camKey}
@@ -127,10 +190,12 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
                 />
             )}
 
+            {/* ===== CTA vào ca / ra ca (màu xanh) ===== */}
             {!isCheckedIn && !isCheckedOut ? (
                 <div className="att-hero-actions">
                     <button
                         type="button"
+                        className="att-hero-btn"
                         onClick={() => check(1)}
                         disabled={busy || !pendingPhoto}
                     >
@@ -146,6 +211,7 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
                 <div className="att-hero-actions">
                     <button
                         type="button"
+                        className="att-hero-btn"
                         onClick={() => check(2)}
                         disabled={busy || !pendingPhoto}
                     >
@@ -163,7 +229,27 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
                 </div>
             )}
 
-            <div className="att-hero-times">
+            {/* ===== Vị trí chấm công (GPS) ===== */}
+            <div
+                className={`att-location${
+                    location.status === "err" ? " att-location--err" : ""
+                }`}
+            >
+                <span className="att-location-ico" aria-hidden="true">
+                    📍
+                </span>
+                <div className="att-location-info">
+                    <span>Vị trí chấm công</span>
+                    <strong>
+                        {location.status === "ok"
+                            ? location.text
+                            : location.text}
+                    </strong>
+                </div>
+            </div>
+
+            {/* ===== 2 mốc: Vào ca / Ra ca (bỏ Trạng thái) ===== */}
+            <div className="att-hero-times att-hero-times--two">
                 <div className="att-hero-slot">
                     <span className="att-hero-slot-ico att-hero-slot-ico--blue" aria-hidden="true">
                         ⏱
@@ -172,21 +258,15 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
                     <strong>{checkInTime || "—"}</strong>
                 </div>
                 <div className="att-hero-slot">
-                    <span className="att-hero-slot-ico att-hero-slot-ico--gold" aria-hidden="true">
+                    <span className="att-hero-slot-ico att-hero-slot-ico--green" aria-hidden="true">
                         ⏰
                     </span>
                     <span className="att-hero-label">Ra ca</span>
                     <strong>{checkOutTime || "—"}</strong>
                 </div>
-                <div className="att-hero-slot">
-                    <span className="att-hero-slot-ico att-hero-slot-ico--green" aria-hidden="true">
-                        {statusInfo.ico}
-                    </span>
-                    <span className="att-hero-label">Trạng thái</span>
-                    <strong className="att-hero-status">{statusInfo.label}</strong>
-                </div>
             </div>
 
+            {/* ===== Tuần ===== */}
             <div className="att-week-section">
                 <div className="att-week-head">
                     <h2>Tuần này</h2>

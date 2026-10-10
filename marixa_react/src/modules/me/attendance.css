@@ -249,13 +249,14 @@
     padding: 8px 12px;
 }
 
-/* ——— CTA buttons (Vào ca / Ra ca) ——— */
+/* ——— CTA buttons (Vào ca / Ra ca) — NỀN XANH ĐẸP ——— */
 .att-hero-actions {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
-.att-hero-actions button {
+.att-hero-actions button,
+.att-hero-actions .att-hero-btn {
     width: 100%;
     padding: 16px;
     border: none;
@@ -264,20 +265,107 @@
     font-weight: 800;
     cursor: pointer;
     min-height: 56px;
-    transition: opacity .15s, transform .15s;
+    transition: opacity .15s, transform .15s, box-shadow .15s;
     letter-spacing: 0.02em;
 }
-.att-hero-actions button:hover:not(:disabled) { transform: translateY(-1px); }
-.att-hero-actions button:first-child { background: var(--mx-primary); color: #fff; }
-.att-hero-actions button:last-of-type { background: var(--mx-text); color: #fff; }
-.att-hero-actions button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.att-hero-actions button,
+.att-hero-actions .att-hero-btn {
+    background: linear-gradient(135deg, var(--mx-primary) 0%, var(--mx-cyan) 100%);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(22, 71, 200, 0.35);
+}
+.att-hero-actions button:hover:not(:disabled),
+.att-hero-actions .att-hero-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(22, 71, 200, 0.45);
+}
+.att-hero-actions button:disabled,
+.att-hero-actions .att-hero-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
 
-/* ——— 3-slot times ——— */
+/* ——— Đồng hồ giờ VN (đếm giờ + ngày) ——— */
+.att-clock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 16px;
+    border-radius: var(--mx-radius);
+    background: linear-gradient(120deg, #0e1a26 0%, #16293d 100%);
+    border: 1px solid #26364a;
+    box-shadow: 0 6px 18px rgba(14, 26, 38, 0.20);
+}
+.att-clock-date {
+    font-size: 14px;
+    font-weight: 600;
+    color: #b9c7d6;
+    text-transform: capitalize;
+}
+.att-clock-time {
+    font: 800 40px "Montserrat", "Be Vietnam Pro", sans-serif;
+    line-height: 1;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+}
+.att-clock-tz {
+    font-size: 11px;
+    color: #6b7f96;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+/* ——— Vị trí chấm công (GPS) ——— */
+.att-location {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: var(--mx-radius-sm);
+    background: var(--mx-page);
+    border: 1px solid var(--mx-border);
+}
+.att-location--err { background: var(--mx-warn-bg); border-color: var(--mx-warn-border); }
+.att-location-ico {
+    font-size: 18px;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 9px;
+    background: var(--mx-primary-soft);
+}
+.att-location--err .att-location-ico { background: var(--mx-warn-bg); }
+.att-location-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+.att-location-info span {
+    font-size: 11px;
+    color: var(--mx-text-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.att-location-info strong {
+    font-size: 14px;
+    color: var(--mx-text);
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.att-location--err .att-location-info strong { color: var(--mx-warn); }
+
+/* ——— 2-slot times (Vào ca / Ra ca) ——— */
 .att-hero-times {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 }
+.att-hero-times--two { grid-template-columns: repeat(2, 1fr); }
 .att-hero-slot {
     display: flex;
     flex-direction: column;

@@ -1,60 +1,52 @@
 /* ============================================================
-   MARIXA THEME TOKENS — NƠI GHI CHÉP DUY NHẤT (SINGLE SOURCE)
-   của toàn bộ mã màu trong project.
-
-   CÁCH DÙNG:
-   - Mọi file CSS khác NÊN tham chiếu bằng var(--th-...) thay
-     vì hardcode mã màu, ví dụ:
-         .my-card { background: var(--th-surface); }
-   - Muốn đổi theme toàn app (VD từ xanh sang xanh lục): chỉ cần
-     chỉnh 1 file này.
-   - Có thể tạo theme khác bằng :root[data-theme="dark"] {...}
-     đè lại các biến sau.
-
+   MARIXA THEME TOKENS — SINGLE SOURCE OF TRUTH
+   Chỉnh file này để đổi màu toàn app.
    IMPORT: main.jsx -> import "./theme.css" (trước index.css).
    ============================================================ */
 
 :root {
     /* ===== 1. MÃU THƯƠNG HIỆU (BRAND) ===== */
-    --th-primary: #1647C8;           /* Xanh MARIXA (chủ đạo) */
-    --th-primary-strong: #0F34A0;    /* Xanh đậm (hover/press) */
-    --th-primary-light: #2F6DF6;     /* Xanh tươi (action) */
-    --th-cyan: #00BFD0;              /* Xanh turquoise (accent) */
-    --th-gold: #F3B928;              /* Vàng (cảnh báo nhẹ) */
+    --th-primary: #1647C8;
+    --th-primary-strong: #0F34A0;
+    --th-primary-light: #2F6DF6;
+    --th-cyan: #00BFD0;
+    --th-gold: #F3B928;
+    --th-green: #16a34a;
+    --th-green-strong: #15803d;
 
-    /* ===== 2. HEADER (xanh, chuyển sang xanh nhạt) ===== */
-    --th-header-from: #1E56D0;       /* Cạnh trái: xanh đậm */
-    --th-header-mid: #3B6FE0;        /* Giữa: xanh vừa */
-    --th-header-to: #8FB8F4;        /* Cạnh phải: xanh nhạt */
-    --th-header-text: #FFFFFF;      /* Chữ chính trên header */
-    --th-header-sub: #DBE7FA;       /* Chữ phụ (slogan) */
-    --th-header-surface: rgba(255, 255, 255, 0.22);   /* Nền nút (bell/avatar/toggle) */
-    --th-header-surface-hover: rgba(255, 255, 255, 0.38);
-    --th-header-border: rgba(255, 255, 255, 0.40);
-    --th-header-shadow: 0 4px 14px rgba(30, 64, 124, 0.18);
+    /* ===== 2. HEADER (TRẮNG + XÁM) ===== */
+    --th-header-from: #FFFFFF;
+    --th-header-mid: #F8FAFC;
+    --th-header-to: #F1F5F9;
+    --th-header-text: #0e1a26;
+    --th-header-sub: #5a6b7b;
+    --th-header-surface: #f0f4f8;
+    --th-header-surface-hover: #e8edf3;
+    --th-header-border: #E2E8F0;
+    --th-header-shadow: 0 2px 8px rgba(23, 32, 51, 0.06);
 
-    /* ===== 3. SIDEBAR (nền xám nhẹ) ===== */
-    --th-side-bg: #F7F9FC;          /* Nền sidebar */
-    --th-side-border: #E4EAF2;      /* Viền phải */
-    --th-side-text: #526174;        /* Chữ item thường */
-    --th-side-text-strong: #172033; /* Chữ item hover */
-    --th-side-hover: #EDF2FA;       /* Nền item hover */
-    --th-side-active-bg: #E3ECFF;   /* Nền item đang chọn */
-    --th-side-active-text: #1647C8; /* Chữ item đang chọn */
-    --th-side-active-bar: #2F6DF6;  /* Thanh dọc item đang chọn */
-    --th-side-scroll: #C9D3E0;      /* Thanh cuộn mảnh */
+    /* ===== 3. SIDEBAR (TRẮNG + XÁM NHẸ) ===== */
+    --th-side-bg: #FFFFFF;
+    --th-side-border: #E4EAF2;
+    --th-side-text: #526174;
+    --th-side-text-strong: #172033;
+    --th-side-hover: #F5F7FA;
+    --th-side-active-bg: #E3ECFF;
+    --th-side-active-text: #1647C8;
+    --th-side-active-bar: #2F6DF6;
+    --th-side-scroll: #C9D3E0;
 
     /* ===== 4. NỀN & BỀ MẶT (XÁM NHẸ) ===== */
-    --th-bg: #EEF1F5;               /* Nền app (vùng trống) */
-    --th-surface: #FFFFFF;          /* Nền card/đropdown */
-    --th-surface-alt: #F6F8FB;      /* Nền thay thế (zebra row) */
-    --th-border: #DCE3EC;          /* Viền chung */
-    --th-divider: #EEF2F6;         /* Đường chia */
+    --th-bg: #F5F6F8;
+    --th-surface: #FFFFFF;
+    --th-surface-alt: #F8F9FB;
+    --th-border: #DCE3EC;
+    --th-divider: #EEF2F6;
 
     /* ===== 5. CHỮ (TEXT) ===== */
-    --th-text: #172033;            /* Chữ chính */
-    --th-text-2: #526174;          /* Chữ phụ */
-    --th-text-3: #8A99AB;          /* Chữ mờ (placeholder) */
+    --th-text: #172033;
+    --th-text-2: #526174;
+    --th-text-3: #8A99AB;
 
     /* ===== 6. TRẠNG THÁI (STATUS) ===== */
     --th-ok: #167347;
@@ -69,12 +61,17 @@
     --th-info: #1D4ED8;
     --th-info-bg: #DBEAFE;
 
-    /* ===== 7. DARK HERO (card chấm công trang /attendance) ===== */
-    --th-dark-hero-1: #1A2332;
-    --th-dark-hero-2: #0E1A26;
-    --th-dark-hero-border: #26364A;
+    /* ===== 7. ATTENDANCE CARD (TRẮNG + XÁM) ===== */
+    --th-card-bg: #FFFFFF;
+    --th-card-border: #E2E8F0;
+    --th-card-shadow: 0 2px 12px rgba(23, 32, 51, 0.06);
+    --th-clock-bg: #0e1a26;
+    --th-clock-text: #ffffff;
+    --th-clock-date: #94a3b8;
+    --th-slot-bg: #F8FAFC;
+    --th-slot-border: #E2E8F0;
 
-    /* ===== 8. ĐA CHẢNH (SHADOW) ===== */
+    /* ===== 8. SHADOW ===== */
     --th-shadow-card: 0 2px 8px rgba(23, 32, 51, 0.06);
     --th-shadow-lg: 0 8px 24px rgba(23, 32, 51, 0.10);
 
