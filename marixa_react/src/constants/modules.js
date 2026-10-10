@@ -54,8 +54,6 @@ export const MODULES = [
         roles: ["HR", "Manager", "Admin"],
         hideInUserSidebar: true,
     })),
-    { to: "/admin/attendance-history", label: "Chấm công (QL)", access: "admin" },
-    { to: "/admin/statistics", label: "Thống kê công (QL)", access: "admin" },
     { to: "/admin/contracts", label: "Hợp đồng", access: "admin" },
     { to: "/admin/leaves", label: "Nghỉ phép", access: "admin" },
     { to: "/admin/payroll", label: "Lương", access: "admin" },

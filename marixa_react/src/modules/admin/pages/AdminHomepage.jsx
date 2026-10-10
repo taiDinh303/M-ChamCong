@@ -17,8 +17,6 @@ const pad = (n) => String(n).padStart(2, "0");
 // 9 chức năng chính trên trang chủ admin (icon + nhãn phụ).
 const ICONS = [
     { to: "/admin/employees", icon: "👥", label: "Nhân sự", sub: "Hồ sơ & tuyển mới" },
-    { to: "/admin/attendance-history", icon: "⏱️", label: "Chấm công", sub: "Lịch sử & duyệt công" },
-    { to: "/admin/statistics", icon: "📊", label: "Thống kê", sub: "Công tác theo tháng" },
     { to: "/admin/contracts", icon: "📄", label: "Hợp đồng", sub: "Ký & theo dõi hạn" },
     { to: "/admin/leaves", icon: "🌴", label: "Nghỉ phép", sub: "Duyệt đơn xin nghỉ" },
     { to: "/admin/payroll", icon: "💰", label: "Lương", sub: "Bảng lương tháng" },

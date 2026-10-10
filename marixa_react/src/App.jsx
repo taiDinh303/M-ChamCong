@@ -6,8 +6,6 @@ import ReportsPage from "./modules/employees/hr/pages/ReportsPage";
 import WorkPage from "./modules/work/WorkPage";
 import ProfilePage from "./modules/profile/pages/ProfilePage";
 import AdminHomepage from "./modules/admin/pages/AdminHomepage";
-import AdminAttendanceHistoryPage from "./modules/admin/attendance/pages/AdminAttendanceHistoryPage";
-import AdminStatisticsPage from "./modules/admin/attendance/pages/AdminStatisticsPage";
 import AdminContractPage from "./modules/admin/contracts/pages/AdminContractPage";
 import AdminWorkPage from "./modules/admin/work/AdminWorkPage";
 import AdminBlockAccountPage from "./modules/admin/block-account/AdminBlockAccountPage";
@@ -116,20 +114,6 @@ function App() {
                 <Route path="/employees/promotions" element={guarded("/employees/promotions", <PromotionsPage />)} />
                 <Route path="/employees/handover" element={guarded("/employees/handover", <MeHandoverPage reviewMode />)} />
                 <Route
-                    path="/admin/attendance-history"
-                    element={guarded(
-                        "/admin/attendance-history",
-                        <AdminAttendanceHistoryPage />
-                    )}
-                />
-                <Route
-                    path="/admin/statistics"
-                    element={guarded(
-                        "/admin/statistics",
-                        <AdminStatisticsPage />
-                    )}
-                />
-                <Route
                     path="/admin/contracts"
                     element={guarded(
                         "/admin/contracts",
@@ -172,8 +156,6 @@ function App() {
                     )}
                 />
                 <Route path="/admin/employees" element={<Navigate to="/employees" replace />} />
-                <Route path="/admin/employees/attendance-history" element={guarded("/admin/employees/attendance-history", <AdminAttendanceHistoryPage hrMode />)} />
-                <Route path="/admin/employees/statistics" element={guarded("/admin/employees/statistics", <AdminStatisticsPage hrMode />)} />
                 <Route path="/admin/employees/leaves" element={guarded("/admin/employees/leaves", <AdminLeaveAdminPage hrMode />)} />
                 <Route path="/admin/employees/handover" element={guarded("/admin/employees/handover", <MeHandoverPage admin />)} />
                 <Route path="/admin/employees/reports" element={guarded("/admin/employees/reports", <ReportsPage admin />)} />

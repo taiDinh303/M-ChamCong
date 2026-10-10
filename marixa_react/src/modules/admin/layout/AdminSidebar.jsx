@@ -1,10 +1,6 @@
 import { NavLink } from "react-router-dom";
 const ADMIN_NAV_ITEMS = [
     { to: "/admin", label: "Dashboard" },
-    { to: "/admin/employees", label: "Nhân sự" },
-    { to: "/admin/attendance-history", label: "Chấm công" },
-    { to: "/employees/work-schedule", label: "Lịch làm" },
-    { to: "/admin/statistics", label: "Thống kê công" },
     { to: "/admin/contracts", label: "Hợp đồng" },
     { to: "/admin/reports", label: "Báo cáo" },
     { to: "/admin/work", label: "Công tác" },
