@@ -1,9 +1,15 @@
-/* ===== THING SHELL: header nav 100% width + body (sidebar + main) ===== */
+/* ============================================================
+   MARIXA — APP SHELL (header + sidebar + main)
+   Theme: navy dark header + light gray content
+   Chủ đạo: xám nhẹ (nền nội dung) + xanh tối (header/sidebar)
+   ============================================================ */
+
+/* ===== SHELL ===== */
 .app-shell {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: #f6f7f9;
+    background: #eef1f5;
     font-family: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
     color: #0e1a26;
 }
@@ -14,7 +20,7 @@
     min-height: 0;
 }
 
-/* ===== HEADER NAV: toàn rộng ===== */
+/* ===== HEADER (navy dark gradient) ===== */
 .app-header {
     position: sticky;
     top: 0;
@@ -25,8 +31,9 @@
     justify-content: space-between;
     gap: 16px;
     padding: 12px 24px;
-    background: #fff;
-    border-bottom: 1px solid #e8edf2;
+    background: linear-gradient(90deg, #0e1a26 0%, #16293d 55%, #143a52 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 6px 20px rgba(10, 20, 32, 0.28);
 }
 
 .app-header-left {
@@ -46,15 +53,16 @@
     justify-content: center;
     gap: 5px;
     padding: 0;
-    border: 1px solid #d1d5db;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 10px;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.08);
     cursor: pointer;
-    transition: border-color 0.15s;
+    transition: background 0.15s, border-color 0.15s;
 }
 
 .app-header-toggle:hover {
-    border-color: #005b94;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.30);
 }
 
 .app-header-toggle span {
@@ -62,7 +70,7 @@
     width: 18px;
     height: 2px;
     border-radius: 1px;
-    background: #0e1a26;
+    background: #e3ecff;
 }
 
 /* Logo + slogan */
@@ -80,12 +88,13 @@
     width: 34px;
     height: 34px;
     border-radius: 10px;
-    background: #005b94;
+    background: linear-gradient(135deg, #1647C8 0%, #00BFD0 100%);
     color: #fff;
     font-family: "Montserrat", sans-serif;
     font-size: 16px;
     font-weight: 800;
     flex-shrink: 0;
+    box-shadow: 0 3px 10px rgba(22, 71, 200, 0.45);
 }
 
 .app-header-logo-text {
@@ -93,13 +102,13 @@
     font-size: 16px;
     font-weight: 800;
     letter-spacing: 0.04em;
-    color: #0e1a26;
+    color: #fff;
 }
 
 .app-header-slogan {
     font-size: 13px;
-    color: #5a6b7b;
-    border-left: 1px solid #e8edf2;
+    color: #b9c7d6;
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
     padding-left: 12px;
     white-space: nowrap;
 }
@@ -112,8 +121,6 @@
     gap: 12px;
 }
 
-
-
 @media (max-width: 520px) {
     .app-header { padding-right: 12px; padding-left: 12px; }
     .app-header-user { gap: 7px; }
@@ -124,16 +131,17 @@
     height: 44px;
     display: grid;
     place-items: center;
-    border: 1px solid #d1d5db;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 10px;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.10);
     overflow: hidden;
     cursor: pointer;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, background 0.15s;
 }
 
 .app-header-avatar-btn:hover {
-    border-color: #005b94;
+    border-color: rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.18);
 }
 
 .app-header-avatar-btn img {
@@ -147,14 +155,14 @@
     height: 100%;
     display: grid;
     place-items: center;
-    background: #e3f0ff;
-    color: #005b94;
+    background: rgba(22, 71, 200, 0.35);
+    color: #fff;
     font-family: "Montserrat", "Be Vietnam Pro", sans-serif;
     font-size: 18px;
     font-weight: 800;
 }
 
-/* Menu dropdown */
+/* Menu dropdown (tụt xuống vùng sáng) */
 .app-header-menu {
     position: absolute;
     top: 52px;
@@ -243,7 +251,7 @@
     z-index: 45;
 }
 
-/* Form đổi mật khẩu (mượn khung modal sẵn có) */
+/* Form đổi mật khẩu */
 .att-cpw-form {
     display: flex;
     flex-direction: column;
@@ -299,8 +307,7 @@
     }
 }
 
-
-/* ===== CHUÔNG THÔNG BÁO (Notification Bell) ===== */
+/* ===== CHUÔNG THÔNG BÁO ===== */
 .app-header-bell { position: relative; }
 .app-header-bell-btn {
     position: relative;
@@ -309,14 +316,17 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #d5dee8;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 10px;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.08);
     cursor: pointer;
     font-size: 18px;
     transition: background .15s, border-color .15s;
 }
-.app-header-bell-btn:hover { background: #f5f8ff; border-color: #2f6df6; }
+.app-header-bell-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.35);
+}
 .app-header-bell-badge {
     position: absolute;
     top: -5px;
@@ -332,7 +342,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 0 2px #fff;
+    box-shadow: 0 0 0 2px #0e1a26;
 }
 .app-header-bell-menu {
     position: absolute;
@@ -398,3 +408,20 @@
 }
 .app-header-bell-item-read:hover { background: #eef4ff; border-color: #2f6df6; }
 .app-header-bell-item-done { color: #9aa8b8; font-size: 14px; }
+
+/* ===== Nút đổi ngôn ngữ (lang-picker) trên header dark ===== */
+.app-header .lang-picker {
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #e3ecff;
+}
+.app-header .lang-picker:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.30);
+}
+.app-header .lang-toggle {
+    color: #e3ecff;
+}
+.app-header .lang-toggle .caret {
+    color: #9fb3c8;
+}
