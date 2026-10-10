@@ -1,4 +1,4 @@
-using M.Contract.Repositories.Entity;
+﻿using M.Contract.Repositories.Entity;
 using M.Contract.Serivces.Interface;
 using M.Contract.Services.Interface;
 using M.Core.Base;
@@ -40,6 +40,9 @@ namespace M.API
             services.AddSwaggerConfig();
             services.AddHttpContextAccessor();
             services.AddMemoryCache();
+            // Supabase Storage – anh cham cong ben khi Render redeploy.
+            services.AddSingleton<SupabaseStorageService>(sp =>
+                new SupabaseStorageService(configuration));
 
             services.AddCors(options =>
             {

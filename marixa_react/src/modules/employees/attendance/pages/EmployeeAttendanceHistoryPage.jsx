@@ -376,7 +376,7 @@ const EmployeeAttendanceHistoryPage = () => {
                 ? form.attendanceDate.slice(0, 8) + String(Number(form.attendanceDate.slice(8)) + 1).padStart(2, "0")
                 : form.attendanceDate;
 
-            return new Date(`"${day}T${time}:00+07:00`).toISOString();
+            return new Date(`${day}T${time}:00+07:00`).toISOString();
 
         };
 
