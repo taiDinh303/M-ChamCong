@@ -1,0 +1,83 @@
+/* ============================================================
+   MARIXA THEME TOKENS — NƠI GHI CHÉP DUY NHẤT (SINGLE SOURCE)
+   của toàn bộ mã màu trong project.
+
+   CÁCH DÙNG:
+   - Mọi file CSS khác NÊN tham chiếu bằng var(--th-...) thay
+     vì hardcode mã màu, ví dụ:
+         .my-card { background: var(--th-surface); }
+   - Muốn đổi theme toàn app (VD từ xanh sang xanh lục): chỉ cần
+     chỉnh 1 file này.
+   - Có thể tạo theme khác bằng :root[data-theme="dark"] {...}
+     đè lại các biến sau.
+
+   IMPORT: main.jsx -> import "./theme.css" (trước index.css).
+   ============================================================ */
+
+:root {
+    /* ===== 1. MÃU THƯƠNG HIỆU (BRAND) ===== */
+    --th-primary: #1647C8;           /* Xanh MARIXA (chủ đạo) */
+    --th-primary-strong: #0F34A0;    /* Xanh đậm (hover/press) */
+    --th-primary-light: #2F6DF6;     /* Xanh tươi (action) */
+    --th-cyan: #00BFD0;              /* Xanh turquoise (accent) */
+    --th-gold: #F3B928;              /* Vàng (cảnh báo nhẹ) */
+
+    /* ===== 2. HEADER (xanh, chuyển sang xanh nhạt) ===== */
+    --th-header-from: #1E56D0;       /* Cạnh trái: xanh đậm */
+    --th-header-mid: #3B6FE0;        /* Giữa: xanh vừa */
+    --th-header-to: #8FB8F4;        /* Cạnh phải: xanh nhạt */
+    --th-header-text: #FFFFFF;      /* Chữ chính trên header */
+    --th-header-sub: #DBE7FA;       /* Chữ phụ (slogan) */
+    --th-header-surface: rgba(255, 255, 255, 0.22);   /* Nền nút (bell/avatar/toggle) */
+    --th-header-surface-hover: rgba(255, 255, 255, 0.38);
+    --th-header-border: rgba(255, 255, 255, 0.40);
+    --th-header-shadow: 0 4px 14px rgba(30, 64, 124, 0.18);
+
+    /* ===== 3. SIDEBAR (nền xám nhẹ) ===== */
+    --th-side-bg: #F7F9FC;          /* Nền sidebar */
+    --th-side-border: #E4EAF2;      /* Viền phải */
+    --th-side-text: #526174;        /* Chữ item thường */
+    --th-side-text-strong: #172033; /* Chữ item hover */
+    --th-side-hover: #EDF2FA;       /* Nền item hover */
+    --th-side-active-bg: #E3ECFF;   /* Nền item đang chọn */
+    --th-side-active-text: #1647C8; /* Chữ item đang chọn */
+    --th-side-active-bar: #2F6DF6;  /* Thanh dọc item đang chọn */
+    --th-side-scroll: #C9D3E0;      /* Thanh cuộn mảnh */
+
+    /* ===== 4. NỀN & BỀ MẶT (XÁM NHẸ) ===== */
+    --th-bg: #EEF1F5;               /* Nền app (vùng trống) */
+    --th-surface: #FFFFFF;          /* Nền card/đropdown */
+    --th-surface-alt: #F6F8FB;      /* Nền thay thế (zebra row) */
+    --th-border: #DCE3EC;          /* Viền chung */
+    --th-divider: #EEF2F6;         /* Đường chia */
+
+    /* ===== 5. CHỮ (TEXT) ===== */
+    --th-text: #172033;            /* Chữ chính */
+    --th-text-2: #526174;          /* Chữ phụ */
+    --th-text-3: #8A99AB;          /* Chữ mờ (placeholder) */
+
+    /* ===== 6. TRẠNG THÁI (STATUS) ===== */
+    --th-ok: #167347;
+    --th-ok-bg: #ECFDF5;
+    --th-ok-border: #BBF7D0;
+    --th-warn: #9A5A00;
+    --th-warn-bg: #FEF9C3;
+    --th-warn-border: #FDE68A;
+    --th-err: #B42318;
+    --th-err-bg: #FEF2F2;
+    --th-err-border: #FECACA;
+    --th-info: #1D4ED8;
+    --th-info-bg: #DBEAFE;
+
+    /* ===== 7. DARK HERO (card chấm công trang /attendance) ===== */
+    --th-dark-hero-1: #1A2332;
+    --th-dark-hero-2: #0E1A26;
+    --th-dark-hero-border: #26364A;
+
+    /* ===== 8. ĐA CHẢNH (SHADOW) ===== */
+    --th-shadow-card: 0 2px 8px rgba(23, 32, 51, 0.06);
+    --th-shadow-lg: 0 8px 24px rgba(23, 32, 51, 0.10);
+
+    /* ===== 9. FONT ===== */
+    --th-font: "Be Vietnam Pro", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
