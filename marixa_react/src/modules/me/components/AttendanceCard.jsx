@@ -235,9 +235,6 @@ const AttendanceCard = ({ employeeId, record, history, onChanged }) => {
                     location.status === "err" ? " att-location--err" : ""
                 }`}
             >
-                <span className="att-location-ico" aria-hidden="true">
-                    📍
-                </span>
                 <div className="att-location-info">
                     <span>Vị trí chấm công</span>
                     <strong>
