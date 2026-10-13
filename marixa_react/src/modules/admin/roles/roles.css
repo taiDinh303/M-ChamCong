@@ -118,6 +118,13 @@
 .roles-roles-table td.roles-th-center {
     text-align: center;
 }
+/* ===== Cột Thao tác: header + cell cùng căn phải để thẳng hàng ===== */
+.roles-th-act,
+.roles-roles-table th.roles-th-act,
+.roles-roles-table td.roles-th-act {
+    text-align: right;
+    white-space: nowrap;
+}
 
 /* ===== Cột Thao tác: wrapper 2 nút (Sửa + Xóa/Hệ thống) ===== */
 .roles-role-actions {
