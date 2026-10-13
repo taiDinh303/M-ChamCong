@@ -11,7 +11,11 @@ namespace M.API.Seed
     /// </summary>
     public static class RoleSeeder
     {
-        private static readonly string[] Roles = { "Admin", "Employee", "Manager", "HR" };
+        // Core (đã map quyền module): Admin, Employee, Manager, HR.
+        // Accounting/Sale/Marketing: bổ sung 12/10/2026 — "code trước",
+        // chưa gán vào quyền module. Dùng tên "Accountant" (khớp SampleDataSeeder).
+        private static readonly string[] Roles =
+            { "Admin", "Employee", "Manager", "HR", "Accountant", "Sale", "Marketing" };
 
         public static async Task SeedAsync(IServiceProvider services)
         {

@@ -1,72 +1,77 @@
 # 07 — Design system và giao diện chấm công Marixa
 
+> Tác giả & chủ tài liệu: **Đinh Văn Tài**.
+> Design system **gắn với mã nguồn thật**: token màu nằm ở `marixa_react/src/theme.css` (nguồn duy nhất), cấu trúc module nằm ở `marixa_react/src/constants/modules.js` và `App.jsx`, layout ở `marixa_react/src/components/layout`.
+
+## 0. Cách đọc (dành cho AI)
+
+- Token màu/số: sửa **một chỗ duy nhất** `theme.css`, toàn app đổi theo.
+- Quyền module/sidebar: đọc `MODULES` trong `modules.js` (nguồn quyền giao diện).
+- Layout: `AppLayout.jsx` (NV), `AdminLayout`, `HrLayout` trong `components/layout` & các module.
+
 ## 1. Hướng thiết kế
 
-Thiết kế dựa trên logo **Marixa** người dùng đã cung cấp: chữ M xanh lam chuyển cyan và ngôi sao vàng ở giữa. Skill `ui-ux-pro-max` được dùng để kiểm tra tính nhất quán, khả năng tiếp cận, vùng chạm và bố cục dashboard. Logo gốc hiện chưa là file trong workspace; các mã màu dưới đây là **màu thiết kế chọn từ ảnh xem trước**, cần đối chiếu với file logo gốc khi phát triển UI. Giao diện sản phẩm ưu tiên nền sáng, bảng rõ, ít trang trí; hiệu ứng chuyển sắc dành cho logo/điểm nhấn thương hiệu, không phủ nền lên bảng dữ liệu.
+Thiết kế bám logo **Marixa** (chữ M xanh lam chuyển cyan, ngôi sao vàng). Nền sáng, bảng rõ, ít trang trí; hiệu ứng chuyển sắc chỉ dùng cho logo/điểm nhấn thương hiệu, không phủ lên bảng dữ liệu.
 
-Nguyên tắc: một màn hình một hành động chính trên điện thoại; HR desktop thấy ngoại lệ và việc cần xử lý trước biểu đồ; mọi trạng thái phải có chữ giải thích. Không dùng màu hoặc icon đơn lẻ để thông báo thành công/lỗi. Giao diện tiếng Việt, ngày `dd/MM/yyyy`, giờ 24h, số phút/giờ hiển thị nhất quán.
+Nguyên tắc:
+- Mobile: một màn một hành động chính (chấm công), vùng chạm đủ lớn.
+- Desktop (HR/Admin): bảng rõ, lọc/sort/phân trang, priority là "việc cần xử lý".
+- Mọi trạng thái luôn kèm **chữ**, không chỉ màu/icon.
+- Giao diện tiếng Việt, ngày `dd/MM/yyyy`, giờ 24h (hiển thị `Asia/Ho_Chi_Minh` qua `vnTime.js`).
 
-## 2. Design tokens V1
+## 2. Design tokens (từ `theme.css`)
 
-| Token | Giá trị | Cách dùng |
+| Token (CSS var) | Giá trị | Cách dùng |
 | --- | --- | --- |
-| `brand.primary` | `#1647C8` | Nút chính, link, focus, mục menu đang chọn. |
-| `brand.cyan` | `#00BFD0` | Điểm nhấn phụ, đồ họa nhẹ; không dùng làm chữ nhỏ trên nền trắng. |
-| `brand.gold` | `#F3B928` | Dấu nhấn thương hiệu và biểu tượng chú ý; không dùng làm màu chữ trạng thái. |
-| `text.primary` | `#172033` | Nội dung chính. |
-| `text.secondary` | `#526174` | Nội dung phụ, nhãn mô tả. |
-| `surface.page` | `#F7F9FC` | Nền trang. |
-| `surface.card` | `#FFFFFF` | Bảng, form, thanh trạng thái. |
-| `border.default` | `#DCE3EC` | Viền bảng/form. |
-| `state.success` | `#167347` | Đã đồng bộ/đã duyệt, luôn kèm chữ. |
-| `state.warning` | `#9A5A00` | Chờ đồng bộ/ngoài văn phòng, luôn kèm chữ. |
-| `state.error` | `#B42318` | Lỗi upload/từ chối, luôn kèm hướng xử lý. |
-| `focus.ring` | `#1647C8` | Viền focus rõ trên nền sáng. |
+| `--th-primary` | `#1647C8` | Nút chính, link, focus. |
+| `--th-primary-strong` | `#0F34A0` | Hover/active của primary. |
+| `--th-cyan` | `#00BFD0` | Điểm nhấn phụ, đồ họa. |
+| `--th-gold` | `#F3B928` | Nhấn thương hiệu, biểu tượng chú ý. |
+| `--th-text` | `#172033` | Nội dung chính. |
+| `--th-text-2` | `#526174` | Nội dung phụ. |
+| `--th-bg` | `#F5F6F8` | Nền trang. |
+| `--th-surface` | `#FFFFFF` | Card/bảng/form. |
+| `--th-border` | `#DCE3EC` | Viền. |
+| `--th-ok` / `--th-warn` / `--th-err` | `#167347` / `#9A5A00` / `#B42318` | Trạng thái, luôn kèm chữ. |
+| `--th-font` | `"Be Vietnam Pro", system-ui` | Font chính, hỗ trợ tiếng Việt. |
 
-Chữ dùng `Be Vietnam Pro` (hoặc font sans hệ thống nếu font không tải được) để hỗ trợ tiếng Việt. Cỡ chữ: nội dung 16 px, nhãn phụ 14 px, tiêu đề trang 24 px, tiêu đề section 18–20 px; dữ liệu thời gian dùng chữ số tabular. Thang khoảng cách 4/8/12/16/24/32 px; bo góc 8 px cho input/nút, 12 px cho card; bóng đổ chỉ ở menu/hộp nổi. Phần tử chạm chính tối thiểu 44×44 px, khoảng cách giữa hai nút chạm tối thiểu 8 px. Đảm bảo độ tương phản chữ thông thường tối thiểu 4,5:1 và focus hiển thị rõ.
+Chữ: nội dung 16px, nhãn phụ 14px, tiêu đề 24px, section 18–20px; thời gian dùng chữ số tabular. Khoảng cách 4/8/12/16/24/32px. Bo góc: input/nút 8px, card 12px. Phần tử chạm tối thiểu 44×44px. Tương phản chữ tối thiểu ~4.5:1.
+
+> Kiểm tra: màu logo cần đối chiếu với asset gốc (`marixa_react/public/marixa-logo.png`) khi làm UI; test tương phản từng cặp chữ/nền.
 
 ## 3. Cấu trúc điều hướng
 
-### Nhân viên và HR trên mobile
+- **Nhân viên (module `me`)**: sidebar `attendance` nhóm (Chấm công, Lịch sử, Thống kê, Nghỉ phép, Bảng lương, Hợp đồng, BHXH, Tài khoản NG, Quy định, Báo cáo, Thăng chức, Bàn giao). Lọc `hideInUserSidebar` khỏi sidebar NV.
+- **HR/Manager/Admin**: `Sidebar`/`AdminSidebar` khu `/employees` và `/admin`; header gọn + notification + language picker.
+- Module đặc biệt: `/work` (Công việc), `/profile` (Hồ sơ), `/kich-hoat` (Kích hoạt), `/unauthorized` (Thiếu quyền).
 
-Bottom navigation tối đa bốn mục: **Hôm nay**, **Công của tôi**, **Đơn của tôi**, **Tài khoản**. HR có lối vào **Quản lý HR** từ trang tài khoản hoặc header; không nhồi bảng HR vào bottom nav. Ở `/today`, phần trên hiển thị ngày, giờ và trạng thái hiện tại; giữa màn hình là một nút chính **Chấm vào** hoặc **Chấm ra**; dưới là hai mốc công hôm nay, ảnh/GPS và thông báo đồng bộ. Chỉ hiện một CTA chính tại một thời điểm.
+## 4. Màn hình & trạng thái chính
 
-### HR và admin trên desktop
-
-Sidebar gồm Tổng quan, Nhân viên, Chấm công, Đơn/yêu cầu, Bảng công, Báo cáo; admin có thêm Cấu hình, Tài khoản, Nhật ký. Header gọn với tên màn hình, kỳ/ngày đang xem, thông báo quan trọng và tài khoản. Bảng HR có search, filter, sorting, phân trang, cột trạng thái dễ quét; filter quan trọng nằm trong URL. Form hồ sơ/đơn dài chia section, thao tác duyệt có hộp xác nhận kèm lý do khi từ chối. Không dùng modal cho một quy trình dài.
-
-## 4. Màn hình và trạng thái chính
-
-| Màn hình | Ưu tiên nội dung | Trạng thái cần thiết |
+| Màn hình (route) | Ưu tiên nội dung | Trạng thái cần |
 | --- | --- | --- |
-| Đăng nhập | Logo Marixa, email, mật khẩu, nút đăng nhập, link hướng dẫn liên hệ admin khi quên mật khẩu | Loading, sai thông tin, tài khoản bị khóa, lỗi mạng, bắt đổi mật khẩu tạm. |
-| Hôm nay | Giờ và trạng thái, nút chấm lớn, preview camera, thông tin ảnh/GPS | Chưa chấm, đã vào, đã ra, xin quyền, đang lưu, local offline, đang đồng bộ, đã đồng bộ, ảnh lỗi, ngoài văn phòng. |
-| Công của tôi | Lịch tháng, từng ngày, giờ vào/ra, công/ngoại lệ, nút yêu cầu sửa | Chưa có dữ liệu, thiếu mốc, đơn chờ, kỳ đã khóa. |
-| Đơn của tôi | Đơn nghỉ, tăng ca, sửa công; tạo đơn; số phép còn lại | Nháp, chờ duyệt, đã duyệt, từ chối, hủy. |
-| HR tổng quan | Việc cần xử lý, số người đã/chưa chấm, đơn chờ, kỳ công | Loading, không có ngoại lệ, lỗi tải, cảnh báo storage. |
-| HR chấm công | Bảng có lọc, chi tiết event, ảnh lightbox, GPS dễ hiểu, ghi kết quả kiểm tra | Ngoài văn phòng, đồng bộ trễ, ảnh chờ/lỗi, thiếu mốc. |
-| Bảng công | Kỳ tháng, ngoại lệ, xem từng ngày, đánh dấu kiểm tra, xuất Excel | Mở, HR đã kiểm tra, admin đã khóa, bản tạm. |
-| Admin cấu hình ca chung | Danh sách phiên bản, ca đang áp dụng, ngày làm trong tuần, giờ vào/ra, nghỉ trưa, phút miễn trừ đi trễ, ngày hiệu lực; nút lưu phiên bản mới | Kiểm tra thứ tự giờ/khoảng hiệu lực, xem trước ca sau đổi, xác nhận lưu, lỗi lưu, lịch sử và audit. Không có thao tác gán ca riêng theo nhân viên trong V1. |
-| Admin cấu hình khác | Ngày nghỉ/làm bù, vị trí, loại nghỉ, phép, retention, tài khoản | Cấu hình chưa đủ, thay đổi có hiệu lực, lỗi lưu, nhật ký. |
+| `/login` | Logo, form (tài khoản + mật khẩu + remember), nút | Loading, sai thông tin, khóa tài khoản, lỗi mạng, cần kích hoạt. |
+| `/attendance` | Giờ + trạng thái, nút chấm lớn, camera preview, ảnh/GPS | Chưa chấm, đã vào, đã ra, xin quyền camera, ngoài văn phòng, trùng log. |
+| `/attendance/attendance-history` | Lịch công, vào/ra, công/ngoại lệ, sửa | Chưa có dữ liệu, thiếu mốc, kỳ khóa. |
+| `/attendance/statistics` | KPI thống kê, cảnh báo, bảng chi tiết | Loading, rỗng. |
+| `/attendance/leave` | Đơn nghỉ, số phép còn lại | Nháp/chờ/duyệt/từ chối/hủy. |
+| `/employees/*` (HR/Admin) | Bảng nhân sự, đối soát, duyệt | Lọc, phân trang, trạng thái duyệt. |
+| `/admin` + `/admin/*` | Dashboard, tài khoản, role, khóa tài khoản, hợp đồng, lương, nghỉ việc, báo cáo | Cảnh báo storage, thiếu cấu hình. |
 
-Không hiện tọa độ thô trên danh sách HR; dùng “Trong văn phòng”, “Ngoài văn phòng — cần kiểm tra”, “Không đủ độ chính xác” và chi tiết khoảng cách khi mở record. Ảnh chấm công chỉ tải khi người có quyền mở chi tiết; lightbox có tên, ngày giờ, trạng thái và nút đóng/điều hướng bằng bàn phím. Nếu ảnh đã hết hạn, hiển thị “Ảnh đã hết thời hạn lưu” và vẫn giữ thông tin event.
+Không hiện tọa độ GPS thô trên danh sách HR; dùng "Trong/Ngoài văn phòng" + chi tiết khi mở record. Ảnh chấm công chỉ tải khi mở chi tiết.
 
 ## 5. Nội dung thông báo mẫu
 
 | Tình huống | Câu hiển thị |
 | --- | --- |
-| Lưu offline thành công | “Đã lưu trên thiết bị. Ứng dụng sẽ đồng bộ khi có mạng.” |
-| Server xác nhận, ảnh còn chờ | “Đã ghi nhận giờ chấm. Ảnh đang được đồng bộ.” |
-| Đồng bộ hoàn tất | “Chấm công đã đồng bộ lúc 08:01.” |
-| Ngoài văn phòng | “Đã ghi nhận vị trí ngoài văn phòng. HR sẽ kiểm tra.” |
-| Camera/GPS bị chặn | “Cần quyền camera và vị trí để chấm công. Hãy cấp quyền hoặc gửi yêu cầu sửa công.” |
-| Thiếu chấm ra | “Ngày công chưa hoàn chỉnh. Hãy chấm ra hoặc gửi yêu cầu sửa công.” |
-| Upload ảnh lỗi | “Giờ chấm đã được ghi nhận. Ảnh chưa tải lên; hãy giữ ứng dụng và thử lại khi có mạng.” |
+| Chấm thành công | "Đã ghi nhận VÀO CA." / "Đã ghi nhận RA CA." |
+| Chấm trùng gần đây | "Đã có lần chấm cùng loại gần đây. Không cần bấm lại." |
+| Camera lỗi | "Không truy cập được camera. Hãy cấp quyền và thử lại." |
+| Lỗi API | "Không kết nối được máy chủ API. Hãy bật backend hoặc kiểm tra VITE_API_BASE_URL." |
 
-Không dùng “thành công” cho dữ liệu mới nằm trong queue local. Nút đang gửi phải khóa tạm và có phản hồi trong thời gian ngắn; không khiến người dùng bấm lặp vì không rõ trạng thái.
+Nút đang gửi phải khóa tạm; không khiến người dùng bấm lặp.
 
-## 6. Tiếp cận, responsive và kiểm tra thiết kế
+## 6. Tiếp cận & responsive
 
-Kiểm tra ở 375, 768, 1024 và 1440 px; không cuộn ngang ở mobile. Tôn trọng safe area điện thoại, không che CTA bằng bottom nav. Input có nhãn thật và thông báo lỗi cạnh trường; dialog có nút hủy, phím Escape và focus hợp lý. Bảng HR có tiêu đề cột và trạng thái diễn đạt bằng chữ. Ưu tiên tải ít ảnh và có chỗ giữ kích thước để tránh nhảy bố cục. Tôn trọng `prefers-reduced-motion`; chuyển động chỉ dùng để thể hiện kết quả thao tác, không cản thao tác. Dùng một bộ icon SVG nhất quán thay cho emoji.
+Kiểm tra 375/768/1024/1440px, không cuộn ngang ở mobile. Tôn trọng safe area; input có nhãn + lỗi cạnh trường; dialog có Esc + focus hợp lý; bảng có tiêu đề cột + trạng thái bằng chữ. Dùng bộ icon nhất quán, không emoji trong nội dung nghiệp vụ (đổi dần các icon emoji còn sót).
 
-Khi triển khai UI, kiểm tra lại màu logo từ asset gốc, test tương phản từng cặp chữ/nền, và làm ít nhất một vòng thử thao tác chấm công trên điện thoại thật ngoài môi trường văn phòng. Luồng nghiệp vụ đối chiếu với [03-workflow.md](03-workflow.md); quyền màn hình đối chiếu với [01-business-analysis.md](01-business-analysis.md).
+Luồng nghiệp vụ đối chiếu [03-workflow.md](03-workflow.md); quyền module đối chiếu [01-business-analysis.md](01-business-analysis.md) và `MODULES`.

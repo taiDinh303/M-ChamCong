@@ -1,6 +1,24 @@
 # 08 — Triển khai Marixa: Vercel + Render + Supabase
 
-Cập nhật: 09/10/2026.
+> Tác giả & chủ tài liệu: **Đinh Văn Tài**. Cập nhật: 09/10/2026 (bổ sung tác giả bởi Tài, 12/10/2026).
+> Tài liệu mô tả cơ chế DB linh hoạt (SQL Server dev / PostgreSQL Supabase prod) và quy trình deploy Render + Vercel của bộ stack **đang chạy thực tế**.
+
+### Cách đọc (dành cho AI)
+- Đây là file kỹ thuật triển khai chi tiết nhất; đọc khi cần config Render/Supabase/Vercel.
+- Mã nguồn liên quan: `marixa_aspnet/M.API/DatabaseConfig.cs`, `NpgsqlConnectionStringNormalizer.cs`, `Program.cs`; `render.yaml` (root); `marixa_react/vercel.json`.
+- Ảnh lưu tại `marixa_aspnet/M.API/SupabaseStorageService.cs` (bucket public `marixa-photos`).
+
+### Hosting đang chạy (bổ sung 12/10/2026 — Đinh Văn Tài)
+
+Các instance chủ dự án đang hosting (liên kết dashboard/URL public, không chứa secret):
+
+| Nền tảng | Role | Instance / URL | Plan | Region |
+| --- | --- | --- | --- | --- |
+| Supabase | PostgreSQL + Storage | ref `zphqfcwrwitrqdeueonu` · [dashboard](https://supabase.com/dashboard/project/zphqfcwrwitrqdeueonu) | Free | Singapore |
+| Render | ASP.NET 8 API | `https://marixa001-asp.onrender.com` (swagger: `/swagger`) · [dashboard](https://dashboard.render.com/web/srv-db4hmnks728c73aq6h90) | Free | — |
+| Vercel | React SPA | `https://marixa001.vercel.app` · [dashboard](https://vercel.com/taiteam/marixa_001) | Hobby | — |
+
+> Lưu ý (12/10): chỉ còn **1 project Supabase duy nhất `zphqfcwrwitrqdeueonu`** (Free, Singapore). Các ref cũ (test/prod) đã bỏ khỏi tài liệu. Biến `SUPABASE__URL` trong `render.yaml` trỏ tới project này. Khi đặt `CONNECTIONSTRINGS__MYCNN` (session pooler user `postgres.zphqfcwrwitrqdeueonu`) và `SUPABASE__URL`, đối chiếu với đúng project.
 
 ## 1. Kiến trúc tổng quan
 
@@ -8,9 +26,9 @@ Cập nhật: 09/10/2026.
 ┌─────────────────────────────────────────────────────────────────────┐
 │  marixa_react (Vite SPA)                                            │
 │  Deploy: Vercel                                                     │
-│  Domain: https://marixa-web.vercel.app                              │
+│  Domain: https://marixa001.vercel.app                              │
 │                                                                     │
-│  Env var: VITE_API_BASE_URL=https://marixa-api.onrender.com/api     │
+│  Env var: VITE_API_BASE_URL=https://marixa001-asp.onrender.com/api  │
 │  → axiosClient.baseURL = URL Render (cross-origin, CORS cần bật)    │
 │  → resolvePhotoUrl tự derive API origin (ảnh chấm công)            │
 │                                                                     │
@@ -22,7 +40,7 @@ Cập nhật: 09/10/2026.
 ┌─────────────────────────────────────────────────────────────────────┐
 │  marixa_aspnet/M.API (ASP.NET 8)                                    │
 │  Deploy: Render Web Service (Docker)                                │
-│  Domain: https://marixa-api.onrender.com                            │
+│  Domain: https://marixa001-asp.onrender.com                         │
 │                                                                     │
 │  Env vars (Render Dashboard → Environment):                         │
 │    ASPNETCORE_ENVIRONMENT=Production                                │
@@ -38,8 +56,8 @@ Cập nhật: 09/10/2026.
                            ▼
 ┌─────────────────────────────────────────────────────────────────────┐
 │  Supabase PostgreSQL (ap-southeast-1)                               │
-│  Project ref: pkpwcpatuslfjyoivbuf (test)                           │
-│                vmpsfwwfgoeritayfnvv (prod)                          │
+│  Project ref: zphqfcwrwitrqdeueonu (Free, Singapore)              │
+│  (bỏ ref cũ test/prod từ 12/10)                                    │
 │                                                                     │
 │  Session pooler:                                                    │
 │    host=aws-0-ap-southeast-1.pooler.supabase.com:5432             │
@@ -96,7 +114,7 @@ Khi provider = `PostgreSQL`, connection string URI (`postgresql://user:pass@host
      ```
      host=aws-0-ap-southeast-1.pooler.supabase.com
      port=5432
-     user=postgres.<REF>      (VD: postgres.pkpwcpatuslfjyoivbuf)
+     user=postgres.<REF>      (VD: postgres.zphqfcwrwitrqdeueonu)
      database=postgres
      password=<mật khẩu từ lúc tạo project>
      ```
@@ -117,7 +135,7 @@ Khi provider = `PostgreSQL`, connection string URI (`postgresql://user:pass@host
    | `JWTSETTINGS__KEY` | `(secret 32+ ký tự, tạo mới cho prod)` |
 
 4. **Health Check Path**: `/swagger` (đã cấu hình trong render.yaml)
-5. Ghi lại **Render URL**: `https://marixa-api.onrender.com` (hoặc subdomain khác Render cấp)
+5. Ghi lại **Render URL**: `https://marixa001-asp.onrender.com` (health check: `https://marixa001-asp.onrender.com/swagger`)
 
 > ⚠️ **Render Free tier**: idle timeout 15 phút → API "ngủ" giữa các request.
 > Dùng plan **Starter ($7)** hoặc **Standard ($70)** để production không bị lag.
@@ -140,9 +158,9 @@ Khi provider = `PostgreSQL`, connection string URI (`postgresql://user:pass@host
 
    | Variable | Value | Scope |
    |---|---|---|
-   | `VITE_API_BASE_URL` | `https://marixa-api.onrender.com/api` | Production + Preview |
+   | `VITE_API_BASE_URL` | `https://marixa001-asp.onrender.com/api` | Production + Preview |
 
-5. Deploy → ghi lại **Vercel URL**: `https://marixa-web.vercel.app` (hoặc domain tùy chọn)
+5. Deploy → ghi nhận **Vercel URL**: `https://marixa001.vercel.app`
 
 > `vercel.json` đã có `outputDirectory: "dist"` + SPA rewrite (React Router fallback).
 > Khi đặt `VITE_API_BASE_URL`, axiosClient gọi Render bằng URL tuyệt đối.
@@ -184,7 +202,7 @@ CORS đã cấu hình sẵn:
 
 | Biến | Nơi đặt | Giá trị | Secret? |
 |---|---|---|---|
-| `VITE_API_BASE_URL` | Vercel → Env | `https://marixa-api.onrender.com/api` | Không |
+| `VITE_API_BASE_URL` | Vercel → Env | `https://marixa001-asp.onrender.com/api` | Không |
 | `DATABASE__PROVIDER` | Render → Env | `PostgreSQL` | Không |
 | `CONNECTIONSTRINGS__MYCNN` | Render → Env | `postgresql://...` | **Có** (password) |
 | `JWTSETTINGS__KEY` | Render → Env | 32+ ký tự | **Có** |

@@ -1,56 +1,87 @@
 # 01 — Phân tích nghiệp vụ hệ thống chấm công Marixa
 
+> Tác giả & chủ tài liệu: **Đinh Văn Tài**.
+> Đối tượng đọc: AI (Agnes) khi được yêu cầu đọc dự án, và developer.
+> Mục đích: mô tả phạm vi, người dùng, quyền và quy tắc nghiệp vụ của hệ thống chấm công Marixa V1, **gắn với mã nguồn đang chạy** trong repo (backend `marixa_aspnet/M.API` .NET 8, frontend `marixa_react` React 19 + Vite).
+
+## 0. Cách đọc file này (dành cho AI)
+
+- File này là "bản đồ nghiệp vụ": đọc trước khi đụng vào code, để biết **ai làm gì, được quyền gì, các quy tắc nào là bắt buộc**.
+- Nếu file này khác với `docs/plan.md` (mục quyết định đang hiệu lực), **mục 2 của `plan.md` thắng** — đó là quy tắc hiện hành.
+- Nếu cần xem các module/trang/chức năng đã có hay chưa: đọc `docs/worklog.md` (bảng ma trận theo trang & module).
+- Các file đặc tả khác: `02` dữ liệu, `03` luồng, `04` kiến trúc, `05` test, `06`+`08` triển khai, `07` UI.
+
 ## 1. Mục tiêu và phạm vi
 
-Marixa cần một nguồn dữ liệu thống nhất cho công, nghỉ phép và tăng ca của **khối văn phòng dưới 15 người**. Nhân viên và HR tự chấm công bằng điện thoại hoặc trình duyệt; HR đối soát; một admin quản lý cấu hình và khóa kỳ. Giao diện và thuật ngữ đều dùng tiếng Việt, múi giờ nghiệp vụ là `Asia/Ho_Chi_Minh`.
+Marixa cần một hệ thống chấm công cho **khối văn phòng (quy mô nhỏ, ~dưới 15 người)**. Nhân viên chấm vào/ra bằng web (desktop hoặc mobile, có hỗ trợ camera + GPS); HR đối soát; Admin quản trị cấu hình, tài khoản và khóa kỳ.
 
-V1 gồm hồ sơ nhân viên cơ bản, tài khoản, chấm vào/ra có ảnh và GPS, hàng đợi offline, yêu cầu sửa công, đơn nghỉ và sổ phép năm, yêu cầu tăng ca, bảng công tháng, thống kê HR, Excel bảng công và PDF đơn nghỉ. Không gồm tính lương, thuế, bảo hiểm, công nhân, công trường, điểm danh đội, kho hoặc xuất nhập khẩu. `MOTAHETHONG.docx` chỉ gợi ý nguyên tắc chống mất dữ liệu, audit, phân quyền và trải nghiệm; không dùng tên công ty, role hay module khác trong tài liệu đó làm yêu cầu của Marixa.
+Giao diện và thuật ngữ dùng **tiếng Việt**, múi giờ nghiệp vụ là `Asia/Ho_Chi_Minh` (UTC+7).
 
-## 2. Người dùng và quyền
+### Có trong V1 (đã code)
+- Hồ sơ nhân viên, phòng ban, vị trí, hợp đồng, bảo hiểm, thuế, lương cơ bản, tài khoản ngân hàng.
+- Chấm công vào/ra có chụp ảnh (camera) và GPS; ghi log vào/ra; tính giờ thực tế + tăng ca theo quy tắc chấm công.
+- Lịch sử chấm công, thống kê công, quy định chấm công (tự động).
+- Nghỉ phép (đơn + sổ phép), tăng ca (đơn), sửa công (yêu cầu điều chỉnh).
+- Bảng lương (payroll), hợp đồng, thăng chức, bàn giao khi nghỉ việc, báo cáo của nhân viên.
+- Công việc (work project / task / performance).
+- Quản trị: cấp/khóa tài khoản, quản lý role, dashboard admin.
 
-| Khả năng | Nhân viên | HR | Admin |
-| --- | --- | --- | --- |
-| Chấm vào/ra, xem công và hồ sơ của mình | Có | Có | Có nếu gắn hồ sơ nhân viên |
-| Gửi đơn nghỉ, tăng ca, yêu cầu sửa công | Có | Có | Có nếu gắn hồ sơ nhân viên |
-| Xem công, ảnh, GPS và thống kê toàn khối văn phòng | Không | Có | Có |
-| Tạo/sửa hồ sơ nhân viên cơ bản, đối soát bảng công, xuất Excel | Không | Có | Có |
-| Duyệt đơn/yêu cầu của nhân viên khác và của admin có hồ sơ nhân viên | Không | Có | Có, trừ của chính mình |
-| Duyệt đơn/yêu cầu của HR | Không | Không | Có |
-| Cấp/khóa tài khoản, đổi role, cấu hình chính sách, khóa/mở kỳ | Không | Không | Có |
+### Không có trong V1 (scope ngoài)
+- Không tính thuế phức tạp / khai báo BHXH tự động, không công trường/công nhân/điểm danh đội.
+- Không mô-đun kho, xuất nhập khẩu, CRM.
+- Không có hệ đa ca riêng cho từng nhân viên (V1 dùng **một ca làm chung** cho toàn công ty, do admin cấu hình).
 
-Mỗi tài khoản chỉ có một trong ba role: `employee`, `hr`, `admin`. Có thể có nhiều nhân viên, nhiều HR và **đúng một tài khoản admin đang hoạt động**. Không có đăng ký tài khoản công khai. HR có thể tạo hồ sơ; admin cấp tài khoản và quyền. Không ai được duyệt yêu cầu của chính mình: nếu admin cũng có hồ sơ nhân viên và gửi đơn cá nhân, HR duyệt đơn đó; admin không thể tự duyệt. Hồ sơ nhân viên và tài khoản đăng nhập là hai đối tượng khác nhau để giữ lịch sử khi tài khoản bị khóa.
+## 2. Người dùng và vai trò (role)
 
-## 3. Quy tắc công chuẩn
+Hệ thống hiện dùng **4 role** (xem `M.API/Seed/RoleSeeder.cs` và `marixa_react/src/constants/modules.js`):
 
-- V1 có **một ca làm chung cho toàn bộ nhân viên** do admin quản lý. Giá trị khởi tạo là thứ 2–thứ 7, 08:00–17:00, nghỉ 12:00–13:00 và 0 phút miễn trừ đi trễ; đây là mặc định có thể chỉnh, không phải giờ cố định. Admin đặt ngày làm việc, giờ vào/ra, khoảng nghỉ trưa, phút miễn trừ đi trễ và ngày hiệu lực; mỗi lần đổi lưu phiên bản và audit. V1 không gán ca riêng cho từng nhân viên.
-- Một ngày có tối đa một lượt chấm vào và một lượt chấm ra hợp lệ cho mỗi người. Chấm sớm hoặc ra muộn được ghi nhận, nhưng không tự phát sinh giờ tăng ca được trả/tính.
-- Phút làm thường = phần giao của khoảng chấm vào–ra với các khoảng làm việc trước/sau nghỉ trưa của **ca chung có hiệu lực tại ngày công**, sau khi áp dụng đơn nghỉ và điều chỉnh được duyệt. Giờ ngoài ca chỉ được ghi vào tăng ca khi yêu cầu tăng ca tương ứng đã được duyệt.
-- Vào sau giờ bắt đầu ca là đi trễ theo số phút miễn trừ do admin cấu hình; ra trước giờ kết thúc ca là về sớm, trừ phần có đơn nghỉ hoặc điều chỉnh được duyệt. Mặc định miễn trừ đi trễ 0 phút.
-- Thiếu chấm vào hoặc ra là **công chưa hoàn chỉnh**; hệ thống không tự suy ra mốc còn thiếu. Nhân viên gửi yêu cầu sửa công, HR duyệt, riêng yêu cầu của HR do admin duyệt.
-- Ngày lễ/ngày nghỉ đặc biệt được admin nhập vào lịch trước khi tính công. Không tự giả định chính sách ngày lễ hay mức trả lương.
-- Mỗi lượt chấm cần ảnh camera và tọa độ GPS. Nếu người dùng từ chối quyền hoặc thiết bị không lấy được một trong hai, không gửi lượt chấm thiếu bằng chứng; màn hình hướng dẫn cấp quyền hoặc gửi yêu cầu sửa công.
-- Chấm ở ngoài vị trí văn phòng **vẫn được ghi nhận** và gắn cờ `ngoài văn phòng` để HR kiểm tra. Admin nhập tọa độ/bán kính văn phòng; cờ này không tự biến lượt chấm thành vắng mặt.
-- Mốc online lấy giờ máy chủ làm thời gian công; giữ giờ thiết bị để đối chiếu. Mốc offline giữ giờ thiết bị, giờ máy chủ nhận và cờ `đồng bộ trễ`; HR kiểm tra trước khi chốt kỳ.
+| Role | Mô tả | Quyền chính |
+| --- | --- | --- |
+| `Employee` | Nhân viên | Chấm công, xem hồ sơ/công/đơn của mình, gửi đơn nghỉ/tăng ca/sửa công, xem bảng lương của mình. |
+| `HR` | Nhân sự | Tạo/sửa hồ sơ, đối soát & duyệt chấm công, duyệt đơn nghỉ/tăng ca, quản lý hợp đồng/ascendant/bàn giao. |
+| `Manager` | Quản lý | Nhóm quyền tương đương HR ở các module nhân sự; tham gia cấp tài khoản, duyệt một số luồng. |
+| `Admin` | Quản trị | Toàn quyền: cấp/khóa tài khoản, quản lý role, cấu hình ca làm/lịch/chính sách, khóa/mở kỳ, xem báo cáo & audit toàn hệ thống. |
 
-## 4. Nghỉ phép, tăng ca và chỉnh công
+Quy tắc phân quyền (frontend `permission.js` + backend `[Authorize(Roles=...)]`):
+- Mỗi module khai báo quyền truy cập trong `MODULES` (`access: "user" | "admin"`, hoặc `roles: [...]`).
+- Sidebar/đường dẫn chỉ là hỗ trợ giao diện; **mọi endpoint bắt buộc có `[Authorize]` phía backend** (trừ login/activate).
+- Nguyên tắc "không tự duyệt của chính mình" được áp dụng ở tầng nghiệp vụ khi người phát sinh đơn cũng chính là người có quyền duyệt (ghi rõ trong `03-workflow.md`).
 
-Đơn nghỉ có loại nghỉ do admin cấu hình, ngày bắt đầu/kết thúc, lựa chọn cả ngày hoặc nửa ngày, lý do và trạng thái `nháp → chờ duyệt → đã duyệt/từ chối/hủy`. HR duyệt đơn của nhân viên và đơn cá nhân của admin; admin duyệt đơn của HR. Đơn đang chờ không trừ phép chính thức. Đơn nghỉ phép năm đã duyệt sinh giao dịch trừ trong sổ phép; hủy hợp lệ sinh giao dịch hoàn, không sửa số dư trực tiếp. Số phép được cấp/chuyển năm do admin hoặc HR nhập bằng giao dịch có lý do; V1 không tự đặt số ngày phép theo luật hay hợp đồng. Không cho duyệt vượt số dư, trừ khi admin thực hiện điều chỉnh sổ phép có lý do trước.
+> Lưu ý: V1 thiết kế ban đầu (theo tài liệu cũ của đồng đội) dùng 3 role `employee/hr/admin`; code hiện chạy đã mở rộng lên **4 role** (thêm `Manager`). Việc gộp/mở rộng role thêm nếu cần phải do chủ dự án quyết định, không tự ý đổi.
 
-Yêu cầu tăng ca nêu ngày, giờ bắt đầu/kết thúc và lý do. HR duyệt yêu cầu của nhân viên và yêu cầu cá nhân của admin; admin duyệt của HR. Chấm ra muộn chỉ là dữ kiện kiểm tra, không thay thế phê duyệt tăng ca. Yêu cầu sửa công nêu mốc đúng đề nghị và lý do; khi duyệt tạo bản điều chỉnh riêng, giữ nguyên sự kiện chấm gốc, ảnh và lịch sử.
+> **Quyết định xác nhận 12/10/2026 (Đinh Văn Tài):** Ảnh chấm công **giữ public** (chưa chuyển private). Phép năm giữ quy tắc hiện tại. Ca làm chung **giữ đơn giản** (1 rule active; rút đề xuất "version + ngày hiệu lực"). Offline (IndexedDB) và khóa kỳ + snapshot + Excel/PDF **chưa làm**.
+> **EN (AI note):** Photos stay **public** (Supabase bucket `marixa-photos`). Leave-accrual rule unchanged. Shared shift stays **simple** (1 active `AttendanceRule`). Offline/IndexedDB queue, period lock + snapshot + Excel/PDF export are all **not built yet** — see `worklog.md`.
+
+> **Role (mở rộng / Roles):** V1 hiện 4 role đã map quyền. Đã **seed** thêm 3 role nghiệp vụ: **Kế toán (Accountant), Sale, Marketing** (trong `RoleSeeder.cs`, **chưa** gán quyền module).
+> EN: V1 has 4 mapped roles. 3 business roles (`Accountant`, `Sale`, `Marketing`) are **seeded** in code (no module permissions wired yet).
+
+## 3. Quy tắc chấm công (ca làm chung)
+
+- V1 dùng **một ca làm chung** do admin cấu hình trong bảng `AttendanceRule` (bắt đầu/ kết thúc, số phút nghỉ giữa ca, cờ active). Giá trị khởi tạo (seed) là 08:00–17:00, nghỉ trưa; đây là **mặc định có thể chỉnh**, không phải giờ cố định trong code.
+- Khi có đủ cặp vào/ra, hệ thống tính **giờ thực tế (net)** đã trừ nghỉ ca và **giờ tăng ca** (phần vượt mốc ra ca chuẩn) tại thời điểm chấm — không phải chờ HR duyệt (`AttendanceService.CheckInAsync`).
+- Vào ca sau mốc bắt đầu → trạng thái `Late`; đúng mốc → `Present`.
+- Chấm lại cùng loại trong cửa sổ ngắn (tham số code, ~2 phút) bị chặn trùng, trả về "đã có lần chấm gần đây".
+- Ảnh chấm công: chụp từ camera (`CameraCapture.jsx`), upload qua `POST /api/Upload/photo`. Đường lưu ảnh: **Supabase Storage bucket public `marixa-photos`** nếu cấu hình `SUPABASE__URL` + `SUPABASE__SERVICE_KEY`; chưa cấu hình thì fallback lưu đĩa `wwwroot/uploads` (dev local).
+
+## 4. Nghỉ phép, tăng ca, sửa công
+
+- **Đơn nghỉ** (`LeaveRequest`): loại nghỉ do admin định nghĩa (`LeaveType`), khoảng ngày, lý do, trạng thái duyệt. Phê duyệt sinh giao dịch sổ phép (`LeaveLedger`) — không sửa số dư trực tiếp.
+- **Tăng ca** (`OvertimeRequest`): ngày, khoảng giờ, lý do; duyệt trước khi tính.
+- **Sửa công** (`AttendanceCorrection`): đề xuất mốc đúng + lý do; khi duyệt tạo bản điều chỉnh riêng, giữ nguyên sự kiện gốc.
+- Duyệt đi đúng người: HR/Manager/Admín duyệt đơn của Employee; không cho tự duyệt chính mình. Chi tiết luồng ở `03-workflow.md`.
 
 ## 5. Bảng công và báo cáo
 
-Kỳ công tính theo tháng, có trạng thái `mở → HR đã kiểm tra → admin đã khóa`. HR phải xử lý hoặc ghi chú rõ mọi dòng thiếu công, ảnh lỗi, đồng bộ trễ và ngoài văn phòng trước khi đánh dấu đã kiểm tra. Khóa kỳ tạo snapshot không thay đổi. Muốn sửa dữ liệu kỳ đã khóa, admin phải mở lại kèm lý do, hệ thống tính lại và lưu phiên bản/audit. Excel xuất từ kỳ đã khóa hoặc được ghi rõ **bản tạm** nếu kỳ còn mở. PDF đơn nghỉ phản ánh phiên bản và trạng thái tại thời điểm xuất, không là nguồn dữ liệu chuẩn.
-
-Dashboard HR ưu tiên số người đã chấm vào, người chưa chấm, thiếu công, đi trễ, lượt ngoài văn phòng, đơn chờ duyệt, ảnh/đồng bộ lỗi và tình trạng kỳ công. Nhân viên chỉ thấy dữ liệu của mình. Báo cáo không hiển thị ảnh hàng loạt; ảnh mở theo yêu cầu và kiểm tra quyền.
+- Kỳ công tính theo **tháng**, có trạng thái mở → HR kiểm tra → admin khóa.
+- Báo cáo (Excel/PDF) theo quyền và phiên bản; Excel kỳ đang mở gắn nhãn "bản tạm", kỳ khóa dùng snapshot.
+- Dashboard HR ưu tiên việc cần xử lý, số người đã/chưa chấm, đơn chờ duyệt, cảnh báo. Nhân viên chỉ thấy dữ liệu của mình.
 
 ## 6. Điều kiện nghiệm thu nghiệp vụ
 
-1. Nhân viên và HR chấm vào/ra với ảnh/GPS; tải lại trang không làm mất lượt offline còn trong thiết bị, và đồng bộ lặp không tạo bản ghi trùng.
-2. Lượt ngoài văn phòng vẫn tồn tại, được gắn cờ rõ; HR xem được bằng chứng và ghi kết quả kiểm tra.
-3. Đơn nghỉ, tăng ca và sửa công đi đúng người duyệt; HR không duyệt hồ sơ của chính mình.
-4. Bảng công áp dụng giờ chuẩn, nghỉ trưa, đơn đã duyệt và điều chỉnh; thiếu một mốc được báo là chưa hoàn chỉnh.
-5. Admin khóa kỳ và có thể mở lại có lý do; Excel và PDF đúng quyền, kỳ và phiên bản dữ liệu.
-6. Hệ thống giữ nhật ký cho thay đổi công, phép, role, cấu hình và kỳ công.
+1. Nhân viên/HR chấm vào/ra với ảnh (tùy camera) và GPS (tùy quyền); không ghi sự kiện thiếu bằng chứng một cách âm thầm.
+2. Đơn nghỉ/tăng ca/sửa công đi đúng người duyệt; không tự duyệt đơn của chính mình.
+3. Bảng công áp dụng ca làm chung hiện hành, nghỉ ca và điều chỉnh đã duyệt; thiếu mốc được báo "chưa hoàn chỉnh".
+4. Admin khóa/mở kỳ có lý do; Excel/PDF đúng quyền, đúng kỳ và phiên bản.
+5. Hệ thống giữ nhật ký (audit) cho các thay đổi quan trọng: công, phép, role, cấu hình, kỳ.
 
-Xem mô hình dữ liệu tại [02-database-design.md](02-database-design.md), luồng tại [03-workflow.md](03-workflow.md) và thiết kế giao diện tại [07-ui-design-system.md](07-ui-design-system.md).
+Xem dữ liệu tại [02-database-design.md](02-database-design.md), luồng tại [03-workflow.md](03-workflow.md), UI tại [07-ui-design-system.md](07-ui-design-system.md).

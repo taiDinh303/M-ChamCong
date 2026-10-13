@@ -1,64 +1,77 @@
 # 02 — Thiết kế dữ liệu hệ thống chấm công Marixa
 
+> Tác giả & chủ tài liệu: **Đinh Văn Tài**.
+> Hệ thống dùng **Entity Framework Core** (context: `M.Repositories/Context/DatabaseContext.cs`), linh hoạt giữa **SQL Server** (dev local) và **PostgreSQL/Supabase** (prod). Danh sách bảng thật nằm trong `M.Contract.Repositories/Entities/`.
+
+## 0. Cách đọc (dành cho AI)
+
+- Mỗi file entity trong `marixa_aspnet/M.Contract.Repositories/Entities/*.cs` = một bảng. Model view tương ứng nằm ở `M.ModelViews/*ModelView.cs`, mapping EF↔VM nằm ở `M.Services/Mapping/*Mapping.cs`.
+- Cơ chế DB linh hoạt (dev/production) xem `08-database-flexible-deployment.md`.
+- Khởi tạo schema: Postgres chạy DDL idempotent khi boot + `PostgresSchemaSync.EnsureColumnsAsync`; SQL Server dev chạy `MigrateAsync`.
+
 ## 1. Nguyên tắc dữ liệu
 
-Supabase Postgres lưu hồ sơ, sự kiện và metadata; **ảnh chỉ nằm trong Supabase Storage bucket riêng tư**. Dữ liệu công gốc không bị ghi đè khi sửa; điều chỉnh và phê duyệt là record riêng. Mọi thời điểm lưu `timestamptz` UTC, hiển thị và xác định ngày công theo `Asia/Ho_Chi_Minh`. Các bảng có `id uuid`, `created_at`, `updated_at` phù hợp; khóa ngoại và chỉ mục tạo trong migration. Chỉ dùng schema cần thiết cho khối văn phòng Marixa.
+- Thời điểm lưu `timestamptz`/UTC; hiển thị & xác định ngày công theo `Asia/Ho_Chi_Minh`. Input model bị chuẩn hóa UTC qua `M.API/Filters/DateTimeUtcKindFilter.cs`.
+- Soft delete: các bảng nghiệp vụ dùng `DeletedTime` (không vật lý xóa ngay), trừ trường hợp admin xóa hẳn.
+- Event chấm công gốc bất biến khi sửa; điều chỉnh/điều chỉnh lại là record riêng (`AttendanceCorrection`), audit ghi lại trước/sau.
+- Ảnh chấm công lưu trong **Supabase Storage** (bucket public `marixa-photos`) khi prod; DB chỉ lưu URL/path, không lưu blob.
 
-## 2. Sơ đồ quan hệ
+## 2. Các bảng chính (EF Core, theo thư mục Entities)
 
-```mermaid
-erDiagram
-  EMPLOYEES ||--o| APP_USERS : has_account
-  EMPLOYEES ||--o{ ATTENDANCE_EVENTS : records
-  ATTENDANCE_EVENTS ||--o| ATTENDANCE_PHOTOS : has
-  EMPLOYEES ||--o{ ATTENDANCE_CORRECTIONS : requests
-  EMPLOYEES ||--o{ LEAVE_REQUESTS : requests
-  LEAVE_TYPES ||--o{ LEAVE_REQUESTS : categorizes
-  EMPLOYEES ||--o{ LEAVE_LEDGER : owns
-  LEAVE_REQUESTS ||--o{ LEAVE_LEDGER : causes
-  EMPLOYEES ||--o{ OVERTIME_REQUESTS : requests
-  TIMESHEET_PERIODS ||--o{ TIMESHEET_DAYS : snapshots
-  EMPLOYEES ||--o{ TIMESHEET_DAYS : owns
-  OFFICE_LOCATIONS ||--o{ ATTENDANCE_EVENTS : evaluated_against
-  APP_USERS ||--o{ AUDIT_LOGS : acts
-```
-
-## 3. Bảng và trường cốt lõi
-
-| Bảng | Trường quan trọng | Ràng buộc / mục đích |
+| Bảng / Entity | Vai trò | Ghi chú |
 | --- | --- | --- |
-| `employees` | `employee_code`, `full_name`, `work_email`, `phone`, `department`, `job_title`, `hire_date`, `status` | `employee_code` và `work_email` duy nhất; hồ sơ không bị xóa khi nghỉ việc. Không đưa lương/CCCD vào V1. |
-| `app_users` | `auth_user_id`, `employee_id`, `role`, `status`, `must_change_password` | Khóa ngoại tới Supabase Auth và `employees`; mỗi hồ sơ tối đa một tài khoản; role thuộc `employee/hr/admin`. Cờ bắt đổi mật khẩu khi admin cấp/reset tài khoản. |
-| `office_locations` | `name`, `latitude`, `longitude`, `radius_m`, `active` | Admin cấu hình nơi tham chiếu GPS; V1 có thể có một văn phòng, schema cho phép nhiều địa điểm văn phòng về sau. |
-| `work_policies` | `effective_from`, `effective_to`, `timezone`, `start_time`, `lunch_start`, `lunch_end`, `end_time`, `working_weekdays`, `late_grace_minutes`, `photo_retention_days` | Một ca chung cho toàn bộ nhân viên, do admin chỉnh qua các phiên bản có ngày hiệu lực và audit. Tạo phiên bản mới phải đóng phiên bản cũ vào ngày liền trước trong cùng giao dịch; mỗi ngày chọn đúng một phiên bản, không có khoảng hiệu lực chồng lấn. Cấu hình mới không sửa snapshot kỳ đã khóa. |
-| `holidays` | `date`, `name`, `is_working_override` | Lịch ngày nghỉ/làm bù do admin nhập; ngày duy nhất. |
-| `attendance_events` | `employee_id`, `work_date`, `kind`, `occurred_at`, `device_occurred_at`, `received_at`, `source`, `idempotency_key`, `latitude`, `longitude`, `accuracy_m`, `office_location_id`, `office_radius_m_at_capture`, `distance_m`, `location_flag`, `evidence_status`, `review_status` | `kind` là `check_in/check_out`; unique `(employee_id, work_date, kind)` và `idempotency_key`; lưu bán kính đã dùng để kết quả vị trí cũ không đổi khi cấu hình văn phòng đổi. |
-| `attendance_photos` | `attendance_event_id`, `storage_path`, `mime_type`, `bytes`, `uploaded_at`, `expires_at`, `deleted_at` | Mỗi event tối đa một ảnh; `storage_path` trỏ bucket private; metadata còn lại sau khi xóa ảnh theo retention. |
-| `attendance_corrections` | `employee_id`, `work_date`, `proposed_check_in`, `proposed_check_out`, `reason`, `status`, `reviewer_id`, `reviewed_at`, `review_note` | Yêu cầu và kết quả duyệt; không sửa event gốc. Lưu snapshot dữ liệu đề nghị và dữ liệu trước/sau trong audit. |
-| `leave_types` | `code`, `name`, `deducts_annual_balance`, `active` | Admin cấu hình các loại nghỉ. |
-| `leave_requests` | `employee_id`, `leave_type_id`, `start_date`, `end_date`, `day_parts`, `total_days`, `reason`, `status`, `version`, `reviewer_id`, `reviewed_at` | `day_parts` mô tả cả ngày/sáng/chiều; số ngày tính theo ngày làm, hỗ trợ bước 0,5 ngày. |
-| `leave_ledger` | `employee_id`, `year`, `amount_days`, `entry_type`, `leave_request_id`, `reason`, `created_by` | Số dư = tổng giao dịch; cấp/chuyển/điều chỉnh/trừ/hoàn; giao dịch trừ/hoàn idempotent theo đơn và phiên bản. |
-| `overtime_requests` | `employee_id`, `work_date`, `start_at`, `end_at`, `reason`, `status`, `reviewer_id`, `reviewed_at` | Không tính tăng ca trước khi duyệt; không tự lấy toàn bộ khoảng ra muộn. |
-| `timesheet_periods` | `year`, `month`, `status`, `reviewed_by`, `reviewed_at`, `locked_by`, `locked_at`, `version` | Unique `(year, month)`; `open/hr_reviewed/locked`; lưu người và thời điểm khóa. |
-| `timesheet_days` | `period_id`, `employee_id`, `work_date`, `regular_minutes`, `overtime_minutes`, `leave_days`, `late_minutes`, `early_minutes`, `exceptions`, `source_revision`, `snapshot_version` | Unique `(period_id, employee_id, work_date, snapshot_version)`; snapshot khi khóa, không tính từ dữ liệu mới trên màn hình kỳ đã khóa. |
-| `audit_logs` | `actor_user_id`, `action`, `entity_type`, `entity_id`, `before_json`, `after_json`, `reason`, `created_at` | Ghi thay đổi công, duyệt đơn, sổ phép, role, chính sách, kỳ công và xóa ảnh. Chỉ admin xem toàn bộ. |
+| `Employee` | Hồ sơ nhân viên: mã, họ tên, email, sđt, phòng ban, vị trí, ngày vào, trạng thái | Hồ sơ độc lập với tài khoản Auth; không xóa khi nghỉ việc. |
+| `ApplicationUser` (Identity) | Tài khoản đăng nhập (ASP.NET Identity) | Liên kết `Employee` bằng mã/sđt; role gắn theo `ApplicationUserRole`. |
+| `ApplicationRole` | Role: `Admin`, `Manager`, `HR`, `Employee` | Seed idempotent ở `M.API/Seed/RoleSeeder.cs`. |
+| `Department` | Phòng ban | Cấp trên `Employee`. |
+| `Position` | Vị trí/CB | Liên kết `Employee`. |
+| `AttendanceRule` | **Ca làm chung**: giờ bắt đầu/kết thúc, nghỉ giữa ca (phút), cờ active | Một quy tắc active cho toàn công ty; thay đổi có audit. |
+| `Shift` | Ca/turn lịch theo ngày | Dùng khi cần ca riêng (phục vụ bảng lịch, chưa gán per-nv trong V1). |
+| `EmployeeShift` | Gán ca theo nhân viên/ngày (nếu có) | |
+| `Attendance` | Bản ghi công **theo ngày** (1 nv/ngày): status, approval, giờ thực tế, tăng ca, ảnh vào/ra, người duyệt | Chấm vào/ra sinh `AttendanceLog`. |
+| `AttendanceLog` | Mỗi lần chấm (vào/ra): log time, phương pháp, ảnh, ghi chú | Nguyên bản; không sửa khi điều chỉnh. |
+| `AttendanceCorrection` | Yêu cầu/điều chỉnh công: mốc đề xuất, lý do, trạng thái, người duyệt | Tạo record riêng, giữ event gốc. |
+| `AuditLog` | Nhật ký: ai, hành động, entity, before/after, lý do | |
+| `OfficeLocation` | Tọa độ/bán kính văn phòng (tham chiếu GPS) | |
+| `HolidayCalendar` | Ngày lễ/ngày nghỉ/làm bù | |
+| `LeaveType` | Loại nghỉ (cờ: có trừ phép năm hay không) | |
+| `LeaveRequest` | Đơn nghỉ: loại, khoảng ngày, lý do, trạng thái, người duyệt | |
+| `LeaveLedger` | Sổ phép: giao dịch cấp/trừ/hoàn/điều chỉnh, số ngày | Số dư = tổng giao dịch. |
+| `OvertimeRequest` | Đơn tăng ca: ngày, khoảng giờ, lý do, trạng thái | |
+| `Payroll` | Bảng lương kỳ | |
+| `SalaryGroup` | Nhóm lương | |
+| `EmployeeSalary` | Lương theo nhân viên | |
+| `EmployeeBankAccount` / `Bank` | Tài khoản & ngân hàng | |
+| `EmployeeContract` | Hợp đồng | |
+| `EmployeeInsurance` | BHXH/thuế | |
+| `EmployeeDependent` | Thân nhân (phụ thuộc) | |
+| `EmployeePromotion` | Thăng chức | |
+| `EmployeeHandover` | Bàn giao khi nghỉ việc | |
+| `EmployeeReport` | Báo cáo của nhân viên (theo kỳ) | |
+| `WorkProject` / `WorkProjectMember` / `WorkTask` / `WorkPerformance` | Công việc: dự án, thành viên, task, hiệu suất | |
+| `ActivationCode` | Mã kích hoạt tài khoản (quy trình bàn giao NV) | |
 
-`work_date` của chấm công được xác định tại thời điểm tạo theo múi giờ công ty. V1 không có ca qua nửa đêm. Ca chung **mặc định khi khởi tạo**: thứ 2–thứ 7, 08:00–12:00 và 13:00–17:00, không có phút miễn trễ; admin có thể thay mọi mốc giờ/ngày làm và số phút miễn trễ bằng phiên bản có ngày hiệu lực. Phép tính, đi trễ/về sớm và nghỉ trưa ngày nghỉ đều dùng phiên bản áp dụng cho ngày đó. Admin phải đặt `photo_retention_days` trước khi mở chấm công; không đặt thời hạn lưu ảnh ngầm.
+> Các migration EF (T-SQL, SQL Server) nằm ở `M.Repositories/Migrations/`. Khi chạy Postgres, code dùng `GenerateCreateScript()` + schema sync thay vì chạy migration T-SQL (không tương thích Postgres) — xem `M.API/Program.cs`.
 
-## 4. Ràng buộc toàn vẹn và ghi nhận offline
+## 3. Ràng buộc toàn vẹn cần đảm bảo
 
-- Tạo unique partial index trên `app_users(role)` khi `role = 'admin' AND status = 'active'` để ngăn admin hoạt động thứ hai. Quy trình bootstrap tạo một admin; giao dịch khóa/xóa tài khoản phải từ chối nếu sẽ làm mất admin cuối cùng.
-- Chỉ tài khoản `active` và nhân viên `active` được chấm công. Khóa tài khoản giữ nguyên toàn bộ hồ sơ và lịch sử.
-- API yêu cầu `idempotency_key` UUID cho mọi lượt chấm; gửi lại cùng khóa trả về cùng kết quả. Khóa unique theo nhân viên/ngày/loại ngăn hai thiết bị ghi hai lượt khác nhau; giao diện hướng dẫn gửi yêu cầu sửa công nếu cần thay mốc.
-- Với lượt online, `occurred_at` lấy giờ máy chủ; với lượt offline, lấy giờ thiết bị lúc chụp và đánh dấu `source = offline`, `review_status = needs_review`. Luôn lưu `received_at`; không âm thầm tin giờ thiết bị là tuyệt đối.
-- Ảnh có thể tới sau event. `evidence_status = pending/ready/failed/expired`; lỗi upload không xóa event. Kỳ công không khóa nếu còn ảnh đang chờ/lỗi mà chưa được HR ghi nhận kết quả xử lý.
-- Phê duyệt đơn, ghi sổ phép và tính lại bảng công phải nằm trong giao dịch nhất quán hoặc hàm database có kiểm soát. Không để hai lượt duyệt song song trừ phép hai lần.
-- Khi kỳ đã khóa, không cho mutation thay đổi kết quả kỳ đó; admin mở lại có lý do mới được điều chỉnh và tạo phiên bản snapshot mới.
+- Một `Attendance` mỗi nhân viên mỗi ngày (chặn trùng `EmployeeId + AttendanceDate`).
+- Chấm lại cùng loại trong cửa sổ ngắn được giữ nguyên (không nhân đôi log).
+- Admin: luôn giữ tối thiểu 1 tài khoản admin hoạt động (chặn khóa admin cuối).
+- Duyệt: người duyệt ≠ người gửi đơn (trừ khi quy trình cho phép); không sửa bản ghi đã khóa/duyệt.
+- Ledger phép: giao dịch idempotent theo đơn/phiên bản, không trừ/hoàn trùng.
 
-## 5. Quyền dữ liệu và ảnh
+## 4. Ảnh chấm công & lưu trữ
 
-Bật RLS cho mọi bảng nghiệp vụ; policy dựa trên `auth.uid()` và role lưu phía database, không tin role gửi từ client. Nhân viên chỉ đọc hồ sơ, công, đơn, phép, tăng ca và bảng công của mình; chỉ tạo yêu cầu của mình. HR đọc toàn khối văn phòng, sửa hồ sơ cơ bản, duyệt yêu cầu cá nhân của nhân viên/admin và đối soát công; HR không duyệt record có `employee_id` của chính mình. Admin có mọi quyền nghiệp vụ và cấu hình nhưng không duyệt yêu cầu cá nhân của chính mình; admin duyệt yêu cầu của HR. Chặn `UPDATE/DELETE` trực tiếp trên event, ledger, audit và snapshot từ client; thao tác đi qua API/hàm có kiểm tra quyền. Chỉ admin thay role và trạng thái tài khoản.
+- Bucket **public** `marixa-photos` trên Supabase (config: `M.API/SupabaseStorageService.cs`), đường dẫn `attendance/{checkin|checkout}/{yyyyMM}/{guid}{ext}`, không chứa họ tên.
+- Dev local: lưu đĩa `wwwroot/uploads/attendance/{kind}/{yyyyMM}/{file}`, serve qua `/uploads` (StaticFiles).
+- DB chỉ lưu URL; không lưu base64/blob vào Postgres.
 
-Bucket `attendance-photos` là private. Đường dẫn ảnh theo `employee_id/yyyy/mm/work_date/event_id.webp`, không chứa họ tên. Nhân viên xem ảnh của mình; HR/admin xem theo quyền. API tạo quyền truy cập ảnh ngắn hạn lúc người dùng mở ảnh; Excel dùng link tới trang chi tiết đã kiểm tra đăng nhập, không nhúng signed URL hết hạn. Xóa ảnh theo retention phải xóa object và đánh dấu metadata, giữ event công và audit.
+## 5. Ghi chú chuyển đổi (đồ án)
 
-Xem quy tắc tại [01-business-analysis.md](01-business-analysis.md) và luồng thao tác tại [03-workflow.md](03-workflow.md).
+> **Quyết định 12/10/2026:** Thư mục `marixa_aspnet/web` (kiến trúc **Next.js + Supabase Auth + RLS + bucket private**) do đồng đội thiết kế đã bị **đình chỉ (decommission)** — không thuộc đường chạy; chỉ giữ trong Git để đối chiếu, chờ xoá khi chủ dự án xác nhận.
+> **EN (AI note):** The `marixa_aspnet/web` Next.js design (Supabase Auth + RLS + private bucket) is **decommissioned**; the live system is ASP.NET 8 + React 19 as above. It is kept in Git only for reference and will be deleted pending owner confirmation.
+
+Tài liệu gốc (của đồng đội) từng đề xuất kiến trúc **Supabase Auth + RLS + bucket private**. Code đang chạy thực tế dùng **ASP.NET Identity + JWT** và **Supabase Storage bucket public** cho ảnh, DB **Supabase Postgres (session pooler)**.
+
+Xem quy tắc nghiệp vụ ở [01-business-analysis.md](01-business-analysis.md) và luồng ở [03-workflow.md](03-workflow.md).
