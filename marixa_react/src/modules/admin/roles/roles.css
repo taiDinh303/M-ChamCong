@@ -415,3 +415,12 @@
     border: 1px solid #f0d58a;
     white-space: nowrap;
 }
+
+/* Nút Xóa / huy hiệu Hệ thống: căn icon SVG với chữ (thay emoji lỗi hiển thị) */
+.roles-role-delete,
+.roles-sys-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.roles-ico { flex: 0 0 auto; display: block; }

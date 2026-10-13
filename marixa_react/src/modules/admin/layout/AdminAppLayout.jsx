@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+﻿import { useCallback, useEffect, useState } from "react";
 import Header from "../../../components/layout/Header";
 import AdminSidebar from "./AdminSidebar";
 import "../../../components/layout/header.css";
@@ -44,12 +44,6 @@ const AdminAppLayout = ({ title, subtitle, children }) => {
             <div className="app-body">
                 <AdminSidebar collapsed={collapsed} />
                 <main className="att-main">
-                    {title && (
-                        <div className="att-main-head">
-                            <h1>{title}</h1>
-                            {subtitle && <p>{subtitle}</p>}
-                        </div>
-                    )}
                     {children}
                 </main>
             </div>

@@ -261,11 +261,13 @@ const AdminRolesPage = () => {
                                                     <td className="roles-th-act">
                                                         {SYSTEM_ROLES.has(role.name) ? (
                                                             <span className="roles-sys-badge" title={L("Vai trò hệ thống không thể xóa")}>
-                                                                🔒 {L("Hệ thống")}
+                                                                <svg className="roles-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+                                                                {L("Hệ thống")}
                                                             </span>
                                                         ) : (
                                                             <button type="button" className="roles-role-delete" onClick={() => deleteRole(role)} title={L("Xóa vai trò")}>
-                                                                🗑 {L("Xóa")}
+                                                                <svg className="roles-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M10 11v6M14 11v6" /></svg>
+                                                                {L("Xóa")}
                                                             </button>
                                                         )}
                                                     </td>

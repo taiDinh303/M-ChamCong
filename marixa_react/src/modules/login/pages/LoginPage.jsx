@@ -37,10 +37,7 @@ const LoginPage = () => {
                         Mới nhận mã kích hoạt?{" "}
                         <Link to="/kich-hoat">Kích hoạt tài khoản</Link>
                     </p>
-                    <p className="activate-link forgot-link">
-                        Quên mật khẩu? Liên hệ Nhân sự cấp lại mã kích hoạt, rồi đặt lại mật khẩu tại <Link to="/kich-hoat">trang Kích hoạt</Link>.
-                    </p>
-                </div>
+                                    </div>
             </div>
         </div>
     );

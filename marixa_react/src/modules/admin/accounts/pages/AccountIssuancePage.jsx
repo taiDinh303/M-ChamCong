@@ -151,10 +151,11 @@ const AccountIssuancePage = ({ hrMode = false }) => {
     // "Cấp lại mã" / đặt lại mật khẩu cho nhân viên đã có tài khoản.
     // Backend create-activation-code tự vô hiệu các mã cũ chưa dùng của cùng NV,
     // nên đây là cách an toàn để nhân viên quên mật khẩu tự đặt lại mật khẩu.
-    const reissueOne = async (employee) => {
+    const reissueOne = async (employee, fresh = false) => {
+        const verb = fresh ? "Cấp mã kích hoạt" : "Cấp lại mã kích hoạt";
         const confirmed = window.confirm(
-            `${L("Cấp lại mã kích hoạt")} ${employee.fullName} (${employee.employeeCode})? ` +
-            L("Nhân viên sẽ dùng mã mới này để đặt lại mật khẩu tại trang Kích hoạt.")
+            `${L(verb)} ${employee.fullName} (${employee.employeeCode})? ` +
+            L("Nhân viên sẽ dùng mã mới này để đặt mật khẩu tại trang Kích hoạt.")
         );
         if (!confirmed) return;
         setBusy(true);
@@ -167,17 +168,16 @@ const AccountIssuancePage = ({ hrMode = false }) => {
             });
             setBusy(false);
             setIssued(
-                `${L("Đã cấp lại mã kích hoạt cho")} ${employee.fullName}. ` +
-                L("Bàn giao mã mới cho nhân viên để kích hoạt lại mật khẩu.")
+                `${L(fresh ? "Đã cấp mã kích hoạt cho" : "Đã cấp lại mã kích hoạt cho")} ${employee.fullName}. ` +
+                L("Bàn giao mã mới cho nhân viên để kích hoạt / đặt lại mật khẩu.")
             );
             await load();
         } catch (err) {
             setBusy(false);
-            setError(err.response?.data?.message || L("Không cấp lại được mã kích hoạt."));
+            setError(err.response?.data?.message || L("Không cấp được mã kích hoạt."));
         }
     };
-
-    const openVerify = (employee) => {
+const openVerify = (employee) => {
         setActivationCode("");
         setConfirmed(false);
         setError("");
@@ -306,16 +306,17 @@ const AccountIssuancePage = ({ hrMode = false }) => {
                                         <td className="ai-th-code">{code ? <code className="ai-code">{code.code}</code> : <span className="ai-muted">—</span>}</td>
                                         <td className="ai-th-act">
                                             <div className="ai-act">
-                                                {code ? (
+                                                {code && (
                                                     <button type="button" className="ai-verify-btn" onClick={() => openVerify(employee)}>&#10003; {L("Xác minh")}</button>
-                                                ) : canIssue ? (
-                                                    <button type="button" className="ai-issue-one-btn" onClick={() => { toggle(employee.id); if (!selected.has(employee.id)) setSelected((prev) => new Set([...prev, employee.id])); }}>{L("Chọn để cấp")}</button>
-                                                ) : (
-                                                    <span className="ai-muted">—</span>
                                                 )}
-                                                {(state.key === "has" || state.key === "activated" || state.key === "expired") && (
-                                                    <button type="button" className="ai-reissue-btn" onClick={() => reissueOne(employee)} title={L("Cấp lại mã kích hoạt để nhân viên đặt lại mật khẩu")}>{L("⟳ Cấp lại mã")}</button>
-                                                )}
+                                                <button
+                                                    type="button"
+                                                    className={canIssue ? "ai-issue-one-btn" : "ai-reissue-btn"}
+                                                    onClick={() => reissueOne(employee, canIssue)}
+                                                    title={L("Cấp mã kích hoạt — nếu đã có tài khoản sẽ tự cấp lại để đặt lại mật khẩu")}
+                                                >
+                                                    {state.key === "none" ? L("Cấp mã") : L("Cấp lại mã")}
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>;

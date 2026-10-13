@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+﻿import { useCallback, useEffect, useState } from "react";
 import Header from "../../../components/layout/Header";
 import WorkSidebar from "./WorkSidebar";
 import { usePillNavActiveInView } from "../../../components/layout/usePillNav";
@@ -38,12 +38,6 @@ const WorkLayout = ({ title, subtitle, search, onSearchChange, children }) => {
             <div className="app-body">
                 <WorkSidebar collapsed={collapsed} search={search} setSearch={onSearchChange} />
                 <main className="att-main">
-                    {title && (
-                        <div className="att-main-head">
-                            <h1>{title}</h1>
-                            {subtitle && <p>{subtitle}</p>}
-                        </div>
-                    )}
                     {children}
                 </main>
             </div>

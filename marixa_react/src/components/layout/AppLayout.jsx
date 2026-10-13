@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+﻿import { useCallback, useEffect, useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { usePillNavActiveInView } from "./usePillNav";
@@ -49,12 +49,6 @@ const AppLayout = ({ title, subtitle, profile, children }) => {
             <div className="app-body">
                 <Sidebar collapsed={collapsed} />
                 <main className="att-main">
-                    {title && (
-                        <div className="att-main-head">
-                            <h1>{title}</h1>
-                            {subtitle && <p>{subtitle}</p>}
-                        </div>
-                    )}
                     {children}
                 </main>
             </div>
