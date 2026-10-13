@@ -7,8 +7,8 @@ const MODULES = [
     { to: "/attendance", icon: "🕗", title: "Chấm công", detail: "Vào ca · Ra ca", color: "blue" },
     { to: "/kich-hoat", icon: "🔑", title: "Kích hoạt", detail: "Đặt mật khẩu", color: "purple" },
     { to: "/employees", icon: "👥", title: "Nhân sự", detail: "Hồ sơ nhân viên", color: "pink" },
-    { to: "/admin", icon: "📊", title: "Dashboard", detail: "Điều hành hệ thống", color: "teal" },
     { to: "/work", icon: "📋", title: "Công việc", detail: "Việc cần xử lý", color: "amber" },
+    { to: "/admin", icon: "📊", title: "Dashboard", detail: "Điều hành hệ thống", color: "teal" },
 ];
 
 const HomePage = () => (
