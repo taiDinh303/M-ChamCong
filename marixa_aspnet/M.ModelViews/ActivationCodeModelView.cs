@@ -60,14 +60,4 @@ namespace ModelViews.ActivationCodeModelView
         public DateTime? ExpiresAt { get; set; }
     }
 
-    public class VerifyEmployeeActivationModelView
-    {
-        [Required]
-        public Guid EmployeeId { get; set; }
-
-        [Required]
-        [MinLength(6)]
-        [MaxLength(50)]
-        public string Code { get; set; } = string.Empty;
-    }
 }

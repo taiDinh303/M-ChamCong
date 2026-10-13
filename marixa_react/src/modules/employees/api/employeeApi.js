@@ -1,4 +1,4 @@
-import axiosClient from "../../../services/api/axiosClient";
+﻿import axiosClient from "../../../services/api/axiosClient";
 
 // API cấp công ty (admin) - dùng get-all với pageSize lớn, tính phía client.
 const P = "pageNumber=1&pageSize=500";
@@ -54,9 +54,6 @@ const employeeApi = {
     },
     createActivationCode(payload) {
         return axiosClient.post("/Auth/create-activation-code", payload);
-    },
-    verifyEmployeeActivation(payload) {
-        return axiosClient.post("/Auth/verify-employee-activation", payload);
     },
     // === Quản trị: chấm công / hợp đồng / nghỉ phép / tài khoản ===
     attendances() {

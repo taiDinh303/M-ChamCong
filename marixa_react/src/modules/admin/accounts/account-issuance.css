@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    CẤP TÀI KHOẢN (Admin Accounts) — giao diện mới (ai-*)
    ============================================================ */
 
@@ -743,4 +743,20 @@
     .ai-profile-grid > div:nth-last-child(2) { border-bottom: 1px solid #e9edf2; }
     .ai-avatar { width: 54px; height: 54px; font-size: 18px; }
     .ai-verify > label:first-of-type input { font-size: 15px; }
+}
+
+
+/* Badge trạng thái chờ nhân viên kích hoạt (thay nút Xác minh) */
+.ai-pending-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #1a7f5a;
+    background: #e3f6ee;
+    border: 1px solid #b7e4cf;
+    white-space: nowrap;
 }

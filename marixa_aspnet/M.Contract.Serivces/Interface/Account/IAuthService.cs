@@ -20,6 +20,5 @@ namespace M.Contract.Services.Interface
         Task<ActivationCodeResponseModelView> CreateActivationCodeAsync(
             CreateActivationCodeModelView model);
 
-        Task VerifyAndLinkEmployeeAccountAsync(VerifyEmployeeActivationModelView model);
     }
 }
