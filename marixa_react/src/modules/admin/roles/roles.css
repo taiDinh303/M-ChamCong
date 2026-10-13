@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    PHÂN QUYỀN (Admin Roles) — giao diện BẢNG (matrix + role table)
    ============================================================ */
 
@@ -25,6 +25,24 @@
     margin: 0;
     font: 700 15px "Montserrat", "Be Vietnam Pro", sans-serif;
     color: #172b42;
+}
+
+/* ===== Nút thêm vai trò (đầu section) ===== */
+.roles-add-btn {
+    padding: 8px 14px;
+    border: 1px solid #d7e2ef;
+    border-radius: 9px;
+    background: #fff;
+    color: #315f9b;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.14s;
+}
+.roles-add-btn:hover {
+    background: #f3f7fc;
+    border-color: #b8cbe1;
 }
 
 /* ===== Form thêm role mới ===== */
@@ -100,7 +118,42 @@
 .roles-roles-table td.roles-th-center {
     text-align: center;
 }
+
+/* ===== Cột Thao tác: wrapper 2 nút (Sửa + Xóa/Hệ thống) ===== */
+.roles-role-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+/* Nút Sửa (blue outline, đối xứng với Xóa) */
+.roles-role-edit {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid #cfe0f7;
+    background: #fff;
+    color: #315f9b;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.14s;
+}
+.roles-role-edit:hover {
+    background: #f3f7fc;
+    border-color: #2f6df6;
+    color: #16324f;
+}
+/* Nút Xóa (red outline) */
 .roles-role-delete {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     padding: 6px 12px;
     border: 1px solid #f0d0d0;
     background: #fff;
@@ -111,9 +164,11 @@
     border-radius: 8px;
     cursor: pointer;
     white-space: nowrap;
+    transition: all 0.14s;
 }
 .roles-role-delete:hover {
     background: #fdecec;
+    border-color: #e79c9c;
 }
 
 /* ===== Bảng ma trận Người dùng × Vai trò ===== */
@@ -292,10 +347,136 @@
     box-shadow: 0 1px 3px rgba(14, 26, 38, 0.05);
 }
 
-/* ===== Modal xem thông tin ===== */
+/* ===== Badge "Hệ thống" (vai trò khóa xóa) ===== */
+.roles-sys-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #5a4b1a;
+    background: #fdf3d7;
+    border: 1px solid #f0d58a;
+    white-space: nowrap;
+    cursor: default;
+}
+
+/* ===== Icon SVG: căn thẳng hàng với chữ trong nút ===== */
+.roles-ico {
+    flex: 0 0 auto;
+    display: block;
+}
+
+/* ===== Modal: Sửa vai trò / Xác nhận Xóa / Xem thông tin ===== */
 .roles-modal {
     width: min(480px, 92%);
     max-height: 85vh;
+}
+.roles-edit-modal {
+    width: min(440px, 92%);
+}
+.roles-confirm-modal {
+    width: min(420px, 92%);
+}
+.roles-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px 0;
+}
+.roles-edit-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.roles-edit-field > span {
+    font-size: 11px;
+    font-weight: 700;
+    color: #78889b;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.roles-edit-field input,
+.roles-edit-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid #d5dee8;
+    border-radius: 9px;
+    background: #fff;
+    font: inherit;
+    font-size: 13px;
+    color: #172b42;
+    resize: vertical;
+}
+.roles-edit-field input:focus,
+.roles-edit-field textarea:focus {
+    outline: none;
+    border-color: #2f6df6;
+    box-shadow: 0 0 0 3px rgba(47, 109, 246, 0.12);
+}
+.roles-edit-field input:disabled {
+    background: #f4f6f9;
+    color: #9aa9b8;
+    cursor: not-allowed;
+}
+.roles-edit-locknote {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #8a6d1a;
+    background: #fdf6e0;
+    border: 1px solid #f0d58a;
+    border-radius: 7px;
+    padding: 6px 9px;
+}
+.roles-confirm-body {
+    padding: 16px 0;
+    color: #435873;
+    font-size: 13px;
+    line-height: 1.55;
+}
+.roles-confirm-body p {
+    margin: 0 0 10px;
+}
+.roles-confirm-body strong {
+    color: #c62828;
+    font-weight: 800;
+}
+.roles-confirm-body .roles-confirm-desc {
+    color: #78889b;
+    font-weight: 500;
+}
+.roles-confirm-body .roles-confirm-q {
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #c62828;
+}
+.roles-confirm-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border: 1px solid #c62828;
+    background: #c62828;
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 9px;
+    cursor: pointer;
+}
+.roles-confirm-btn:hover {
+    background: #a51e1e;
+    border-color: #a51e1e;
+}
+.roles-confirm-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
 }
 
 /* ===== KPI row: 3 thẻ LUÔN ngang (desktop + mobile) ===== */
@@ -377,7 +558,12 @@
     .roles-roles-table td:nth-child(2) {
         display: none; /* ẩn cột Mô tả trên mobile để gọn */
     }
-    .roles-roles-table .roles-role-delete {
+    .roles-role-actions {
+        justify-content: flex-start;
+        gap: 6px;
+    }
+    .roles-roles-table .roles-role-delete,
+    .roles-roles-table .roles-role-edit {
         padding: 6px 10px;
         font-size: 11px;
     }
@@ -399,28 +585,9 @@
         width: 32px;
         height: 32px;
     }
+    .roles-modal,
+    .roles-edit-modal,
+    .roles-confirm-modal {
+        width: 94%;
+    }
 }
-
-
-.roles-sys-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 700;
-    color: #5a4b1a;
-    background: #fdf3d7;
-    border: 1px solid #f0d58a;
-    white-space: nowrap;
-}
-
-/* Nút Xóa / huy hiệu Hệ thống: căn icon SVG với chữ (thay emoji lỗi hiển thị) */
-.roles-role-delete,
-.roles-sys-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-.roles-ico { flex: 0 0 auto; display: block; }

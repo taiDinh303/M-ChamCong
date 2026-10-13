@@ -760,3 +760,24 @@
     border: 1px solid #b7e4cf;
     white-space: nowrap;
 }
+
+/* ===== Modal xac nhan cap / cap lai ma (thay window.confirm) ===== */
+.ai-confirm-modal {
+    width: min(440px, 100%);
+    max-height: 90vh;
+}
+.ai-confirm-body {
+    padding: 16px 0;
+    color: #435873;
+    font-size: 13px;
+    line-height: 1.55;
+}
+.ai-confirm-body p { margin: 0 0 10px; }
+.ai-confirm-hint {
+    padding: 10px 12px;
+    background: #f5f8fc;
+    border: 1px solid #e4eaf1;
+    border-radius: 9px;
+    font-size: 12px;
+    color: #546a83;
+}

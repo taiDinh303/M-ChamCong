@@ -59,3 +59,10 @@
 .account-modal > footer .account-confirm-btn:disabled { opacity: .6; cursor: wait; }
 @media (max-width: 760px) { .account-kpis { grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); } .account-toolbar { align-items: flex-start; flex-direction: column; } .account-toolbar-actions { width: 100%; flex-wrap: wrap; } .account-search { max-width: none; } .account-modal { padding: 17px; } }
 @media (max-width: 480px) { .account-profile-grid { grid-template-columns: 1fr; } .account-profile-grid > div:nth-child(odd) { border-right: 0; } .account-profile-grid > div:nth-last-child(2) { border-bottom: 1px solid #e9edf2; } }
+
+/* Modal xac nhan cap / cap lai ma (thay window.confirm) */
+.account-confirm-modal { width: min(420px, 100%); }
+.account-confirm-body { padding: 16px 0; color: #344b65; font-size: 13px; }
+.account-confirm-body p { margin: 0 0 10px; }
+.account-confirm-body p strong { color: #162a45; font-size: 15px; }
+.account-confirm-hint { padding: 10px 12px; background: #f5f8fc; border: 1px solid #e4eaf1; border-radius: 8px; font-size: 12px; color: #546a83; margin: 0; }
