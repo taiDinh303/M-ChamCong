@@ -1,4 +1,4 @@
-import { useLocation, Link } from "react-router-dom";
+﻿import { useLocation, Link } from "react-router-dom";
 import LoginForm from "../components/LoginForm";
 import LanguagePicker from "../../../components/layout/LanguagePicker";
 import logo from "../../../assets/images/marixa-logo.png";
@@ -36,6 +36,9 @@ const LoginPage = () => {
                     <p className="activate-link">
                         Mới nhận mã kích hoạt?{" "}
                         <Link to="/kich-hoat">Kích hoạt tài khoản</Link>
+                    </p>
+                    <p className="activate-link forgot-link">
+                        Quên mật khẩu? Liên hệ Nhân sự cấp lại mã kích hoạt, rồi đặt lại mật khẩu tại <Link to="/kich-hoat">trang Kích hoạt</Link>.
                     </p>
                 </div>
             </div>

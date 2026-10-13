@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+﻿import { useState, useEffect, useMemo, useCallback } from "react";
 import AdminAppLayout from "../../layout/AdminAppLayout";
 import HrAppLayout from "../../../employees/hr/layout/HrAppLayout";
 import adminApi from "../../api/adminApi";
@@ -148,6 +148,35 @@ const AccountIssuancePage = ({ hrMode = false }) => {
         await load();
     };
 
+    // "Cấp lại mã" / đặt lại mật khẩu cho nhân viên đã có tài khoản.
+    // Backend create-activation-code tự vô hiệu các mã cũ chưa dùng của cùng NV,
+    // nên đây là cách an toàn để nhân viên quên mật khẩu tự đặt lại mật khẩu.
+    const reissueOne = async (employee) => {
+        const confirmed = window.confirm(
+            `${L("Cấp lại mã kích hoạt")} ${employee.fullName} (${employee.employeeCode})? ` +
+            L("Nhân viên sẽ dùng mã mới này để đặt lại mật khẩu tại trang Kích hoạt.")
+        );
+        if (!confirmed) return;
+        setBusy(true);
+        setError("");
+        try {
+            await adminApi.createActivationCode({
+                employeeId: employee.id,
+                code: generateCode(),
+                validMinutes: activationCodeValidityMinutes,
+            });
+            setBusy(false);
+            setIssued(
+                `${L("Đã cấp lại mã kích hoạt cho")} ${employee.fullName}. ` +
+                L("Bàn giao mã mới cho nhân viên để kích hoạt lại mật khẩu.")
+            );
+            await load();
+        } catch (err) {
+            setBusy(false);
+            setError(err.response?.data?.message || L("Không cấp lại được mã kích hoạt."));
+        }
+    };
+
     const openVerify = (employee) => {
         setActivationCode("");
         setConfirmed(false);
@@ -276,13 +305,18 @@ const AccountIssuancePage = ({ hrMode = false }) => {
                                         <td><span className={`att-badge ${state.cls}`}>{L(state.label)}</span></td>
                                         <td className="ai-th-code">{code ? <code className="ai-code">{code.code}</code> : <span className="ai-muted">—</span>}</td>
                                         <td className="ai-th-act">
-                                            {code ? (
-                                                <button type="button" className="ai-verify-btn" onClick={() => openVerify(employee)}>✓ {L("Xác minh")}</button>
-                                            ) : canIssue ? (
-                                                <button type="button" className="ai-issue-one-btn" onClick={() => { toggle(employee.id); if (!selected.has(employee.id)) setSelected((prev) => new Set([...prev, employee.id])); }}>{L("Chọn để cấp")}</button>
-                                            ) : (
-                                                <span className="ai-muted">—</span>
-                                            )}
+                                            <div className="ai-act">
+                                                {code ? (
+                                                    <button type="button" className="ai-verify-btn" onClick={() => openVerify(employee)}>&#10003; {L("Xác minh")}</button>
+                                                ) : canIssue ? (
+                                                    <button type="button" className="ai-issue-one-btn" onClick={() => { toggle(employee.id); if (!selected.has(employee.id)) setSelected((prev) => new Set([...prev, employee.id])); }}>{L("Chọn để cấp")}</button>
+                                                ) : (
+                                                    <span className="ai-muted">—</span>
+                                                )}
+                                                {(state.key === "has" || state.key === "activated" || state.key === "expired") && (
+                                                    <button type="button" className="ai-reissue-btn" onClick={() => reissueOne(employee)} title={L("Cấp lại mã kích hoạt để nhân viên đặt lại mật khẩu")}>{L("⟳ Cấp lại mã")}</button>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>;
                                 })}

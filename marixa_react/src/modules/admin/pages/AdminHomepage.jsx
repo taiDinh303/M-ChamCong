@@ -14,7 +14,8 @@ const vnNow = () => {
 
 const pad = (n) => String(n).padStart(2, "0");
 
-// 9 chức năng chính trên trang chủ admin (icon + nhãn phụ).
+// Các chức năng chính trên trang chủ admin (icon + nhãn phụ).
+// Nhóm A: vận hành (module nghiệp vụ). Nhóm B: quản trị (tài khoản / phân quyền).
 const ICONS = [
     { to: "/admin/employees", icon: "👥", label: "Nhân sự", sub: "Hồ sơ & tuyển mới" },
     { to: "/admin/contracts", icon: "📄", label: "Hợp đồng", sub: "Ký & theo dõi hạn" },
@@ -22,6 +23,9 @@ const ICONS = [
     { to: "/admin/payroll", icon: "💰", label: "Lương", sub: "Bảng lương tháng" },
     { to: "/admin/resigned", icon: "📦", label: "Nghỉ việc", sub: "Lưu trữ nhân viên" },
     { to: "/admin/reports", icon: "📑", label: "Báo cáo", sub: "Tổng hợp công việc" },
+    { to: "/admin/work", icon: "🧾", label: "Công tác", sub: "Quá trình công tác" },
+    { to: "/admin/roles", icon: "🛡️", label: "Phân quyền", sub: "Vai trò & người dùng" },
+    { to: "/admin/block-accounts", icon: "🔒", label: "Chặn tài khoản", sub: "Chặn / mở chặn" },
     { to: "/admin/accounts", icon: "🔑", label: "Cấp tài khoản", sub: "Mã kích hoạt" },
 ];
 

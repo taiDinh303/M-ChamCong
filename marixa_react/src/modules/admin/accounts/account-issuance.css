@@ -439,6 +439,27 @@
     cursor: pointer;
 }
 .ai-issue-one-btn:hover { background: #f3f7fc; border-color: #16324f; }
+/* Nút "Cấp lại mã" (reset mật khẩu cho NV đã có tài khoản) + wrapper flex 2 nút */
+.ai-act {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+.ai-reissue-btn {
+    padding: 7px 13px;
+    border: 1px solid #f2d9b8;
+    border-radius: 8px;
+    background: #fff8ef;
+    color: #9a5b00;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.14s;
+}
+.ai-reissue-btn:hover { background: #fbeccd; border-color: #e6b980; }
 .ai-empty {
     text-align: center;
     color: #9aa9b8;

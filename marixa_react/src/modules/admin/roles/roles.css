@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    PHÂN QUYỀN (Admin Roles) — giao diện BẢNG (matrix + role table)
    ============================================================ */
 
@@ -399,4 +399,19 @@
         width: 32px;
         height: 32px;
     }
+}
+
+
+.roles-sys-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #5a4b1a;
+    background: #fdf3d7;
+    border: 1px solid #f0d58a;
+    white-space: nowrap;
 }

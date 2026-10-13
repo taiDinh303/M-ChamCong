@@ -7,6 +7,10 @@ import "./roles.css";
 
 const AVA_COLORS = ["#2f6df6", "#16a085", "#e67e22", "#8e44ad", "#c0392b", "#1565c0", "#00838f"];
 
+// Vai trò hệ thống (đã seed): không cho xóa để tránh mất phân quyền (Admin...).
+// UI ẩn nút Xóa; phía API cũng chặn (RoleService) -> 2 lớp bảo vệ.
+const SYSTEM_ROLES = new Set(["Admin", "Employee", "Manager", "HR"]);
+
 const AdminRolesPage = () => {
     const { language } = useLanguage();
     const L = useCallback((t) => translate(t, language), [language]);
@@ -95,6 +99,11 @@ const AdminRolesPage = () => {
     };
 
     const deleteRole = async (role) => {
+        // Bảo vệ: không cho xóa vai trò hệ thống (Admin, Employee, Manager, HR).
+        if (SYSTEM_ROLES.has(role.name)) {
+            setError(L("Vai trò hệ thống (Admin, Employee, Manager, HR) không thể xóa."));
+            return;
+        }
         if (!window.confirm(`${L("Xóa vai trò")} ${role.name}?`)) return;
         try {
             await adminApi.deleteRole(role.id);
@@ -250,9 +259,15 @@ const AdminRolesPage = () => {
                                                         </span>
                                                     </td>
                                                     <td className="roles-th-act">
-                                                        <button type="button" className="roles-role-delete" onClick={() => deleteRole(role)} title={L("Xóa vai trò")}>
-                                                            🗑 {L("Xóa")}
-                                                        </button>
+                                                        {SYSTEM_ROLES.has(role.name) ? (
+                                                            <span className="roles-sys-badge" title={L("Vai trò hệ thống không thể xóa")}>
+                                                                🔒 {L("Hệ thống")}
+                                                            </span>
+                                                        ) : (
+                                                            <button type="button" className="roles-role-delete" onClick={() => deleteRole(role)} title={L("Xóa vai trò")}>
+                                                                🗑 {L("Xóa")}
+                                                            </button>
+                                                        )}
                                                     </td>
                                                 </tr>
                                             ))}
@@ -279,7 +294,7 @@ const AdminRolesPage = () => {
                                     </div>
                                 </div>
                                 <p className="att-muted roles-matrix-hint">
-                                    {L("Bấm "+ " để gán, bấm ✓ để gỡ vai trò. Dòng đậm = đang có vai trò.")}
+                                    {L("Bấm + để gán, bấm ✓ để gỡ vai trò. Dòng đậm = đang có vai trò.")}
                                 </p>
                                 <div className="att-table-wrap roles-matrix-wrap">
                                     <table className="att-table roles-matrix">

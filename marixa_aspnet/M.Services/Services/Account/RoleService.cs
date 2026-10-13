@@ -1,4 +1,4 @@
-﻿using M.Contract.Repositories.Entity;
+using M.Contract.Repositories.Entity;
 using M.Contract.Repositories.IUOW;
 using M.Contract.Services.Interface;
 using M.Core.Base;
@@ -14,6 +14,22 @@ namespace M.Services.Service
 {
     public class RoleService : IRoleService
     {
+        // Vai trò hệ thống (đã seed) không cho xóa để tránh mất phân quyền.
+        private static readonly HashSet<string> ProtectedRoleNames =
+            new(StringComparer.OrdinalIgnoreCase) { "Admin", "Employee", "Manager", "HR" };
+
+        private void GuardSystemRoleDeletion(ApplicationRole role)
+        {
+            if (role != null && !string.IsNullOrEmpty(role.Name)
+                && ProtectedRoleNames.Contains(role.Name))
+            {
+                throw new ErrorException(
+                    StatusCodes.Status400BadRequest,
+                    ResponseCodeConstants.FAILED,
+                    $"Vai trò hệ thống '{role.Name}' không thể xóa.");
+            }
+        }
+
         private readonly IUnitOfWork _unitOfWork;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -126,6 +142,8 @@ namespace M.Services.Service
                 .FirstOrDefaultAsync(r => r.Id == id && !r.DeletedTime.HasValue)
                 ?? throw new ErrorException(StatusCodes.Status404NotFound, ResponseCodeConstants.NOT_FOUND, "Role not found");
 
+            GuardSystemRoleDeletion(role);
+
             //Audit
             string currentUser = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "System";
             role.DeletedBy = currentUser;
@@ -144,6 +162,8 @@ namespace M.Services.Service
                     ResponseCodeConstants.NOT_FOUND,
                     "Role not found"
             );
+
+            GuardSystemRoleDeletion(role);
 
             //delete by roleManager
             IdentityResult result = await _roleManager.DeleteAsync(role);

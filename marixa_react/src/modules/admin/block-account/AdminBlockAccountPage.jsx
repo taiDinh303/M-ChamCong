@@ -1,6 +1,7 @@
 import AdminAppLayout from "../layout/AdminAppLayout";
 import adminApi from "../api/adminApi";
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { getAuth } from "../../../services/auth/auth";
 import "./block-account.css";
 
 const AdminBlockAccountPage = () => {
@@ -9,6 +10,9 @@ const AdminBlockAccountPage = () => {
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("");
     const [message, setMessage] = useState("");
+
+    // Người đang đăng nhập (để chặn việc tự khóa chính tài khoản admin của mình).
+    const auth = useMemo(() => getAuth(), []);
 
     const load = useCallback(() => {
         setLoading(true);
@@ -33,6 +37,8 @@ const AdminBlockAccountPage = () => {
         setTimeout(() => setMessage(""), 3000);
     };
 
+    const isSelf = (u) => Boolean(auth?.userId) && (u.userId === auth.userId || u.email === auth.userName || u.fullName === auth.userName);
+
     const filtered = useMemo(() => {
         const q = search.trim().toLowerCase();
         return users.filter((u) => {
@@ -55,13 +61,17 @@ const AdminBlockAccountPage = () => {
 
     const blockAccount = async (user) => {
         if (!user.userId) return;
+        if (isSelf(user)) {
+            flash("Không thể tự chặn chính tài khoản đang đăng nhập. Hãy mời một admin khác mở chặn.", true);
+            return;
+        }
         if (!window.confirm(`Chặn tài khoản của ${user.fullName} (${user.employeeCode})?`)) return;
         try {
             await adminApi.blockUser(user.userId, {});
             flash(`Đã chặn tài khoản của ${user.fullName}.`);
             load();
         } catch (err) {
-            flash(err.response?.data?.message || err.message || "Không chặn được.");
+            flash(err.response?.data?.message || err.message || "Không chặn được.", true);
         }
     };
 
@@ -72,13 +82,16 @@ const AdminBlockAccountPage = () => {
             flash(`Đã mở chặn tài khoản của ${user.fullName}.`);
             load();
         } catch (err) {
-            flash(err.response?.data?.message || err.message || "Không mở chặn được.");
+            flash(err.response?.data?.message || err.message || "Không mở chặn được.", true);
         }
     };
 
     // Nút thao tác: chỉ HIỆN "Chặn/Mở chặn" khi CÓ tài khoản (userId).
     // Chưa có tài khoản -> ẩn hoàn toàn cột thao tác (hiện "Chưa có").
     const actionOf = (u) => {
+        if (isSelf(u)) {
+            return <span className="blk-self-note" title="Tài khoản của bạn">Tài khoản của tôi</span>;
+        }
         if (u.isLockedOut) {
             return <button type="button" className="blk-btn blk-btn--unblock" onClick={() => unblockAccount(u)}>Mở chặn</button>;
         }
@@ -104,7 +117,7 @@ const AdminBlockAccountPage = () => {
     return (
         <AdminAppLayout title="Chặn tài khoản" subtitle="Quản lý chặn / mở chặn tài khoản nhân viên">
             <div className="att-content">
-                {message && <div className={`blk-notice${message.includes("chặn được") || message.includes("chặn thất") ? " is-error" : ""}`}>{message}</div>}
+                {message && <div className={`blk-notice${message.includes("chặn được") || message.includes("chặn thất") || message.includes("Không thể") ? " is-error" : ""}`}>{message}</div>}
 
                 {/* ===== Hero + KPI ===== */}
                 <div className="blk-hero">
@@ -112,7 +125,7 @@ const AdminBlockAccountPage = () => {
                         <span className="blk-hero-ico">🔒</span>
                         <div>
                             <h2>Quản lý chặn tài khoản</h2>
-                            <p>Chặn / mở chặn tài khoản. Nút chặn chỉ hiện với nhân viên đã có tài khoản.</p>
+                            <p>Chặn / mở chặn tài khoản. Không thể tự chặn chính tài khoản đang đăng nhập.</p>
                         </div>
                     </div>
                     <div className="blk-kpi-row">
@@ -166,7 +179,7 @@ const AdminBlockAccountPage = () => {
                                                         <span className="blk-ava" style={{ background: "hsl(" + Math.abs([...String(u.employeeCode || u.fullName)].reduce((a, c) => (a * 31 + c.charCodeAt(0)) | 0, 0)) % 360 + " 55% 45%)" }}>
                                                             {(u.fullName || "?").slice(0, 1).toUpperCase()}
                                                         </span>
-                                                        <strong>{u.fullName}</strong>
+                                                        <strong>{u.fullName}{isSelf(u) ? " (tôi)" : ""}</strong>
                                                     </div>
                                                 </td>
                                                 <td>{u.email || <span className="att-muted">—</span>}</td>
