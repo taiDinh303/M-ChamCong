@@ -305,18 +305,20 @@ const openVerify = (employee) => {
                                         <td><span className={`att-badge ${state.cls}`}>{L(state.label)}</span></td>
                                         <td className="ai-th-code">{code ? <code className="ai-code">{code.code}</code> : <span className="ai-muted">—</span>}</td>
                                         <td className="ai-th-act">
-                                            <div className="ai-act">
-                                                {code && (
-                                                    <button type="button" className="ai-verify-btn" onClick={() => openVerify(employee)}>&#10003; {L("Xác minh")}</button>
+                                            <div className="ai-act ai-only-act">
+                                                {code ? (
+                                                    <button type="button" className="ai-verify-btn" onClick={() => openVerify(employee)} title={L("Xác minh mã &amp; kích hoạt tài khoản")}>
+                                                        &#10003; {L("Xác minh")}
+                                                    </button>
+                                                ) : canIssue ? (
+                                                    <button type="button" className="ai-issue-one-btn" onClick={() => reissueOne(employee, true)} title={L("Cấp mã kích hoạt cho nhân viên chưa có tài khoản")}>
+                                                        {L("Cấp mã")}
+                                                    </button>
+                                                ) : (
+                                                    <button type="button" className="ai-reissue-btn" onClick={() => reissueOne(employee, false)} title={L("Cấp lại mã để nhân viên đặt lại mật khẩu")}>
+                                                        {L("Cấp lại mã")}
+                                                    </button>
                                                 )}
-                                                <button
-                                                    type="button"
-                                                    className={canIssue ? "ai-issue-one-btn" : "ai-reissue-btn"}
-                                                    onClick={() => reissueOne(employee, canIssue)}
-                                                    title={L("Cấp mã kích hoạt — nếu đã có tài khoản sẽ tự cấp lại để đặt lại mật khẩu")}
-                                                >
-                                                    {state.key === "none" ? L("Cấp mã") : L("Cấp lại mã")}
-                                                </button>
                                             </div>
                                         </td>
                                     </tr>;
