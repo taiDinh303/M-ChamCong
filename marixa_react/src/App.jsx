@@ -16,11 +16,12 @@ import {
     ResignedPage as AdminResignedPage,
 } from "./modules/admin/leaves/pages/PayrollResignedReport";
 import AdminAccountIssuancePage from "./modules/admin/accounts/pages/AccountIssuancePage";
+import adminApi from "./modules/admin/api/adminApi";
+import employeeApi from "./modules/employees/api/employeeApi";
 import EmployeeAttendanceHistoryPage from "./modules/employees/attendance/pages/EmployeeAttendanceHistoryPage";
 import EmployeeWorkSchedulePage from "./modules/employees/attendance/pages/EmployeeWorkSchedulePage";
 import EmployeeStatisticsPage from "./modules/employees/attendance/pages/EmployeeStatisticsPage";
 import EmployeeLeavePage from "./modules/employees/leaves/pages/EmployeeLeavePage";
-import EmployeeAccountIssuancePage from "./modules/employees/accounts/pages/AccountIssuancePage";
 import EmployeeContractPage from "./modules/employees/contracts/pages/EmployeeContractPage";
 import HomePage from "./modules/home/pages/HomePage";
 import UnauthorizedPage from "./modules/unauthorized/pages/UnauthorizedPage";
@@ -104,11 +105,12 @@ function App() {
                     path="/employees/reports"
                     element={guarded("/employees/reports", <ReportsPage />)}
                 />
+                {/* Cấp tài khoản — HR vào (layout HR, dùng employeeApi) */}
                 <Route
                     path="/employees/accounts"
                     element={guarded(
                         "/employees/accounts",
-                        <EmployeeAccountIssuancePage hrMode />
+                        <AdminAccountIssuancePage layout="hr" api={employeeApi} />
                     )}
                 />
                 <Route path="/employees/promotions" element={guarded("/employees/promotions", <PromotionsPage />)} />
@@ -148,18 +150,20 @@ function App() {
                         <ReportsPage admin />
                     )}
                 />
+                {/* Cấp tài khoản — Admin vào (layout Admin, dùng adminApi) */}
                 <Route
                     path="/admin/accounts"
                     element={guarded(
                         "/admin/accounts",
-                        <AdminAccountIssuancePage />
+                        <AdminAccountIssuancePage layout="admin" api={adminApi} />
                     )}
                 />
                 <Route path="/admin/employees" element={<Navigate to="/employees" replace />} />
                 <Route path="/admin/employees/leaves" element={guarded("/admin/employees/leaves", <AdminLeaveAdminPage hrMode />)} />
                 <Route path="/admin/employees/handover" element={guarded("/admin/employees/handover", <MeHandoverPage admin />)} />
                 <Route path="/admin/employees/reports" element={guarded("/admin/employees/reports", <ReportsPage admin />)} />
-                <Route path="/admin/employees/accounts" element={guarded("/admin/employees/accounts", <AdminAccountIssuancePage hrMode />)} />
+                {/* URL cũ /admin/employees/accounts → redirect về /admin/accounts */}
+                <Route path="/admin/employees/accounts" element={<Navigate to="/admin/accounts" replace />} />
                 <Route path="/admin/employees/promotions" element={<Navigate to="/employees/promotions" replace />} />
                 <Route path="/admin/employees/contracts" element={guarded("/admin/employees/contracts", <AdminContractPage hrMode />)} />
                 <Route path="/admin/work" element={guarded("/admin/work", <AdminWorkPage />)} />
