@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import employeeApi from "../../api/employeeApi";
+import employeeApi from "../api/employeeApi";
 
 const items = (r) =>
     r?.status === "fulfilled" ? r.value.data.data?.items || [] : [];

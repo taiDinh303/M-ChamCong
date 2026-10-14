@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import Header from "../../../../components/layout/Header";
+import Header from "../../../components/layout/Header";
 import HrSidebar from "./HrSidebar";
-import "../../../../components/layout/header.css";
-import { usePillNavActiveInView } from "../../../../components/layout/usePillNav";
-import "../../employee.css";
+import "../../../components/layout/header.css";
+import { usePillNavActiveInView } from "../../../components/layout/usePillNav";
+import "../employee.css";
 
 const COLLAPSE_KEY = "marixa_hr_sidebar_collapsed";
 

@@ -1,7 +1,7 @@
 import { Fragment, useState } from "react";
 
 import HrAppLayout from "../layout/HrAppLayout";
-import employeeApi from "../../api/employeeApi";
+import employeeApi from "../api/employeeApi";
 import { useHrData } from "../hooks/useHrData";
 import { HR_QUICK_FILTERS, useHrFilters } from "../hooks/useHrFilters";
 import HrFilterBar from "../components/HrFilterBar";
@@ -10,9 +10,9 @@ import HrEmployeeTable from "../components/HrEmployeeTable";
 import HrPagination from "../components/HrPagination";
 import HrAddForm from "../components/HrAddForm";
 import { downloadExcel, hrTemplate, exportEmployees, HR_HEADER_BY_KEY, parseCsv, readExcel } from "../hrUtils";
-import "../../../../modules/me/attendance.css";
+import "../../../modules/me/attendance.css";
 import "../hr.css";
-import { localeForLanguage, translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
+import { localeForLanguage, translate, useLanguage } from "../../../services/i18n/LanguageProvider";
 
 const formatImportError = (error) => {
     const body = error.response?.data;

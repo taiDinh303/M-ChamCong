@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import axiosClient from "../../../services/api/axiosClient";
 import { getAuth } from "../../../services/auth/auth";
-import HrAppLayout from "../../hr/hr/layout/HrAppLayout";
+import HrAppLayout from "../../hr/layout/HrAppLayout";
 import AppLayout from "../../../components/layout/AppLayout";
 import { localeForLanguage, useLanguage } from "../../../services/i18n/LanguageProvider";
 import PageBanner from "../components/PageBanner";

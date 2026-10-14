@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import HrAppLayout from "../../hr/layout/HrAppLayout";
-import HrHero from "../../hr/HrHero";
+import HrAppLayout from "../../layout/HrAppLayout";
+import HrHero from "../../HrHero";
 import employeeApi from "../../api/employeeApi";
 import "../../employee.css";
 import "../leaves.css";

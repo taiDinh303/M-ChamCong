@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import HrAppLayout from "../layout/HrAppLayout";
-import AdminAppLayout from "../../../admin/layout/AdminAppLayout";
-import employeeApi from "../../api/employeeApi";
-import { getAuth } from "../../../../services/auth/auth";
-import { localeForLanguage, translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
+import AdminAppLayout from "../../admin/layout/AdminAppLayout";
+import employeeApi from "../api/employeeApi";
+import { getAuth } from "../../../services/auth/auth";
+import { localeForLanguage, translate, useLanguage } from "../../../services/i18n/LanguageProvider";
 import "../reports.css";
 import HrHero from "../HrHero";
 

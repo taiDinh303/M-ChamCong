@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import AdminAppLayout from "../../layout/AdminAppLayout";
-import HrAppLayout from "../../../hr/hr/layout/HrAppLayout";
+import HrAppLayout from "../../../hr/layout/HrAppLayout";
 import adminApi from "../../api/adminApi";
 import "../../../../modules/me/attendance.css";
 import "../../admin.css";

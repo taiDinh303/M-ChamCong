@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import axiosClient from "../../../../services/api/axiosClient";
-import { getAuth } from "../../../../services/auth/auth";
+import axiosClient from "../../../services/api/axiosClient";
+import { getAuth } from "../../../services/auth/auth";
 import HrAppLayout from "../layout/HrAppLayout";
-import AppLayout from "../../../../components/layout/AppLayout";
-import { localeForLanguage, useLanguage } from "../../../../services/i18n/LanguageProvider";
+import AppLayout from "../../../components/layout/AppLayout";
+import { localeForLanguage, useLanguage } from "../../../services/i18n/LanguageProvider";
 import "./promotions.css";
 import HrHero from "../HrHero";
 

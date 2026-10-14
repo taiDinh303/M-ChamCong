@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import HrAppLayout from "../../hr/layout/HrAppLayout";
+import HrAppLayout from "../../layout/HrAppLayout";
 import employeeAttendanceApi from "../api/employeeAttendanceApi";
 import { approvalClass, approvalLabel } from "../labels";
 import { getAuth } from "../../../../services/auth/auth";
 import "../../employee.css";
-import HrHero from "../../hr/HrHero";
+import HrHero from "../../HrHero";
 import EmployeeShiftDetailModal from "../components/EmployeeShiftDetailModal";
 
 const vnToday = () => new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Bangkok" }).format(new Date());

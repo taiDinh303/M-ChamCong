@@ -1,13 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
 
-import HrAppLayout from "../../hr/layout/HrAppLayout";
+import HrAppLayout from "../../layout/HrAppLayout";
 import employeeAttendanceApi from "../api/employeeAttendanceApi";
 import AttendanceFormModal from "../components/AttendanceFormModal";
 import AttendanceDetailModal from "../components/AttendanceDetailModal";
 import { translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
 import "../../../../modules/me/attendance.css";
 import "../../employee.css";
-import HrHero from "../../hr/HrHero";
+import HrHero from "../../HrHero";
 
 // Trang quản trị: thống kê công của TOÀN BỘ nhân viên theo tháng.
 // Trích "YYYY-MM" từ chuỗi ngày (bất biến theo múi giờ).

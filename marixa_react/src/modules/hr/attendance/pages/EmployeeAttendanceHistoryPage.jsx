@@ -1,10 +1,10 @@
-﻿import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import { useSearchParams } from "react-router-dom";
 
 
 
-import HrAppLayout from "../../hr/layout/HrAppLayout";
+import HrAppLayout from "../../layout/HrAppLayout";
 
 import employeeAttendanceApi from "../api/employeeAttendanceApi";
 
@@ -18,13 +18,13 @@ import { statusLabel, statusClass, approvalLabel, approvalClass } from "../label
 
 import { formatVnTime, formatVnDate, calcOvertime, formatOvertime } from "../../../../utils/vnTime";
 
-import { toCsv, downloadCsv } from "../../hr/hrUtils";
+import { toCsv, downloadCsv } from "../../hrUtils";
 import { localeForLanguage, translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
 
 import "../../../../modules/me/attendance.css";
 
 import "../../employee.css";
-import HrHero from "../../hr/HrHero";
+import HrHero from "../../HrHero";
 
 
 

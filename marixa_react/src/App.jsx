@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./modules/login/pages/LoginPage";
 import ActivatePage from "./modules/activate/pages/ActivatePage";
-import HrPage from "./modules/hr/hr/pages/HrPage";
-import ReportsPage from "./modules/hr/hr/pages/ReportsPage";
+import HrPage from "./modules/hr/pages/HrPage";
+import ReportsPage from "./modules/hr/pages/ReportsPage";
 import WorkPage from "./modules/work/WorkPage";
 import ProfilePage from "./modules/profile/pages/ProfilePage";
 import AdminHomepage from "./modules/admin/pages/AdminHomepage";
@@ -26,7 +26,7 @@ import EmployeeContractPage from "./modules/hr/contracts/pages/EmployeeContractP
 import HomePage from "./modules/home/pages/HomePage";
 import UnauthorizedPage from "./modules/unauthorized/pages/UnauthorizedPage";
 import RequireModule from "./components/common/RequireModule";
-import PromotionsPage from "./modules/hr/hr/pages/PromotionsPage";
+import PromotionsPage from "./modules/hr/pages/PromotionsPage";
 
 // ===== Module "me": các trang nhân viên xem thông tin của mình =====
 import MeClockInPage from "./modules/me/pages/ClockInPage";

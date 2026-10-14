@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
 import AdminAppLayout from "./layout/AdminAppLayout";
-import HrAppLayout from "../hr/hr/layout/HrAppLayout";
+import HrAppLayout from "../hr/layout/HrAppLayout";
 import { useAdminList } from "./hooks/useAdminList";
 import ApproveButtons from "./components/ApproveButtons";
-import { toCsv, downloadCsv } from "../hr/hr/hrUtils";
+import { toCsv, downloadCsv } from "../hr/hrUtils";
 import "../../modules/me/attendance.css";
 import "./admin.css";
 

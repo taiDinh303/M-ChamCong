@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
 
-import HrAppLayout from "./hr/layout/HrAppLayout";
+import HrAppLayout from "./layout/HrAppLayout";
 import { useEmployeeList } from "./hooks/useEmployeeList";
 import ApproveButtons from "./components/ApproveButtons";
-import { toCsv, downloadCsv } from "./hr/hrUtils";
+import { toCsv, downloadCsv } from "./hrUtils";
 import { localeForLanguage, translate, useLanguage } from "../../services/i18n/LanguageProvider";
 import "../../modules/me/attendance.css";
 import "./employee.css";

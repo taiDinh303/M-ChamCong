@@ -1,5 +1,5 @@
 import { useState } from "react";
-import employeeApi from "../../api/employeeApi";
+import employeeApi from "../api/employeeApi";
 
 // Component con định nghĩa ở MODULE-LEVEL (ngoài component) để giữ identity ổn định
 // qua từng lần render. Nếu định nghĩa bên trong thân HR_ADDForm thì mỗi keystroke
