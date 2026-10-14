@@ -1,4 +1,4 @@
-# 05 — Chiến lược kiểm thử hệ thống chấm công Marixa
+﻿5 — Chiến lược kiểm thử hệ thống chấm công Marixa
 
 > Tác giả & chủ tài liệu: **Đinh Văn Tài**.
 > Kiểm thử cho hệ thống **ASP.NET 8 + React 19 + DB linh hoạt** đang chạy. Ưu tiên: không mất/nhân đôi công, đúng quyền, đúng số liệu, đúng kỳ.
@@ -53,4 +53,4 @@ Các mốc giờ dưới dùng **ca làm chung active** (seed 08:00–17:00), kh
 
 ## 5. Cổng chấp nhận trước dùng thật
 
-Không đưa thật nếu còn: mất/nhân đôi event, sai công/phép/tăng ca, vượt quyền, khóa kỳ không ổn định, lộ secret, restore thất bại. Đạt ma trận §2–§4, thử backup/restore ít nhất 1 lần, admin đã nhập lịch/địa điểm/chính sách trước vận hành. Hạn mức & điều kiện gói (Render/Vercel/Supabase Free) ghi rõ trong [06-deployment-vercel-supabase.md](06-deployment-vercel-supabase.md).
+Không đưa thật nếu còn: mất/nhân đôi event, sai công/phép/tăng ca, vượt quyền, khóa kỳ không ổn định, lộ secret, restore thất bại. Đạt ma trận §2–§4, thử backup/restore ít nhất 1 lần, admin đã nhập lịch/địa điểm/chính sách trước vận hành. Hạn mức & điều kiện gói (Render/Vercel/Supabase Free) ghi rõ trong [07-deploy-overview.md](07-deploy-overview.md).

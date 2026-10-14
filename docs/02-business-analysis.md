@@ -1,4 +1,4 @@
-# 01 — Phân tích nghiệp vụ hệ thống chấm công Marixa
+﻿1 — Phân tích nghiệp vụ hệ thống chấm công Marixa
 
 > Tác giả & chủ tài liệu: **Đinh Văn Tài**.
 > Đối tượng đọc: AI (Agnes) khi được yêu cầu đọc dự án, và developer.
@@ -7,7 +7,7 @@
 ## 0. Cách đọc file này (dành cho AI)
 
 - File này là "bản đồ nghiệp vụ": đọc trước khi đụng vào code, để biết **ai làm gì, được quyền gì, các quy tắc nào là bắt buộc**.
-- Nếu file này khác với `docs/plan.md` (mục quyết định đang hiệu lực), **mục 2 của `plan.md` thắng** — đó là quy tắc hiện hành.
+- Nếu file này khác với `docs/01-plan.md` (mục quyết định đang hiệu lực), **mục 2 của `01-plan.md` thắng** — đó là quy tắc hiện hành.
 - Nếu cần xem các module/trang/chức năng đã có hay chưa: đọc `docs/worklog.md` (bảng ma trận theo trang & module).
 - Các file đặc tả khác: `02` dữ liệu, `03` luồng, `04` kiến trúc, `05` test, `06`+`08` triển khai, `07` UI.
 
@@ -45,7 +45,7 @@ Hệ thống hiện dùng **4 role** (xem `M.API/Seed/RoleSeeder.cs` và `marixa
 Quy tắc phân quyền (frontend `permission.js` + backend `[Authorize(Roles=...)]`):
 - Mỗi module khai báo quyền truy cập trong `MODULES` (`access: "user" | "admin"`, hoặc `roles: [...]`).
 - Sidebar/đường dẫn chỉ là hỗ trợ giao diện; **mọi endpoint bắt buộc có `[Authorize]` phía backend** (trừ login/activate).
-- Nguyên tắc "không tự duyệt của chính mình" được áp dụng ở tầng nghiệp vụ khi người phát sinh đơn cũng chính là người có quyền duyệt (ghi rõ trong `03-workflow.md`).
+- Nguyên tắc "không tự duyệt của chính mình" được áp dụng ở tầng nghiệp vụ khi người phát sinh đơn cũng chính là người có quyền duyệt (ghi rõ trong `05-workflow.md`).
 
 > Lưu ý: V1 thiết kế ban đầu (theo tài liệu cũ của đồng đội) dùng 3 role `employee/hr/admin`; code hiện chạy đã mở rộng lên **4 role** (thêm `Manager`). Việc gộp/mở rộng role thêm nếu cần phải do chủ dự án quyết định, không tự ý đổi.
 
@@ -68,7 +68,7 @@ Quy tắc phân quyền (frontend `permission.js` + backend `[Authorize(Roles=..
 - **Đơn nghỉ** (`LeaveRequest`): loại nghỉ do admin định nghĩa (`LeaveType`), khoảng ngày, lý do, trạng thái duyệt. Phê duyệt sinh giao dịch sổ phép (`LeaveLedger`) — không sửa số dư trực tiếp.
 - **Tăng ca** (`OvertimeRequest`): ngày, khoảng giờ, lý do; duyệt trước khi tính.
 - **Sửa công** (`AttendanceCorrection`): đề xuất mốc đúng + lý do; khi duyệt tạo bản điều chỉnh riêng, giữ nguyên sự kiện gốc.
-- Duyệt đi đúng người: HR/Manager/Admín duyệt đơn của Employee; không cho tự duyệt chính mình. Chi tiết luồng ở `03-workflow.md`.
+- Duyệt đi đúng người: HR/Manager/Admín duyệt đơn của Employee; không cho tự duyệt chính mình. Chi tiết luồng ở `05-workflow.md`.
 
 ## 5. Bảng công và báo cáo
 
@@ -84,4 +84,4 @@ Quy tắc phân quyền (frontend `permission.js` + backend `[Authorize(Roles=..
 4. Admin khóa/mở kỳ có lý do; Excel/PDF đúng quyền, đúng kỳ và phiên bản.
 5. Hệ thống giữ nhật ký (audit) cho các thay đổi quan trọng: công, phép, role, cấu hình, kỳ.
 
-Xem dữ liệu tại [02-database-design.md](02-database-design.md), luồng tại [03-workflow.md](03-workflow.md), UI tại [07-ui-design-system.md](07-ui-design-system.md).
+Xem dữ liệu tại [04-database-design.md](04-database-design.md), luồng tại [05-workflow.md](05-workflow.md), UI tại [09-ui-design.md](09-ui-design.md).

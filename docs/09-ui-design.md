@@ -1,4 +1,4 @@
-# 07 — Design system và giao diện chấm công Marixa
+﻿7 — Design system và giao diện chấm công Marixa
 
 > Tác giả & chủ tài liệu: **Đinh Văn Tài**.
 > Design system **gắn với mã nguồn thật**: token màu nằm ở `marixa_react/src/theme.css` (nguồn duy nhất), cấu trúc module nằm ở `marixa_react/src/constants/modules.js` và `App.jsx`, layout ở `marixa_react/src/components/layout`.
@@ -74,4 +74,4 @@ Nút đang gửi phải khóa tạm; không khiến người dùng bấm lặp.
 
 Kiểm tra 375/768/1024/1440px, không cuộn ngang ở mobile. Tôn trọng safe area; input có nhãn + lỗi cạnh trường; dialog có Esc + focus hợp lý; bảng có tiêu đề cột + trạng thái bằng chữ. Dùng bộ icon nhất quán, không emoji trong nội dung nghiệp vụ (đổi dần các icon emoji còn sót).
 
-Luồng nghiệp vụ đối chiếu [03-workflow.md](03-workflow.md); quyền module đối chiếu [01-business-analysis.md](01-business-analysis.md) và `MODULES`.
+Luồng nghiệp vụ đối chiếu [05-workflow.md](05-workflow.md); quyền module đối chiếu [02-business-analysis.md](02-business-analysis.md) và `MODULES`.

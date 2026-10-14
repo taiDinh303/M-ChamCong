@@ -1,10 +1,10 @@
-# WORKLOG — Hệ thống chấm công Marixa
+﻿# WORKLOG — Hệ thống chấm công Marixa
 
 > **Tác giả & chủ tài liệu: Đinh Văn Tài.** (File này được Tài tổ chức lại 12/10/2026 thành "bản đồ chức năng" theo trang & module để AI/Agnes và dev đọc nhanh.)
 
 File này là điểm bắt đầu cho bất kỳ AI/người làm việc tiếp. Đọc theo thứ tự: (1) trạng thái, (2) ma trận chức năng, (3) log sự kiện, (4) quy tắc cập nhật.
 
-**Quy tắc bất biến:** `docs/worklog.md` là file duy nhất được phép sửa tự do trong nhóm Markdown. Các file `01`–`08`, `plan.md`, `SETUP_CLOUD.md` là đặc tả; khi cần thay đổi đặc tả → **ghi nhận + đề xuất vào đây**, không tự sửa file đó. AI ghi sự thật đã kiểm chứng; không đánh dấu "xong" khi chưa kiểm tra.
+**Quy tắc bất biến:** `docs/worklog.md` là file duy nhất được phép sửa tự do trong nhóm Markdown. Các file `01`–`10`, `01-plan.md`, `11-setup-cloud.md` là đặc tả; khi cần thay đổi đặc tả → **ghi nhận + đề xuất vào đây**, không tự sửa file đó. AI ghi sự thật đã kiểm chứng; không đánh dấu "xong" khi chưa kiểm tra.
 
 ## 1. Trạng thái hiện tại (cập nhật 12/10/2026, múi giờ Asia/Ho_Chi_Minh)
 
@@ -12,7 +12,7 @@ File này là điểm bắt đầu cho bất kỳ AI/người làm việc tiếp
 - **Role:** 4 core đã map quyền `Admin`, `Manager`, `HR`, `Employee` (frontend `marixa_react/src/constants/modules.js`) + 3 role nghiệp vụ **đã seed** `Accountant`, `Sale`, `Marketing` (`M.API/Seed/RoleSeeder.cs`, **chưa** gán quyền module).
 - **Next.js `marixa_aspnet/web`: ĐÃ XÓA** (12/10/2026, không liên quan — không còn bị tham chiếu bởi Dockerfile/solution).
 - **Repository:** `origin = github.com/taiDinh303/M-ChamCong`.
-- **Instance hosting đang chạy (xác nhận 12/10/2026):** Supabase ref `zphqfcwrwitrqdeueonu` (Free, Singapore · [dashboard](https://supabase.com/dashboard/project/zphqfcwrwitrqdeueonu)) · Render `https://marixa001-asp.onrender.com` (Free · service `srv-db4hmnks728c73aq6h90`, [dashboard](https://dashboard.render.com/web/srv-db4hmnks728c73aq6h90)) · Vercel `https://marixa001.vercel.app` (Hobby · team/project `taiteam/marixa_001`, [dashboard](https://vercel.com/taiteam/marixa_001)). Chi tiết trong `docs/06`, `docs/08`, `docs/SETUP_CLOUD.md`.
+- **Instance hosting đang chạy (xác nhận 12/10/2026):** bảng đầy đủ (URL, ref, plan, region) nằm tại [`00-README.md`](00-README.md) §Quick facts → "Hosting (live)". File này không lặp bảng.
 - Chấm công, nghỉ phép, tăng ca, sửa công, hồ sơ nhân sự, bảng lương, hợp đồng, BHXH, công việc, quản trị tài khoản/role **đều đã có code** (backend + frontend). Các mục **chưa có** tập trung ở: offline queue, khóa kỳ + snapshot, export Excel/PDF kỳ công, cộng phép năm tự động, audit log đầy đủ (xem ma trận §2).
 
 ## 2. Ma trận chức năng theo module & trang
@@ -94,7 +94,7 @@ File này là điểm bắt đầu cho bất kỳ AI/người làm việc tiếp
 | DB linh hoạt SQL Server/PostgreSQL + boot DDL + schema sync | ✅ | `DatabaseConfig.cs`, `PostgresSchemaSync.cs`, `NpgsqlConnectionStringNormalizer.cs`. |
 | Soft delete + audit (trên bảng công) | 🟡 | `AuditLog` entity + `AuditLogController` có; kiểm tra mọi module có ghi audit đều hay chưa. |
 | Chấm công online + ảnh camera + tính giờ thực tế/tăng ca | ✅ | `AttendanceService.CheckInAsync`, `AttendanceTimeCalculator`. |
-| **Offline / đồng bộ trễ (IndexedDB queue)** | ❌ | Chưa có. Event đến sau khi khóa kỳ cần "điều chỉnh kỳ mở sau". Xem `plan.md`. |
+| **Offline / đồng bộ trễ (IndexedDB queue)** | ❌ | Chưa có. Event đến sau khi khóa kỳ cần "điều chỉnh kỳ mở sau". Xem `01-plan.md`. |
 | **Khóa/mở kỳ công + snapshot không đổi** | ❌ | Chưa có luồng lock kỳ tháng. |
 | **Xuất Excel (bảng công) & PDF (đơn nghỉ) theo kỳ** | ❌ | Chỉ có upload báo cáo NV; chưa có export kỳ công/đơn. |
 | **Cộng phép năm tự động hằng tháng (idempotent)** | ❌ | Chưa có; cần job/cron + giao dịch ledger. |
@@ -102,11 +102,39 @@ File này là điểm bắt đầu cho bất kỳ AI/người làm việc tiếp
 | **Ca làm chung** | ✅ | Giữ đơn giản: 1 `AttendanceRule` active (chủ dự án **không** yêu cầu ngày hiệu lực — đã rút lại đề xuất "version + ngày hiệu lực"). |
 | **Giới hạn dung lượng / dọn ảnh (retention, cron)** | ❌ | Chưa có job dọn ảnh. |
 | **Backup/restore chạy thật** | ❌ | Chưa có; cần `pg_dump` + backup ảnh + thử restore. |
-| **Integration/E2E test** | ❌ | Chưa có bộ test; cần theo `05-testing-strategy.md`. |
+| **Integration/E2E test** | ❌ | Chưa có bộ test; cần theo `06-testing.md`. |
 | RLS / Supabase Auth | ❌ | Không dùng (đang dùng .NET Identity + JWT); không phải yêu cầu bắt buộc. |
 
 ## 4. Log sự kiện (mới trên cùng)
 
+### 14/10/2026 (2) — Đinh Văn Tài: đồng bộ tên file docs (đánh số 00–12)  - **Đổi tên 2 file cho đồng bộ đánh số:** `SETUP_CLOUD.md` → `11-setup-cloud.md`; `plan.md` → `01-plan.md`. Giờ toàn bộ `docs/` mang tên `00`–`12` + `worklog.md`. - **Cập nhật mọi tham chiếu/link** tới 2 file đổi tên trong `00`, `01`, `04`, `06`, `12`, `worklog`. - **Thêm `10-setup-local.md` và `12-glossary.md`** vào bảng "file nào cho việc nào" của `00-README`; mở rộng "spec" từ `01`–`10` thành `01`–`10`. - Không sửa code; chỉ chỉnh Markdown trong `docs/`. ### 14/10/2026 — Đinh Văn Tài: tổ chức lại tài liệu (gộp trùng lặp, thêm 09/10, gắn P0/P1/P2, sửa mojibake)
+- **Gộp nội dung trùng về `00-README.md` (nguồn duy nhất):** bảng hosting (trước lặp 5 file: 00/06/08/11-setup-cloud/worklog) giờ chỉ ở `00-README` §Quick facts, các file khác link về. Quy tắc đọc/ghi (trước lặp 4 file) chuẩn hoá ở `00-README` (mục mới "Quy tắc đọc / ghi tài liệu (NGUỒN DUY NHẤT)"). `plan §2` là nguồn "việc tiếp theo", `worklog §6` chỉ link.
+- **Thêm `10-setup-local.md`:** hướng dẫn setup dev local end-to-end (.NET 8 SDK, SQL Server, Node, build, seed, migration, test).
+- **Thêm `12-glossary.md`:** bảng thuật ngữ dùng chung (ca làm, kỳ công, snapshot, idempotent, session pooler, DB linh hoạt, soft delete, bucket public, module, role, offline queue, export, blueprint, SPA fallback).
+- **Gộp `06` vào `08`:** nội dung `06` (biến môi trường + bước triển khai + troubleshooting) nhúng vào `08`. `06` giờ chỉ là overview + link.
+- **Gắn P0/P1/P2 vào `01-plan.md §2`:** P0 = khóa kỳ/snapshot/export + test + deploy thật; P1 = offline + sổ phép + backup; P2 = map quyền role mới + bảo mật ảnh.
+- **Sửa mojibake:** `worklog.md` bị lỗi ký tự (backticks + hyphen trong route bị mất, diacritics lỗi) — đã reconstruct toàn bộ file bằng nội dung chuẩn, kiểm tra lại bằng cách đọc raw bytes.
+
+### 14/10/2026 (2) — Đinh Văn Tài: đồng bộ tên file docs (đánh số 00–12) + sửa backticks  - **Đổi tên 2 file cho đồng bộ đánh số:** `SETUP_CLOUD.md` → `11-setup-cloud.md`; `plan.md` → `01-plan.md`. Giờ `docs/` gồm `00`–`12` + `worklog.md`. - **Cập nhật mọi tham chiếu/link** tới 2 file đổi tên trong `00`, `01`, `04`, `06`, `12`, `worklog`. - **Thêm `10-setup-local.md` + `12-glossary.md`** vào bảng "file nào cho việc nào" trong `00-README`; mở rộng "spec" `01`–`10` → `01`–`10`. - **Sửa lỗi backticks** trong `00-README` (một số dòng `09`/`12-plan` mất backtick do tool encode) — reconstruct toàn bộ `00-README.md` từ bản sạch, verify bằng byte inspection (0 dòng hỏng, 4 dòng có backtick đúng). - Không sửa code; chỉ chỉnh Markdown trong `docs/`.  ### 14/10/2026 (4) — Đinh Văn Tài: sắp xếp lại file theo thứ tự đọc (logic)
+- **Đổi tên file theo thứ tự đọc quan trọng → phụ:**
+  | Số mới | File | Nội dung |
+  | --- | --- | --- |
+  | 01 | `01-plan.md` | Kế hoạch, việc tiếp theo, quyết định (từ `12-plan.md`) |
+  | 02 | `02-business-analysis.md` | Nghiệp vụ, role, quy tắc (từ `01`) |
+  | 03 | `03-architecture.md` | Kiến trúc (từ `04`) |
+  | 04 | `04-database-design.md` | DB / entity (từ `02`) |
+  | 05 | `05-workflow.md` | Luồng nghiệp vụ (từ `03`) |
+  | 06 | `06-testing.md` | Kiểm thử (từ `05`) |
+  | 07 | `07-deploy-overview.md` | Deploy overview (từ `06`) |
+  | 08 | `08-deploy-detail.md` | Deploy chi tiết + troubleshooting (từ `08`) |
+  | 09 | `09-ui-design.md` | UI / design (từ `07`) |
+  | 10 | `10-setup-local.md` | Setup dev local (từ `09`) |
+  | 11 | `11-setup-cloud.md` | Setup cloud dashboard (giữ) |
+  | 12 | `12-glossary.md` | Thuật ngữ (từ `10`) |
+
+- **Cập nhật link/tham chiếu** trong toàn bộ file (heading, cross-link, nội dung).
+- **Viết lại `00-README`** với bảng "file nào cho việc nào" mới theo logic đọc.
+- Không sửa code; chỉ chỉnh Markdown trong `docs/`.
 ### 12/10/2026 — Đinh Văn Tài: thực thi yêu cầu chủ dự án (delete Next.js, thêm role, rút "ngày hiệu lực")
 - **Xoá `marixa_aspnet/web`** (bản Next.js): đã kiểm tra không bị tham chiếu bởi Dockerfile/solution/scripts → `git rm -r` + `Remove-Item` xóa sạch khỏi đĩa. Không còn tồn tại.
 - **Thêm 3 role** `Accountant`, `Sale`, `Marketing` vào `M.API/Seed/RoleSeeder.cs` ("code trước" theo yêu cầu; "Accountant" khớp `SampleDataSeeder` sẵn có). Chưa gán vào `MODULES`/endpoint; comment ghi rõ.
@@ -135,11 +163,11 @@ Câu trả lời của chủ dự án → cập nhật tài liệu (chỉ sửa 
 
 ### 12/10/2026 — Đinh Văn Tài: bổ sung instance hosting đang chạy
 - Chủ dự án cung cấp các instance đang hosting (không chứa secret): Supabase ref `zphqfcwrwitrqdeueonu`, Render web service `srv-db4hmnks728c73aq6h90`, Vercel team/project `taiteam/marixa_001`.
-- Đã ghi vào `docs/06` (mục 0a), `docs/08` ( Hosting đang chạy ), `docs/SETUP_CLOUD.md` (mục 1) và trạng thái ở đây.
+- Đã ghi vào `docs/06` (mục 0a), `docs/08` (Hosting đang chạy), `docs/11-setup-cloud.md` (mục 1) và trạng thái ở đây.
 - Không sửa code; chỉ bổ sung tài liệu.
 
 ### 12/10/2026 — Đinh Văn Tài: tổ chức lại tài liệu
-- Viết lại toàn bộ `docs/01`–`08`, `plan.md`, `SETUP_CLOUD.md`, `worklog.md` cho **phù hợp bộ stack đang chạy** (ASP.NET 8 `M.API` + React 19 `marixa_react`), không còn bám vào kiến trúc Next.js + Supabase Auth cũ (chưa triển khai).
+- Viết lại toàn bộ `docs/01`–`08`, `01-plan.md`, `11-setup-cloud.md`, `worklog.md` cho **phù hợp bộ stack đang chạy** (ASP.NET 8 `M.API` + React 19 `marixa_react`), không còn bám vào kiến trúc Next.js + Supabase Auth cũ (chưa triển khai).
 - Thay thế tên/liên kết đồng đội cũ → **Đinh Văn Tài**; bỏ tham chiếu repo cá nhân cũ, cập nhật về `taiDinh303/M-ChamCong`.
 - Bỏ tên đồng đội cũ (nơi còn sót) và các link tài khoản/repo cá nhân cũ ra khỏi mọi file .md; gộp về **Đinh Văn Tài**.
 - Xây dựng **ma trận chức năng theo module & trang** (phần 2–3) làm nguồn duy nhất để biết "đã có / chưa có" → dễ cho AI và dev.
@@ -158,21 +186,15 @@ Câu trả lời của chủ dự án → cập nhật tài liệu (chỉ sửa 
 - **Render/Vercel/Supabase Free:** rủi ro hạn mức + điều kiện sử dụng thương mại — chủ dự án xác nhận trước khi vận hành thật (`docs/06`).
 - **Chưa có test/backup/restore:** chưa chạy integration/e2e, chưa thử khôi phục dữ liệu.
 
-## 6. Việc tiếp theo (tham chiếu `plan.md` mục 2)
+## 6. Việc tiếp theo
 
-1. Offline queue (IndexedDB) + điều chỉnh kỳ mở sau.
-2. Khóa/mở kỳ + snapshot bất biến.
-3. Export Excel (bảng công) & PDF (đơn nghỉ) theo quyền + phiên bản.
-4. Cộng phép năm hằng tháng (idempotent).
-5. **Map quyền module cho 3 role mới** (`Accountant`/`Sale`/`Marketing`) vào `MODULES` (frontend) + `[Authorize(Roles=...)]` (backend) — hiện 3 role này đã seed (code dùng "Accountant") nhưng chưa gán quyền.
-6. Cân nhắc bucket ảnh private.
-7. Bộ test (unit/integration/e2e) + backup/restore.
-8. Deploy thật (Render + Vercel + Supabase) + smoke test URL thật.
+> **Nguồn duy nhất cho danh sách "việc tiếp theo theo module" là [`01-plan.md`](01-plan.md) §2 (checkbox).** `worklog.md` không liệt kê lại — chỉ link về.
 
-> ~~Nâng `AttendanceRule` sang phiên bản có ngày hiệu lực~~ — **ĐÃ RÚT (12/10):** chủ dự án không yêu cầu ngày hiệu lực; giữ ca làm đơn giản (1 rule active).
+- Khi hoàn thành 1 mục trong `01-plan.md` §2: thêm entry vào §4 (log sự kiện) của file này, ghi ngày + bằng chứng.
+- Khi phát sinh việc mới không nằm trong `01-plan.md` §2: đề xuất mục mới (ghi trong §4 hoặc §5), **không tự thêm vào `01-plan.md`**.
 
 ## 7. Quy tắc cập nhật worklog
 
 - Mỗi lượt: ghi ngày + thay đổi thật + bằng chứng kiểm tra; chuyển việc xong khỏi "Việc tiếp theo".
 - Bug: triệu chứng + cách tái hiện + mức ảnh hưởng + trạng thái; khi hết lỗi ghi cách sửa + ngày đóng.
-- Nếu cần đổi đặc tả (01–08/plan/SETUP_CLOUD): ghi **đề xuất + ảnh hưởng** vào đây, không tự sửa file đặc tả.
+- Nếu cần đổi đặc tả (01–08/plan/11-setup-cloud): ghi **đề xuất + ảnh hưởng** vào đây, không tự sửa file đặc tả.

@@ -1,15 +1,14 @@
-# Kế hoạch triển khai hệ thống chấm công Marixa V1
+﻿# 01— Kế hoạch triển khai hệ thống chấm công Marixa V1
 
 > Tác giả & chủ tài liệu: **Đinh Văn Tài**. Cập nhật: 12/10/2026 (viết lại theo bộ stack thật: ASP.NET 8 `M.API` + React 19 `marixa_react` + DB linh hoạt + Render/Vercel/Supabase).
 
 ## 0. Cách dùng kế hoạch (dành cho AI)
 
-1. Đọc `docs/worklog.md` trước (bản đồ chức năng đã có/chưa có), rồi đọc `01`–`08` để nắm nghiệp vụ/kiến trúc/luồng.
-2. **Quy tắc:** khi đặc tả `01`–`07` khác với thực tế code hoặc quyết định mới, **mục 1 dưới đây + code đang chạy** là chuẩn; ghi nhận khác biệt vào `worklog.md`.
-3. Mỗi bước hoàn thành phải **đã kiểm chứng** (chạy được / có bằng chứng). Không đánh dấu `[x]` khi chưa kiểm tra. Ghi ngày, file/commit, kết quả vào `worklog.md`.
-4. Secret (DB/JWT/Supabase) chỉ đặt trong Render/Vercel Dashboard, không commit; không gửi qua chat.
-5. Docker chỉ dùng cho **build/chạy API trên Render**; dev local chạy .NET trực tiếp.
-
+- Đọc `docs/worklog.md` trước (bản đồ chức năng đã có/chưa có), rồi đọc `01`–`08` để nắm nghiệp vụ/kiến trúc/luồng.
+- **Quy tắc đọc/ghi (file nào được sửa, không commit secret, đánh dấu "xong" khi nào, và "khi đặc tả khác code → ai thắng"): xem [`00-README.md`](00-README.md) §Quy tắc đọc/ghi (song ngữ).** File này không lặp các quy tắc đó — chỉ link về.
+- Mỗi bước hoàn thành phải **đã kiểm chứng** (chạy được / có bằng chứng). Không đánh dấu `[x]` khi chưa kiểm tra. Ghi ngày, file/commit, kết quả vào `worklog.md`.
+- Secret (DB/JWT/Supabase) chỉ đặt trong Render/Vercel Dashboard, không commit; không gửi qua chat.
+- Docker chỉ dùng cho **build/chạy API trên Render**; dev local chạy .NET trực tiếp.
 ## 1. Quyết định & trạng thái hiện hành (đang chạy)
 
 | Chủ đề | Trạng thái / quy tắc hiện hành |
@@ -27,15 +26,15 @@
 
 ## 2. Việc tiếp theo (theo module, ưu tiên từ `worklog.md`)
 
-- [ ] **Offline / đồng bộ trễ**: thêm hàng đợi IndexedDB cho chấm công khi mất mạng; event đến sau khi khóa kỳ → điều chỉnh kỳ mở sau (không sửa snapshot).
-- [ ] **Khóa/mở kỳ công** theo tháng + snapshot không đổi; Excel kỳ mở = "bản tạm", kỳ khóa = snapshot.
-- [ ] **Xuất Excel/PDF**: bảng công (Excel) và đơn nghỉ (PDF) theo quyền & phiên bản (hiện mới có upload báo cáo NV; chưa có export kỳ công).
-- [ ] **Sổ phép tự động**: giao dịch cộng phép năm hằng tháng (idempotent) khi có chính sách.
-- [ ] **Map quyền module cho 3 role mới** (`Accounting`/`Sale`/`Marketing`): hiện đã seed trong `RoleSeeder.cs` nhưng chưa gán quyền; cần thêm vào `MODULES` (frontend) + `[Authorize(Roles=...)]` (backend) khi muốn dùng.
-- [ ] **Bảo mật ảnh**: cân nhắc bucket **private** + đọc ảnh theo quyền (hiện public). Quyết định + cập nhật `docs/02` trước khi làm.
-- [ ] **Test**: unit (tính công), integration (API+DB+upload), e2e (NV→HR→Admin) theo `05-testing-strategy.md`.
-- [ ] **Sao lưu/khôi phục**: `pg_dump` nghiệp vụ + backup ảnh; thử restore trên project test.
-- [ ] **Deploy thật**: config Render + Vercel + Supabase theo `SETUP_CLOUD.md`; smoke test end-to-end URL thật.
+- [ ] **P1 — Offline / đồng bộ trễ**: thêm hàng đợi IndexedDB cho chấm công khi mất mạng; event đến sau khi khóa kỳ → điều chỉnh kỳ mở sau (không sửa snapshot).
+- [ ] **P0 — Khóa/mở kỳ công** theo tháng + snapshot không đổi; Excel kỳ mở = "bản tạm", kỳ khóa = snapshot.
+- [ ] **P0 — Xuất Excel/PDF**: bảng công (Excel) và đơn nghỉ (PDF) theo quyền & phiên bản (hiện mới có upload báo cáo NV; chưa có export kỳ công).
+- [ ] **P1 — Sổ phép tự động**: giao dịch cộng phép năm hằng tháng (idempotent) khi có chính sách.
+- [ ] **P2 — Map quyền module cho 3 role mới** (`Accounting`/`Sale`/`Marketing`): hiện đã seed trong `RoleSeeder.cs` nhưng chưa gán quyền; cần thêm vào `MODULES` (frontend) + `[Authorize(Roles=...)]` (backend) khi muốn dùng.
+- [ ] **P2 — Bảo mật ảnh**: cân nhắc bucket **private** + đọc ảnh theo quyền (hiện public). Quyết định + cập nhật `docs/02` trước khi làm.
+- [ ] **P0 — Test**: unit (tính công), integration (API+DB+upload), e2e (NV→HR→Admin) theo `06-testing.md`.
+- [ ] **P1 — Sao lưu/khôi phục**: `pg_dump` nghiệp vụ + backup ảnh; thử restore trên project test.
+- [ ] **P0 — Deploy thật**: config Render + Vercel + Supabase theo `11-setup-cloud.md`; smoke test end-to-end URL thật.
 
 > Danh sách chi tiết "đã có / chưa có" theo từng trang & module nằm ở **`docs/worklog.md`**.
 

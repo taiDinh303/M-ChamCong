@@ -1,4 +1,4 @@
-# 08 — Triển khai Marixa: Vercel + Render + Supabase
+﻿# 08— Triển khai Marixa: Vercel + Render + Supabase
 
 > Tác giả & chủ tài liệu: **Đinh Văn Tài**. Cập nhật: 09/10/2026 (bổ sung tác giả bởi Tài, 12/10/2026).
 > Tài liệu mô tả cơ chế DB linh hoạt (SQL Server dev / PostgreSQL Supabase prod) và quy trình deploy Render + Vercel của bộ stack **đang chạy thực tế**.
@@ -8,18 +8,12 @@
 - Mã nguồn liên quan: `marixa_aspnet/M.API/DatabaseConfig.cs`, `NpgsqlConnectionStringNormalizer.cs`, `Program.cs`; `render.yaml` (root); `marixa_react/vercel.json`.
 - Ảnh lưu tại `marixa_aspnet/M.API/SupabaseStorageService.cs` (bucket public `marixa-photos`).
 
-### Hosting đang chạy (bổ sung 12/10/2026 — Đinh Văn Tài)
+### Hosting đang chạy
 
-Các instance chủ dự án đang hosting (liên kết dashboard/URL public, không chứa secret):
+> **Nguồn duy nhất cho bảng instance hosting (Render / Vercel / Supabase) là [`00-README.md`](00-README.md).** File này không lặp bảng hosting — chỉ link về.
 
-| Nền tảng | Role | Instance / URL | Plan | Region |
-| --- | --- | --- | --- | --- |
-| Supabase | PostgreSQL + Storage | ref `zphqfcwrwitrqdeueonu` · [dashboard](https://supabase.com/dashboard/project/zphqfcwrwitrqdeueonu) | Free | Singapore |
-| Render | ASP.NET 8 API | `https://marixa001-asp.onrender.com` (swagger: `/swagger`) · [dashboard](https://dashboard.render.com/web/srv-db4hmnks728c73aq6h90) | Free | — |
-| Vercel | React SPA | `https://marixa001.vercel.app` · [dashboard](https://vercel.com/taiteam/marixa_001) | Hobby | — |
-
-> Lưu ý (12/10): chỉ còn **1 project Supabase duy nhất `zphqfcwrwitrqdeueonu`** (Free, Singapore). Các ref cũ (test/prod) đã bỏ khỏi tài liệu. Biến `SUPABASE__URL` trong `render.yaml` trỏ tới project này. Khi đặt `CONNECTIONSTRINGS__MYCNN` (session pooler user `postgres.zphqfcwrwitrqdeueonu`) và `SUPABASE__URL`, đối chiếu với đúng project.
-
+- Khi đặt `CONNECTIONSTRINGS__MYCNN` (session pooler user `postgres.zphqfcwrwitrqdeueonu`) và `SUPABASE__URL`: **đối chiếu với đúng project duy nhất** (xem `00-README.md`).
+- Lưu ý (12/10): chỉ còn **1 project Supabase duy nhất** `zphqfcwrwitrqdeueonu` (Free, Singapore). Các ref cũ (test/prod) đã bỏ khỏi tài liệu.
 ## 1. Kiến trúc tổng quan
 
 ```

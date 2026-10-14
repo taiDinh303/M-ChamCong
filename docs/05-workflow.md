@@ -1,4 +1,4 @@
-# 03 — Luồng nghiệp vụ hệ thống chấm công Marixa
+﻿3 — Luồng nghiệp vụ hệ thống chấm công Marixa
 
 > Tác giả & chủ tài liệu: **Đinh Văn Tài**.
 > Mô tả luồng chấm công, nghỉ phép/tăng ca/sửa công, khóa kỳ và các trạng thái lỗi — **khớp với code đang chạy** (`M.API` controllers/services + `marixa_react` modules).
@@ -81,4 +81,4 @@ Kỳ mở tính lại khi có chấm/đơn/điều chỉnh mới. Dữ liệu ph
 | Thiếu chấm ra | "Ngày công chưa hoàn chỉnh" | Chờ lượt ra hoặc sửa công |
 | Kỳ đã khóa | "Kỳ công đã khóa" | Chặn thay đổi đến khi admin mở lại |
 
-Chi tiết trường dữ liệu ở [02-database-design.md](02-database-design.md); kịch bản test ở [05-testing-strategy.md](05-testing-strategy.md).
+Chi tiết trường dữ liệu ở [04-database-design.md](04-database-design.md); kịch bản test ở [06-testing.md](06-testing.md).

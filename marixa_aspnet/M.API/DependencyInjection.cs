@@ -35,7 +35,7 @@ namespace M.API
             services.AddDatabase(configuration);
             services.AddIdentity();
             services.AddInfrastructure(configuration);
-            services.AddServices();
+            services.AddBusinessServices();
             services.AddJwtAuthentication(configuration);
             services.AddSwaggerConfig();
             services.AddHttpContextAccessor();
@@ -107,45 +107,6 @@ namespace M.API
             })
              .AddEntityFrameworkStores<DatabaseContext>()
              .AddDefaultTokenProviders();
-        }
-        public static void AddServices(this IServiceCollection services)
-        {
-            services
-                .AddScoped<M.Services.Security.JwtGenerator>()
-                .AddScoped<IAuthService, AuthService>()
-                .AddScoped<IUserService, UserService>()
-                .AddScoped<IRoleService, RoleService>()
-                .AddScoped<IUserRoleService, UserRoleService>()
-                .AddScoped<IUserLoginService, UserLoginService>()
-                .AddScoped<IAttendanceLogService, AttendanceLogService>()
-                .AddScoped<IAttendanceService, AttendanceService>()
-                .AddScoped<IBankService, BankService>()
-                .AddScoped<IDepartmentService, DepartmentService>()
-                .AddScoped<IEmployeeBankAccountService, EmployeeBankAccountService>()
-                .AddScoped<IEmployeeContractService, EmployeeContractService>()
-                .AddScoped<IEmployeeDependentService, EmployeeDependentService>()
-                .AddScoped<IEmployeeInsuranceService, EmployeeInsuranceService>()
-                .AddScoped<IEmployeeSalaryService, EmployeeSalaryService>()
-                .AddScoped<IEmployeeService, EmployeeService>()
-                .AddScoped<ILeaveRequestService, LeaveRequestService>()
-                .AddScoped<ILeaveTypeService, LeaveTypeService>()
-                .AddScoped<IPayrollService, PayrollService>()
-                .AddScoped<IPositionService, PositionService>()
-                .AddScoped<ISalaryGroupService, SalaryGroupService>()
-                .AddScoped<IShiftService, ShiftService>()
-                .AddScoped<IEmployeeShiftService, EmployeeShiftService>()
-                .AddScoped<IHolidayCalendarService, HolidayCalendarService>()
-                .AddScoped<IAttendanceRuleService, AttendanceRuleService>()
-                .AddScoped<IActivationCodeService, ActivationCodeService>()
-                .AddScoped<IOvertimeRequestService, OvertimeRequestService>()
-                .AddScoped<ILeaveLedgerService, LeaveLedgerService>()
-                .AddScoped<IAttendanceCorrectionService, AttendanceCorrectionService>()
-                .AddScoped<IOfficeLocationService, OfficeLocationService>()
-                .AddScoped<IWorkTaskService, WorkTaskService>()
-                .AddScoped<IWorkProjectService, WorkProjectService>()
-                .AddScoped<IWorkPerformanceService, WorkPerformanceService>()
-                .AddScoped<IAuditLogService, AuditLogService>()
-                .AddHttpContextAccessor();
         }
 
         //JWT

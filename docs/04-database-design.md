@@ -1,4 +1,4 @@
-# 02 — Thiết kế dữ liệu hệ thống chấm công Marixa
+﻿2 — Thiết kế dữ liệu hệ thống chấm công Marixa
 
 > Tác giả & chủ tài liệu: **Đinh Văn Tài**.
 > Hệ thống dùng **Entity Framework Core** (context: `M.Repositories/Context/DatabaseContext.cs`), linh hoạt giữa **SQL Server** (dev local) và **PostgreSQL/Supabase** (prod). Danh sách bảng thật nằm trong `M.Contract.Repositories/Entities/`.
@@ -6,7 +6,7 @@
 ## 0. Cách đọc (dành cho AI)
 
 - Mỗi file entity trong `marixa_aspnet/M.Contract.Repositories/Entities/*.cs` = một bảng. Model view tương ứng nằm ở `M.ModelViews/*ModelView.cs`, mapping EF↔VM nằm ở `M.Services/Mapping/*Mapping.cs`.
-- Cơ chế DB linh hoạt (dev/production) xem `08-database-flexible-deployment.md`.
+- Cơ chế DB linh hoạt (dev/production) xem `08-deploy-detail.md`.
 - Khởi tạo schema: Postgres chạy DDL idempotent khi boot + `PostgresSchemaSync.EnsureColumnsAsync`; SQL Server dev chạy `MigrateAsync`.
 
 ## 1. Nguyên tắc dữ liệu
@@ -74,4 +74,4 @@
 
 Tài liệu gốc (của đồng đội) từng đề xuất kiến trúc **Supabase Auth + RLS + bucket private**. Code đang chạy thực tế dùng **ASP.NET Identity + JWT** và **Supabase Storage bucket public** cho ảnh, DB **Supabase Postgres (session pooler)**.
 
-Xem quy tắc nghiệp vụ ở [01-business-analysis.md](01-business-analysis.md) và luồng ở [03-workflow.md](03-workflow.md).
+Xem quy tắc nghiệp vụ ở [02-business-analysis.md](02-business-analysis.md) và luồng ở [05-workflow.md](05-workflow.md).

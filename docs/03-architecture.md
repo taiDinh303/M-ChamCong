@@ -1,4 +1,4 @@
-# 04 — Kiến trúc hệ thống chấm công Marixa
+﻿4 — Kiến trúc hệ thống chấm công Marixa
 
 > Tác giả & chủ tài liệu: **Đinh Văn Tài**.
 > Kiến trúc **đang chạy thực tế** của repo: backend **ASP.NET Core 8 Web API** (`marixa_aspnet/M.API`), frontend **React 19 + Vite SPA** (`marixa_react`), CSDL **SQL Server (dev) / PostgreSQL Supabase (prod)** qua lớp DB linh hoạt, deploy **Render (API) + Vercel (web)** + **Supabase Storage (ảnh)**.
@@ -6,7 +6,7 @@
 ## 0. Cách đọc (dành cho AI)
 
 - Đây là "bản đồ hệ thống": backend nào, frontend nào, dữ liệu ở đâu, deploy ra đâu.
-- Để biết chi tiết config Render/Supabase/Vercel: xem `08-database-flexible-deployment.md` và `SETUP_CLOUD.md`.
+- Để biết chi tiết config Render/Supabase/Vercel: xem `08-deploy-detail.md` và `11-setup-cloud.md`.
 - Để biết module/trang nào đã làm: xem `docs/worklog.md`.
 
 ## 1. Kiến trúc tổng quan
@@ -81,4 +81,4 @@ Phân quyền route guard bằng `RequireModule` + `canAccessModule` (đọc `MO
 - Ghi log có mã lỗi, độ trễ; không ghi mật khẩu/GPS thô vào log.
 - Ảnh upload bounded (5 MB); bảng danh sách phân trang.
 
-Chi tiết dữ liệu ở [02-database-design.md](02-database-design.md), UI ở [07-ui-design-system.md](07-ui-design-system.md), triển khai chi tiết ở [08-database-flexible-deployment.md](08-database-flexible-deployment.md).
+Chi tiết dữ liệu ở [04-database-design.md](04-database-design.md), UI ở [09-ui-design.md](09-ui-design.md), triển khai chi tiết ở [08-deploy-detail.md](08-deploy-detail.md).
