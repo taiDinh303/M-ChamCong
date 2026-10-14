@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import axiosClient from "../../../services/api/axiosClient";
 import { localeForLanguage, translate, useLanguage } from "../../../services/i18n/LanguageProvider";
 import AppLayout from "../../../components/layout/AppLayout";
-import HrAppLayout from "../../employees/hr/layout/HrAppLayout";
-import HrHero from "../../employees/hr/HrHero";
+import HrAppLayout from "../../hr/hr/layout/HrAppLayout";
+import HrHero from "../../hr/hr/HrHero";
 import PageBanner from "../components/PageBanner";
 import "../handover.css";
 

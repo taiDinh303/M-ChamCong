@@ -1,10 +1,10 @@
-﻿import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Header from "../../../components/layout/Header";
 import WorkSidebar from "./WorkSidebar";
 import { usePillNavActiveInView } from "../../../components/layout/usePillNav";
 import "../../../components/layout/header.css";
 import "../../me/attendance.css";
-import "../../employees/employee.css";
+import "../../hr/employee.css";
 import "../../admin/admin.css";
 import "../work.css";
 

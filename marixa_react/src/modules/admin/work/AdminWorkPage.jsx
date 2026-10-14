@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import AdminAppLayout from "../layout/AdminAppLayout";
 import adminApi from "../api/adminApi";
-import { toCsv, downloadCsv } from "../../employees/hr/hrUtils";
+import { toCsv, downloadCsv } from "../../hr/hr/hrUtils";
 import { translate, useLanguage } from "../../../services/i18n/LanguageProvider";
 import "../admin.css";
 

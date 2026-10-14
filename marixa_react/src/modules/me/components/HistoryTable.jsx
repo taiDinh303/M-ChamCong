@@ -1,6 +1,6 @@
 import { formatVnTime, formatVnDate, calcOvertime, formatOvertime } from "../../../utils/vnTime";
 import PhotoCell from "./PhotoCell";
-import { statusLabel, statusClass, approvalLabel, approvalClass } from "../../employees/attendance/labels";
+import { statusLabel, statusClass, approvalLabel, approvalClass } from "../../hr/attendance/labels";
 
 // Bảng lịch sử chấm công của NHÂN VIÊN (display-only).
 // Cùng phong cách compact với trang /employees/attendance-history nhưng

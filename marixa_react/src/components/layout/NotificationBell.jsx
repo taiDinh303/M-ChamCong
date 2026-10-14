@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { getAuth } from "../../services/auth/auth";
-import employeeApi from "../../modules/employees/api/employeeApi";
+import employeeApi from "../../modules/hr/api/employeeApi";
 import axiosClient from "../../services/api/axiosClient";
 
 // Chuông thông báo toàn cục:

@@ -1,11 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
 import AdminAppLayout from "../../layout/AdminAppLayout";
-import HrAppLayout from "../../../employees/hr/layout/HrAppLayout";
+import HrAppLayout from "../../../hr/hr/layout/HrAppLayout";
 import adminApi from "../../api/adminApi";
-import employeeApi from "../../../employees/api/employeeApi";
+import employeeApi from "../../../hr/api/employeeApi";
 import "../../../../modules/me/attendance.css";
 import "../../admin.css";
-import HrHero from "../../../employees/hr/HrHero";
+import HrHero from "../../../hr/hr/HrHero";
 import { localeForLanguage, translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
 
 // 5 trạng thái hợp đồng (tính từ endDate so với hôm nay, giờ VN).

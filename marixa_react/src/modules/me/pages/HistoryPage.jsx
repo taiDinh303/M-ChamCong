@@ -5,7 +5,7 @@ import HistoryTable from "../components/HistoryTable";
 import PageBanner from "../components/PageBanner";
 import relatedApi from "../api/relatedApi";
 import "../attendance.css";
-import "../../employees/employee.css";
+import "../../hr/employee.css";
 
 const AttendanceHistoryPage = () => {
     const auth = getAuth();

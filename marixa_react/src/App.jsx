@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./modules/login/pages/LoginPage";
 import ActivatePage from "./modules/activate/pages/ActivatePage";
-import HrPage from "./modules/employees/hr/pages/HrPage";
-import ReportsPage from "./modules/employees/hr/pages/ReportsPage";
+import HrPage from "./modules/hr/hr/pages/HrPage";
+import ReportsPage from "./modules/hr/hr/pages/ReportsPage";
 import WorkPage from "./modules/work/WorkPage";
 import ProfilePage from "./modules/profile/pages/ProfilePage";
 import AdminHomepage from "./modules/admin/pages/AdminHomepage";
@@ -17,16 +17,16 @@ import {
 } from "./modules/admin/leaves/pages/PayrollResignedReport";
 import AdminAccountIssuancePage from "./modules/admin/accounts/pages/AccountIssuancePage";
 import adminApi from "./modules/admin/api/adminApi";
-import employeeApi from "./modules/employees/api/employeeApi";
-import EmployeeAttendanceHistoryPage from "./modules/employees/attendance/pages/EmployeeAttendanceHistoryPage";
-import EmployeeWorkSchedulePage from "./modules/employees/attendance/pages/EmployeeWorkSchedulePage";
-import EmployeeStatisticsPage from "./modules/employees/attendance/pages/EmployeeStatisticsPage";
-import EmployeeLeavePage from "./modules/employees/leaves/pages/EmployeeLeavePage";
-import EmployeeContractPage from "./modules/employees/contracts/pages/EmployeeContractPage";
+import employeeApi from "./modules/hr/api/employeeApi";
+import EmployeeAttendanceHistoryPage from "./modules/hr/attendance/pages/EmployeeAttendanceHistoryPage";
+import EmployeeWorkSchedulePage from "./modules/hr/attendance/pages/EmployeeWorkSchedulePage";
+import EmployeeStatisticsPage from "./modules/hr/attendance/pages/EmployeeStatisticsPage";
+import EmployeeLeavePage from "./modules/hr/leaves/pages/EmployeeLeavePage";
+import EmployeeContractPage from "./modules/hr/contracts/pages/EmployeeContractPage";
 import HomePage from "./modules/home/pages/HomePage";
 import UnauthorizedPage from "./modules/unauthorized/pages/UnauthorizedPage";
 import RequireModule from "./components/common/RequireModule";
-import PromotionsPage from "./modules/employees/hr/pages/PromotionsPage";
+import PromotionsPage from "./modules/hr/hr/pages/PromotionsPage";
 
 // ===== Module "me": các trang nhân viên xem thông tin của mình =====
 import MeClockInPage from "./modules/me/pages/ClockInPage";
