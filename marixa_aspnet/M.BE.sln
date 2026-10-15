@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M.Repositories", "M.Reposit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M.Services", "M.Services\M.Services.csproj", "{FA87C8DA-81C2-4CF2-AD15-C1A080CF6DEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M.Contract.Serivces", "M.Contract.Serivces\M.Contract.Serivces.csproj", "{CB32CD28-36A1-4620-8D81-E27ED66ADBD3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M.Contract.Services", "M.Contract.Services\M.Contract.Services.csproj", "{CB32CD28-36A1-4620-8D81-E27ED66ADBD3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M.ModelViews", "M.ModelViews\M.ModelViews.csproj", "{3BC11E5D-131E-4E50-B842-38AE4EC118C1}"
 EndProject

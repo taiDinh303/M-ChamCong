@@ -1,6 +1,6 @@
 ﻿using M.Contract.Repositories.Entities;
 using M.Contract.Repositories.IUOW;
-using M.Contract.Serivces.Interface;
+using M.Contract.Services.Interface;
 using M.Core.Base;
 using M.Core.Utils;
 using Microsoft.AspNetCore.Http;

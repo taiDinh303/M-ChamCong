@@ -1,7 +1,7 @@
 ﻿using M.Core.Base;
 using ModelViews.DepartmentModelView;
 
-namespace M.Contract.Serivces.Interface
+namespace M.Contract.Services.Interface
 {
     public interface IDepartmentService
     {

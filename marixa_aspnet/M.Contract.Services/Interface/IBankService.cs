@@ -1,7 +1,7 @@
 ﻿using M.Core.Base;
 using ModelViews.BankModelView;
 
-namespace M.Contract.Serivces.Interface
+namespace M.Contract.Services.Interface
 {
     public interface IBankService
     {

@@ -15,7 +15,7 @@ WORKDIR /source
 # Copy csproj trước để tận dụng Docker layer cache (deps không đổi -> không restore lại)
 COPY M.API/*.csproj M.API/
 COPY M.Contract.Repositories/*.csproj M.Contract.Repositories/
-COPY M.Contract.Serivces/*.csproj M.Contract.Serivces/
+COPY M.Contract.Services/*.csproj M.Contract.Services/
 COPY M.Core/*.csproj M.Core/
 COPY M.ModelViews/*.csproj M.ModelViews/
 COPY M.Repositories/*.csproj M.Repositories/
@@ -27,7 +27,7 @@ RUN dotnet restore M.API/M.API.csproj
 # Copy source + build publish (framework-dependent, nhỏ hơn self-contained)
 COPY M.API/ M.API/
 COPY M.Contract.Repositories/ M.Contract.Repositories/
-COPY M.Contract.Serivces/ M.Contract.Serivces/
+COPY M.Contract.Services/ M.Contract.Services/
 COPY M.Core/ M.Core/
 COPY M.ModelViews/ M.ModelViews/
 COPY M.Repositories/ M.Repositories/

@@ -1,4 +1,4 @@
-using M.Contract.Serivces.Interface;
+using M.Contract.Services.Interface;
 using M.Core.Base;
 using M.Core.Store;
 using Microsoft.AspNetCore.Authorization;

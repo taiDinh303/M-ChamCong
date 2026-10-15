@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\M.Contract.Repositories\M.Contract.Repositories.csproj" />
-    <ProjectReference Include="..\M.Contract.Serivces\M.Contract.Serivces.csproj" />
+    <ProjectReference Include="..\M.Contract.Services\M.Contract.Services.csproj" />
     <ProjectReference Include="..\M.Core\M.Core.csproj" />
     <ProjectReference Include="..\M.ModelViews\M.ModelViews.csproj" />
   </ItemGroup>
