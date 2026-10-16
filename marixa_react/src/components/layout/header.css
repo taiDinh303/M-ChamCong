@@ -350,7 +350,6 @@
 
 @media (max-width: 900px) {
     .app-header { padding: 10px 16px; }
-    .app-header-slogan { display: none; }
     .app-header-menu { right: -32px; width: 220px; }
     .app-header-notice { right: 48px; }
 }
