@@ -1,84 +1,126 @@
-﻿4 — Kiến trúc hệ thống chấm công Marixa
+# 03 — Kiến trúc hệ thống Marixa
 
-> Tác giả & chủ tài liệu: **Đinh Văn Tài**.
-> Kiến trúc **đang chạy thực tế** của repo: backend **ASP.NET Core 8 Web API** (`marixa_aspnet/M.API`), frontend **React 19 + Vite SPA** (`marixa_react`), CSDL **SQL Server (dev) / PostgreSQL Supabase (prod)** qua lớp DB linh hoạt, deploy **Render (API) + Vercel (web)** + **Supabase Storage (ảnh)**.
+> Chủ tài liệu: **Đinh Văn Tài**. Đối chiếu mã nguồn: **16/10/2026**.
+> **CURRENT** = có trong checkout; **TARGET** = thiết kế cần đạt; **NOT VERIFIED** = chưa kiểm tra runtime/hạ tầng. Có mã nguồn không đồng nghĩa đã nghiệm thu production.
+> **EN — Codex / Agnes:** Read [00-README.md](00-README.md) first. Treat source links below as implementation evidence, not proof of production behavior. Preserve owner decisions; record security or architecture changes before implementation.
 
-## 0. Cách đọc (dành cho AI)
-
-- Đây là "bản đồ hệ thống": backend nào, frontend nào, dữ liệu ở đâu, deploy ra đâu.
-- Để biết chi tiết config Render/Supabase/Vercel: xem `08-deploy-detail.md` và `11-setup-cloud.md`.
-- Để biết module/trang nào đã làm: xem `docs/worklog.md`.
-
-## 1. Kiến trúc tổng quan
+## 1. Thành phần và đường chạy hiện tại
 
 ```mermaid
 flowchart LR
-  UI[marixa_react: React 19 + Vite SPA] -->|axios Bearer, /api| API[M.API: ASP.NET 8 Web API]
-  UI -->|CORS| API
-  API --> DB[(SQL Server dev / PostgreSQL Supabase prod)]
-  API --> IMG[Supabase Storage bucket: marixa-photos]
-  API --> AUTH[ASP.NET Identity + JWT]
-  subgraph Deploy
-    R[Render: M.API Docker]
-    V[Vercel: marixa_react static SPA]
-  end
+  UI[React 19 + Vite SPA] -->|HTTP /api + Bearer JWT| API[ASP.NET Core 8 Web API]
+  API --> ID[ASP.NET Identity]
+  API --> DB[(SQL Server local / PostgreSQL cloud)]
+  API --> STORAGE[Supabase Storage: marixa-photos]
+  API --> LOCAL[Fallback: wwwroot/uploads]
 ```
 
-- **Frontend** (`marixa_react`): React 19 + Vite + React Router 7. Build static (`npm run build` → `dist/`), deploy Vercel. Gọi backend bằng `VITE_API_BASE_URL` (cross-origin, bật CORS).
-- **Backend** (`marixa_aspnet/M.API`): ASP.NET Core 8, EF Core, JWT Bearer, Swagger. Chạy trong Docker trên Render (Web service, `render.yaml`).
-- **DB linh hoạt**: đọc qua `M.API/DatabaseConfig.cs` (env `DATABASE__PROVIDER`, `CONNECTIONSTRINGS__MYCNN`). Dev = SQL Server, Prod = PostgreSQL (Supabase session pooler). URI Postgres được normalize bằng `NpgsqlConnectionStringNormalizer`.
-- **Ảnh**: `SupabaseStorageService` upload bucket public `marixa-photos` khi đã set `SUPABASE__URL` + `SUPABASE__SERVICE_KEY`; chưa set thì fallback `wwwroot/uploads`.
-
-> **Docker chỉ dùng cho build/chạy API trên Render** (theo `render.yaml` + `marixa_aspnet/Dockerfile`). Phát triển local chạy .NET trực tiếp (không cần Docker cho dev web/DB).
-
-## 2. Phân hệ (theo controllers/services thật)
-
-| Phân hệ | Controllers / Services chính | Trách nhiệm |
+| Thành phần | CURRENT — mã nguồn / cấu hình | Giới hạn xác minh |
 | --- | --- | --- |
-| Identity & Account | `AuthController`, `UserLoginController`, `RoleController`, `UserController`, `UserRoleController` | Login (username/email/sđt), register, activate (mã kích hoạt), đổi mật khẩu, link Google, quản lý role/user. |
-| Employee / HR | `EmployeeController`, `DepartmentController`, `PositionController`, `EmployeeContract/Insurance/Salary/Dependent/Shift/BankAccount` | Hồ sơ nhân sự, phòng ban, hợp đồng, bảo hiểm, lương, thân nhân, ca. |
-| Attendance | `AttendanceController`, `AttendanceLogController`, `AttendanceRuleController`, `AttendanceRulePublicController`, `AttendanceCorrectionController` | Chấm vào/ra, log, quy tắc ca, sửa công. |
-| Leave & Overtime | `LeaveRequestController`, `LeaveTypeController`, `LeaveLedgerController`, `OvertimeRequestController` | Đơn nghỉ, loại nghỉ, sổ phép, tăng ca. |
-| Reports & Audit | `EmployeeReportController`, `AuditLogController` | Báo cáo theo kỳ, nhật ký thay đổi. |
-| Admin | `ActivationCodeController`, seeder | Cấp mã kích hoạt, seed role/admin/quy tắc/dữ liệu mẫu. |
-| Work (đặc tả mở rộng) | `WorkProjectController`, `WorkTaskController`, `WorkPerformanceController` | Dự án công việc, task, hiệu suất. |
-| Payroll | `PayrollController`, `SalaryGroupController`, `BankController` | Bảng lương, nhóm lương, ngân hàng. |
+| Frontend | [`marixa_react/package.json`](../marixa_react/package.json): React 19, React Router 7, Vite 6; build static vào `dist/`. | Chưa chạy build/browser trong lượt chuẩn hóa tài liệu. |
+| Backend | [`M.API/Program.cs`](../marixa_aspnet/M.API/Program.cs): controllers, EF Core, Identity/JWT, Swagger, static files, middleware lỗi. | Không khẳng định API đang truy cập được trên hosting. |
+| CSDL | [`DatabaseConfig.cs`](../marixa_aspnet/M.API/DatabaseConfig.cs): chọn provider qua `Database:Provider`, kết nối qua `ConnectionStrings:MyCnn`. | DB/schema live chưa đọc. |
+| Ảnh chấm công | [`SupabaseStorageService.cs`](../marixa_aspnet/M.API/SupabaseStorageService.cs): khi đủ URL/service key, upload vào bucket public `marixa-photos`; thiếu cấu hình thì [`UploadController`](../marixa_aspnet/M.API/Controllers/UploadController.cs) lưu đĩa local. | Không suy ra bucket/quyền live từ tên bucket trong code. |
+| Triển khai | Cấu hình dự án dùng Render cho API, Vercel cho SPA, Supabase cho PostgreSQL/Storage. | Instance và cấu hình triển khai xem [08](08-deploy-detail.md), [11](11-setup-cloud.md); trạng thái online chưa kiểm tra. |
 
-Seeder chạy khi boot (idempotent): `RoleSeeder`, `AttendanceRuleSeeder`, `AdminSeeder`, `SampleDataSeeder` (dữ liệu mẫu dev).
+Frontend dùng [`apiConfig.js`](../marixa_react/src/services/api/apiConfig.js): `VITE_API_BASE_URL` nếu có, mặc định `/api`. Local có Vite proxy; triển khai web/API khác origin cần CORS đúng origin. [`axiosClient.js`](../marixa_react/src/services/api/axiosClient.js) đính Bearer token từ `marixa_auth` trong localStorage; HTTP 401 khi đang có token sẽ xóa phiên và chuyển về `/login`.
 
-## 3. Route giao diện (frontend `marixa_react`)
+Ứng dụng dùng **ASP.NET Identity + JWT**, không dùng Supabase Auth cho phiên đăng nhập hiện tại. `marixa_aspnet/web` (Next.js cũ) đã bị xóa khỏi checkout; SQL/RPC của kiến trúc cũ không phải bằng chứng API .NET đang thực thi quy tắc đó.
 
-Từ `marixa_react/src/App.jsx` và `constants/modules.js`:
+## 2. Ranh giới mã nguồn
 
-| Route | Người dùng | Nội dung |
+| Project / thư mục | Trách nhiệm |
+| --- | --- |
+| `marixa_aspnet/M.API` | HTTP controllers, đăng ký dịch vụ, auth, cấu hình DB, upload, seed, middleware. Một số controllers truy cập `DatabaseContext` trực tiếp. |
+| `M.Contract.Services`, `M.Services` | Interface và xử lý nghiệp vụ/service, JWT, tính công. |
+| `M.Contract.Repositories`, `M.Repositories` | Entity, repository/unit of work, EF `DatabaseContext`, migration. |
+| `M.ModelViews`, `M.Core` | DTO request/response, phân trang, lỗi, hằng số dùng chung. |
+| `marixa_react/src/modules` | Các module `login`, `activate`, `home`, `me`, `hr`, `admin`, `work`, `profile`, `unauthorized`. |
+| `marixa_react/src/components`, `services`, `utils` | Layout/component dùng chung, API/auth/permission và tiện ích thời gian. |
+
+Controllers hiện có bao phủ Identity/account, HR (nhân viên/phòng ban/chức vụ/hợp đồng/lương/bảo hiểm/thân nhân/ca/tài khoản ngân hàng), attendance/log/rule/correction, leave/ledger/OT, báo cáo/audit, work project/task/performance, payroll và danh mục. **Controller tồn tại chỉ xác nhận có bề mặt API**, không xác nhận toàn bộ UI, quyền hay quy tắc nghiệp vụ hoàn tất. Trạng thái theo module: [worklog.md](worklog.md); việc cần làm: [01-plan.md](01-plan.md).
+
+## 3. Route frontend và quyền hiện tại
+
+Nguồn route: [`App.jsx`](../marixa_react/src/App.jsx). Nguồn hiển thị module: [`modules.js`](../marixa_react/src/constants/modules.js). Inventory từng màn hình dùng cho thiết kế nằm ở [`figma/files-map.md`](../figma/files-map.md).
+
+| Nhóm | Route hiển thị hiện có | Quyền / guard trong mã nguồn |
 | --- | --- | --- |
-| `/login` | Chưa đăng nhập | Đăng nhập (username/sđt/email + mật khẩu). |
-| `/kich-hoat` | Tài khoản mới | Kích hoạt bằng mã, đặt mật khẩu. |
-| `/home` | Đã đăng nhập | Trang tổng quan (module cards). |
-| `/attendance`, `/attendance/attendance-history`, `/attendance/statistics`, `/attendance/leave`, `/attendance/salary`, `/attendance/contracts`, `/attendance/insurance`, `/attendance/bank-accounts`, `/attendance/attendance-rules`, `/attendance/reports`, `/attendance/promotions`, `/attendance/handover` | Nhân viên (module `me`) | Chấm công, lịch sử, thống kê, nghỉ phép, lương, hợp đồng, BHXH, tài khoản NG, quy định, báo cáo, thăng chức, bàn giao. |
-| `/work`, `/profile` | Đã đăng nhập | Công việc, hồ sơ cá nhân. |
-| `/employees`, `/employees/attendance-history`, `/employees/work-schedule`, `/employees/statistics`, `/employees/contracts`, `/employees/leaves`, `/employees/reports`, `/employees/accounts`, `/employees/promotions`, `/employees/handover` | HR / Manager / Admin | Quản lý nhân sự, đối soát, duyệt. |
-| `/admin`, `/admin/contracts`, `/admin/leaves`, `/admin/payroll`, `/admin/resigned`, `/admin/reports`, `/admin/accounts`, `/admin/work`, `/admin/roles`, `/admin/block-accounts`, `/admin/employees/*` | Admin | Dashboard, cấu hình, tài khoản, role, khóa tài khoản, hợp đồng, nghỉ phép, lương, nghỉ việc, báo cáo. |
+| Public / tổng quan | `/login`, `/kich-hoat`, `/unauthorized`, `/home` | Không bọc `RequireModule` tại `App.jsx`; page/component có xử lý phiên riêng tùy nơi. |
+| Cá nhân `me` | `/attendance`, `/attendance/attendance-history`, `/attendance/attendance-rules`, `/attendance/statistics`, `/attendance/leave`, `/attendance/contracts`, `/attendance/salary`, `/attendance/insurance`, `/attendance/bank-accounts` | Registry khai báo `access: user`; các route này không bọc `RequireModule` tại `App.jsx`. |
+| Cá nhân có wrapper | `/attendance/reports`, `/attendance/promotions`, `/attendance/handover`, `/work` | Bọc `RequireModule`, registry là `access: user`. |
+| Hồ sơ | `/profile` | Registry `access: user`, không bọc `RequireModule` tại `App.jsx`. |
+| Nhân sự | `/employees`, `/employees/attendance-history`, `/employees/work-schedule`, `/employees/statistics`, `/employees/contracts`, `/employees/leaves`, `/employees/reports`, `/employees/accounts`, `/employees/promotions`, `/employees/handover` | Bọc `RequireModule`; registry cho `HR`, `Manager`, `Admin`. Đây không tự động cấp quyền cho mọi API đằng sau màn hình. |
+| Admin có registry | `/admin`, `/admin/contracts`, `/admin/leaves`, `/admin/payroll`, `/admin/resigned`, `/admin/reports`, `/admin/accounts` | Bọc `RequireModule`; registry là `access: admin`, `ADMIN_ROLES = ["Admin"]`. |
+| Admin thiếu registry | `/admin/work`, `/admin/roles`, `/admin/block-accounts`, `/admin/employees/leaves`, `/admin/employees/handover`, `/admin/employees/reports`, `/admin/employees/contracts` | Có wrapper nhưng không có mục tương ứng trong `MODULES`; `canAccessModule` hiện trả `true` khi không tìm thấy đường dẫn. Đây là khoảng trống cần sửa, không phải quyền được phê duyệt. |
 
-Phân quyền route guard bằng `RequireModule` + `canAccessModule` (đọc `MODULES`); backend vẫn là nguồn quyền thật.
+[`permission.js`](../marixa_react/src/services/auth/permission.js) hiện chỉ kiểm tra role cho mục có `roles` hoặc `access: admin`; nhánh `access: user` và đường dẫn không đăng ký đều trả `true`, không kiểm tra token tại đây. [`RequireModule.jsx`](../marixa_react/src/components/common/RequireModule.jsx) chỉ chuyển tới `/unauthorized` khi hàm này trả `false`. **TARGET:** hoàn thiện kiểm tra phiên/route và kiểm tra quyền tại API; ẩn sidebar không phải biện pháp bảo vệ dữ liệu.
 
-## 4. Hợp đồng API
+Redirect hiện tại, không phải màn hình riêng:
 
-- Backend route chung: `[Route("api/[controller]")]`, ví dụ `/api/Attendance/checkin`, `/api/Upload/photo`, `/api/Auth/login`, `/api/LeaveRequest/...`, `/api/Role/...`.
-- Chuẩn response: `BaseResponse<T>` / `BasePaginatedList<T>` (statusCode, code, message, data).
-- Auth: JWT Bearer (phát hành qua `M.Services/Security/JwtGenerator.cs`). Endpoint công khai: `Auth/login`, `Auth/activate`, `Auth/register`.
-- Upload ảnh: multipart, giới hạn 5 MB, chấp nhận `jpg/jpeg/png/webp`.
+- `/` → `/home`; đường dẫn không khớp (`*`) → `/home`.
+- `/finance` → `/attendance/salary`; `/employees/payroll` → `/employees`.
+- `/admin/employees` → `/employees`; `/admin/employees/accounts` → `/admin/accounts`; `/admin/employees/promotions` → `/employees/promotions`.
+- Các URL cũ `/attendance-history`, `/attendance-rules`, `/statistics`, `/leave`, `/reports`, `/promotions`, `/handover`, `/contracts`, `/salary`, `/insurance`, `/bank-accounts` chuyển sang URL cùng hậu tố dưới `/attendance`.
 
-> Ghi chú: tài liệu cũ mô tả endpoint `/api/v1/...` (kiến trúc Next.js Route Handler). Repo hiện chạy **không có Next.js backend**; nếu muốn dùng lại bộ API `/api/v1` + Supabase Auth/RLS (bản `marixa_aspnet/web` Next.js), cần một quyết định rõ của chủ dự án và cập nhật mục này.
+[`RoleSeeder.cs`](../marixa_aspnet/M.API/Seed/RoleSeeder.cs) khai báo 7 role: `Admin`, `Employee`, `Manager`, `HR`, `Accountant`, `Sale`, `Marketing`. Ba role mới chưa có quyền module chuyên biệt. Không tự diễn giải nhãn “Kế toán” của `/finance` thành phân hệ Accountant đã triển khai.
 
-## 5. Thời gian & offline
+## 4. Hợp đồng HTTP đang có
 
-- Máy chủ lưu UTC; hiển thị quy đổi `Asia/Ho_Chi_Minh` (frontend `marixa_react/src/utils/vnTime.js`).
-- Chấm offline (mất mạng) chưa có hàng đợi IndexedDB trong V1 (xem `worklog.md` mục chức năng chưa có).
+### 4.1 Quy ước và ngoại lệ
 
-## 6. Quan sát & hiệu năng
+- Route API phổ biến là `api/[controller]`, không có prefix `/api/v1` trong đường chạy này. Đọc controller/DTO cụ thể hoặc Swagger của instance đang thử để biết method và payload.
+- Thành công thường trả [`BaseResponse<T>`](../marixa_aspnet/M.Core/Base/BaseResponse.cs): `data`, `message`, `statusCode`, `code`. `code` chưa thống nhất: controller có thể dùng `SUCCESS`, helper `OkResponse` dùng `OK`.
+- [`BasePaginatedList<T>`](../marixa_aspnet/M.Core/Base/BasePaginatedList.cs) gồm `items`, `totalItems`, `currentPage`, `totalPages`, `pageSize`, `hasPreviousPage`, `hasNextPage`; không áp dụng cho mọi list API.
+- [`ExceptionMiddleware.cs`](../marixa_aspnet/M.API/Middleware/ExceptionMiddleware.cs) chuyển `ErrorException` thành HTTP status tương ứng và envelope lỗi; exception khác thành HTTP 500/envelope chung. Lỗi model validation của `[ApiController]`, auth challenge/forbid và controller trả trực tiếp `BadRequest(string)`, `NotFound()` hoặc file có thể khác envelope.
+- **Upload/photo hiện trả HTTP 200 cả khi body `statusCode` là 400/500.** Frontend phải đọc body; không chỉ dựa vào HTTP 2xx hoặc chuỗi `code = SUCCESS`.
 
-- Ghi log có mã lỗi, độ trễ; không ghi mật khẩu/GPS thô vào log.
-- Ảnh upload bounded (5 MB); bảng danh sách phân trang.
+### 4.2 Điểm vào quan trọng và quyền xác nhận tĩnh
 
-Chi tiết dữ liệu ở [04-database-design.md](04-database-design.md), UI ở [09-ui-design.md](09-ui-design.md), triển khai chi tiết ở [08-deploy-detail.md](08-deploy-detail.md).
+| Endpoint | Đầu vào / kết quả chính | CURRENT — kiểm soát quyền / chú ý |
+| --- | --- | --- |
+| `POST /api/Auth/login` | DTO login → token + thông tin user/employee/roles. | Không có `[Authorize]`; đăng nhập do `AuthService` xử lý. |
+| `POST /api/Auth/register`, `POST /api/Auth/activate` | DTO đăng ký / mã kích hoạt + mật khẩu. | Không có `[Authorize]`; không suy ra UI tự đăng ký đã có từ endpoint. |
+| `POST /api/Auth/change-password` | DTO đổi mật khẩu. | Action hiện thiếu `[Authorize]`; service nhận `UserId` từ body và kiểm tra mật khẩu cũ, chưa ràng buộc user đó với JWT. Cần rà soát/bổ sung bảo vệ theo [01](01-plan.md), không coi chú thích “đã xác thực” là bằng chứng. |
+| `POST /api/Upload/photo?type=checkin` hoặc `checkout` | `multipart/form-data`, field `file`; `.jpg/.jpeg/.png/.webp`, tối đa **5 MiB** → `data` là URL/path ảnh. | `[Authorize]`; kiểm tra extension/size, không có bằng chứng kiểm tra nội dung ảnh hoàn chỉnh. Không gán Content-Type cố định làm mất multipart boundary. |
+| `POST /api/Attendance/checkin` | `employeeId`, `type` (`1` vào / `2` ra), tùy chọn `method`, `photoUrl`, `note` → `alreadyRecorded`, `message`, `attendance`. | Controller `[Authorize]`; service kiểm tra nhân viên tồn tại nhưng chưa ràng buộc `employeeId` với user đang gọi. DTO không nhận tọa độ GPS. |
+| `GET /api/Attendance/by-employee/{employeeId}`, `GET /api/Attendance/get-by-id/{id}` | Danh sách theo nhân viên / bản ghi. | `[Authorize]`; chưa có kiểm tra quyền sở hữu tại các service tương ứng. |
+| `GET /api/Attendance/get-all`; `POST create/approve`, `PUT update`, `DELETE soft-delete/{id}` hoặc `delete/{id}` dưới `/api/Attendance` | Quản trị/chỉnh/duyệt/xóa công. | Action yêu cầu `Admin,Manager,HR`; phạm vi nhân viên/phòng ban phải rà soát riêng, không mặc định có scoping. |
+| `GET /api/AttendanceRulePublic/active` | Các rule active. | Có `[Authorize]` dù tên controller chứa `Public`; không phải anonymous API. |
+| `/api/LeaveRequest/*`, `/api/OvertimeRequest/*` | Tạo, đọc, đổi trạng thái đơn. | Có role/owner/status check theo action và service, không đồng nhất giữa leave và OT; xem [02](02-business-analysis.md), [05](05-workflow.md). |
+| `/api/EmployeeReport/*` | Upload/phiên bản/duyệt/tải file báo cáo. | Có kiểm tra người sở hữu/người quản lý theo luồng; tải file và lỗi trực tiếp khác envelope chuẩn. Không phải export bảng công snapshot. |
+
+Ví dụ payload **hiện tại** cho API chấm công (GUID minh họa, không phải dữ liệu thật):
+
+```json
+{
+  "employeeId": "11111111-1111-1111-1111-111111111111",
+  "type": 1,
+  "method": 4,
+  "photoUrl": "/uploads/attendance/checkin/202610/example.jpg",
+  "note": null
+}
+```
+
+`method = 4` là `Phone` mặc định. Request không truyền thời gian log hoặc ngày công: service dùng UTC máy chủ. Trong 2 phút có log cùng loại, API trả `alreadyRecorded = true` với bản ghi hiện có; đây là chống bấm lặp ở service, **chưa phải idempotency key hoặc bảo đảm chống race tại DB**. Lỗi nhân viên không tồn tại ném HTTP 404 với `code = NOT_FOUND`. Nguồn DTO: [`AttendanceModelView.cs`](../marixa_aspnet/M.ModelViews/AttendanceModelView/AttendanceModelView.cs); xử lý: [`AttendanceService.cs`](../marixa_aspnet/M.Services/Services/AttendanceService.cs).
+
+### 4.3 Bảo mật cần hoàn thiện
+
+**TARGET:** API phải quyết định quyền dựa trên JWT hợp lệ, role và quyền sở hữu/phạm vi quản lý; client ids và localStorage không phải nguồn cấp quyền. Các lỗ hổng route/ownership/change-password ở trên là việc cần xử lý, không được “chuẩn hóa” thành quy tắc nghiệp vụ hợp lệ. Ma trận endpoint/role/scope cần mở rộng khi sửa từng module và kèm test HTTP 401/403/cross-user. Không khẳng định toàn API đã audit bảo mật.
+
+## 5. Thời gian, bootstrap và tính nhất quán
+
+| Chủ đề | CURRENT | TARGET / giới hạn |
+| --- | --- | --- |
+| Timestamp | Chấm công dùng UTC; nhiều chỗ hiển thị qua [`vnTime.js`](../marixa_react/src/utils/vnTime.js). | Ngày nghiệp vụ phải thống nhất `Asia/Ho_Chi_Minh`. |
+| Ngày công | `AttendanceService.CheckInAsync` tìm/tạo `AttendanceDate = DateTime.UtcNow.Date`. Một số phép chọn “hôm nay” ở UI dùng timezone trình duyệt. | Sai khác với ngày Việt Nam vào 00:00–06:59 UTC+7; cần sửa và test biên giờ, không gọi đây là hành vi đúng. |
+| Rule/ca | Tính giờ/OT đọc rule active; trạng thái đúng/trễ dùng `PlannedShift` hoặc ca fallback; các đường xử lý chưa dùng một nguồn thống nhất. | Xem công thức và sai khác ở [02](02-business-analysis.md), [04](04-database-design.md). |
+| Khởi động | SQL Server chạy EF migrations. PostgreSQL chạy DDL tạo từ EF, xử lý statement và bổ sung cột qua `PostgresSchemaSync`; startup ghi cảnh báo khi bước DB/seed lỗi. | Không thay thế migration/backfill/rollback; API boot được không chứng minh DB đầy đủ. |
+| Seed | `RoleSeeder`, `AttendanceRuleSeeder`, `AdminSeeder`, `SampleDataSeeder` được gọi khi boot. `SampleDataSeeder` không chỉ giới hạn ở Development. | `AttendanceRuleSeeder` ghi lại nhiều trường của `DEFAULT-CA` đã tồn tại; không gọi toàn bộ seed là “chỉ tạo nếu thiếu”. |
+| Offline / khóa kỳ | Chưa có queue IndexedDB; chưa có khóa kỳ + snapshot bảng công + export snapshot XLSX/PDF. | Luồng tương lai ở [05](05-workflow.md); kiểm thử ở [06](06-testing.md). |
+
+## 6. Cách mở rộng có kiểm soát
+
+Khi sửa một module: đọc route → caller API → DTO/controller → service → entity/EF; ghi rõ request, response, role, owner/scope, transition và lỗi có thể xảy ra. Cập nhật tài liệu cùng thay đổi đã được giao; thay đổi quyết định nghiệp vụ/bảo mật/kiến trúc phải có quyết định của chủ dự án trong [01](01-plan.md)/[worklog](worklog.md). Kiểm tra code/build/test phù hợp trước khi ghi hoàn thành. Chưa chạy runtime, DB live hoặc Figma thì giữ nhãn **NOT VERIFIED**.
+
+Liên quan: [04 — Dữ liệu](04-database-design.md), [09 — UI](09-ui-design.md), [10 — Local](10-setup-local.md), [13 — Figma](13-figma-sync.md).

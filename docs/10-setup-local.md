@@ -1,92 +1,131 @@
-﻿# 10— Setup môi trường dev local (end-to-end) cho Marixa
+# 10 — Thiết lập và chạy môi trường local
 
-> Tác giả & chủ tài liệu: **Đinh Văn Tài**. Cập nhật: 14/10/2026.
-> Cách chạy bộ stack **đang chạy** (ASP.NET 8 `M.API` + React 19 `marixa_react`) trên máy dev từ đầu. Dev local dùng **SQL Server** (không dùng Supabase — Supabase chỉ cho prod).
+> Chủ tài liệu: **Đinh Văn Tài**. Đối chiếu mã nguồn: **16/10/2026**.
+> Hướng dẫn PowerShell cho ASP.NET Core 8 + React 19/Vite, SQL Server local. Các lệnh chạy API sẽ migrate/seed DB; lần cập nhật tài liệu này chưa thực thi chúng.
 
-## 0. Cách đọc (dành cho AI)
+**CURRENT** = cấu hình/lệnh phù hợp checkout; **NOT VERIFIED** = kết quả chạy trên máy dev; **PENDING** = test suite chưa được triển khai.
 
-- Dev local: **SQL Server** + `.NET` chạy trực tiếp (không Docker), frontend `npm run dev` + Vite.
-- Chi tiết config prod (Render/Vercel/Supabase): xem `08-deploy-detail.md` (đã gộp nội dung `06` vào).
-- Bảng instance hosting đang chạy: xem `00-README.md` §Quick facts.
-- Ma trận chức năng đã có/chưa có: xem `worklog.md` §2.
+## 1. Yêu cầu và phạm vi
 
-## 1. Yêu cầu phần mềm
+| Thành phần | Yêu cầu từ repo |
+| --- | --- |
+| .NET SDK | 8.x; solution [M.BE.sln](../marixa_aspnet/M.BE.sln), target `net8.0` |
+| SQL Server | SQL Server/Express hoặc LocalDB tương thích provider EF Core SQL Server 8; có quyền tạo/migrate DB local |
+| Node.js + npm | Tương thích Vite trong lockfile; tại lần rà soát, Vite 6.4.3 khai báo `^18.0.0 \|\| ^20.0.0 \|\| >=22.0.0`. Đây là range package, không cam kết các bản đó còn được hỗ trợ bảo mật. |
+| Git | Để quản lý source; IDE tùy chọn |
 
-| Phần mềm | Phiên bản | Ghi chú |
-| --- | --- | --- |
-| .NET SDK | 8.0.x | Build `M.BE.sln`. |
-| SQL Server | 2019+ (hoặc LocalDB / SQL Server Express) | Dev local. |
-| Node.js | 20.x LTS | Build/chạy `marixa_react` (Vite). |
-| Visual Studio / Rider / VS Code + C# extension | Tuỳ chọn | Chạy debug .NET. |
-| Git | Bất kỳ | Clone repo. |
+Repo chưa pin phiên bản Node dùng chung. Kiểm tra runtime của máy và dùng cùng phiên bản với môi trường build đã xác nhận; không tự nâng dependencies để làm theo tài liệu này. Local không cần Docker hoặc Supabase để chạy luồng cơ bản.
 
-## 2. Clone & build
+Đọc [00-README.md](00-README.md) trước khi sửa; [08-deploy-detail.md](08-deploy-detail.md) giải thích provider, startup và Storage; [06-testing.md](06-testing.md) chứa ca kiểm thử.
 
-```bash
-git clone https://github.com/taiDinh303/M-ChamCong.git
-cd M-ChamCong
+## 2. Restore và build từ đúng thư mục
 
-# Backend (solution .NET 8, nằm trong marixa_aspnet/)
-cd marixa_aspnet
-dotnet restore
-dotnet build M.BE.sln -c Debug
-cd ..
+Các ví dụ dùng checkout hiện tại; thay đường dẫn nếu đặt repo ở nơi khác.
 
-# Frontend (React 19 + Vite)
-cd marixa_react
-npm install
-cd ..
+```powershell
+Set-Location -LiteralPath 'D:\My Project\marixa_aspnet_react\marixa_aspnet'
+dotnet restore .\M.BE.sln
+dotnet build .\M.BE.sln -c Debug --no-restore
 ```
 
-## 3. Cấu hình CSDL dev (SQL Server)
+```powershell
+Set-Location -LiteralPath 'D:\My Project\marixa_aspnet_react\marixa_react'
+npm ci
+npm run build
+```
 
-- Chỉnh `marixa_aspnet/M.API/appsettings.json` → `ConnectionStrings:MyCnn` về SQL Server local của bạn (ví dụ):
-  `Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Marixa_001;Integrated Security=True;Encrypt=False`
-- `appsettings.json` hiện có `Database:Provider = "SqlServer"` (dev mặc định). **Không cần** env var `DATABASE__PROVIDER` / `CONNECTIONSTRINGS__MYCNN` cho dev (chúng chỉ dùng khi prod/PostgreSQL).
-- Khi khởi động, `M.API/Program.cs` tự chạy:
-  - **SQL Server (dev)**: `db.Database.MigrateAsync()` (thực thi migration T-SQL có sẵn trong `M.Repositories/Migrations/`).
-  - **PostgreSQL (prod)**: chạy DDL idempotent + `PostgresSchemaSync.EnsureColumnsAsync` (không chạy migration T-SQL).
-- Sau đó chạy seeder idempotent: `RoleSeeder`, `AttendanceRuleSeeder`, `AdminSeeder`, `SampleDataSeeder` (dữ liệu mẫu dev).
-- `AdminSeeder` tạo/không có tài khoản admin (config `Seed:Admin:Username/Email/Password` trong appsettings nếu cần; mặc định theo code).
+`npm ci` dùng `package-lock.json`; nếu lockfile không khớp package.json, xử lý sai khác có chủ đích thay vì xóa lockfile. Build thành công chỉ xác nhận biên dịch, chưa xác nhận DB/nghiệp vụ.
 
-> **Lưu ý:** schema Postgres được tạo bằng `GenerateCreateScript()` (không phải migration T-SQL). Khi thêm/sửa entity mới ở `M.Contract.Repositories/Entities/*.cs`, Postgres tự thêm cột ở boot lần sau (schema sync); SQL Server dev thì cần tạo migration mới (`dotnet ef migrations add <ten>` trong `M.Repositories`).
+## 3. Cấu hình API local
 
-## 4. Chạy dev (2 terminal)
+Đặt biến trong **terminal backend**. Chọn database local riêng, không dùng connection string production để thử.
 
-```bash
-# Terminal 1 — backend .NET (API + Swagger)
-cd marixa_aspnet
-dotnet run --project M.API
-# API: http://localhost:5xxxx (xem log) · Swagger: .../swagger
-# Ảnh dev: lưu đĩa wwwroot/uploads → serve /uploads
+```powershell
+Set-Location -LiteralPath 'D:\My Project\marixa_aspnet_react\marixa_aspnet'
+$env:DATABASE__PROVIDER = 'SqlServer'
+$env:CONNECTIONSTRINGS__MYCNN = 'Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Marixa_Local;Integrated Security=True;Encrypt=False'
+$env:JWTSETTINGS__KEY = '<LOCAL_RANDOM_SIGNING_KEY_AT_LEAST_32_CHARACTERS>'
+```
 
-# Terminal 2 — frontend React (Vite dev server)
-cd marixa_react
+**Thay JWT placeholder bằng khóa riêng trước khi chạy.** Connection string trên dành cho LocalDB + Windows authentication; đổi server/authentication theo SQL Server máy bạn. Không commit mật khẩu hoặc khóa local vào `appsettings.json`; project `M.API` đã có `UserSecretsId` nếu cần lưu cấu hình development ngoài repo. `.env.example` backend không được .NET tự đọc.
+
+Để dùng nhánh lưu ảnh đĩa, bảo đảm cấu hình hiệu lực không có đủ `Supabase:Url` + `Supabase:ServiceKey`. Nếu máy đã cấu hình Storage qua env/user secrets, kiểm tra nguồn đó trước khi chạy. Quy tắc tên biến đúng và lỗi tên cũ nằm tại `08` §2.
+
+**Tác động startup cần biết:** SQL Server chạy `MigrateAsync`; các seeder role/admin/dữ liệu mẫu/ca làm đều được gọi. Seeder ca có thể ghi lại rule mặc định; seeder mẫu chưa được giới hạn theo môi trường. Tài khoản bootstrap đọc `Seed:Admin:Username/Email/Password` và có fallback trong code; đặt credential riêng qua cấu hình riêng tư, không sao chép mặc định vào tài liệu. Không mặc định mọi seeder đã chạy thành công: xem warning và kiểm tra dữ liệu.
+
+## 4. Cấu hình frontend
+
+```powershell
+Set-Location -LiteralPath 'D:\My Project\marixa_aspnet_react\marixa_react'
+if (-not (Test-Path -LiteralPath '.env.local')) {
+    Copy-Item -LiteralPath '.env.example' -Destination '.env.local'
+}
+```
+
+Kiểm tra `.env.local` có cấu hình dev sau và **không bật `VITE_API_BASE_URL` tới cloud**:
+
+```dotenv
+VITE_API_PROXY_TARGET=http://localhost:57432
+# VITE_API_BASE_URL không đặt khi dùng dev proxy.
+```
+
+- [apiConfig.js](../marixa_react/src/services/api/apiConfig.js) dùng `/api` khi không có base URL tuyệt đối.
+- [vite.config.js](../marixa_react/vite.config.js) proxy cả `/api` và `/uploads` tới API; mặc định target `http://localhost:57432`.
+- `.env.example` frontend có ví dụ domain cloud cũ; không dùng nó làm nguồn xác định hosting hiện hành.
+- Restart Vite sau khi đổi `.env.local`. Nếu chọn base URL tuyệt đối, trình duyệt gọi API trực tiếp và chịu CORS; đường dẫn ảnh tương đối lấy origin API.
+
+## 5. Chạy bằng hai terminal độc lập
+
+**Terminal 1 — backend**, dùng cấu hình đã đặt tại §3:
+
+```powershell
+Set-Location -LiteralPath 'D:\My Project\marixa_aspnet_react\marixa_aspnet'
+dotnet run --project .\M.API\M.API.csproj --launch-profile M.API --urls http://localhost:57432
+```
+
+Lệnh chỉ định HTTP để khớp Vite proxy. Profile gốc trong [launchSettings.json](../marixa_aspnet/M.API/Properties/launchSettings.json) có HTTPS `57431` và HTTP `57432`, đặt environment `Development`. Swagger: [http://localhost:57432/swagger](http://localhost:57432/swagger). Đọc log thực tế nếu cổng bị chiếm hoặc bạn override cấu hình.
+
+**Terminal 2 — frontend**:
+
+```powershell
+Set-Location -LiteralPath 'D:\My Project\marixa_aspnet_react\marixa_react'
 npm run dev
-# Vite dev server (thường http://localhost:5173 hoặc theo vite.config.js)
-# Frontend gọi backend qua VITE_API_BASE_URL (xem .env.example)
 ```
 
-- Kiểm tra: mở Swagger → login (dùng tài khoản admin/employee mẫu đã seed) → chấm công → upload ảnh (dev lưu đĩa `wwwroot/uploads`, không cần Supabase).
-- Nếu cần dữ liệu mẫu: `SampleDataSeeder` tạo sẵn ~8 tài khoản (NV/NH/QT/Admin/KT) — xem `M.API/Seed/SampleDataSeeder.cs`.
+Mở URL Vite in ra terminal (thường port `5173`; có thể đổi khi bị chiếm). Nhánh ảnh đĩa lưu dưới `marixa_aspnet/M.API/wwwroot/uploads/attendance/...` và được serve qua `/uploads/attendance/...`.
 
-## 5. Chạy test (theo `06-testing.md`)
+## 6. Kiểm tra kết quả và trạng thái test
 
-```bash
-# Unit (tính công/tăng ca, ledger phép, quy tắc ca)
-cd marixa_aspnet
-dotnet test
+1. Đọc log backend để xác nhận migration/seeder không lỗi; Swagger mở được chưa chứng minh DB sẵn sàng.
+2. Đăng nhập bằng tài khoản local đã chuẩn bị, kiểm tra JWT và dữ liệu nhân viên.
+3. Upload ảnh hợp lệ → kiểm tra body thành công và URL đọc được → check-in/check-out → lịch sử công. Các bước ghi DB phải dùng dữ liệu giả; xem `06` cho sai khác ảnh/GPS/ngày công.
+4. Kiểm tra Network: request `/api`/`/uploads` qua Vite đúng target; không nhận HTML SPA thay JSON.
 
-# Frontend (nếu có)
-cd marixa_react
-npm test   # (hỗ trợ khi đã cấu hình; hiện chưa có bộ test e2e — xem worklog §3)
+**Chưa có test suite tự động trong checkout:** solution chưa có test project; `package.json` không có script `test`. Không dùng `dotnet test` exit 0 hoặc chạy `npm test` để tuyên bố đã kiểm thử. Các lệnh sẵn có:
+
+```powershell
+Set-Location -LiteralPath 'D:\My Project\marixa_aspnet_react\marixa_aspnet'
+dotnet build .\M.BE.sln -c Debug
 ```
 
-> Dev local **không dùng Docker**. Docker chỉ dùng cho build/chạy API trên Render (prod) — xem `08`.
+```powershell
+Set-Location -LiteralPath 'D:\My Project\marixa_aspnet_react\marixa_react'
+npm run build
+npm run lint
+```
 
-## 6. Kiểm tra trước khi commit
+Ghi kết quả thực tế; lint/build là kiểm tra tĩnh, không thay thế các ca nghiệp vụ trong `06`. Test tự động là việc cần bổ sung theo [01-plan.md](01-plan.md).
 
-- `dotnet build M.BE.sln` không lỗi compile.
-- `git status` không đưa secret (DB password, JWT key, Supabase service key) vào commit.
-- Chạy 1 smoke test end-to-end (login → chấm → upload ảnh → xem ảnh) trước khi đánh dấu "xong".
-- Ghi sự kiện (ngày + thay đổi + bằng chứng) vào `worklog.md` §4.
+## 7. Lỗi local thường gặp
+
+| Triệu chứng | Cách kiểm tra |
+| --- | --- |
+| Vite proxy `ECONNREFUSED` | API đã chạy đúng HTTP `57432`; target trong `.env.local` khớp log; restart Vite. |
+| SQL login/migration lỗi | SQL Server đã cài/chạy, connection string và quyền DB local đúng; không đổi sang production để chữa lỗi. |
+| Ảnh không hiện | Body upload có thành công, file local tồn tại, `/uploads` được proxy; nếu trả URL Supabase thì Storage đang được cấu hình. |
+| Upload HTTP 200 nhưng thất bại | Đọc `statusCode`/`code` trong JSON theo `08`, không chỉ nhìn HTTP status. |
+| Tài khoản mẫu không đăng nhập được | Kiểm tra seeder/log và dữ liệu local; không suy ra mật khẩu hoặc dùng credential production. |
+
+## 8. Contract for Codex / Agnes
+
+Run each command from its stated directory. Use a local SQL Server database and the HTTP API at `57432` with Vite's `/api` and `/uploads` proxy. API startup writes schema/seed data. No automated test suite is currently configured; report builds, lint and manual scenarios separately. Do not claim a successful runtime check from documentation review alone.

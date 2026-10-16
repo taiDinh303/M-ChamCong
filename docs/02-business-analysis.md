@@ -1,87 +1,95 @@
-﻿1 — Phân tích nghiệp vụ hệ thống chấm công Marixa
+# 02 — Phân tích nghiệp vụ Marixa
 
-> Tác giả & chủ tài liệu: **Đinh Văn Tài**.
-> Đối tượng đọc: AI (Agnes) khi được yêu cầu đọc dự án, và developer.
-> Mục đích: mô tả phạm vi, người dùng, quyền và quy tắc nghiệp vụ của hệ thống chấm công Marixa V1, **gắn với mã nguồn đang chạy** trong repo (backend `marixa_aspnet/M.API` .NET 8, frontend `marixa_react` React 19 + Vite).
+> Chủ tài liệu và quyết định nghiệp vụ: **Đinh Văn Tài**.
+> Cập nhật: **16/10/2026**. Phạm vi xác minh: mã nguồn trong repo, chưa nghiệm thu ứng dụng hoặc hạ tầng live.
+> Đối tượng: chủ dự án, developer, Codex và Agnes.
 
-## 0. Cách đọc file này (dành cho AI)
+## 1. Phạm vi và cách sử dụng
 
-- File này là "bản đồ nghiệp vụ": đọc trước khi đụng vào code, để biết **ai làm gì, được quyền gì, các quy tắc nào là bắt buộc**.
-- Nếu file này khác với `docs/01-plan.md` (mục quyết định đang hiệu lực), **mục 2 của `01-plan.md` thắng** — đó là quy tắc hiện hành.
-- Nếu cần xem các module/trang/chức năng đã có hay chưa: đọc `docs/worklog.md` (bảng ma trận theo trang & module).
-- Các file đặc tả khác: `02` dữ liệu, `03` luồng, `04` kiến trúc, `05` test, `06`+`08` triển khai, `07` UI.
+Marixa phục vụ quản lý nhân sự và chấm công cho khối văn phòng quy mô nhỏ, dự kiến dưới 15 người. Giao diện và thuật ngữ nghiệp vụ dùng tiếng Việt; múi giờ nghiệp vụ là `Asia/Ho_Chi_Minh` (UTC+7). Đường chạy hiện tại là ASP.NET Core 8 + ASP.NET Identity/JWT + React 19/Vite.
 
-## 1. Mục tiêu và phạm vi
+Quy ước trạng thái và quyền cập nhật tài liệu theo [00-README.md](00-README.md). **CURRENT** mô tả điều đã đối chiếu trong source; **TARGET/PENDING** mô tả yêu cầu/đề xuất chưa hoàn tất; **NOT VERIFIED** cần kiểm tra runtime hoặc xác nhận thêm. CURRENT không có nghĩa là hành vi đó đã đúng nghiệp vụ.
 
-Marixa cần một hệ thống chấm công cho **khối văn phòng (quy mô nhỏ, ~dưới 15 người)**. Nhân viên chấm vào/ra bằng web (desktop hoặc mobile, có hỗ trợ camera + GPS); HR đối soát; Admin quản trị cấu hình, tài khoản và khóa kỳ.
+**EN — AI contract:** Read [00-README.md](00-README.md) and [01-plan.md](01-plan.md) first. Preserve recorded owner decisions. Keep observed implementation separate from required behavior; do not redefine business rules to legitimize a bug. Source inspection does not prove runtime or production readiness.
 
-Giao diện và thuật ngữ dùng **tiếng Việt**, múi giờ nghiệp vụ là `Asia/Ho_Chi_Minh` (UTC+7).
+## 2. Quyết định nghiệp vụ đang giữ
 
-### Có trong V1 (đã code)
-- Hồ sơ nhân viên, phòng ban, vị trí, hợp đồng, bảo hiểm, thuế, lương cơ bản, tài khoản ngân hàng.
-- Chấm công vào/ra có chụp ảnh (camera) và GPS; ghi log vào/ra; tính giờ thực tế + tăng ca theo quy tắc chấm công.
-- Lịch sử chấm công, thống kê công, quy định chấm công (tự động).
-- Nghỉ phép (đơn + sổ phép), tăng ca (đơn), sửa công (yêu cầu điều chỉnh).
-- Bảng lương (payroll), hợp đồng, thăng chức, bàn giao khi nghỉ việc, báo cáo của nhân viên.
-- Công việc (work project / task / performance).
-- Quản trị: cấp/khóa tài khoản, quản lý role, dashboard admin.
+Các quyết định đã ghi trong [01-plan.md](01-plan.md) và lịch sử [worklog.md](worklog.md) được giữ khi chuẩn hóa tài liệu này:
 
-### Không có trong V1 (scope ngoài)
-- Không tính thuế phức tạp / khai báo BHXH tự động, không công trường/công nhân/điểm danh đội.
-- Không mô-đun kho, xuất nhập khẩu, CRM.
-- Không có hệ đa ca riêng cho từng nhân viên (V1 dùng **một ca làm chung** cho toàn công ty, do admin cấu hình).
-
-## 2. Người dùng và vai trò (role)
-
-Hệ thống hiện dùng **4 role** (xem `M.API/Seed/RoleSeeder.cs` và `marixa_react/src/constants/modules.js`):
-
-| Role | Mô tả | Quyền chính |
+| Chủ đề | Yêu cầu áp dụng | Tình trạng triển khai |
 | --- | --- | --- |
-| `Employee` | Nhân viên | Chấm công, xem hồ sơ/công/đơn của mình, gửi đơn nghỉ/tăng ca/sửa công, xem bảng lương của mình. |
-| `HR` | Nhân sự | Tạo/sửa hồ sơ, đối soát & duyệt chấm công, duyệt đơn nghỉ/tăng ca, quản lý hợp đồng/ascendant/bàn giao. |
-| `Manager` | Quản lý | Nhóm quyền tương đương HR ở các module nhân sự; tham gia cấp tài khoản, duyệt một số luồng. |
-| `Admin` | Quản trị | Toàn quyền: cấp/khóa tài khoản, quản lý role, cấu hình ca làm/lịch/chính sách, khóa/mở kỳ, xem báo cáo & audit toàn hệ thống. |
+| Ảnh và GPS chấm công | Bằng chứng **tùy chọn**; thiếu quyền camera/GPS cần được thể hiện rõ, không tự đặt thêm điều kiện bắt buộc. | **TARGET/PENDING:** UI hiện yêu cầu có ảnh; GPS chưa đi hết luồng lưu dữ liệu. |
+| Ảnh lưu trữ | Giữ bucket public `marixa-photos`. | **CURRENT:** backend trả URL public khi cấu hình Storage. Cấu hình bucket live **NOT VERIFIED**. |
+| Ca làm | Một quy tắc chung active cho công ty; giữ đơn giản, không bổ sung version hoặc ngày hiệu lực cho `AttendanceRule`. | **CURRENT:** có CRUD rule và chọn rule active mới nhất; chưa đảm bảo duy nhất một rule active. |
+| Phép năm | Giữ chính sách hiện tại; không tự đổi mức cấp, cách cộng dồn hoặc điều kiện hưởng. | Có loại nghỉ, hạn mức và ledger. Chưa chứng minh tự động cấp phép định kỳ trong đường chạy hiện tại. |
+| Ngoài phạm vi đã làm | Offline/IndexedDB, khóa kỳ, snapshot kỳ và xuất XLSX/PDF theo kỳ. | **TARGET/PENDING:** chưa có luồng hoàn chỉnh trong ứng dụng ASP.NET/React hiện tại. |
 
-Quy tắc phân quyền (frontend `permission.js` + backend `[Authorize(Roles=...)]`):
-- Mỗi module khai báo quyền truy cập trong `MODULES` (`access: "user" | "admin"`, hoặc `roles: [...]`).
-- Sidebar/đường dẫn chỉ là hỗ trợ giao diện; **mọi endpoint bắt buộc có `[Authorize]` phía backend** (trừ login/activate).
-- Nguyên tắc "không tự duyệt của chính mình" được áp dụng ở tầng nghiệp vụ khi người phát sinh đơn cũng chính là người có quyền duyệt (ghi rõ trong `05-workflow.md`).
+Yêu cầu nền tảng vẫn gồm: ngày công theo Việt Nam, giữ log chấm gốc và truy vết các điều chỉnh. **Chính sách OT còn cần chủ dự án xác nhận:** tài liệu cũ mô tả “duyệt rồi lấy phần giao với giờ thực tế”, trong khi source và một số ghi nhận lịch sử có OT tự động. Không tự chọn một cách tính làm yêu cầu cuối cùng. Nguyên tắc chống tự duyệt trong tài liệu cũ cũng cần đối chiếu các ngoại lệ HR/Admin hiện có trước khi thống nhất ma trận áp dụng. Các sai khác với code được ghi tại §5 để xử lý có chủ đích.
 
-> Lưu ý: V1 thiết kế ban đầu (theo tài liệu cũ của đồng đội) dùng 3 role `employee/hr/admin`; code hiện chạy đã mở rộng lên **4 role** (thêm `Manager`). Việc gộp/mở rộng role thêm nếu cần phải do chủ dự án quyết định, không tự ý đổi.
+## 3. Phạm vi module và vai trò
 
-> **Quyết định xác nhận 12/10/2026 (Đinh Văn Tài):** Ảnh chấm công **giữ public** (chưa chuyển private). Phép năm giữ quy tắc hiện tại. Ca làm chung **giữ đơn giản** (1 rule active; rút đề xuất "version + ngày hiệu lực"). Offline (IndexedDB) và khóa kỳ + snapshot + Excel/PDF **chưa làm**.
-> **EN (AI note):** Photos stay **public** (Supabase bucket `marixa-photos`). Leave-accrual rule unchanged. Shared shift stays **simple** (1 active `AttendanceRule`). Offline/IndexedDB queue, period lock + snapshot + Excel/PDF export are all **not built yet** — see `worklog.md`.
+### 3.1. Phạm vi có source
 
-> **Role (mở rộng / Roles):** V1 hiện 4 role đã map quyền. Đã **seed** thêm 3 role nghiệp vụ: **Kế toán (Accountant), Sale, Marketing** (trong `RoleSeeder.cs`, **chưa** gán quyền module).
-> EN: V1 has 4 mapped roles. 3 business roles (`Accountant`, `Sale`, `Marketing`) are **seeded** in code (no module permissions wired yet).
+| Nhóm | CURRENT | Giới hạn |
+| --- | --- | --- |
+| Nhân sự | Hồ sơ, phòng ban, vị trí, hợp đồng, lương, bảo hiểm, người phụ thuộc, ngân hàng. | Có màn hình/API không đồng nghĩa đã nghiệm thu toàn bộ quy tắc dữ liệu. |
+| Chấm công | Vào/ra, ảnh, lịch sử, thống kê, trạng thái duyệt ngày công, rule, lịch/ca và yêu cầu sửa công. | GPS và ngày công còn sai khác; chưa khóa kỳ. |
+| Nghỉ và tăng ca | Đơn nghỉ, loại nghỉ, ledger; đơn tăng ca và phê duyệt. | Chưa nối giờ OT được duyệt vào phép tính OT của ngày công. |
+| Nhân sự mở rộng | Thăng chức, bàn giao, báo cáo nhân viên và các phiên bản/tệp/sự kiện của báo cáo. | Không nhầm phiên bản báo cáo với snapshot bảng công. |
+| Công việc | Dự án, thành viên, task, bình luận và đánh giá hiệu suất. | Quyền từng thao tác cần kiểm tra controller/service tương ứng. |
+| Quản trị | Tài khoản, kích hoạt, khóa tài khoản, role, dashboard và các màn hình danh mục. | Khóa tài khoản khác khóa kỳ công. |
 
-## 3. Quy tắc chấm công (ca làm chung)
+Ngoài phạm vi V1: kho, xuất nhập khẩu, CRM, khai thuế/BHXH tự động và mô hình chấm đội công trường. Source có `Shift`/`EmployeeShift`; sự tồn tại các bảng này không thay đổi quyết định dùng một ca chung trong V1.
 
-- V1 dùng **một ca làm chung** do admin cấu hình trong bảng `AttendanceRule` (bắt đầu/ kết thúc, số phút nghỉ giữa ca, cờ active). Giá trị khởi tạo (seed) là 08:00–17:00, nghỉ trưa; đây là **mặc định có thể chỉnh**, không phải giờ cố định trong code.
-- Khi có đủ cặp vào/ra, hệ thống tính **giờ thực tế (net)** đã trừ nghỉ ca và **giờ tăng ca** (phần vượt mốc ra ca chuẩn) tại thời điểm chấm — không phải chờ HR duyệt (`AttendanceService.CheckInAsync`).
-- Vào ca sau mốc bắt đầu → trạng thái `Late`; đúng mốc → `Present`.
-- Chấm lại cùng loại trong cửa sổ ngắn (tham số code, ~2 phút) bị chặn trùng, trả về "đã có lần chấm gần đây".
-- Ảnh chấm công: chụp từ camera (`CameraCapture.jsx`), upload qua `POST /api/Upload/photo`. Đường lưu ảnh: **Supabase Storage bucket public `marixa-photos`** nếu cấu hình `SUPABASE__URL` + `SUPABASE__SERVICE_KEY`; chưa cấu hình thì fallback lưu đĩa `wwwroot/uploads` (dev local).
+### 3.2. Vai trò
 
-## 4. Nghỉ phép, tăng ca, sửa công
+| Role chính xác trong code | Phạm vi có khai báo quyền |
+| --- | --- |
+| `Employee` | Các màn hình cá nhân: hồ sơ, chấm công, công/đơn và thông tin nhân sự của mình. Đây cũng là phạm vi dữ liệu cần được backend bảo vệ. |
+| `HR` | Nhân sự, đối soát và một số thao tác duyệt; quyền không đồng nhất với Manager ở mọi luồng. |
+| `Manager` | Các module được khai báo cho quản lý; không mặc định bằng HR hoặc Admin. |
+| `Admin` | Quản trị tài khoản/role, danh mục và các thao tác quản trị được controller cho phép. |
+| `Accountant`, `Sale`, `Marketing` | Đã seed tên role; chưa có ma trận quyền module riêng hoàn chỉnh. Không suy ra quyền nghiệp vụ từ tên role. |
 
-- **Đơn nghỉ** (`LeaveRequest`): loại nghỉ do admin định nghĩa (`LeaveType`), khoảng ngày, lý do, trạng thái duyệt. Phê duyệt sinh giao dịch sổ phép (`LeaveLedger`) — không sửa số dư trực tiếp.
-- **Tăng ca** (`OvertimeRequest`): ngày, khoảng giờ, lý do; duyệt trước khi tính.
-- **Sửa công** (`AttendanceCorrection`): đề xuất mốc đúng + lý do; khi duyệt tạo bản điều chỉnh riêng, giữ nguyên sự kiện gốc.
-- Duyệt đi đúng người: HR/Manager/Admín duyệt đơn của Employee; không cho tự duyệt chính mình. Chi tiết luồng ở `05-workflow.md`.
+Nguồn: [RoleSeeder.cs](../marixa_aspnet/M.API/Seed/RoleSeeder.cs), [modules.js](../marixa_react/src/constants/modules.js), [permission.js](../marixa_react/src/services/auth/permission.js). Tài khoản có thể mang nhiều role; phải kiểm tra tổ hợp role khi nghiệm thu.
 
-## 5. Bảng công và báo cáo
+Sidebar/route guard chỉ quyết định UI. `[Authorize]` chỉ chứng minh yêu cầu đăng nhập ở endpoint đó; quyền xem/sửa **đúng nhân viên** phải được server kiểm tra riêng. Hiện còn khoảng trống đã thấy trong source: `Attendance` đọc theo ID/employee và checkin chưa đối chiếu quyền sở hữu; `LeaveRequest/get-all` chưa giới hạn role hoặc lọc theo chủ đơn. Xem ma trận quyền tại [03-architecture.md](03-architecture.md) và kịch bản tại [06-testing.md](06-testing.md).
 
-- Kỳ công tính theo **tháng**, có trạng thái mở → HR kiểm tra → admin khóa.
-- Báo cáo (Excel/PDF) theo quyền và phiên bản; Excel kỳ đang mở gắn nhãn "bản tạm", kỳ khóa dùng snapshot.
-- Dashboard HR ưu tiên việc cần xử lý, số người đã/chưa chấm, đơn chờ duyệt, cảnh báo. Nhân viên chỉ thấy dữ liệu của mình.
+## 4. Quy tắc nghiệp vụ cần đạt
 
-## 6. Điều kiện nghiệm thu nghiệp vụ
+| Chủ đề | TARGET/PENDING hoặc yêu cầu cần giữ |
+| --- | --- |
+| Ngày và thời điểm | Lưu thời điểm có offset/UTC; xác định ngày công theo Việt Nam. Ngày nghiệp vụ không được suy ra bằng ngày UTC. |
+| Bằng chứng | Cho phép ảnh/GPS tùy chọn đúng quyết định; hiển thị rõ chưa có bằng chứng/quyền bị chặn; nếu thu thập thì truyền và lưu đúng. |
+| Ca và giờ công | Áp dụng một rule chung nhất quán cho giờ chuẩn, nghỉ ca và trạng thái. Không âm thầm đổi lịch sử công khi chỉnh rule. Chưa có snapshot; cách xử lý lịch sử phải được làm rõ trước khi triển khai. |
+| Sửa công | Tạo yêu cầu riêng, lưu mốc đề nghị và trước/sau; bảo toàn log gốc. Kết quả duyệt có thể ghi override ở ngày công, phải truy vết được người và lý do. |
+| Nghỉ phép | Chỉ thay đổi theo trạng thái được phép; số liệu ledger phải nhất quán, chống trừ/hoàn lặp. Quy tắc hủy đơn đã duyệt chưa được triển khai, không hứa đã có. |
+| Tăng ca | **Cần quyết định:** OT tự động, OT có duyệt hay kết hợp theo loại ngày. Mô tả cũ “lấy phần giao đơn Approved với giờ thực tế” là phương án chờ xác nhận, chưa là quy tắc chung đã chốt. Luôn phân biệt giờ vượt mốc với giờ đã được duyệt. |
+| Duyệt | Xác thực người duyệt từ phiên đăng nhập và bảo vệ quyền. Tài liệu cũ nêu chống tự duyệt; ngoại lệ HR/Admin hiện có cần chủ dự án xác nhận theo từng loại đơn trước khi sửa chính sách. |
+| Chốt kỳ và xuất báo cáo | Nếu triển khai: quy trình HR kiểm tra → Admin khóa → snapshot; mở lại có lý do; báo cáo thể hiện kỳ/trạng thái. Đây là phần chưa làm. |
 
-1. Nhân viên/HR chấm vào/ra với ảnh (tùy camera) và GPS (tùy quyền); không ghi sự kiện thiếu bằng chứng một cách âm thầm.
-2. Đơn nghỉ/tăng ca/sửa công đi đúng người duyệt; không tự duyệt đơn của chính mình.
-3. Bảng công áp dụng ca làm chung hiện hành, nghỉ ca và điều chỉnh đã duyệt; thiếu mốc được báo "chưa hoàn chỉnh".
-4. Admin khóa/mở kỳ có lý do; Excel/PDF đúng quyền, đúng kỳ và phiên bản.
-5. Hệ thống giữ nhật ký (audit) cho các thay đổi quan trọng: công, phép, role, cấu hình, kỳ.
+## 5. Sai khác đã xác minh trong source
 
-Xem dữ liệu tại [04-database-design.md](04-database-design.md), luồng tại [05-workflow.md](05-workflow.md), UI tại [09-ui-design.md](09-ui-design.md).
+| Chủ đề | CURRENT | Hướng xử lý trong [01-plan.md](01-plan.md) |
+| --- | --- | --- |
+| Ảnh | `AttendanceCard` khóa nút khi chưa có ảnh; DTO/API chấm công cho phép `PhotoUrl` null; rule seed đặt `PhotoRequired=true`. | Đồng bộ với quyết định bằng chứng tùy chọn. |
+| GPS | UI chỉ hiển thị tọa độ. DTO checkin không có latitude/longitude; service không gán tọa độ vào log. | Hoàn tất hợp đồng và lưu dữ liệu trước khi mô tả GPS/geofence đã chạy. |
+| Ngày công | Checkin tìm/tạo ngày bằng `DateTime.UtcNow.Date`; tính trạng thái/giờ có chuyển UTC+7. | Sửa ranh giới ngày theo Việt Nam, kiểm tra dữ liệu cũ. |
+| Ca | Seeder ghi lại `DEFAULT-CA` thành 08:00–17:00, nghỉ 60 phút, active mỗi lần boot; `AttendanceRuleService` không chặn nhiều active. Status checkin dùng ca kế hoạch hoặc mốc cố định 08:00, không đọc `AttendanceRule.CheckInTime`. | Giữ ca chung đơn giản nhưng nhất quán và không mất cấu hình sau restart. |
+| Giờ công | Calculator làm tròn giờ thực thành `int`, OT một chữ số thập phân; nghỉ bắt đầu cố định 12:00. `AttendanceRule`/status evaluator có mặc định 16:30, seeder/calculator dùng 17:00. | Thống nhất công thức và độ chính xác; không tự chọn lại chính sách làm tròn. |
+| OT | Ngày công tự tính phần ra sau giờ chuẩn; không đọc `OvertimeRequest.Approved`. | Ghi nhận sai khác với phương án có duyệt trong tài liệu cũ; chốt chính sách trước khi đổi phép tính, luôn phân biệt giờ vượt mốc và OT được duyệt. |
+| Tự duyệt | Leave chặn mọi người tự duyệt. OT và sửa công có ngoại lệ HR/Admin; duyệt ngày công chưa có kiểm tra tự duyệt trong service. | Rà quyền, người duyệt và ngoại lệ; ghi quyết định trước khi đổi chính sách. |
+| Hủy nghỉ | Chỉ `Pending` được hủy. `Approved` trả `INVALID_STATUS`; nhánh refund chỉ xử lý Deduct tồn dư ở Pending. | Giữ mô tả hiện tại; luồng hủy nghỉ đã duyệt/hoàn phép là phần chưa làm cần đặc tả. |
+| Audit và bất biến | Có `AuditLog` và snapshot riêng của yêu cầu sửa; có CRUD log/ngày công và xóa cứng được expose cho role quản lý ở một số controller. | Không chứng nhận log/audit bất biến toàn hệ thống; cần kiểm tra quyền và đường sửa/xóa. |
+
+Nguồn chi tiết: [AttendanceService.cs](../marixa_aspnet/M.Services/Services/AttendanceService.cs), [AttendanceTimeCalculator.cs](../marixa_aspnet/M.Services/Services/AttendanceTimeCalculator.cs), [AttendanceRuleSeeder.cs](../marixa_aspnet/M.API/Seed/AttendanceRuleSeeder.cs), [LeaveRequestService.cs](../marixa_aspnet/M.Services/Services/LeaveRequestService.cs), [OvertimeRequestService.cs](../marixa_aspnet/M.Services/Services/OvertimeRequestService.cs), [AttendanceCorrectionService.cs](../marixa_aspnet/M.Services/Services/AttendanceCorrectionService.cs), [AttendanceCard.jsx](../marixa_react/src/modules/me/components/AttendanceCard.jsx).
+
+## 6. Báo cáo và điều kiện nghiệm thu
+
+**CURRENT:** có Excel import/export hồ sơ HR, CSV lịch sử công/thống kê ở frontend và tệp báo cáo nhân viên. Các xuất dữ liệu này dùng dữ liệu hiện thời, không chứng minh đã có bảng công XLSX/PDF theo kỳ khóa.
+
+**TARGET/PENDING:** offline, khóa/mở kỳ, snapshot, XLSX bảng công khóa và PDF đơn nghỉ chưa được nghiệm thu hoặc triển khai đầy đủ. SQL lịch sử dưới `marixa_aspnet/supabase` không là bằng chứng các luồng ấy đang chạy trong ASP.NET/React.
+
+Nghiệm thu phải có bằng chứng kiểm thử quyền dữ liệu, ranh giới ngày Việt Nam, tính công/OT/phép, retry/concurrency và việc bảo toàn log/điều chỉnh. Build thành công không thay thế kiểm thử nghiệp vụ. Ma trận và cách ghi kết quả nằm ở [06-testing.md](06-testing.md); trạng thái công việc ở [01-plan.md](01-plan.md).
+
+Xem tiếp [04-database-design.md](04-database-design.md) và [05-workflow.md](05-workflow.md).

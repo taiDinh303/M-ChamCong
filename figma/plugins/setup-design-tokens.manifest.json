@@ -1,0 +1,9 @@
+{
+  "id": "marixa-figma-setup",
+  "api": "1.0.0",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["none"],
+    "reasoning": "Plugin creates Variables, Pages, Frames locally in Figma — no network access required."
+  }
+}
