@@ -144,22 +144,32 @@ const Header = ({ profile, onToggleSidebar, collapsed, minimal = false, navItems
                     {imgSrc ? (
                         <img src={imgSrc} alt="Ảnh đại diện" />
                     ) : (
-                        <span>{name.trim().charAt(0).toUpperCase() || "?"}</span>
+                        <span className="app-header-avatar-fallback" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="8" r="4" />
+                                <path d="M4 20c0-3.3 3.6-6 8-6s8 2.7 8 6" />
+                            </svg>
+                        </span>
                     )}
                 </button>
 
-                {/* Nút "về phân khu theo phận sự" — 4 chấm tròn, chỉ ở home (minimal) */}
+                {/* Nút "về phân khu theo phận sự" — icon home, chỉ ở home (minimal) */}
                 {minimal && (
                     <button
                         type="button"
-                        className="app-header-dots-btn"
+                        className="app-header-home-btn"
                         title="Vào phân khu của bạn"
                         aria-label="Vào phân khu theo phận sự"
                         onClick={() => {
                             window.location.href = roleHome;
                         }}
                     >
-                        <span className="app-header-dots" aria-hidden="true"><i /><i /><i /><i /></span>
+                        <span className="app-header-home-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M3 11l9-8 9 8" />
+                                <path d="M5 10v10h5v-6h4v6h5V10" />
+                            </svg>
+                        </span>
                     </button>
                 )}
 

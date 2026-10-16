@@ -149,36 +149,77 @@
     border-bottom-color: var(--th-primary);
 }
 
-/* ===== NÚT 4 CHẤM — về phân khu theo phận sự (cuối phải, chỉ home) ===== */
-.app-header-dots-btn {
-    width: 40px;
-    height: 40px;
+/* ===== NÚT HOME — về phân khu theo phận sự (cuối phải, chỉ home) ===== */
+/* Nền accent-tint để làm rõ CTA, giữ cùng hình vuông với 3 nút kia. */
+.app-header-home-btn {
+    width: 42px;
+    height: 42px;
     display: grid;
     place-items: center;
-    border: 1px solid var(--th-header-border);
-    border-radius: 10px;
-    background: var(--th-header-surface);
+    border: 1px solid #cfe0ee;
+    border-radius: 12px;
+    background: #eaf4fc;
+    color: var(--th-primary);
     cursor: pointer;
-    transition: background .15s, border-color .15s;
+    transition: background .15s, border-color .15s, transform .15s;
 }
-.app-header-dots-btn:hover {
-    background: var(--th-header-surface-hover);
-    border-color: var(--th-primary);
-}
-.app-header-dots {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3px;
-}
-.app-header-dots i {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--th-header-sub);
-    transition: background .15s;
-}
-.app-header-dots-btn:hover .app-header-dots i {
+.app-header-home-btn:hover {
     background: var(--th-primary);
+    border-color: var(--th-primary);
+    color: #fff;
+    transform: translateY(-1px);
+}
+.app-header-home-icon {
+    display: grid;
+    place-items: center;
+    transition: transform .15s;
+}
+.app-header-home-btn:hover .app-header-home-icon {
+    transform: scale(1.08);
+}
+
+/* ===== ĐỒNG BỘ 4 NÚT PHẢI: cùng 42×42, cùng góc bo + viền + nền ===== */
+.app-header-bell-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+}
+.app-header-avatar-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+}
+/* Nút ngôn ngữ (flag-only) ở header: đổi từ pill sang vuông, cờ căn giữa */
+.app-header .lang-picker {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    gap: 0;
+    border-radius: 12px;
+    background: var(--th-header-surface);
+    justify-content: center;
+}
+.app-header .lang-toggle {
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+.app-header .lang-toggle .flag {
+    width: 26px;
+    height: 17px;
+}
+/* Avatar fallback: icon người trên nền accent-tint (thay chữ số/"?" trần) */
+.app-header-avatar-fallback {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background: #eaf4fc;
+    color: var(--th-primary);
+}
+.app-header-avatar-btn:hover .app-header-avatar-fallback {
+    background: #dceaf7;
 }
 
 @media (max-width: 520px) {
@@ -189,12 +230,12 @@
 }
 
 .app-header-avatar-btn {
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
     display: grid;
     place-items: center;
     border: 1px solid var(--th-header-border);
-    border-radius: 10px;
+    border-radius: 12px;
     background: var(--th-header-surface);
     overflow: hidden;
     cursor: pointer;
@@ -208,17 +249,7 @@
     height: 100%;
     object-fit: cover;
 }
-.app-header-avatar-btn span {
-    width: 100%;
-    height: 100%;
-    display: grid;
-    place-items: center;
-    background: rgba(22, 71, 200, 0.10);
-    color: var(--th-header-text);
-    font-family: "Montserrat", "Be Vietnam Pro", sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-}
+/* Fallback (icon người) được style riêng qua .app-header-avatar-fallback */
 
 /* Menu dropdown (nền trắng, tụt xuống vùng sáng) */
 .app-header-menu {
