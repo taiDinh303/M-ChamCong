@@ -1,8 +1,8 @@
-﻿using M.Contract.Repositories.Entity;
+using M.Contract.Repositories.AuthEntities;
 using M.Contract.Repositories.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.ActivationCodeModelView
+namespace M.ModelViews.ActivationCodeModelView
 {
     public class ActivationCodeResponseModelView
     {

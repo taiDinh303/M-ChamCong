@@ -1,4 +1,4 @@
-﻿namespace ModelViews.UserRoleModelView
+namespace M.ModelViews.UserRoleModelView
 {
     public class UserRoleResponseModelView
     {

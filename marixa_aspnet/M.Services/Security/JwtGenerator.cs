@@ -1,8 +1,10 @@
+using M.Core.Configuration;
+using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
-using M.Contract.Repositories.Entity;
+using M.Contract.Repositories.AuthEntities;
 using M.Contract.Repositories.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -16,23 +18,24 @@ namespace M.Services.Security
     public class JwtGenerator
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IConfiguration _configuration;
+        private readonly JwtSettings _settings;
+        private readonly TimeProvider _clock;
 
         public JwtGenerator(
             UserManager<ApplicationUser> userManager,
-            IConfiguration configuration)
+            IOptions<JwtSettings> settings, TimeProvider clock)
         {
             _userManager = userManager;
-            _configuration = configuration;
+            _settings = settings.Value;
+            _clock = clock;
         }
 
         public async Task<string> GenerateAsync(
             ApplicationUser user,
             Employee? employee)
         {
-            int expireMinutes = int.Parse(
-                _configuration["Jwtsettings:ExpirationMinutes"]!);
-            DateTime expires = DateTime.UtcNow.AddMinutes(expireMinutes);
+            var expireMinutes = _settings.ExpirationMinutes;
+            DateTime expires = _clock.GetUtcNow().UtcDateTime.AddMinutes(expireMinutes);
 
             List<Claim> claims =
                 await BuildClaimsAsync(user, employee);
@@ -50,6 +53,7 @@ namespace M.Services.Security
                 new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+            claims.Add(new Claim("securityStamp", user.SecurityStamp ?? string.Empty));
 
             if (employee != null)
             {
@@ -75,13 +79,13 @@ namespace M.Services.Security
         private string GenerateJwtToken(IEnumerable<Claim> claims, DateTime expires)
         {
             SymmetricSecurityKey key =
-                new(Encoding.UTF8.GetBytes(_configuration["Jwtsettings:Key"]!));
+                new(Encoding.UTF8.GetBytes(_settings.Key));
             SigningCredentials creds =
                 new(key, SecurityAlgorithms.HmacSha256);
             JwtSecurityToken token =
                 new(
-                    issuer: _configuration["Jwtsettings:Issuer"],
-                    audience: _configuration["Jwtsettings:Audience"],
+                    issuer: _settings.Issuer,
+                    audience: _settings.Audience,
                     claims: claims,
                     expires: expires,
                     signingCredentials: creds);

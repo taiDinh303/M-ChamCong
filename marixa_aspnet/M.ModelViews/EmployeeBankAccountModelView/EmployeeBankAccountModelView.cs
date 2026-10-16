@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.EmployeeBankAccountModelView
+namespace M.ModelViews.EmployeeBankAccountModelView
 {
     public class EmployeeBankAccountResponseModelView
     {

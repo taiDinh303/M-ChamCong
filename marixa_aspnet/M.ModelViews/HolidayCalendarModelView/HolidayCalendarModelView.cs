@@ -1,7 +1,7 @@
-﻿using M.Contract.Repositories.Entities;
+using M.Contract.Repositories.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.HolidayCalendarModelView
+namespace M.ModelViews.HolidayCalendarModelView
 {
     public class HolidayCalendarResponseModelView
     {

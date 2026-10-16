@@ -1,4 +1,4 @@
-﻿namespace ModelViews.UserInfoModelView
+namespace M.ModelViews.UserInfoModelView
 {
     public class UserResponseModelView
     {

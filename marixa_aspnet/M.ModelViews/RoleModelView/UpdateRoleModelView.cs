@@ -1,4 +1,4 @@
-﻿namespace ModelViews.RoleModelView
+namespace M.ModelViews.RoleModelView
 {
     public class UpdateRoleModelView
     {

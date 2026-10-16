@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.PositionModelView
+namespace M.ModelViews.PositionModelView
 {
     public class PositionResponseModelView
     {

@@ -1,218 +1,61 @@
 using M.API;
+using M.API.Bootstrap;
 using M.API.Middleware;
-using M.Repositories.Context;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddScoped<M.API.Filters.EmployeeScopeFilter>();
 builder.Services.AddControllers(options =>
 {
-    // Normalize every DateTime/DateTime? on all controller input models to
-    // Kind=Utc BEFORE actions run. PostgreSQL/Npgsql requires UTC for
-    // timestamptz columns both as query parameters AND as stored values.
-    // No-op on SQL Server (local dev). Covers all controllers in one place.
-    options.Filters.Add(new M.API.Filters.DateTimeUtcKindFilter());
-});
-
-// File báo cáo tối đa 20MB (upload ảnh vẫn được giới hạn riêng trong API chấm công).
-builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
-{
-    options.MultipartBodyLengthLimit = 21 * 1024 * 1024;
-});
-
-var jwtKey = builder.Configuration["JwtSettings:Key"]
-    ?? "FALLBACK-DEV-JWT-KEY-CHANGE-ME-32CHARS!";
-
+    options.Filters.Add<M.API.Filters.DateTimeUtcKindFilter>();
+    options.Filters.AddService<M.API.Filters.EmployeeScopeFilter>();
+})
+    .ConfigureApiBehaviorOptions(options => options.InvalidModelStateResponseFactory = context =>
+        new BadRequestObjectResult(new
+        {
+            statusCode = 400, code = "VALIDATION", message = "Request validation failed.",
+            data = context.ModelState.Where(x => x.Value?.Errors.Count > 0)
+                .ToDictionary(x => x.Key, x => x.Value!.Errors.Select(e =>
+                    string.IsNullOrWhiteSpace(e.ErrorMessage) ? "Invalid value." : e.ErrorMessage).ToArray())
+        }));
+builder.Services.Configure<FormOptions>(options => options.MultipartBodyLengthLimit = 21 * 1024 * 1024);
 builder.Services.AddEndpointsApiExplorer();
-
-// Add all services to this
-builder.Services.AddConfig(builder.Configuration);
-
+builder.Services.AddConfig(builder.Configuration, builder.Environment);
+builder.Services.AddScoped<IDatabaseInitializer, DatabaseInitializer>();
 
 var app = builder.Build();
+await using (var scope = app.Services.CreateAsyncScope())
+    await scope.ServiceProvider.GetRequiredService<IDatabaseInitializer>().InitializeAsync();
 
-// Render đưa request qua load balancer; tin header X-Forwarded-* để Kestrel
-// thấy đúng IP và scheme của client (chạy sau khi build, trước các middleware khác).
-app.UseForwardedHeaders();
-
-// Tạo schema CSDL khi khởi động.
-// - PostgreSQL (Render): dùng EnsureCreated, vì các migration đã commit chứa
-//   T-SQL (IF COL_LENGTH...) chỉ chạy được trên SQL Server.
-// - SQL Server (dev local): chạy migration thật.
-// DatabaseConfig doc Provider + ConnectionString tu appsettings + env var
-// (CONNECTIONSTRINGS__MYCNN, DATABASE__PROVIDER) - dung chung voi EF setup.
-var dbConfig = M.API.DatabaseConfig.FromConfiguration(app.Configuration);
-
-try
-{
-    using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-    if (dbConfig.IsPostgres)
-    {
-        // DB Supabase thuong KHONG rong (Supabase tao san table), nen EnsureCreated()
-        // se NO-OP va KHONG tao bang EF -> seeder loai "relation does not exist".
-        // -> Check co bang EF chua; neu chua co thi CreateTablesAsync (idempotent,
-        //    chi tao bang, khong can DB rong).
-        // Supabase postgres DB KHONG rong (co schemas auth/storage/extensions),
-        // nen EnsureCreated() no-op, khong tao bang EF.
-        //
-        // Luon chay GenerateCreateScript() tung cau lenh (idempotent, self-healing):
-        //   - bang chua co   -> tao
-        //   - bang da co    -> "already exists" -> skip
-        //   - trang thai tan (create 1 phan) -> lan boot sau se tao them
-        var createScript = db.Database.GenerateCreateScript();
-        string[] ddlStatements = createScript
-            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-        int created = 0, skipped = 0, failed = 0;
-        var ddlLogger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup");
-
-        foreach (string statement in ddlStatements)
-        {
-            if (string.IsNullOrWhiteSpace(statement)) continue;
-            try
-            {
-                await db.Database.ExecuteSqlRawAsync(statement);
-                created++;
-            }
-            catch (Exception ex) when (
-                ex.Message.Contains("already exists") ||
-                ex.Message.Contains("does not exist"))
-            {
-                skipped++;
-            }
-            catch (Exception ex)
-            {
-                failed++;
-                ddlLogger.LogWarning(ex,
-                    "DDL stmt {N} failed: {Snippet}",
-                    failed,
-                    statement.Length > 120 ? statement.Substring(0, 120) + "..." : statement);
-            }
-        }
-
-        ddlLogger.LogInformation(
-            "PostgreSQL DDL: {Created} created, {Skipped} existing, {Failed} failed",
-            created, skipped, failed);
-        // Generic schema drift sync: compare EF model to actual PostgreSQL schema,
-        // auto-add any missing columns (idempotent, runs every boot).
-        // Handles ALL future model changes without hardcoding ALTER TABLE.
-        try
-        {
-            await M.API.PostgresSchemaSync.EnsureColumnsAsync(db, app.Services);
-        }
-        catch (Exception syncEx)
-        {
-            app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup")
-                .LogWarning(syncEx, "PostgreSQL schema sync FAILED: {Reason}", syncEx.Message);
-        }
-    }
-    else
-    {
-        await db.Database.MigrateAsync();
-    }
-}
-}
-catch (Exception ex)
-{
-    app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup").LogWarning(
-        "DB init skipped at startup (retry next boot): {Reason}", ex.Message);
-}
-
-// Dev: tu dong migrate CSDL local de khua schema moi (AttendanceLogs, ChangeSummary,
-// EmployeeReports, EmployeePromotions, EmployeeHandovers...). Idempotent + chi chay
-// Development (khong dong CSDL Somee trong Production). Khua loi 500 "invalid column/table".
-if (app.Environment.IsDevelopment() && !dbConfig.IsPostgres)
-{
-    using var scope = app.Services.CreateScope();
-    try
-    {
-        await scope.ServiceProvider
-            .GetRequiredService<M.Repositories.Context.DatabaseContext>()
-            .Database.MigrateAsync();
-    }
-    catch (Exception ex)
-    {
-        app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup").LogWarning(
-            "Auto-migrate skipped at startup: {Reason}", ex.Message);
-    }
-}
-
-try
-{
-    await M.API.Seed.RoleSeeder.SeedAsync(app.Services);
-}
-catch (Exception ex)
-{
-    app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup").LogWarning(
-        "RoleSeeder skipped at startup: {Reason}", ex.Message);
-}
-
-// Seed quy định chấm công mặc định 8h-17h (idempotent).
-try
-{
-    await M.API.Seed.AttendanceRuleSeeder.SeedAsync(app.Services);
-}
-catch (Exception ex)
-{
-    app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup").LogWarning(
-        "AttendanceRuleSeeder skipped at startup: {Reason}", ex.Message);
-}
-
-// Táº¹o/á»Ÿ cå© tháº§m táº¹i khoáº£n quáº£n trá» (admin), idempotent. Cå“i tä¿u:
-// Seed:Admin:Username / Seed:Admin:Email / Seed:Admin:Password.
-try
-{
-    await M.API.Seed.AdminSeeder.SeedAsync(app.Services);
-}
-catch (Exception ex)
-{
-    app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup").LogWarning(
-        "AdminSeeder skipped at startup: {Reason}", ex.Message);
-}
-
-//Catch error
-//app.UseDeveloperExceptionPage();
-
-// Seed 8 tai khoan mau (NV / Nhan su / Quan ly / Admin / Ke toan), idempotent.
-// Khi them/sua du lieu mau: mo mang Users trong SampleDataSeeder.cs, build + push.
-try
-{
-    await M.API.Seed.SampleDataSeeder.SeedAsync(app.Services);
-}
-catch (Exception ex)
-{
-    app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup").LogWarning(
-        "SampleDataSeeder skipped at startup: {Reason}", ex.Message);
-}
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseCors("ReactPolicy");
 app.UseDefaultFiles();
 app.UseStaticFiles();
-
-app.UseSwagger();
-app.UseSwaggerUI();
-
-app.UseCors("ReactPolicy");
-// Render đã có HTTPS ở load balancer (không chạy Kestrel bằng SSL),
-// nên KHÔNG dùng UseHttpsRedirection để tránh vòng lặp redirect.
-
-// Ảnh chấm công đã upload -> /uploads (lưu trong wwwroot/uploads, ổn định)
-var uploadDir = PhotoStore.GetRoot(app.Environment);
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(uploadDir),
-    RequestPath = "/uploads"
+    FileProvider = new PhysicalFileProvider(PhotoStore.GetRoot(app.Environment)), RequestPath = "/uploads"
 });
-
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
-// SPA fallback: moi duong dan React Router (/login, /employees, ...) -> tra index.html
-// (chi cho duong dan cua app; /api, /uploads, /swagger van trai 404 dung).
-app.MapFallbackToFile("index.html");
-
+app.MapFallback(async context =>
+{
+    var index = Path.Combine(app.Environment.WebRootPath ?? Path.Combine(app.Environment.ContentRootPath, "wwwroot"), "index.html");
+    if (context.Request.Path.StartsWithSegments("/api") || context.Request.Path.StartsWithSegments("/uploads")
+        || context.Request.Path.StartsWithSegments("/swagger") || !File.Exists(index))
+    {
+        context.Response.StatusCode = 404;
+        await context.Response.WriteAsJsonAsync(new { statusCode = 404, code = "NOT_FOUND", message = "Route not found.", data = (object?)null });
+        return;
+    }
+    context.Response.ContentType = "text/html";
+    await context.Response.SendFileAsync(index);
+}).AllowAnonymous();
 app.Run();
+
+// WebApplicationFactory entry point; does not change application behavior.
+public partial class Program { }

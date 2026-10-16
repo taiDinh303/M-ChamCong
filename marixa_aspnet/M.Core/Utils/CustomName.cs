@@ -1,4 +1,4 @@
-﻿namespace M.Core.Utils
+namespace M.Core.Utils
 {
     [AttributeUsage(AttributeTargets.All)]
     public class CustomName : Attribute

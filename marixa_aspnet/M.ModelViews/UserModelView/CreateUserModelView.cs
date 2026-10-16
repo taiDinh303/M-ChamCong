@@ -1,8 +1,8 @@
-﻿using M.Contract.Repositories.Entities;
-using ModelViews.EmployeeModelView;
+using M.Contract.Repositories.Entities;
+using M.ModelViews.EmployeeModelView;
 using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.UserModelView
+namespace M.ModelViews.UserModelView
 {
     public class CreateUserModelView
     {

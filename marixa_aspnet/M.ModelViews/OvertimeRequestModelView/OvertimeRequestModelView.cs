@@ -1,7 +1,7 @@
 using M.Contract.Repositories.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.OvertimeRequestModelView
+namespace M.ModelViews.OvertimeRequestModelView
 {
     /// <summary>
     /// Trả về chi tiết 1 yêu cầu tăng ca (dùng cho list + detail).

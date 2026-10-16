@@ -1,7 +1,7 @@
 using M.Contract.Repositories.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.AttendanceModelView
+namespace M.ModelViews.AttendanceModelView
 {
     public class AttendanceResponseModelView
     {
@@ -146,6 +146,12 @@ namespace ModelViews.AttendanceModelView
         [MaxLength(500)]
         public string? PhotoUrl { get; set; }
 
+        [Range(-90, 90)]
+        public decimal? Latitude { get; set; }
+        [Range(-180, 180)]
+        public decimal? Longitude { get; set; }
+        [MaxLength(100)]
+        public string? DeviceId { get; set; }
         public string? Note { get; set; }
     }
 

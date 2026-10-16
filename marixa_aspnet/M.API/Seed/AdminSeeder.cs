@@ -1,4 +1,4 @@
-using M.Contract.Repositories.Entity;
+using M.Contract.Repositories.AuthEntities;
 using M.Contract.Repositories.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,13 +11,11 @@ namespace M.API.Seed
     /// Đảm bảo tài khoản quản trị (admin) tồn tại khi khởi động,
     /// idempotent: chạy lại nhiều lần không tạo trùng.
     ///
-    /// Config (tuỳ chọn, có default):
-    ///   Seed:Admin:Username  (default "admin")
-    ///   Seed:Admin:Email    (default "admin@monica.vn")
-    ///   Seed:Admin:Password (default "Admin@12345")
+
+
+
     ///
     /// Render có thể override qua env:
-    ///   Seed__Admin__Username / Seed__Admin__Email / Seed__Admin__Password
     /// </summary>
     public static class AdminSeeder
     {
@@ -35,7 +33,8 @@ namespace M.API.Seed
 
             string username = config["Seed:Admin:Username"] ?? "admin";
             string email = config["Seed:Admin:Email"] ?? "admin@monica.vn";
-            string password = config["Seed:Admin:Password"] ?? "Admin@12345";
+            string password = config["Seed:Admin:Password"]
+                ?? throw new InvalidOperationException("Set Seed:Admin:Password before enabling admin bootstrap.");
 
             // Chờ role Admin tồn tại (RoleSeeder chạy trước)
             if (!await roleManager.RoleExistsAsync("Admin"))

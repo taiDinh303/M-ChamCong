@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.AuthModelView
+namespace M.ModelViews.AuthModelView
 {
     /// <summary>
     /// Kích hoạt tài khoản bằng mã kích hoạt (quy trình bàn giao:

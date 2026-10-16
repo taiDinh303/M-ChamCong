@@ -1,4 +1,4 @@
-namespace ModelViews.WorkPerformanceModelView
+namespace M.ModelViews.WorkPerformanceModelView
 {
     public class WorkPerformanceRow
     {

@@ -18,7 +18,7 @@ services:
     dockerfilePath: marixa_aspnet/Dockerfile
     dockerContext: marixa_aspnet
     plan: standard
-    healthCheckPath: /swagger
+    healthCheckPath: /health/ready
     autoDeploy: true
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
@@ -27,7 +27,7 @@ services:
       #   DATABASE__PROVIDER     = PostgreSQL
       #   CONNECTIONSTRINGS__MYCNN = postgresql://postgres.REF:PASS@host:5432/postgres?sslmode=require
       #   JWTSETTINGS__KEY       = (secret 32+ ký tự)
-      #   SUPABASE__SERVICE_KEY  = (secret service_role – đặt trực tiếp trong Render Dashboard, KHÔNG commit)
+      #   SUPABASE__SERVICEKEY  = (secret service_role – đặt trực tiếp trong Render Dashboard, KHÔNG commit)
       # Ảnh chấm công upload lên Supabase Storage (bền, không mất khi redeploy Render).
       - key: SUPABASE__URL
         value: https://zphqfcwrwitrqdeueonu.supabase.co

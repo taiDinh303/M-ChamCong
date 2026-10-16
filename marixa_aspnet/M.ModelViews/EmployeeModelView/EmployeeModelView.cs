@@ -1,7 +1,7 @@
-﻿using M.Contract.Repositories.Entities;
+using M.Contract.Repositories.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.EmployeeModelView
+namespace M.ModelViews.EmployeeModelView
 {
     public class EmployeeResponseModelView
     {

@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.AuthModelView
+namespace M.ModelViews.AuthModelView
 {
     /// <summary>
     /// Đổi mật khẩu (đã xác thực qua token / session).

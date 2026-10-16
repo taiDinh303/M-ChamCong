@@ -16,7 +16,7 @@ Quyền cập nhật, thứ tự nguồn và trạng thái theo [00-README.md](0
 
 ## 2. Chấm vào/ra và ảnh
 
-Nguồn: [AttendanceCard.jsx](../marixa_react/src/modules/me/components/AttendanceCard.jsx), [relatedApi.js](../marixa_react/src/modules/me/api/relatedApi.js), [AttendanceController.cs](../marixa_aspnet/M.API/Controllers/AttendanceController.cs), [AttendanceService.cs](../marixa_aspnet/M.Services/Services/AttendanceService.cs).
+Nguồn: [AttendanceCard.jsx](../marixa_react/src/modules/me/components/AttendanceCard.jsx), [relatedApi.js](../marixa_react/src/modules/me/api/relatedApi.js), [AttendanceController.cs](../marixa_aspnet/M.API/Controllers/Timekeeping/AttendanceController.cs), [AttendanceService.cs](../marixa_aspnet/M.Services/Services/Timekeeping/AttendanceService.cs).
 
 ### 2.1. Trình tự CURRENT
 
@@ -49,11 +49,11 @@ Ví dụ body theo DTO hiện tại; thay GUID bằng hồ sơ test được ph�
 
 ### 2.3. Công thức CURRENT và giới hạn
 
-Trong [AttendanceTimeCalculator.cs](../marixa_aspnet/M.Services/Services/AttendanceTimeCalculator.cs): đổi mốc sang UTC+7 → lấy giờ/phút → tính khoảng làm → trừ phần giao với cửa sổ nghỉ bắt đầu cố định **12:00**, dài `BreakMinutes` của rule → `ActualHours = Math.Round(netMinutes / 60.0)` thành số nguyên. `OvertimeHours = Math.Round(max(0, outMinute - standardEndMinute) / 60, 1)`.
+Trong [AttendanceTimeCalculator.cs](../marixa_aspnet/M.Services/Services/Timekeeping/AttendanceTimeCalculator.cs): đổi mốc sang UTC+7 → lấy giờ/phút → tính khoảng làm → trừ phần giao với cửa sổ nghỉ bắt đầu cố định **12:00**, dài `BreakMinutes` của rule → `ActualHours = Math.Round(netMinutes / 60.0)` thành số nguyên. `OvertimeHours = Math.Round(max(0, outMinute - standardEndMinute) / 60, 1)`.
 
 Với rule ra 17:00, nghỉ 60 phút: 08:00–17:00 trả 8 giờ, OT 0; 08:00–18:00 trả 9 giờ, OT 1. Đây là cách calculator hiện tính, **chưa phải OT đã được duyệt**. Hàm trả null khi thiếu mốc hoặc ra trước vào; có xử lý chênh giờ qua nửa đêm nhưng bỏ phần ngày nên ca dài/qua nhiều ngày và nghỉ/OT qua đêm cần kiểm thử riêng. Quy tắc làm tròn cần được thống nhất trước khi đổi.
 
-Status lúc chấm vào dùng ca kế hoạch nếu có, nếu không dùng mốc cố định 08:00 của [AttendanceStatusEvaluator.cs](../marixa_aspnet/M.Services/Services/AttendanceStatusEvaluator.cs); chỉ gán khi Status còn null. Không khẳng định `AttendanceRule.CheckInTime`, grace hoặc ngưỡng về sớm đã được áp dụng đầy đủ. Mặc định evaluator/entity ra 16:30 còn seeder/calculator dùng 17:00.
+Status lúc chấm vào dùng ca kế hoạch nếu có, nếu không dùng mốc cố định 08:00 của [AttendanceStatusEvaluator.cs](../marixa_aspnet/M.Services/Services/Timekeeping/AttendanceStatusEvaluator.cs); chỉ gán khi Status còn null. Không khẳng định `AttendanceRule.CheckInTime`, grace hoặc ngưỡng về sớm đã được áp dụng đầy đủ. Mặc định evaluator/entity ra 16:30 còn seeder/calculator dùng 17:00.
 
 **TARGET/PENDING:** ngày Việt Nam nhất quán giữa server/UI; bằng chứng tùy chọn đúng quyết định; dữ liệu GPS xuyên suốt nếu thu thập; một rule chung được tôn trọng sau restart; quyền sở hữu, retry và đồng thời được bảo vệ ở backend/DB.
 
@@ -74,7 +74,7 @@ Status lúc chấm vào dùng ca kế hoạch nếu có, nếu không dùng mố
 
 ## 4. Yêu cầu sửa công
 
-Nguồn: [AttendanceCorrectionController.cs](../marixa_aspnet/M.API/Controllers/AttendanceCorrectionController.cs), [AttendanceCorrectionService.cs](../marixa_aspnet/M.Services/Services/AttendanceCorrectionService.cs).
+Nguồn: [AttendanceCorrectionController.cs](../marixa_aspnet/M.API/Controllers/Timekeeping/AttendanceCorrectionController.cs), [AttendanceCorrectionService.cs](../marixa_aspnet/M.Services/Services/Timekeeping/AttendanceCorrectionService.cs).
 
 | Bước CURRENT | API và dữ liệu | Kết quả/giới hạn |
 | --- | --- | --- |
@@ -90,7 +90,7 @@ Enum có Cancelled nhưng controller hiện không có endpoint hủy riêng. Kh
 
 ## 5. Đơn nghỉ và sổ phép
 
-Nguồn: [LeaveRequestController.cs](../marixa_aspnet/M.API/Controllers/LeaveRequestController.cs), [LeaveRequestService.cs](../marixa_aspnet/M.Services/Services/LeaveRequestService.cs), [LeaveLedgerService.cs](../marixa_aspnet/M.Services/Services/LeaveLedgerService.cs).
+Nguồn: [LeaveRequestController.cs](../marixa_aspnet/M.API/Controllers/Leave/LeaveRequestController.cs), [LeaveRequestService.cs](../marixa_aspnet/M.Services/Services/Leave/LeaveRequestService.cs), [LeaveLedgerService.cs](../marixa_aspnet/M.Services/Services/Leave/LeaveLedgerService.cs).
 
 ### 5.1. Trạng thái CURRENT
 
@@ -117,7 +117,7 @@ Deduct hiện do service kiểm tra tồn tại trước khi tạo, không có b
 
 ## 6. Yêu cầu tăng ca
 
-Nguồn: [OvertimeRequestController.cs](../marixa_aspnet/M.API/Controllers/OvertimeRequestController.cs), [OvertimeRequestService.cs](../marixa_aspnet/M.Services/Services/OvertimeRequestService.cs).
+Nguồn: [OvertimeRequestController.cs](../marixa_aspnet/M.API/Controllers/Leave/OvertimeRequestController.cs), [OvertimeRequestService.cs](../marixa_aspnet/M.Services/Services/Leave/OvertimeRequestService.cs).
 
 1. `POST /OvertimeRequest/create` nhận employeeId, attendanceId?, workDate, startAt?, endAt?, overtimeHours?, reason?. Tạo Pending; chặn một Pending cùng nhân viên/ngày bằng truy vấn. Nếu không nhập overtimeHours, service tính khoảng giờ và làm tròn 2 chữ số khi có cặp hợp lệ.
 2. `PUT /OvertimeRequest/update` chỉ nhận record Pending. API create/update yêu cầu đăng nhập; source chưa kiểm tra quyền sở hữu đầy đủ.

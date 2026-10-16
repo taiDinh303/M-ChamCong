@@ -1,4 +1,4 @@
-﻿using M.Core.Utils;
+using M.Core.Utils;
 using System.ComponentModel.DataAnnotations;
 
 namespace M.Core.Base
@@ -19,6 +19,29 @@ namespace M.Core.Base
         public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset LastUpdatedTime { get; set; }
         public DateTimeOffset? DeletedTime { get; set; }
+
+        public void MarkUpdated(string actor, DateTimeOffset at)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(actor);
+            LastUpdatedBy = actor;
+            LastUpdatedTime = at.ToUniversalTime();
+        }
+
+        public void SoftDelete(string actor, DateTimeOffset at)
+        {
+            if (DeletedTime.HasValue) return;
+            MarkUpdated(actor, at);
+            DeletedBy = actor;
+            DeletedTime = at.ToUniversalTime();
+        }
+
+        public void Restore(string actor, DateTimeOffset at)
+        {
+            if (!DeletedTime.HasValue) return;
+            MarkUpdated(actor, at);
+            DeletedTime = null;
+            DeletedBy = null;
+        }
     }
 }
 

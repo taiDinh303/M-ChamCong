@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.EmployeeDependentModelView
+namespace M.ModelViews.EmployeeDependentModelView
 {
     public class EmployeeDependentResponseModelView
     {

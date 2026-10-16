@@ -1,7 +1,7 @@
-﻿using M.Contract.Repositories.Entities;
+using M.Contract.Repositories.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ModelViews.AuthModelView
+namespace M.ModelViews.AuthModelView
 {
     public class AuthResponseModelView
     {

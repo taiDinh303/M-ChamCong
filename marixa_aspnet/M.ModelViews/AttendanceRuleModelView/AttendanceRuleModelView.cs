@@ -1,7 +1,7 @@
-﻿using M.Contract.Repositories.Entities;
+using M.Contract.Repositories.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.AttendanceRuleModelView
+namespace M.ModelViews.AttendanceRuleModelView
 {
     public class AttendanceRuleResponseModelView
     {
@@ -53,7 +53,7 @@ namespace ModelViews.AttendanceRuleModelView
 
         public TimeOnly CheckInTime { get; set; } = new TimeOnly(8, 0);
 
-        public TimeOnly CheckOutTime { get; set; } = new TimeOnly(16, 30);
+        public TimeOnly CheckOutTime { get; set; } = new TimeOnly(17, 0);
 
         public int LateGraceMinutes { get; set; } = 0;
 
@@ -61,7 +61,7 @@ namespace ModelViews.AttendanceRuleModelView
 
         public int BreakMinutes { get; set; } = 0;
 
-        public bool PhotoRequired { get; set; } = true;
+        public bool PhotoRequired { get; set; } = false;
 
         public bool GpsRequired { get; set; }
 

@@ -1,5 +1,5 @@
 using M.Contract.Repositories.Entities;
-using M.Contract.Repositories.Entity;
+using M.Contract.Repositories.AuthEntities;
 using System.Threading;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -210,6 +210,16 @@ public DbSet<AuditLog> AuditLogs { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<AttendanceRule>().HasIndex(r => r.IsActive).IsUnique()
+                .HasDatabaseName("UX_AttendanceRules_Active")
+                .HasFilter(Database.IsNpgsql() ? "\"IsActive\" = TRUE AND \"DeletedTime\" IS NULL" : "[IsActive] = 1 AND [DeletedTime] IS NULL");
+
+            builder.Entity<Attendance>()
+                .HasIndex(a => new { a.EmployeeId, a.AttendanceDate })
+                .HasDatabaseName("UX_Attendances_Employee_Date")
+                .IsUnique()
+                .HasFilter(Database.IsNpgsql() ? "\"DeletedTime\" IS NULL" : "[DeletedTime] IS NULL");
+
 
             builder.Entity<EmployeePromotion>()
                 .HasOne<Employee>()

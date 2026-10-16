@@ -1,4 +1,4 @@
-using M.Contract.Repositories.Entity;
+using M.Contract.Repositories.AuthEntities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 

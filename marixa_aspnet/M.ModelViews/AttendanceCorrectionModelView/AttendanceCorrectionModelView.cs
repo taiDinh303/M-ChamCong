@@ -1,7 +1,7 @@
 using M.Contract.Repositories.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.AttendanceCorrectionModelView
+namespace M.ModelViews.AttendanceCorrectionModelView
 {
     /// <summary>
     /// Trả về chi tiết 1 yêu cầu sửa công (list + detail).

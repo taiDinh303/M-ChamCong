@@ -1,7 +1,7 @@
 using M.Contract.Repositories.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.LeaveLedgerModelView
+namespace M.ModelViews.LeaveLedgerModelView
 {
     /// <summary>
     /// Trả về 1 giao dịch sổ phép (dùng cho list lịch sử số dư).

@@ -9,7 +9,7 @@
 
 API ASP.NET Core 8 chạy Docker trên Render; React/Vite build static trên Vercel; PostgreSQL và ảnh chấm công dùng Supabase. Identity/JWT do .NET quản lý, không dùng Supabase Auth cho luồng đăng nhập hiện tại. Thông tin instance chỉ ghi tại [00-README.md](00-README.md).
 
-Nguồn code: [DatabaseConfig.cs](../marixa_aspnet/M.API/DatabaseConfig.cs), [Program.cs](../marixa_aspnet/M.API/Program.cs), [DependencyInjection.cs](../marixa_aspnet/M.API/DependencyInjection.cs), [render.yaml](../render.yaml), [Dockerfile](../marixa_aspnet/Dockerfile), [vercel.json](../marixa_react/vercel.json).
+Nguồn code: [DatabaseConfig.cs](../marixa_aspnet/M.API/Configuration/DatabaseConfig.cs), [Program.cs](../marixa_aspnet/M.API/Program.cs), [DependencyInjection.cs](../marixa_aspnet/M.API/Configuration/DependencyInjection.cs), [render.yaml](../render.yaml), [Dockerfile](../marixa_aspnet/Dockerfile), [vercel.json](../marixa_react/vercel.json).
 
 Hướng dẫn Dashboard: [11-setup-cloud.md](11-setup-cloud.md). Nghiệm thu: [07-deploy-overview.md](07-deploy-overview.md). Chạy local: [10-setup-local.md](10-setup-local.md).
 
@@ -51,7 +51,7 @@ postgresql://postgres.<PROJECT_REF>:<URL_ENCODED_PASSWORD>@<POOLER_HOST>:5432/po
 
 Lấy host, port và user từ **Connect** của đúng Supabase project; không suy ra host từ region. Session pooler dùng user dạng `postgres.<PROJECT_REF>`. Xem [Supabase connection guide](https://supabase.com/docs/guides/database/connecting-to-postgres).
 
-**Giới hạn normalizer hiện tại:** [NpgsqlConnectionStringNormalizer.cs](../marixa_aspnet/M.API/NpgsqlConnectionStringNormalizer.cs) đổi URI sang keyword/value nhưng chỉ chuyển `sslmode=require` thành `TrustServerCertificate=true`, bỏ các query options khác. Vì vậy không được khẳng định SSL Mode đã được enforce/giữ nguyên từ URI. Cần sửa và kiểm thử riêng; dạng keyword/value được chuyển nguyên trạng và có thể đặt rõ `SSL Mode=Require` hoặc cấu hình xác minh certificate theo môi trường.
+**Giới hạn normalizer hiện tại:** [NpgsqlConnectionStringNormalizer.cs](../marixa_aspnet/M.API/Configuration/NpgsqlConnectionStringNormalizer.cs) đổi URI sang keyword/value nhưng chỉ chuyển `sslmode=require` thành `TrustServerCertificate=true`, bỏ các query options khác. Vì vậy không được khẳng định SSL Mode đã được enforce/giữ nguyên từ URI. Cần sửa và kiểm thử riêng; dạng keyword/value được chuyển nguyên trạng và có thể đặt rõ `SSL Mode=Require` hoặc cấu hình xác minh certificate theo môi trường.
 
 ### 3.2. Startup có ghi DB
 
@@ -75,7 +75,7 @@ Các lỗi khởi tạo DB/seeder phần lớn được catch và ghi warning r�
 
 ## 4. Ảnh chấm công và Storage
 
-Nguồn: [SupabaseStorageService.cs](../marixa_aspnet/M.API/SupabaseStorageService.cs), [UploadController.cs](../marixa_aspnet/M.API/Controllers/UploadController.cs), [PhotoStore.cs](../marixa_aspnet/M.API/PhotoStore.cs), [photoUrl.js](../marixa_react/src/utils/photoUrl.js).
+Nguồn: [SupabaseStorageService.cs](../marixa_aspnet/M.API/Storage/SupabasePhotoStorage.cs), [UploadController.cs](../marixa_aspnet/M.API/Controllers/Files/UploadController.cs), [PhotoStore.cs](../marixa_aspnet/M.API/Storage/PhotoStore.cs), [photoUrl.js](../marixa_react/src/utils/photoUrl.js).
 
 | Điều kiện thực tế | Nơi lưu và URL trả về |
 | --- | --- |

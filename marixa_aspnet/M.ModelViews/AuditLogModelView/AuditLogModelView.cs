@@ -1,7 +1,7 @@
 using M.Contract.Repositories.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.AuditLogModelView
+namespace M.ModelViews.AuditLogModelView
 {
     /// <summary>
     /// Trả về 1 bản ghi audit log (list + detail).

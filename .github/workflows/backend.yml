@@ -1,0 +1,27 @@
+name: Backend verification
+
+on:
+  push:
+    paths: ["marixa_aspnet/**", ".github/workflows/backend.yml"]
+  pull_request:
+    paths: ["marixa_aspnet/**", ".github/workflows/backend.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 8.0.x
+      - run: dotnet restore marixa_aspnet/M.BE.sln
+      - run: dotnet build marixa_aspnet/M.BE.sln -c Release --no-restore -warnaserror
+      - run: dotnet test marixa_aspnet/M.BE.sln -c Release --no-build --logger trx --results-directory TestResults
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: backend-test-results
+          path: TestResults/*.trx

@@ -1,4 +1,4 @@
-﻿namespace ModelViews.UserModelView
+namespace M.ModelViews.UserModelView
 {
     public class ChangePasswordModelView
     {

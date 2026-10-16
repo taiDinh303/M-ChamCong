@@ -1,5 +1,5 @@
-﻿
-namespace ModelViews.AuthModelView
+
+namespace M.ModelViews.AuthModelView
 {
     public class VerifyPasswordModelView
     {

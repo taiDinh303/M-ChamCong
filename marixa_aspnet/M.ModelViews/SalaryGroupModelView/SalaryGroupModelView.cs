@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.SalaryGroupModelView
+namespace M.ModelViews.SalaryGroupModelView
 {
     public class SalaryGroupResponseModelView
     {

@@ -1,4 +1,4 @@
-using M.Contract.Repositories.Entity;
+using M.Contract.Repositories.AuthEntities;
 using M.Core.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

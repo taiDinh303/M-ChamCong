@@ -1,8 +1,8 @@
-﻿namespace M.Core.Base
+namespace M.Core.Base
 {
     public class BasePaginatedList<T>
     {
-        public IReadOnlyCollection<T> Items { get; set; }
+        public IReadOnlyCollection<T> Items { get; set; } = Array.Empty<T>();
 
         // Thuộc tính để lưu trữ tổng số phần tử
         public int TotalItems { get; set; }
@@ -19,11 +19,15 @@
         // Constructor để khởi tạo danh sách phân trang
         public BasePaginatedList(IReadOnlyCollection<T> items, int count, int pageNumber, int pageSize)
         {
+            ArgumentNullException.ThrowIfNull(items);
+            ArgumentOutOfRangeException.ThrowIfNegative(count);
+            ArgumentOutOfRangeException.ThrowIfLessThan(pageNumber, 1);
+            ArgumentOutOfRangeException.ThrowIfLessThan(pageSize, 1);
             TotalItems = count;
             CurrentPage = pageNumber;
             PageSize = pageSize;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
-            Items = items;
+            Items = Array.AsReadOnly(items.ToArray());
         }
 
         public BasePaginatedList() { }

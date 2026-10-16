@@ -1,4 +1,4 @@
-using M.Contract.Repositories.Entity;
+using M.Contract.Repositories.AuthEntities;
 using M.Contract.Repositories.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +10,7 @@ namespace M.API.Seed
 {
     /// <summary>
     /// Seed 8 tài khoản mẫu (idempotent: chỉ tạo nếu chưa tồn tại).
-    /// Chạy khi API khởi động (cả Dev + Production).
+    /// Chạy khi API khởi động (chỉ Development khi được bật rõ ràng).
     ///
     /// Khi cần THÊM / SỬA dữ liệu mẫu:
     ///   1. Mở mảng Users bên dưới
@@ -22,7 +22,7 @@ namespace M.API.Seed
     public static class SampleDataSeeder
     {
         // Mật khẩu thống nhất cho tất cả tài khoản mẫu (đổi nếu cần)
-        private const string Password = "Hovaten123@";
+        
 
         /// <summary>
         /// 8 tài khoản mẫu:
@@ -42,6 +42,9 @@ namespace M.API.Seed
 
         public static async Task SeedAsync(IServiceProvider services)
         {
+            var password = services.GetRequiredService<Microsoft.Extensions.Configuration.IConfiguration>()["Seed:Sample:Password"]
+                ?? throw new InvalidOperationException("Set Seed:Sample:Password before enabling sample data.");
+
             using var scope = services.CreateScope();
             var sp = scope.ServiceProvider;
             var userManager = sp.GetRequiredService<UserManager<ApplicationUser>>();
@@ -78,7 +81,7 @@ namespace M.API.Seed
                     CreatedBy = "Seeder"
                 };
 
-                var createResult = await userManager.CreateAsync(user, Password);
+                var createResult = await userManager.CreateAsync(user, password);
                 if (!createResult.Succeeded)
                 {
                     logger.LogWarning(

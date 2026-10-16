@@ -1,4 +1,4 @@
-﻿namespace M.Core.Utils
+namespace M.Core.Utils
 {
     public static class TimeHelper
     {

@@ -20,27 +20,15 @@ namespace M.API.Seed
             var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>()
                 .CreateLogger("AttendanceRuleSeeder");
 
-            // Đảm bảo ca mặc định luôn tồn tại và cập nhật mô tả/nghỉ giữa ca
-            // (idempotent: sửa nếu đã có, tạo nếu chưa).
+            // Seed only when no active rule exists; never overwrite custom or disabled rules.
             var defaultRule = await db.AttendanceRules
                 .FirstOrDefaultAsync(r => r.Code == "DEFAULT-CA");
 
-            if (defaultRule is null)
+            if (defaultRule is null && !await db.AttendanceRules.AnyAsync(r => r.IsActive && !r.DeletedTime.HasValue))
             {
                 db.AttendanceRules.Add(DefaultRule());
                 await db.SaveChangesAsync();
                 logger.LogInformation("AttendanceRuleSeeder: tạo ca hành chính 8h-17h (nghỉ trưa 1h).");
-            }
-            else
-            {
-                defaultRule.Description = DefaultRule().Description;
-                defaultRule.StandardHours = 8;
-                defaultRule.CheckInTime = new TimeOnly(8, 0);
-                defaultRule.CheckOutTime = new TimeOnly(17, 0);
-                defaultRule.BreakMinutes = 60;
-                defaultRule.IsActive = true;
-                await db.SaveChangesAsync();
-                logger.LogInformation("AttendanceRuleSeeder: cập nhật ca hành chính (nghỉ trưa 12:00-13:00).");
             }
         }
 
@@ -55,7 +43,7 @@ namespace M.API.Seed
             LateGraceMinutes = 0,
             EarlyLeaveThresholdMinutes = 0,
             BreakMinutes = 60,
-            PhotoRequired = true,
+            PhotoRequired = false,
             GpsRequired = false,
             IsActive = true,
         };

@@ -1,4 +1,4 @@
-﻿using M.Core.Store;
+using M.Core.Store;
 
 namespace M.Core.Base
 {
@@ -43,7 +43,7 @@ namespace M.Core.Base
 
             public ErrorDetail ErrorDetail { get; }
 
-            public ErrorException(int statusCode, string errorCode, string message)
+            public ErrorException(int statusCode, string errorCode, string message) : base(message)
             {
                 StatusCode = statusCode;
                 ErrorDetail = new ErrorDetail

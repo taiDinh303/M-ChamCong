@@ -109,7 +109,7 @@ Các enum của lương, hợp đồng, bảo hiểm, nhân sự và công việ
 
 ## 5. Ảnh và tệp
 
-Nguồn: [UploadController.cs](../marixa_aspnet/M.API/Controllers/UploadController.cs), [SupabaseStorageService.cs](../marixa_aspnet/M.API/SupabaseStorageService.cs).
+Nguồn: [UploadController.cs](../marixa_aspnet/M.API/Controllers/Files/UploadController.cs), [SupabaseStorageService.cs](../marixa_aspnet/M.API/Storage/SupabasePhotoStorage.cs).
 
 - Cloud: bucket public `marixa-photos`, object thực tế là `{checkin|checkout}/{yyyyMM}/{guid}.{ext}` — **không có** tiền tố `attendance/` dù comment cũ ghi như vậy. URL public được lưu vào Attendance/AttendanceLog; DB không lưu blob/base64 ảnh.
 - Local: `/uploads/attendance/{checkin|checkout}/{yyyyMM}/{guid}.{ext}` dưới `wwwroot/uploads`. Thư mục tháng đang lấy `DateTime.Now` của máy chủ, không là ngày công nghiệp vụ.
@@ -119,7 +119,7 @@ Nguồn: [UploadController.cs](../marixa_aspnet/M.API/Controllers/UploadControll
 
 ## 6. Schema, migration và lịch sử kiến trúc
 
-**CURRENT:** [Program.cs](../marixa_aspnet/M.API/Program.cs) có nhánh SQL Server dùng EF migration; PostgreSQL dùng `GenerateCreateScript()` theo từng câu lệnh rồi [PostgresSchemaSync.cs](../marixa_aspnet/M.API/PostgresSchemaSync.cs). Sync chỉ thêm cột thiếu; không đổi kiểu, xóa/đổi tên cột, backfill hay bảo đảm bổ sung mọi constraint/index. Cột thêm bằng SQL sync cũng không tự kế thừa đầy đủ nullability/default/precision của EF model. Seeder có thể bị catch/log và bỏ qua; boot lên không chứng minh schema/seed hoàn tất.
+**CURRENT:** [Program.cs](../marixa_aspnet/M.API/Program.cs) có nhánh SQL Server dùng EF migration; PostgreSQL dùng `GenerateCreateScript()` theo từng câu lệnh rồi [PostgresSchemaSync.cs](../marixa_aspnet/M.API/Bootstrap/PostgresSchemaSync.cs). Sync chỉ thêm cột thiếu; không đổi kiểu, xóa/đổi tên cột, backfill hay bảo đảm bổ sung mọi constraint/index. Cột thêm bằng SQL sync cũng không tự kế thừa đầy đủ nullability/default/precision của EF model. Seeder có thể bị catch/log và bỏ qua; boot lên không chứng minh schema/seed hoàn tất.
 
 **TARGET/PENDING khi thay đổi schema:** đánh giá dữ liệu hiện có → migration đúng provider → backup → backfill/constraint → kiểm thử → rollback có kiểm chứng. Đổi kiểu giờ/độ chính xác, unique công/ngày và sửa ngày UTC cần kế hoạch dữ liệu riêng. Không xóa DB để “sửa sync” khi chưa có quyền cụ thể.
 

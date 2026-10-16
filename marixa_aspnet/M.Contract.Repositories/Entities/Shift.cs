@@ -1,4 +1,4 @@
-﻿using M.Core.Base;
+using M.Core.Base;
 using System.ComponentModel.DataAnnotations;
 
 namespace M.Contract.Repositories.Entities

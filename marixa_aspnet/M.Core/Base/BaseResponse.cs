@@ -1,4 +1,4 @@
-﻿using M.Core.Store;
+using M.Core.Store;
 using M.Core.Utils;
 
 namespace M.Core.Base

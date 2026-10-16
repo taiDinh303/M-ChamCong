@@ -1,4 +1,4 @@
-﻿namespace M.Core.Base
+namespace M.Core.Base
 {
     public class ResponseCodeConstants
     {

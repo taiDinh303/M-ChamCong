@@ -1,7 +1,7 @@
-﻿using M.Contract.Repositories.Entities;
+using M.Contract.Repositories.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.EmployeeInsuranceModelView
+namespace M.ModelViews.EmployeeInsuranceModelView
 {
     public class EmployeeInsuranceResponseModelView
     {

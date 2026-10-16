@@ -13,6 +13,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /source
 
 # Copy csproj trước để tận dụng Docker layer cache (deps không đổi -> không restore lại)
+COPY Directory.Build.props ./
 COPY M.API/*.csproj M.API/
 COPY M.Contract.Repositories/*.csproj M.Contract.Repositories/
 COPY M.Contract.Services/*.csproj M.Contract.Services/
@@ -56,7 +57,8 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 EXPOSE 10000
 
 # Tạo wwwroot/uploads nếu chưa có (PhotoStore sẽ tạo tự động, đây chỉ là fallback)
-RUN mkdir -p /app/wwwroot/uploads
+RUN mkdir -p /app/wwwroot/uploads /app/App_Data && chown -R app:app /app/wwwroot/uploads /app/App_Data
+USER app
 
 # Chạy .NET (framework-dependent). + = listen all interfaces (0.0.0.0) để
 # Render load balancer gọi vào được. Default 10000 nếu PORT chưa set.

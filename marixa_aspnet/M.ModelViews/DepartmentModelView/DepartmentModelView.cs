@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.DepartmentModelView
+namespace M.ModelViews.DepartmentModelView
 {
     public class DepartmentResponseModelView
     {

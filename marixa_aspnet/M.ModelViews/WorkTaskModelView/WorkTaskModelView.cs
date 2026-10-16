@@ -1,6 +1,6 @@
 using M.Contract.Repositories.Entities;
 
-namespace ModelViews.WorkTaskModelView
+namespace M.ModelViews.WorkTaskModelView
 {
     public class WorkTaskRow
     {

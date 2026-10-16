@@ -1,4 +1,4 @@
-namespace ModelViews.WorkProjectModelView
+namespace M.ModelViews.WorkProjectModelView
 {
     public class WorkProjectRow
     {

@@ -1,4 +1,4 @@
-﻿using M.Core.Base;
+using M.Core.Base;
 using System.ComponentModel.DataAnnotations;
 
 namespace M.Contract.Repositories.Entities
@@ -30,7 +30,7 @@ namespace M.Contract.Repositories.Entities
         public TimeOnly CheckInTime { get; set; } = new TimeOnly(8, 0);
 
         // Giờ ra ca chuẩn (mặc định 16:30)
-        public TimeOnly CheckOutTime { get; set; } = new TimeOnly(16, 30);
+        public TimeOnly CheckOutTime { get; set; } = new TimeOnly(17, 0);
 
         // Dung sai đi trễ (phút) — quá mốc này sẽ đánh Late
         public int LateGraceMinutes { get; set; } = 0;

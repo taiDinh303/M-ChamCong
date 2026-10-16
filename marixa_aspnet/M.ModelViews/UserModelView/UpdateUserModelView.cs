@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.UserInfoModelView
+namespace M.ModelViews.UserInfoModelView
 {
     public class UpdateUserModelView
     {

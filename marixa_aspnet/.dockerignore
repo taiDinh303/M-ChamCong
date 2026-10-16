@@ -31,7 +31,7 @@ M.API/wwwroot/uploads/
 
 # Docs / research (không cần trong runtime image)
 docs/
-.agines/
+.agnes/
 
 # Misc
 *.mdf
@@ -41,3 +41,9 @@ docs/
 *.binlog
 Thumbs.db
 .DS_Store
+
+M.Tests/
+build-verify/
+**/TestResults/
+M.API/App_Data/
+.env*

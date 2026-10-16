@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.LeaveTypeModelView
+namespace M.ModelViews.LeaveTypeModelView
 {
     public class LeaveTypeResponseModelView
     {

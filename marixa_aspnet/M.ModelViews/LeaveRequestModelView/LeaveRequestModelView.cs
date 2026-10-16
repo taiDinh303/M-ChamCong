@@ -1,7 +1,7 @@
 using M.Contract.Repositories.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.LeaveRequestModelView
+namespace M.ModelViews.LeaveRequestModelView
 {
     public class LeaveRequestResponseModelView
     {

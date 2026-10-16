@@ -1,7 +1,7 @@
 using M.Contract.Repositories.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace ModelViews.OfficeLocationModelView
+namespace M.ModelViews.OfficeLocationModelView
 {
     /// <summary>
     /// Trả về chi tiết 1 địa điểm văn phòng (list + detail).
