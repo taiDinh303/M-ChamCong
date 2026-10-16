@@ -9,6 +9,8 @@ import StatDetailTable from "../components/StatDetailTable";
 import StatWarnings from "../components/StatWarnings";
 import StatSummary from "../components/StatSummary";
 import PageBanner from "../components/PageBanner";
+import { ChartCard, ColumnChart } from "../../../components/charts/charts";
+import "../../../components/charts/charts.css";
 import {
     dkey,
     computeStats,
@@ -128,6 +130,17 @@ const StatisticsPage = () => {
         [monthRows, ym, byDate, holidayMap, stats]
     );
 
+    const dailyHours = useMemo(
+        () =>
+            monthRows.map((r) => {
+                const d = new Date(r.attendanceDate);
+                const mins = r.checkInTime && r.checkOutTime
+                    ? Math.round((new Date(r.checkOutTime) - new Date(r.checkInTime)) / 60000)
+                    : (r.actualHours || 0) * 60;
+                return { name: String(d.getDate()), value: Math.round((mins / 60) * 10) / 10 };
+            }),
+        [monthRows]
+    );
     const shiftMonth = (delta) =>
         setYm(({ y, m }) => {
             const d = new Date(y, m + delta, 1);
@@ -202,6 +215,13 @@ const StatisticsPage = () => {
                             <StatSummary stats={stats} />
                             <StatKpis ym={ym} stats={stats} />
                         </div>
+                        <ChartCard
+                            title="Giờ làm theo ngày"
+                            hint="Giờ công từng ngày trong tháng"
+                            empty={monthRows.length === 0}
+                        >
+                            <ColumnChart data={dailyHours} yKey="value" yTickFormatter={(v) => v + "h"} />
+                        </ChartCard>
                         <StatCalendar ym={ym} weeks={calendar} />
                         <StatDetailTable monthRows={monthRows} holidayMap={holidayMap} />
                     </div>

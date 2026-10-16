@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import AdminAppLayout from "../layout/AdminAppLayout";
 import "../../../modules/me/attendance.css";
 import "../admin.css";
+import adminApi from "../api/adminApi";
+import { ChartCard, TrendLine } from "../../../components/charts/charts";
+import "../../../components/charts/charts.css";
 import { localeForLanguage, translate, useLanguage } from "../../../services/i18n/LanguageProvider";
 
 // ===== Đồng hồ giờ Việt Nam (UTC+7) =====
@@ -88,6 +91,28 @@ const AdminHomepage = () => {
     const { language } = useLanguage();
     const L = (text) => translate(text, language);
 
+    const [trendData, setTrendData] = useState([]);
+    useEffect(() => {
+        const load = async () => {
+            try {
+                const r = await adminApi.attendances();
+                const all = r.data.data?.items || [];
+                const days = [];
+                for (let i = 6; i >= 0; i--) {
+                    const d = new Date();
+                    d.setDate(d.getDate() - i);
+                    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+                    const set = new Set(all.filter((a) => a.attendanceDate && a.attendanceDate.startsWith(key) && a.checkInTime).map((a) => a.employeeId));
+                    days.push({ name: d.toLocaleDateString("vi-VN", { weekday: "short" }), full: key, value: set.size });
+                }
+                setTrendData(days);
+            } catch {
+                /* chart stays empty */
+            }
+        };
+        load();
+    }, []);
+
     return (
         <AdminAppLayout
             title={L("Trang chủ")}
@@ -99,6 +124,13 @@ const AdminHomepage = () => {
                         <VnClock />
                     </div>
 
+                    <ChartCard
+                        title={L("Check-in 7 ngày")}
+                        hint={L("Số người có giờ vào ca trong 7 ngày gần nhất")}
+                        empty={trendData.length === 0}
+                    >
+                        <TrendLine data={trendData} yKey="value" />
+                    </ChartCard>
                     <div className="admhome-grid">
                         {ICONS.map((x) => (
                             <button

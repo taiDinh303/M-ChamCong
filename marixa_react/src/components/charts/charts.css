@@ -1,0 +1,103 @@
+/* ============================================================
+   mx-chart — biểu đồ dùng chung (recharts), token theo theme.css
+   IMPORT tại page cần dùng: import "…/components/charts/charts.css";
+   ============================================================ */
+
+.mx-chart-card {
+  background: var(--th-surface, #fff);
+  border: 1px solid var(--th-border, #DCE3EC);
+  border-radius: 16px;
+  box-shadow: var(--th-shadow-card, 0 2px 8px rgba(23,32,51,.06));
+  padding: 18px;
+  margin: 14px 0;
+}
+.mx-chart-card-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.mx-chart-card-head h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--th-text, #172033);
+}
+.mx-chart-body {
+  width: 100%;
+  min-height: 180px;
+}
+.mx-chart-empty {
+  color: var(--th-text-3, #8A99AB);
+  font-size: 14px;
+  padding: 30px 0;
+  text-align: center;
+}
+
+/* Donut */
+.mx-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.mx-chart-donut {
+  width: 100%;
+}
+.mx-chart-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.mx-chart-center strong {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--th-text, #172033);
+  line-height: 1;
+}
+.mx-chart-center span {
+  font-size: 12px;
+  color: var(--th-text-2, #526174);
+  margin-top: 4px;
+}
+
+/* Legend */
+.mx-chart-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mx-chart-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--th-text, #172033);
+}
+.mx-chart-legend li .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: 0 0 auto;
+}
+.mx-chart-legend li span {
+  flex: 1 1 auto;
+  color: var(--th-text-2, #526174);
+}
+.mx-chart-legend li b {
+  font-weight: 700;
+  color: var(--th-text, #172033);
+}
+
+/* Responsive: trên mobile, cho cột H nằm ngang cuộn được */
+@media (max-width: 480px) {
+  .mx-chart-card { padding: 14px; }
+  .mx-chart-legend { gap: 6px; }
+}

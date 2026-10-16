@@ -4,6 +4,8 @@ import { useLanguage, translate } from "../../services/i18n/LanguageProvider";
 import WorkLayout from "./layout/WorkLayout";
 import adminApi from "../admin/api/adminApi";
 import { getAuth } from "../../services/auth/auth";
+import { DonutChart } from "../../components/charts/charts";
+import "../../components/charts/charts.css";
 import "./work.css";
 
 const PRIORITY = ["Thấp", "Trung bình", "Cao", "Khẩn"];
@@ -218,15 +220,19 @@ const WorkPage = () => {
             .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
     }, [tasks]);
 
-    const todayTasks = useMemo(() => openTasks
-        .filter((t) => dueStr(t.dueDate) <= T)
-        .sort((a, b) => b.priority - a.priority || dueStr(a.dueDate).localeCompare(dueStr(b.dueDate))), [openTasks, T]);
 
     const completion = tasks.length ? Math.round(tasks.filter((t) => t.status === 2).length / tasks.length * 100) : 0;
     const kpi = { open: openTasks.length, doing: tasks.filter((t) => t.status === 1).length, done: tasks.filter((t) => t.status === 2).length, perf: perfs.length ? avg(perfs[perfs.length - 1]) : 0 };
     const myPerfs = canManage ? perfs.filter((p) => p.status !== 0) : perfs;
     const total = tasks.length;
     const done = kpi.done, doing = kpi.doing, blocked = tasks.filter((t) => t.status === 3).length;
+
+    const statusData = [
+        { name: L("Chưa bắt đầu"), value: tasks.filter((t) => t.status === 0).length, color: "#8A99AB" },
+        { name: L("Đang thực hiện"), value: tasks.filter((t) => t.status === 1).length, color: "#1647C8" },
+        { name: L("Hoàn thành"), value: tasks.filter((t) => t.status === 2).length, color: "#16a34a" },
+        { name: L("Bị chặn"), value: tasks.filter((t) => t.status === 3).length, color: "#B42318" },
+    ].filter((d) => d.value > 0);
 
     const repTasks = useMemo(() => {
         const list = repFilter === -1 ? tasks : tasks.filter((t) => t.status === repFilter);
@@ -272,7 +278,6 @@ const WorkPage = () => {
     return (
         <WorkLayout
             title="Công việc"
-            subtitle="Tổng quan · Việc của tôi · Tiến độ · Dự án · Hiệu suất"
             search={q}
             onSearchChange={setQ}
         >
@@ -289,7 +294,6 @@ const WorkPage = () => {
                                     <div className="work-ov-hi">
                                         <p className="work-ov-date">{new Date().toLocaleDateString("vi-VN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</p>
                                         <h2>{L("Xin chào")}, {auth?.userName || auth?.employeeCode || "..."}</h2>
-                                        <p className="work-ov-sub">{L("Đây là tiến độ công việc của bạn. Tạo dự án, giao việc và theo dõi tình trạng từ bảng bên dưới.")}</p>
                                     </div>
                                     <div className="work-ov-ring" style={{ background: `conic-gradient(#2f6df6 ${completion * 3.6}deg, rgba(255,255,255,.15) 0deg)` }}>
                                         <div className="work-ov-ring-inner"><strong>{completion}%</strong><span>{L("Hoàn thành")}</span></div>
@@ -333,29 +337,46 @@ const WorkPage = () => {
 
                                 <section className="att-card">
                                     <div className="work-ov-head">
-                                        <h3>{L("Danh sách công việc hôm nay")}</h3>
-                                        {canManage && <button type="button" className="work-add-btn work-add-btn--sm" onClick={openProject}>+ {L("Thêm dự án")}</button>}
+                                        <h3>{L("Sắp làm tiếp")}</h3>
                                     </div>
-                                    {todayTasks.length === 0
-                                        ? <p className="att-muted">{L("Hôm nay không có nhiệm vụ quá hạn hay đến hạn.")}</p>
-                                        : <div className="work-today-kanban">
-                                            {STATUS_META.map((col) => {
-                                                const items = todayTasks.filter((t) => t.status === col.id);
-                                                return (
-                                                    <div key={col.id} className="work-tk-col">
-                                                        <div className="work-tk-head">
-                                                            <span>{L(col.label)}</span>
-                                                            <i className="work-tk-count">{items.length}</i>
-                                                        </div>
-                                                        <div className="work-tk-body">
-                                                            {items.length === 0
-                                                                ? <p className="att-muted work-col-empty">{L("Kéo thẻ vào đây")}</p>
-                                                                : items.map((t) => <TaskCard key={t.id} t={t} draggable={false} />)}
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>}
+                                    <div className="work-quick-nav">
+                                        <button
+                                            type="button"
+                                            className="work-quick-card"
+                                            onClick={() => navigate("/work?tab=tasks")}
+                                        >
+                                            <span className="work-quick-ico" aria-hidden="true">☰</span>
+                                            <strong>{L("Việc của tôi")}</strong>
+                                            <small>{L("Bảng Kanban toàn bộ")} →</small>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="work-quick-card"
+                                            onClick={() => navigate("/work?tab=reports")}
+                                        >
+                                            <span className="work-quick-ico" aria-hidden="true">▤</span>
+                                            <strong>{L("Tiến độ")}</strong>
+                                            <small>{L("Tổng hợp theo trạng thái")} →</small>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="work-quick-card"
+                                            onClick={() => navigate("/work?tab=projects")}
+                                        >
+                                            <span className="work-quick-ico" aria-hidden="true">◈</span>
+                                            <strong>{L("Dự án")}</strong>
+                                            <small>{L("Gói công việc & thành viên")} →</small>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="work-quick-card"
+                                            onClick={() => navigate("/work?tab=performance")}
+                                        >
+                                            <span className="work-quick-ico" aria-hidden="true">✦</span>
+                                            <strong>{L("Hiệu suất")}</strong>
+                                            <small>{L("Bảng KPI theo kỳ")} →</small>
+                                        </button>
+                                    </div>
                                 </section>
                             </div>
                         )}
@@ -395,19 +416,19 @@ const WorkPage = () => {
                         {/* ============ TIẾN ĐỘ ============ */}
                         {tab === "reports" && (
                             <div className="work-progress-report">
-                                <div className="work-pr-note">
-                                    <strong>{L("Tiến độ công việc")}</strong>
-                                    <p>{L("Tổng hợp tiến độ các nhiệm vụ được giao. Đây là báo cáo riêng về tiến độ làm việc, không liên quan đến báo cáo chuyên môn / báo cáo kỳ.")}</p>
-                                </div>
-                                <div className="work-pr-summary">
-                                    <div className="work-pr-stat"><span>{L("Tổng nhiệm vụ")}</span><strong>{total}</strong></div>
-                                    <div className="work-pr-stat doing"><span>{L("Đang làm")}</span><strong>{doing}</strong></div>
-                                    <div className="work-pr-stat done"><span>{L("Hoàn thành")}</span><strong>{done}</strong></div>
-                                    <div className="work-pr-stat blocked"><span>{L("Bị chặn")}</span><strong>{blocked}</strong></div>
-                                </div>
-                                <div className="work-pr-bar">
-                                    <div className="work-pr-bar-head"><span>{L("Tỉ lệ hoàn thành")}</span><em>{completion}%</em></div>
-                                    <div className="work-pr-bar-track"><div style={{ width: `${completion}%` }} /></div>
+                                <div className="work-pr-charts">
+                                    <div className="work-pr-charts-card">
+                                        <h3>{L("Phân bổ trạng thái")} <em>{total} {L("nhiệm vụ")}</em></h3>
+                                        {statusData.length ? (
+                                            <div className="work-pr-donut">
+                                                <DonutChart data={statusData} centerValue={total} centerLabel={L("Tổng")} />
+                                            </div>
+                                        ) : <p className="att-muted">{L("Chưa có dữ liệu.")}</p>}
+                                    </div>
+                                    <div className="work-pr-bar">
+                                        <div className="work-pr-bar-head"><span>{L("Tỉ lệ hoàn thành")}</span><em>{completion}%</em></div>
+                                        <div className="work-pr-bar-track"><div style={{ width: `${completion}%` }} /></div>
+                                    </div>
                                 </div>
                                 <div className="work-pr-filters">
                                     <button type="button" className={repFilter === -1 ? "on" : ""} onClick={() => setRepFilter(-1)}>{L("Tất cả")}</button>

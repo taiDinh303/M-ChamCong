@@ -1273,3 +1273,25 @@
     .leave-stat-card strong,
     .admin-kpi strong { font-size: 20px; }
 }
+
+/* ============================================================
+   RECHARTS (mx-chart) on phones
+   ============================================================ */
+@media (max-width: 768px) {
+    .mx-chart-card { padding: 14px 12px; }
+    .mx-chart-card-head { gap: 6px; }
+    .mx-chart { gap: 12px; }
+    .work-pr-charts { grid-template-columns: 1fr !important; }
+    .work-pr-charts-card .mx-chart {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .work-pr-charts-card .mx-chart-donut {
+        width: 55%;
+        flex: 0 0 auto;
+    }
+    .work-pr-charts-card .mx-chart-legend {
+        flex: 1 1 100%;
+    }
+}

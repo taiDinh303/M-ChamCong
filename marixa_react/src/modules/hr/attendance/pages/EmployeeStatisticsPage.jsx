@@ -8,6 +8,8 @@ import { translate, useLanguage } from "../../../../services/i18n/LanguageProvid
 import "../../../../modules/me/attendance.css";
 import "../../employee.css";
 import HrHero from "../../HrHero";
+import { ChartCard, HBarChart } from "../../../../components/charts/charts";
+import "../../../../components/charts/charts.css";
 
 // Trang quản trị: thống kê công của TOÀN BỘ nhân viên theo tháng.
 // Trích "YYYY-MM" từ chuỗi ngày (bất biến theo múi giờ).
@@ -105,6 +107,17 @@ const EmployeeStatisticsPage = () => {
         );
     }, [perEmployee, search]);
 
+    // Top nhân viên theo tổng giờ trong tháng (cho biểu đồ)
+    const topByHours = useMemo(() => {
+        return perEmployee
+            .filter((x) => x.stat && x.stat.hours > 0)
+            .sort((a, b) => b.stat.hours - a.stat.hours)
+            .slice(0, 8)
+            .map(({ emp, stat }) => ({
+                name: emp.fullName || emp.employeeCode,
+                value: Math.round(stat.hours * 10) / 10,
+            }));
+    }, [perEmployee]);
     const latestRowOf = (empId) =>
         rows
             .filter((r) => r.employeeId === empId && monthOf(r.attendanceDate) === month)
@@ -161,7 +174,6 @@ const EmployeeStatisticsPage = () => {
                         <HrHero
                             ico="📊"
                             title="Thống kê công"
-                            sub="Tổng hợp ngày công, đi trễ, vắng mặt của toàn bộ nhân viên theo tháng."
                             kpis={[
                                 { ico: "👥", label: "Nhân viên", value: kpi.total, tone: "blue", sub: "đang làm" },
                                 { ico: "✅", label: "Có ngày công", value: kpi.active, tone: "green", sub: "trong tháng" },
@@ -171,6 +183,13 @@ const EmployeeStatisticsPage = () => {
                             ]}
                         />
 
+                        <ChartCard
+                            title="Top giờ công trong tháng"
+                            hint="8 nhân viên có tổng giờ cao nhất"
+                            empty={topByHours.length === 0}
+                        >
+                            <HBarChart data={topByHours} yKey="name" xKey="value" unit="h" />
+                        </ChartCard>
                         <section className="att-card">
                             <div className="admin-toolbar stats-toolbar">
                                 <label className="admin-search">

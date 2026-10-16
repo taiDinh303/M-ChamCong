@@ -213,7 +213,6 @@ const EmployeeWorkSchedulePage = () => {
                         <HrHero
                             ico="📅"
                             title="Lịch làm"
-                            sub="Chọn ngày để xem danh sách nhân viên có ca làm trong tháng."
                             kpis={[
                                 { ico: "📅", label: "Ngày đang xem", value: selectedLabel, tone: "blue" },
                                 { ico: "👥", label: "Người có lịch", value: scheduled.length + " người", tone: "green" },

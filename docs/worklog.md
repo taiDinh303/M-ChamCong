@@ -1,4 +1,4 @@
-﻿# WORKLOG — Hệ thống chấm công Marixa
+# WORKLOG — Hệ thống chấm công Marixa
 
 > **Tác giả & chủ tài liệu: Đinh Văn Tài.** (File này được Tài tổ chức lại 12/10/2026 thành "bản đồ chức năng" theo trang & module để AI/Agnes và dev đọc nhanh.)
 
@@ -106,6 +106,20 @@ File này là điểm bắt đầu cho bất kỳ AI/người làm việc tiếp
 | RLS / Supabase Auth | ❌ | Không dùng (đang dùng .NET Identity + JWT); không phải yêu cầu bắt buộc. |
 
 ## 4. Log sự kiện (mới trên cùng)
+### 16/10/2026 (2) — Đinh Văn Tài: xác nhận Figma file thật + quy ước 2-frame (mobile 375 / desktop 1440)
+- **Figma file thật (cung cấp bởi chủ dự án):** tên `Marixa001` · key `2TYFTZweE1j2enGLUNXaq3` · URL `https://www.figma.com/design/2TYFTZweE1j2enGLUNXaq3/Marixa001` · team/project `Marixa_001` (Free · owner `taiDz`). File đã có, Pages = "Page 1" (chưa tạo page per-route).
+- **Variables + UI Kit chưa tạo** (chủ dự án trả Q2 = A) → hướng dẫn tạo 1 lần trong Figma đã ghi vào `figma/files-map.md §3`: (a) tạo Figma Variables khớp key trong `figma/tokens/tokens.json` (mode Light, đặt tên `color/th-*`, `typo/th-font`…) · (b) tạo UI Kit components (Button / Input / Card / Badge / Table row / Dialog / Toast).
+- **Quy ước Q5 = B (đã chốt):** mỗi route = **1 Figma Page** chứa **2 frame** (`-mobile` 375px + `-desktop` 1440px) → đã ghi vào `figma/files-map.md §0` + ghi chú trước §2.
+- **Q4 (loại workflow sync) & Q6 (UI Kit) — chưa chốt** (chủ dự án chưa rõ) → **chưa sửa `docs/13-figma-sync.md §4`**; chỉ ghi nhận trong chat, chờ chủ dự án trả lời Q4/Q6 rồi cập nhật spec.
+- **Đổi meta trong `figma/`:** điền `figma/files-map.md §0` (URL + key + team + quy ước 2-frame + hướng dẫn §3) + 1 changelog entry `fix` trong `figma/tokens/changelog.md` (xác nhận Figma file thật). **Không** đổi `theme.css` / `tokens.json`.
+
+### 16/10/2026 — Đinh Văn Tài: scaffold figma/ + docs/13-figma-sync.md
+- **Tạo `figma/` (root repo):** `README.md` (entry point + AI read order) · `files-map.md` (page↔route table, DRAFT — chờ Figma file thật) · `tokens/tokens.json` (mirror 50+ biến `--th-*` từ `marixa_react/src/theme.css` + UI metrics từ `docs/09-ui-design.md §2`) · `tokens/changelog.md` (scaffold + baseline entry `code→Figma`) · `generated/` (placeholder draft zone).
+- **Tạo `docs/13-figma-sync.md` (spec đông băng):** SSoT matrix (theme.css = code SSoT, Figma = design intent, tokens.json = mirror) + 5 workflow (token change · layout change · new-page · deprecate · codegen) + hard rules (không binary `.fig`, không secret/token, `theme.css` thắng khi lệch, changelog mới-trên-cùng, codegen gated qua review, files-map 1:1 `modules.js`).
+- **Đăng ký trong `docs/00-README.md`:** thêm dòng task-table `| Figma sync (design↔code) | 13-figma-sync.md |` + mở rộng phạm vi "spec frozen" từ `02–12` → `02–13` (6 vị trí).
+- **Quyết định (chuyên gia):** `figma/` đặt ở **root repo** (không trong `marixa_react/`) — design-as-data, cùng cấp với `docs/`, Figma phục vụ cả .NET + React, git reviewer thấy design + code trong 1 diff, sống qua thay đổi stack frontend.
+- **Chiến lược token:** mirror full 50+ biến `theme.css` vào `tokens.json` (không phải Figma-export minimal) để làm reference hoàn chỉnh; `_meta.note` ghi rõ `theme.css` là code SSoT, khi lệch `theme.css` thắng.
+- Không sửa code; chỉ tạo Markdown trong `figma/` + `docs/`.
 
 ### 14/10/2026 (2) — Đinh Văn Tài: đồng bộ tên file docs (đánh số 00–12)  - **Đổi tên 2 file cho đồng bộ đánh số:** `SETUP_CLOUD.md` → `11-setup-cloud.md`; `plan.md` → `01-plan.md`. Giờ toàn bộ `docs/` mang tên `00`–`12` + `worklog.md`. - **Cập nhật mọi tham chiếu/link** tới 2 file đổi tên trong `00`, `01`, `04`, `06`, `12`, `worklog`. - **Thêm `10-setup-local.md` và `12-glossary.md`** vào bảng "file nào cho việc nào" của `00-README`; mở rộng "spec" từ `01`–`10` thành `01`–`10`. - Không sửa code; chỉ chỉnh Markdown trong `docs/`. ### 14/10/2026 — Đinh Văn Tài: tổ chức lại tài liệu (gộp trùng lặp, thêm 09/10, gắn P0/P1/P2, sửa mojibake)
 - **Gộp nội dung trùng về `00-README.md` (nguồn duy nhất):** bảng hosting (trước lặp 5 file: 00/06/08/11-setup-cloud/worklog) giờ chỉ ở `00-README` §Quick facts, các file khác link về. Quy tắc đọc/ghi (trước lặp 4 file) chuẩn hoá ở `00-README` (mục mới "Quy tắc đọc / ghi tài liệu (NGUỒN DUY NHẤT)"). `plan §2` là nguồn "việc tiếp theo", `worklog §6` chỉ link.

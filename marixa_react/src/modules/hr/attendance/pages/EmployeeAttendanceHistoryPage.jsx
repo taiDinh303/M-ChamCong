@@ -523,7 +523,6 @@ const EmployeeAttendanceHistoryPage = () => {
                         <HrHero
                             ico="🕒"
                             title="Lịch sử chấm công"
-                            sub="Theo dõi, duyệt và xử lý chấm công toàn bộ nhân viên theo ngày."
                             kpis={[
                                 { ico: "👥", label: "Quân số", value: kpi.workforce, tone: "blue" },
                                 { ico: "📅", label: "Có lịch làm", value: kpi.scheduled, tone: "green" },

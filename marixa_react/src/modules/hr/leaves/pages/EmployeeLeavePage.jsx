@@ -106,7 +106,6 @@ const EmployeeLeavePage = ({ hrMode = false }) => {
                 <HrHero
                     ico="🏖️"
                     title="Đơn nghỉ phép"
-                    sub="Duyệt đơn nghỉ phép: chờ · đã duyệt · từ chối · đã hủy."
                     kpis={kpis}
                 />
                 {error && <div className="lp-err">{error}<button onClick={() => setError("")}>×</button></div>}
