@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { clearAuth, getAuth } from "../../services/auth/auth";
 import {
     fileToAvatarDataUrl,
@@ -109,21 +109,20 @@ const Header = ({ profile, onToggleSidebar, collapsed, minimal = false, navItems
             {navItems && (
                 <nav className="app-header-nav" aria-label="Phân mục">
                     {navItems.map((item) => (
-                        <NavLink
+                        <Link
                             key={item.label}
-                            to={item.to}
-                            end={item.to === "/home"}
+                            to={item.href}
                             className="app-header-nav-link"
                         >
                             {item.label}
-                        </NavLink>
+                        </Link>
                     ))}
                 </nav>
             )}
 
             <div className="app-header-user" ref={userRef}>
                 <NotificationBell />
-                <LanguagePicker />
+                <LanguagePicker flagOnly={minimal} />
                 <button
                     type="button"
                     className="app-header-avatar-btn"

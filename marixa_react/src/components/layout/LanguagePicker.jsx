@@ -11,7 +11,8 @@ const FLAGS = {
 const LANG_LABELS = { vi: "Tiếng Việt", en: "English", zh: "中文" };
 
 // Nút chuyển ngôn ngữ (cờ + tên + ▾) — dùng chung cho Header và các trang không có header.
-const LanguagePicker = ({ className = "" }) => {
+// flagOnly: chỉ hiện cờ (không hiện chữ) — dùng cho header gọn. Dropdown giữ nguyên đầy đủ.
+const LanguagePicker = ({ className = "", flagOnly = false }) => {
     const { language, setLanguage } = useLanguage();
     const [open, setOpen] = useState(false);
     const ref = useRef(null);
@@ -35,7 +36,7 @@ const LanguagePicker = ({ className = "" }) => {
                 aria-label="Language"
             >
                 <span className="flag">{FLAGS[language]}</span>
-                <span>{LANG_LABELS[language]}</span>
+                {!flagOnly && <span>{LANG_LABELS[language]}</span>}
                 <span className="caret">▾</span>
             </button>
             {open && (

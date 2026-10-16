@@ -13,21 +13,15 @@ const MODULES = [
     { to: "/finance", icon: "💰", title: "Kế toán", detail: "Tài chính · Báo cáo", color: "lime" },
 ];
 
-function greetByTime(hour) {
-    if (hour < 5) return "Chào bạn, vẫn làm việc khuya?";
-    if (hour < 11) return "Chào buổi sáng";
-    if (hour < 14) return "Chào buổi trưa";
-    if (hour < 18) return "Chào buổi chiều";
-    return "Chào buổi tối";
-}
-
+// MỤC PHÂN MỤC — dùng link "giả" (placeholder) tương ứng theo tên,
+// chưa có trang đích riêng cho từng mục.
 const NAV_ITEMS = [
-    { label: "Vận hành", to: "/attendance" },
-    { label: "Thông tin", to: "/work" },
-    { label: "Con người", to: "/employees" },
-    { label: "Tài chính", to: "/finance" },
-    { label: "Khách hàng", to: "/admin" },
-    { label: "Sản phẩm", to: "/admin/reports" },
+    { label: "Vận hành", href: "/attendance" },
+    { label: "Thông tin", href: "/work" },
+    { label: "Con người", href: "/employees" },
+    { label: "Tài chính", href: "/finance" },
+    { label: "Khách hàng", href: "/admin" },
+    { label: "Sản phẩm", href: "/admin/reports" },
 ];
 
 const HomePage = () => {
@@ -44,10 +38,8 @@ const HomePage = () => {
             month: "2-digit",
             year: "numeric",
         }).format(now);
-        const hour = now.getHours();
         return {
             date: dateStr,
-            greet: greetByTime(hour),
             time: now.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" }),
         };
     }, []);
@@ -71,10 +63,9 @@ const HomePage = () => {
                         </div>
                     </div>
 
-                    {/* Greeting — bottom-right corner of hero */}
+                    {/* Date pill — bottom-right corner of hero */}
                     <div className="home-hero__greet">
                         <span>{today.date}</span>
-                        <strong>{today.greet} 👋</strong>
                     </div>
 
                     <div className="home-hero__art" aria-hidden="true">
