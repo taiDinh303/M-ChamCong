@@ -16,7 +16,8 @@ import "./header.css";
 
 
 // Thanh nav toàn rộng: logo + slogan (trái), (tuỳ chọn) thanh menu phân mục
-// giữa, nút gập sidebar, nút vuông dropdown tài khoản (phải).
+// ngay sau logo, nút gập sidebar, nút vuông dropdown tài khoản + nút "về phân khu"
+// (4 chấm) theo phận sự (phải).
 const Header = ({ profile, onToggleSidebar, collapsed, minimal = false, navItems = null }) => {
     const auth = getAuth();
     const key = auth?.userId;
@@ -25,6 +26,15 @@ const Header = ({ profile, onToggleSidebar, collapsed, minimal = false, navItems
     const [modal, setModal] = useState(null);
     const [avatar, setAvatarState] = useState(() => getAvatar(key));
     const [avatarBusy, setAvatarBusy] = useState(false);
+
+    // Đường dẫn "phân khu" theo vai trò: Admin -> dashboard,
+    // HR/Manager -> module HR, nhân viên thường -> module Me.
+    const roles = getAuth()?.roles || [];
+    const roleHome = roles.some((r) => /admin/i.test(String(r)))
+        ? "/admin"
+        : roles.some((r) => /hr|manager/i.test(String(r)))
+            ? "/employees"
+            : "/attendance";
 
     // Đồng bộ avatar khi bị đổi ở nơi khác (vd trang Hồ sơ).
     useEffect(
@@ -104,21 +114,21 @@ const Header = ({ profile, onToggleSidebar, collapsed, minimal = false, navItems
                         </span>
                     )}
                 </a>
-            </div>
 
-            {navItems && (
-                <nav className="app-header-nav" aria-label="Phân mục">
-                    {navItems.map((item) => (
-                        <Link
-                            key={item.label}
-                            to={item.href}
-                            className="app-header-nav-link"
-                        >
-                            {item.label}
-                        </Link>
-                    ))}
-                </nav>
-            )}
+                {navItems && (
+                    <nav className="app-header-nav" aria-label="Phân mục">
+                        {navItems.map((item) => (
+                            <Link
+                                key={item.label}
+                                to={item.href}
+                                className="app-header-nav-link"
+                            >
+                                {item.label}
+                            </Link>
+                        ))}
+                    </nav>
+                )}
+            </div>
 
             <div className="app-header-user" ref={userRef}>
                 <NotificationBell />
@@ -137,6 +147,21 @@ const Header = ({ profile, onToggleSidebar, collapsed, minimal = false, navItems
                         <span>{name.trim().charAt(0).toUpperCase() || "?"}</span>
                     )}
                 </button>
+
+                {/* Nút "về phân khu theo phận sự" — 4 chấm tròn, chỉ ở home (minimal) */}
+                {minimal && (
+                    <button
+                        type="button"
+                        className="app-header-dots-btn"
+                        title="Vào phân khu của bạn"
+                        aria-label="Vào phân khu theo phận sự"
+                        onClick={() => {
+                            window.location.href = roleHome;
+                        }}
+                    >
+                        <span className="app-header-dots" aria-hidden="true"><i /><i /><i /><i /></span>
+                    </button>
+                )}
 
                 {open && (
                     <div className="app-header-menu" role="menu">

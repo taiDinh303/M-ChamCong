@@ -119,34 +119,66 @@
     gap: 12px;
 }
 
-/* ===== THANH NAV PHÂN MỤC (giữa header, chỉ hiện khi truyền navItems) ===== */
+/* ===== THANH NAV PHÂN MỤC (ngay sau logo, chỉ hiện khi truyền navItems) =====
+   Flat, không viền (giống "BUSINESS OS"): các link đứng liền sau logo,
+   active gạch chân bằng màu accent. */
+.app-header-left { gap: 6px; }
 .app-header-nav {
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding: 4px;
-    border: 1px solid var(--th-header-border);
-    border-radius: 999px;
-    background: var(--th-header-surface);
+    gap: 2px;
+    margin-left: 10px;
 }
 .app-header-nav-link {
-    padding: 8px 15px;
-    border-radius: 999px;
+    padding: 8px 12px;
+    border: 0;
+    background: none;
     color: var(--th-header-sub);
-    font: 700 13px var(--th-font, "Be Vietnam Pro", sans-serif);
+    font: 600 13.5px var(--th-font, "Be Vietnam Pro", sans-serif);
     letter-spacing: .01em;
     text-decoration: none;
     white-space: nowrap;
-    transition: background .15s, color .15s;
+    border-bottom: 2px solid transparent;
+    transition: color .15s, border-color .15s;
 }
 .app-header-nav-link:hover {
-    background: var(--th-header-surface-hover);
     color: var(--th-header-text);
 }
 .app-header-nav-link.active {
+    color: var(--th-header-text);
+    border-bottom-color: var(--th-primary);
+}
+
+/* ===== NÚT 4 CHẤM — về phân khu theo phận sự (cuối phải, chỉ home) ===== */
+.app-header-dots-btn {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--th-header-border);
+    border-radius: 10px;
+    background: var(--th-header-surface);
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+}
+.app-header-dots-btn:hover {
+    background: var(--th-header-surface-hover);
+    border-color: var(--th-primary);
+}
+.app-header-dots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+}
+.app-header-dots i {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--th-header-sub);
+    transition: background .15s;
+}
+.app-header-dots-btn:hover .app-header-dots i {
     background: var(--th-primary);
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(22, 71, 200, .3);
 }
 
 @media (max-width: 520px) {
