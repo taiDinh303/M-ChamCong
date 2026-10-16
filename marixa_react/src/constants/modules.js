@@ -26,6 +26,7 @@ export const MODULES = [
     { to: "/attendance/promotions", label: "Đề xuất thăng chức", access: "user" },
     { to: "/attendance/handover", label: "Bàn giao nghỉ việc", access: "user" },
     { to: "/work", label: "Công việc", access: "user", hideInUserSidebar: true },
+    { to: "/finance", label: "Kế toán", access: "user", hideInUserSidebar: true },
     { to: "/profile", label: "Hồ sơ", access: "user", hideInUserSidebar: true },
     // Khu quản trị (admin) là một trang riêng, bắt đầu tại dashboard.
     { to: "/admin", label: "Dashboard", access: "admin" },

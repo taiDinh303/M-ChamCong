@@ -119,9 +119,41 @@
     gap: 12px;
 }
 
+/* ===== THANH NAV PHÂN MỤC (giữa header, chỉ hiện khi truyền navItems) ===== */
+.app-header-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--th-header-border);
+    border-radius: 999px;
+    background: var(--th-header-surface);
+}
+.app-header-nav-link {
+    padding: 8px 15px;
+    border-radius: 999px;
+    color: var(--th-header-sub);
+    font: 700 13px var(--th-font, "Be Vietnam Pro", sans-serif);
+    letter-spacing: .01em;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background .15s, color .15s;
+}
+.app-header-nav-link:hover {
+    background: var(--th-header-surface-hover);
+    color: var(--th-header-text);
+}
+.app-header-nav-link.active {
+    background: var(--th-primary);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(22, 71, 200, .3);
+}
+
 @media (max-width: 520px) {
-    .app-header { padding-right: 12px; padding-left: 12px; }
+    .app-header { padding: 10px 12px; flex-wrap: wrap; row-gap: 10px; }
     .app-header-user { gap: 7px; }
+    .app-header-nav { order: 3; width: 100%; overflow-x: auto; scrollbar-width: none; justify-content: flex-start; }
+    .app-header-nav::-webkit-scrollbar { display: none; }
 }
 
 .app-header-avatar-btn {

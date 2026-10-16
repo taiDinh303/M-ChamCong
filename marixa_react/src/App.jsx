@@ -68,6 +68,7 @@ function App() {
                 <Route path="/unauthorized" element={<UnauthorizedPage />} />
                 <Route path="/" element={<Navigate to="/home" replace />} />
                 <Route path="/home" element={<HomePage />} />
+                <Route path="/finance" element={<Navigate to="/attendance/salary" replace />} />
 
                 {/* Khu quản trị */}
                 <Route

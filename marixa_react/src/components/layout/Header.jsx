@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { NavLink } from "react-router-dom";
 import { clearAuth, getAuth } from "../../services/auth/auth";
 import {
     fileToAvatarDataUrl,
@@ -14,12 +15,11 @@ import ChangePasswordModal from "./ChangePasswordModal";
 import "./header.css";
 
 
-// Thanh nav toàn rộng: logo + slogan (trái), nút gập sidebar,
-// nút vuông dropdown tài khoản (phải).
-const Header = ({ profile, onToggleSidebar, collapsed, minimal = false }) => {
+// Thanh nav toàn rộng: logo + slogan (trái), (tuỳ chọn) thanh menu phân mục
+// giữa, nút gập sidebar, nút vuông dropdown tài khoản (phải).
+const Header = ({ profile, onToggleSidebar, collapsed, minimal = false, navItems = null }) => {
     const auth = getAuth();
     const key = auth?.userId;
-    
 
     const [open, setOpen] = useState(false);
     const [modal, setModal] = useState(null);
@@ -106,8 +106,23 @@ const Header = ({ profile, onToggleSidebar, collapsed, minimal = false }) => {
                 </a>
             </div>
 
+            {navItems && (
+                <nav className="app-header-nav" aria-label="Phân mục">
+                    {navItems.map((item) => (
+                        <NavLink
+                            key={item.label}
+                            to={item.to}
+                            end={item.to === "/home"}
+                            className="app-header-nav-link"
+                        >
+                            {item.label}
+                        </NavLink>
+                    ))}
+                </nav>
+            )}
+
             <div className="app-header-user" ref={userRef}>
-                                <NotificationBell />
+                <NotificationBell />
                 <LanguagePicker />
                 <button
                     type="button"
