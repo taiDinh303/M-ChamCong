@@ -108,11 +108,6 @@ const Header = ({ profile, onToggleSidebar, collapsed, minimal = false, navItems
                 <a href="/home" className="app-header-brand">
                     <span className="app-header-logo">M</span>
                     <span className="app-header-logo-text">MARIXA</span>
-                    {!minimal && (
-                        <span className="app-header-slogan">
-                            Chấm công &amp; quản lý nhân sự
-                        </span>
-                    )}
                 </a>
 
                 {navItems && (
@@ -132,7 +127,7 @@ const Header = ({ profile, onToggleSidebar, collapsed, minimal = false, navItems
 
             <div className="app-header-user" ref={userRef}>
                 <NotificationBell />
-                <LanguagePicker flagOnly={minimal} />
+                <LanguagePicker flagOnly />
                 <button
                     type="button"
                     className="app-header-avatar-btn"

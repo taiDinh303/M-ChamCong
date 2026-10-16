@@ -103,14 +103,6 @@
     letter-spacing: 0.04em;
     color: var(--th-header-text);
 }
-.app-header-slogan {
-    font-size: 13px;
-    color: var(--th-header-sub);
-    border-left: 1px solid var(--th-header-border);
-    padding-left: 12px;
-    white-space: nowrap;
-}
-
 /* Khối chứa avatar + menu */
 .app-header-user {
     position: relative;
