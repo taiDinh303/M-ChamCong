@@ -8,7 +8,7 @@ import {
     subscribeAvatarChange,
 } from "../../services/avatar/avatar";
 import { GuideModal } from "./GuideModal";
-import LanguagePicker from "./LanguagePicker";
+import LanguagePicker, { LanguageOptions } from "./LanguagePicker";
 import NotificationBell from "./NotificationBell";
 import ChangePasswordModal from "./ChangePasswordModal";
 
@@ -174,6 +174,7 @@ const Header = ({ profile, onToggleSidebar, collapsed, minimal = false, navItems
                             <strong>{name}</strong>
                             <span>{code || "—"}</span>
                         </div>
+                        {!minimal && <LanguageOptions />}
                         <button
                             type="button"
                             role="menuitem"

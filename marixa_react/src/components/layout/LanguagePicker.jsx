@@ -59,4 +59,30 @@ const LanguagePicker = ({ className = "", flagOnly = false }) => {
     );
 };
 
+// Danh sách lựa chọn ngôn ngữ (dùng nội嵌 trong dropdown tài khoản ở header
+// non-home, nơi không có ô cờ riêng).
+export const LanguageOptions = () => {
+    const { language, setLanguage } = useLanguage();
+    return (
+        <div className="lang-inline" role="menu" aria-label="Ngôn ngữ">
+            <div className="lang-inline__label">Ngôn ngữ</div>
+            <div className="lang-inline__row">
+                {["vi", "en", "zh"].map((code) => (
+                    <button
+                        key={code}
+                        type="button"
+                        role="menuitem"
+                        className={`lang-inline__opt${code === language ? " active" : ""}`}
+                        title={LANG_LABELS[code]}
+                        aria-pressed={code === language}
+                        onClick={() => setLanguage(code)}
+                    >
+                        <span className="flag">{FLAGS[code]}</span>
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 export default LanguagePicker;
