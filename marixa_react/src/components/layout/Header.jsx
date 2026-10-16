@@ -127,7 +127,7 @@ const Header = ({ profile, onToggleSidebar, collapsed, minimal = false, navItems
 
             <div className="app-header-user" ref={userRef}>
                 <NotificationBell />
-                <LanguagePicker flagOnly />
+                {minimal && <LanguagePicker flagOnly />}
                 <button
                     type="button"
                     className="app-header-avatar-btn"
