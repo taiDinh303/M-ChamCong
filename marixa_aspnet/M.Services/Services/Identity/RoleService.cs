@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using M.ModelViews.RoleModelView;
-using Services.Mappings;
+using M.Services.Mappings;
 using static M.Core.Base.BaseException;
 
 namespace M.Services.Services.Identity
@@ -39,6 +39,7 @@ namespace M.Services.Services.Identity
 
         public async Task<BasePaginatedList<RoleResponseModelView>> GetAllAsync(int pageNumber, int pageSize)
         {
+            RequireAdmin();
             (pageNumber, pageSize) = Pagination.Normalize(pageNumber, pageSize);
 
             IGenericRepository<ApplicationRole> repo = UnitOfWork.GetRepository<ApplicationRole>();
@@ -63,6 +64,7 @@ namespace M.Services.Services.Identity
 
         public async Task<RoleResponseModelView> GetByIdAsync(Guid id)
         {
+            RequireAdmin();
             ApplicationRole? role = await UnitOfWork.GetRepository<ApplicationRole>().Entities
                 .Where(r => r.Id == id && !r.DeletedTime.HasValue)
                 .FirstOrDefaultAsync()
@@ -78,6 +80,7 @@ namespace M.Services.Services.Identity
 
         public async Task CreateAsync(CreateRoleModelView request)
         {
+            RequireAdmin();
             ApplicationRole? existingRole = await _roleManager.FindByNameAsync(request.Name ?? string.Empty);
             if (existingRole != null && !existingRole.DeletedTime.HasValue)
             {
@@ -100,6 +103,7 @@ namespace M.Services.Services.Identity
 
         public async Task UpdateAsync(UpdateRoleModelView request)
         {
+            RequireAdmin();
             ApplicationRole? role = await _roleManager.FindByIdAsync(request.Id.ToString());
             if (role == null || role.DeletedTime.HasValue)
             {
@@ -112,6 +116,9 @@ namespace M.Services.Services.Identity
 
             if (!string.IsNullOrEmpty(request.Name))
             {
+                if (ProtectedRoleNames.Contains(role.Name ?? string.Empty)
+                    && !string.Equals(role.Name, request.Name.Trim(), StringComparison.Ordinal))
+                    throw new ErrorException(400, "SYSTEM_ROLE", "System roles cannot be renamed.");
                 role.Name = request.Name;
             }
 
@@ -135,6 +142,7 @@ namespace M.Services.Services.Identity
 
         public async Task SoftDeleteAsync(Guid id)
         {
+            RequireAdmin();
             IGenericRepository<ApplicationRole> roleRepo = UnitOfWork.GetRepository<ApplicationRole>();
             ApplicationRole role = await roleRepo.Entities
                 .FirstOrDefaultAsync(r => r.Id == id && !r.DeletedTime.HasValue)
@@ -154,6 +162,7 @@ namespace M.Services.Services.Identity
 
         public async Task DeleteAsync(Guid id)
         {
+            RequireAdmin();
             ApplicationRole role = await _roleManager.FindByIdAsync(id.ToString())
                 ?? throw new ErrorException(
                     StatusCodes.Status404NotFound,

@@ -71,11 +71,13 @@ namespace M.Services.Services.Leave
                 .Where(x => x.Id == id && !x.DeletedTime.HasValue)
                 .FirstOrDefaultAsync()
                 ?? throw new ErrorException(StatusCodes.Status404NotFound, "NOT_FOUND", "Leave request not found");
+            RequireEmployeeAccess(entity.EmployeeId);
             return entity.ToViewModel();
         }
 
         public async Task<List<LeaveRequestResponseModelView>> ByEmployeeIdAsync(Guid employeeId)
         {
+            RequireEmployeeAccess(employeeId);
             IGenericRepository<LeaveRequest> repo = UnitOfWork.GetRepository<LeaveRequest>();
             List<LeaveRequest> entities = await repo.Entities
                 .Where(x => x.EmployeeId == employeeId && !x.DeletedTime.HasValue)
@@ -109,7 +111,14 @@ namespace M.Services.Services.Leave
         // 2. TẠO / SỬA
         // =====================================================================
 
-        public async Task<Guid> CreateAsync(CreateLeaveRequestModelView model, Guid requesterEmployeeId)
+        public Task<Guid> CreateAsync(CreateLeaveRequestModelView model, Guid requesterEmployeeId)
+        {
+            ArgumentNullException.ThrowIfNull(model);
+            RequireEmployeeAccess(model.EmployeeId);
+            return InTransactionAsync(() => CreateAsyncCore(model, RequireCurrentEmployeeId()));
+        }
+
+        private async Task<Guid> CreateAsyncCore(CreateLeaveRequestModelView model, Guid requesterEmployeeId)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
 
@@ -167,6 +176,7 @@ namespace M.Services.Services.Leave
             // For limited leave types, ensure projected remaining >= TotalDays
             decimal totalDays = model.TotalDays
                 ?? (decimal)(model.ToDate.Date - model.FromDate.Date).TotalDays + 1m;
+            ValidateTotalDays(totalDays, model.FromDate, model.ToDate);
             if (leaveType.MaxDays.HasValue)
             {
                 int year = model.FromDate.Year;
@@ -190,7 +200,14 @@ namespace M.Services.Services.Leave
             return entity.Id;
         }
 
-        public async Task UpdateAsync(UpdateLeaveRequestModelView model, Guid requesterEmployeeId)
+        public Task UpdateAsync(UpdateLeaveRequestModelView model, Guid requesterEmployeeId)
+        {
+            ArgumentNullException.ThrowIfNull(model);
+            RequireEmployeeAccess(model.EmployeeId);
+            return InTransactionAsync(async () => { await UpdateAsyncCore(model, RequireCurrentEmployeeId()); return true; });
+        }
+
+        private async Task UpdateAsyncCore(UpdateLeaveRequestModelView model, Guid requesterEmployeeId)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
 
@@ -244,6 +261,7 @@ namespace M.Services.Services.Leave
 
             decimal totalDays = model.TotalDays
                 ?? (decimal)(model.ToDate.Date - model.FromDate.Date).TotalDays + 1m;
+            ValidateTotalDays(totalDays, model.FromDate, model.ToDate);
 
             // Balance check on limited types (projected remaining after edit)
             if (leaveType.MaxDays.HasValue)
@@ -275,19 +293,34 @@ namespace M.Services.Services.Leave
         // 3. QUYẾT ĐỊNH (APPROVE / REJECT / CANCEL)
         // =====================================================================
 
-        public async Task ApproveAsync(Guid id, DecisionLeaveRequestModelView model, Guid approverEmployeeId)
+        public Task ApproveAsync(Guid id, DecisionLeaveRequestModelView model, Guid approverEmployeeId)
+        {
+            RequireStaff(); return InTransactionAsync(async () => { await ApproveAsyncCore(id, model, RequireCurrentEmployeeId()); return true; });
+        }
+
+        private async Task ApproveAsyncCore(Guid id, DecisionLeaveRequestModelView model, Guid approverEmployeeId)
         {
             await DecideAsync(id, approverEmployeeId, LeaveRequestStatus.Approved,
                 model?.Note, ledgerOnPositive: true);
         }
 
-        public async Task RejectAsync(Guid id, DecisionLeaveRequestModelView model, Guid approverEmployeeId)
+        public Task RejectAsync(Guid id, DecisionLeaveRequestModelView model, Guid approverEmployeeId)
+        {
+            RequireStaff(); return InTransactionAsync(async () => { await RejectAsyncCore(id, model, RequireCurrentEmployeeId()); return true; });
+        }
+
+        private async Task RejectAsyncCore(Guid id, DecisionLeaveRequestModelView model, Guid approverEmployeeId)
         {
             await DecideAsync(id, approverEmployeeId, LeaveRequestStatus.Rejected,
                 model?.Note, ledgerOnPositive: false);
         }
 
-        public async Task CancelAsync(Guid id, CancelLeaveRequestModelView model, Guid cancellerEmployeeId)
+        public Task CancelAsync(Guid id, CancelLeaveRequestModelView model, Guid cancellerEmployeeId)
+        {
+            return InTransactionAsync(async () => { await CancelAsyncCore(id, model, RequireCurrentEmployeeId()); return true; });
+        }
+
+        private async Task CancelAsyncCore(Guid id, CancelLeaveRequestModelView model, Guid cancellerEmployeeId)
         {
             IGenericRepository<LeaveRequest> repo = UnitOfWork.GetRepository<LeaveRequest>();
             LeaveRequest entity = await repo.Entities
@@ -296,31 +329,32 @@ namespace M.Services.Services.Leave
                 .FirstOrDefaultAsync()
                 ?? throw new ErrorException(StatusCodes.Status404NotFound, "NOT_FOUND", "Leave request not found");
 
-            if (entity.Status != LeaveRequestStatus.Pending)
-                throw new ErrorException(StatusCodes.Status400BadRequest, "INVALID_STATUS",
-                    "Only pending leave requests can be cancelled. Rejected/Approved requests are immutable.");
-
-            // Only the owner or Admin can cancel
             bool isOwner = entity.EmployeeId == cancellerEmployeeId;
-            (bool isAdmin, _, _, _) = await ResolveRolesAsync(cancellerEmployeeId);
-            if (!isOwner && !isAdmin)
-                throw new ErrorException(StatusCodes.Status403Forbidden, "FORBIDDEN",
-                    "Only the owner or an admin can cancel this request.");
-
+            bool isHrAdmin = CurrentUser.IsInRole(RoleNames.Admin) || CurrentUser.IsInRole(RoleNames.HR);
+            if (entity.Status == LeaveRequestStatus.Cancelled)
+            {
+                if (!isOwner && !isHrAdmin) throw new ErrorException(403, "FORBIDDEN", "You cannot cancel this request.");
+                return;
+            }
+            if (entity.Status == LeaveRequestStatus.Approved)
+            {
+                if (!isHrAdmin || isOwner)
+                    throw new ErrorException(403, "FORBIDDEN", "An HR/Admin other than the owner must cancel an approved request.");
+                if (string.IsNullOrWhiteSpace(model?.Reason) || model.Reason.Trim().Length < 5)
+                    throw new ErrorException(400, "REASON_REQUIRED", "A cancellation reason of 5–500 characters is required.");
+            }
+            else if (entity.Status != LeaveRequestStatus.Pending)
+                throw new ErrorException(409, "INVALID_STATUS", "Only pending or approved leave requests can be cancelled.");
+            else if (!isOwner && !CurrentUser.IsInRole(RoleNames.Admin))
+                throw new ErrorException(403, "FORBIDDEN", "Only the owner or an administrator can cancel a pending request.");
+            if (model?.Reason?.Trim().Length > 500) throw new ErrorException(400, "VALIDATION", "Cancellation reason is too long.");
             entity.Status = LeaveRequestStatus.Cancelled;
-            entity.ApprovedBy = cancellerEmployeeId; // record who cancelled
-            entity.ApprovedAt = UtcNow.UtcDateTime;
+            entity.CancelledBy = cancellerEmployeeId;
+            entity.CancelledAt = UtcNow.UtcDateTime;
+            entity.CancellationReason = model?.Reason?.Trim();
             entity.LastUpdatedBy = CurrentUserName;
             entity.LastUpdatedTime = UtcNow;
-
-            // If there is a stray Deduct entry (admin undid a previously approved),
-            // emit a Refund to keep the ledger consistent.
-            bool strayDeduct = await UnitOfWork.GetRepository<LeaveLedger>().Entities.AnyAsync(x =>
-                x.LeaveRequestId == entity.Id && x.EntryType == LeaveLedgerEntryType.Deduct);
-            if (strayDeduct)
-            {
-                await InsertLedgerRefundAsync(entity, model?.Reason ?? "Hủy đơn");
-            }
+            await InsertLedgerRefundAsync(entity, entity.CancellationReason ?? "Hủy đơn chưa duyệt");
 
             await repo.UpdateAsync(entity);
             await UnitOfWork.SaveAsync();
@@ -367,10 +401,10 @@ namespace M.Services.Services.Leave
             // HR không được duyệt HR khác; Manager không duyệt HR/Admin
             (bool ownerIsAdmin, bool ownerIsHr, bool ownerIsMgr, _) =
                 await ResolveRolesAsync(entity.EmployeeId);
-            if (isHr && (ownerIsHr || ownerIsMgr))
+            if (!isAdmin && isHr && (ownerIsHr || ownerIsMgr))
                 throw new ErrorException(StatusCodes.Status403Forbidden, "FORBIDDEN",
                     "HR can only approve employees and admin-with-profile, not other HR/Manager.");
-            if (isMgr && (ownerIsHr || ownerIsAdmin))
+            if (!isAdmin && !isHr && isMgr && (ownerIsHr || ownerIsAdmin))
                 throw new ErrorException(StatusCodes.Status403Forbidden, "FORBIDDEN",
                     "Manager can only approve employees.");
 
@@ -407,12 +441,14 @@ namespace M.Services.Services.Leave
         {
             IGenericRepository<LeaveLedger> repo = UnitOfWork.GetRepository<LeaveLedger>();
             IQueryable<LeaveLedger> q = repo.Entities
-                .Where(x => x.EmployeeId == employeeId && x.Year == year);
+                .Where(x => x.EmployeeId == employeeId && x.Year == year && !x.DeletedTime.HasValue);
             if (leaveTypeId.HasValue)
                 q = q.Where(x => x.LeaveTypeId == leaveTypeId);
 
-            decimal deduct = await q.Where(x => x.EntryType == LeaveLedgerEntryType.Deduct).SumAsync(x => x.Days);
-            decimal refund = await q.Where(x => x.EntryType == LeaveLedgerEntryType.Refund).SumAsync(x => x.Days);
+            var entries = await q.Where(x => x.EntryType == LeaveLedgerEntryType.Deduct || x.EntryType == LeaveLedgerEntryType.Refund)
+                .Select(x => new { x.EntryType, x.Days }).ToListAsync();
+            decimal deduct = entries.Where(x => x.EntryType == LeaveLedgerEntryType.Deduct).Sum(x => x.Days);
+            decimal refund = entries.Where(x => x.EntryType == LeaveLedgerEntryType.Refund).Sum(x => x.Days);
             return deduct - refund;
         }
 
@@ -451,24 +487,26 @@ namespace M.Services.Services.Leave
 
         private async Task InsertLedgerRefundAsync(LeaveRequest entity, string reason)
         {
-            IGenericRepository<LeaveLedger> repo = UnitOfWork.GetRepository<LeaveLedger>();
-            int year = entity.FromDate.Year;
-            LeaveLedger entry = new()
+            var repo = Repository<LeaveLedger>();
+            var history = await repo.Entities.Where(e => e.LeaveRequestId == entity.Id && !e.DeletedTime.HasValue).ToListAsync();
+            foreach (var group in history.Where(e => e.EntryType == LeaveLedgerEntryType.Deduct).GroupBy(e => e.Year))
             {
-                Id = Guid.NewGuid(),
-                EmployeeId = entity.EmployeeId,
-                Year = year,
-                LeaveTypeId = entity.LeaveTypeId,
-                EntryType = LeaveLedgerEntryType.Refund,
-                Days = entity.TotalDays ?? 0m,
-                LeaveRequestId = entity.Id,
-                Reason = reason,
-                CreatedBy = CurrentUserName,
-                CreatedTime = UtcNow,
-                LastUpdatedBy = CurrentUserName,
-                LastUpdatedTime = UtcNow,
-            };
-            await repo.InsertAsync(entry);
+                var days = group.Sum(e => e.Days);
+                var refunds = history.Where(e => e.Year == group.Key && e.EntryType == LeaveLedgerEntryType.Refund).ToList();
+                if (refunds.Count > 0)
+                {
+                    if (refunds.Sum(e => e.Days) != days) throw new ErrorException(409, "LEAVE_LEDGER_INTEGRITY", "Existing refund does not match its deduction; reconcile it before cancellation.");
+                    continue;
+                }
+                if (days <= 0 || group.Any(e => e.EmployeeId != entity.EmployeeId || e.LeaveTypeId != entity.LeaveTypeId))
+                    throw new ErrorException(409, "LEAVE_LEDGER_INTEGRITY", "Leave deduction history is inconsistent.");
+                await repo.InsertAsync(new LeaveLedger
+                {
+                    EmployeeId = entity.EmployeeId, Year = group.Key, LeaveTypeId = entity.LeaveTypeId,
+                    EntryType = LeaveLedgerEntryType.Refund, Days = days, LeaveRequestId = entity.Id, Reason = reason,
+                    CreatedBy = CurrentUserName, CreatedTime = UtcNow, LastUpdatedBy = CurrentUserName, LastUpdatedTime = UtcNow
+                });
+            }
         }
 
         // =====================================================================
@@ -477,11 +515,14 @@ namespace M.Services.Services.Leave
 
         public async Task SoftDeleteAsync(Guid id)
         {
+            RequireStaff();
             IGenericRepository<LeaveRequest> repo = UnitOfWork.GetRepository<LeaveRequest>();
             LeaveRequest entity = await repo.Entities
                 .FirstOrDefaultAsync(x => x.Id == id && !x.DeletedTime.HasValue)
                 ?? throw new ErrorException(StatusCodes.Status404NotFound, "NOT_FOUND", "Leave request not found");
 
+            if (entity.Status != LeaveRequestStatus.Pending)
+                throw new ErrorException(409, "CLOSED_REQUEST", "Decided leave requests must be retained for audit.");
             entity.DeletedBy = CurrentUserName;
             entity.DeletedTime = UtcNow;
             await repo.UpdateAsync(entity);
@@ -490,18 +531,21 @@ namespace M.Services.Services.Leave
 
         public async Task DeleteAsync(Guid id)
         {
+            RequireStaff();
             IGenericRepository<LeaveRequest> repo = UnitOfWork.GetRepository<LeaveRequest>();
             LeaveRequest entity = await repo.Entities
                 .FirstOrDefaultAsync(x => x.Id == id)
                 ?? throw new ErrorException(StatusCodes.Status404NotFound, "NOT_FOUND", "Leave request not found");
 
-            // Nếu đã sinh Deduct, cũng xóa để tránh "orphan" ledger
+            if (entity.Status != LeaveRequestStatus.Pending)
+                throw new ErrorException(409, "CLOSED_REQUEST", "Decided leave requests must be retained for audit.");
+            // Never delete leave-balance history through a request endpoint.
             IGenericRepository<LeaveLedger> ledgerRepo = UnitOfWork.GetRepository<LeaveLedger>();
             List<LeaveLedger> ledgers = await ledgerRepo.Entities
                 .Where(x => x.LeaveRequestId == entity.Id)
                 .ToListAsync();
-            foreach (LeaveLedger ledger in ledgers)
-                await ledgerRepo.DeleteAsync(ledger);
+            if (ledgers.Count != 0)
+                throw new ErrorException(409, "LEAVE_LEDGER_EXISTS", "A request with balance history cannot be deleted.");
 
             await repo.DeleteAsync(entity);
             await UnitOfWork.SaveAsync();
@@ -517,6 +561,12 @@ namespace M.Services.Services.Leave
         /// Trả về (isAdmin, isHr, isMgr, userId) của employee này.
         /// Dùng để enforce rule "chặn tự duyệt" + "HR không duyệt HR".
         /// </summary>
+        private static void ValidateTotalDays(decimal days, DateTime from, DateTime to)
+        {
+            if (days <= 0 || days > (decimal)(to.Date - from.Date).TotalDays + 1m)
+                throw new ErrorException(400, "INVALID_TOTAL_DAYS", "Leave days must be positive and cannot exceed the selected calendar range.");
+        }
+
         private async Task<(bool IsAdmin, bool IsHr, bool IsMgr, Guid UserId)> ResolveRolesAsync(Guid employeeId)
         {
             if (employeeId == Guid.Empty)

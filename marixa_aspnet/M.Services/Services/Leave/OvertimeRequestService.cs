@@ -77,6 +77,7 @@ namespace M.Services.Services.Leave
         public async Task CreateAsync(CreateOvertimeRequestModelView model)
         {
             RequireEmployeeAccess(model.EmployeeId);
+            ValidateWindow(model.WorkDate, model.StartAt, model.EndAt);
             if (model.AttendanceId is Guid attendanceId && !await Repository<Attendance>().Entities
                 .AnyAsync(a => a.Id == attendanceId && a.EmployeeId == model.EmployeeId
                     && a.AttendanceDate.Date == model.WorkDate.Date && !a.DeletedTime.HasValue))
@@ -116,8 +117,8 @@ namespace M.Services.Services.Leave
             string currentUser = CurrentUserName;
 
             OvertimeRequest entity = model.ToEntity();
-            entity.OvertimeHours = entity.OvertimeHours
-                ?? CalcHoursFromRange(entity.StartAt, entity.EndAt);
+            entity.WorkDate = DateTime.SpecifyKind(model.WorkDate.Date, DateTimeKind.Utc);
+            entity.OvertimeHours = CalcHoursFromRange(entity.StartAt, entity.EndAt);
             entity.CreatedBy = currentUser;
             entity.LastUpdatedBy = currentUser;
             entity.CreatedTime = UtcNow;
@@ -129,12 +130,19 @@ namespace M.Services.Services.Leave
 
         public async Task UpdateAsync(UpdateOvertimeRequestModelView model)
         {
+            ValidateWindow(model.WorkDate, model.StartAt, model.EndAt);
             IGenericRepository<OvertimeRequest> repo = UnitOfWork.GetRepository<OvertimeRequest>();
 
             OvertimeRequest entity = await repo.Entities
                 .FirstOrDefaultAsync(x => x.Id == model.Id && !x.DeletedTime.HasValue)
                 ?? throw new ErrorException(StatusCodes.Status404NotFound, "NOT_FOUND", "Overtime request not found");
             RequireEmployeeAccess(entity.EmployeeId);
+
+            if (model.EmployeeId != entity.EmployeeId)
+                throw new ErrorException(400, "INVALID_EMPLOYEE", "An overtime request cannot change its owner.");
+            if (model.AttendanceId.HasValue && !await Repository<Attendance>().Entities.AnyAsync(a => a.Id == model.AttendanceId
+                    && a.EmployeeId == entity.EmployeeId && a.AttendanceDate.Date == model.WorkDate.Date && !a.DeletedTime.HasValue))
+                throw new ErrorException(400, "INVALID_ATTENDANCE_REFERENCE", "Attendance must belong to the same employee and day.");
 
             if (entity.Status != OvertimeStatus.Pending)
                 throw new ErrorException(StatusCodes.Status400BadRequest, "INVALID_STATE",
@@ -143,8 +151,8 @@ namespace M.Services.Services.Leave
             string currentUser = CurrentUserName;
 
             model.ToEntity(entity);
-            entity.OvertimeHours = model.OvertimeHours
-                ?? CalcHoursFromRange(entity.StartAt, entity.EndAt);
+            entity.WorkDate = DateTime.SpecifyKind(model.WorkDate.Date, DateTimeKind.Utc);
+            entity.OvertimeHours = CalcHoursFromRange(entity.StartAt, entity.EndAt);
             entity.LastUpdatedBy = currentUser;
             entity.LastUpdatedTime = UtcNow;
 
@@ -159,6 +167,8 @@ namespace M.Services.Services.Leave
         /// </summary>
         public async Task ReviewAsync(ReviewOvertimeRequestModelView model)
         {
+            if (model.Status is not (OvertimeStatus.Approved or OvertimeStatus.Rejected))
+                throw new ErrorException(400, "INVALID_STATE", "Review must approve or reject the request.");
             RequireStaff();
             model.ApprovedBy = RequireCurrentEmployeeId();
 
@@ -172,6 +182,7 @@ namespace M.Services.Services.Leave
             if (entity.Status != OvertimeStatus.Pending)
                 throw new ErrorException(StatusCodes.Status400BadRequest, "INVALID_STATE",
                     "Overtime request is already processed");
+            if (model.Status == OvertimeStatus.Approved) ValidateWindow(entity.WorkDate, entity.StartAt, entity.EndAt);
 
             // Người duyệt phải tồn tại (Employee)
             IGenericRepository<Employee> employeeRepo = UnitOfWork.GetRepository<Employee>();
@@ -201,12 +212,15 @@ namespace M.Services.Services.Leave
 
         public async Task SoftDeleteAsync(Guid id)
         {
+            RequireStaff();
             IGenericRepository<OvertimeRequest> repo = UnitOfWork.GetRepository<OvertimeRequest>();
             OvertimeRequest entity = await repo.Entities
                 .FirstOrDefaultAsync(x => x.Id == id && !x.DeletedTime.HasValue)
                 ?? throw new ErrorException(StatusCodes.Status404NotFound, "NOT_FOUND", "Overtime request not found");
 
             string currentUser = CurrentUserName;
+            if (entity.Status != OvertimeStatus.Pending)
+                throw new ErrorException(409, "CLOSED_REQUEST", "Decided overtime requests must be retained for audit.");
             entity.SoftDelete(currentUser, UtcNow);
 
             await repo.UpdateAsync(entity);
@@ -214,6 +228,13 @@ namespace M.Services.Services.Leave
         }
 
         // ===== Helpers =====
+        private static void ValidateWindow(DateTime workDate, DateTimeOffset? start, DateTimeOffset? end)
+        {
+            if (!start.HasValue || !end.HasValue || end <= start || end - start > TimeSpan.FromDays(1)
+                || start.Value.ToOffset(TimeSpan.FromHours(7)).Date != workDate.Date)
+                throw new ErrorException(400, "INVALID_OVERTIME_WINDOW", "Overtime needs a valid start/end window within 24 hours, starting on the selected Vietnam business day.");
+        }
+
         private static decimal? CalcHoursFromRange(DateTimeOffset? start, DateTimeOffset? end)
         {
             if (start is null || end is null) return null;

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.RateLimiting;
 using M.Contract.Repositories.AuthEntities;
 using M.Contract.Services.Interface;
 using M.Core.Base;
@@ -12,6 +13,7 @@ namespace M.API.Controllers.Identity
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("auth")]
     // No Authorize
     public class AuthController : BaseApiController
     {

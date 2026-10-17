@@ -1,3 +1,5 @@
+using M.API.Export;
+using M.Contract.Services.Export;
 using M.Core.Configuration;
 using Microsoft.Extensions.Options;
 using M.API.Storage;
@@ -32,6 +34,7 @@ namespace M.API.Configuration
             services.AddIdentity();
             services.AddRepositories();
             services.AddBusinessServices();
+            services.AddSingleton<IWorkforceExportWriter, WorkforceExportWriter>();
             services.AddJwtAuthentication(configuration, environment.IsProduction());
             services.AddSwaggerConfig();
             services.AddHttpContextAccessor();
@@ -40,6 +43,7 @@ namespace M.API.Configuration
                 new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
             services.AddHttpClient<SupabasePhotoStorage>(client => client.Timeout = TimeSpan.FromSeconds(30));
             services.AddScoped<LocalPhotoStorage>();
+            services.AddScoped<IPrivateDocumentStorage, LocalPrivateDocumentStorage>();
             services.AddScoped<IPhotoStorage>(sp => SupabasePhotoStorage.IsConfigured(configuration)
                 ? sp.GetRequiredService<SupabasePhotoStorage>() : sp.GetRequiredService<LocalPhotoStorage>());
 
@@ -54,7 +58,8 @@ namespace M.API.Configuration
                             || configuration.GetSection("Cors:AllowedOrigins").GetChildren()
                                 .Any(v => string.Equals(v.Value, origin, StringComparison.OrdinalIgnoreCase)))
                         .AllowAnyHeader()
-                        .AllowAnyMethod();
+                        .AllowAnyMethod()
+                        .WithExposedHeaders("X-Correlation-ID", "Retry-After", "Content-Disposition");
                 });
             });
         }
@@ -89,10 +94,10 @@ namespace M.API.Configuration
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
                 options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequiredLength = 6;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequiredLength = 10;
 
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 options.Lockout.MaxFailedAccessAttempts = 5;
@@ -114,6 +119,8 @@ namespace M.API.Configuration
                 .Validate(settings => !string.IsNullOrWhiteSpace(settings.Issuer) && !string.IsNullOrWhiteSpace(settings.Audience),
                     "JWT issuer and audience are required.")
                 .Validate(settings => settings.ExpirationMinutes is >= 1 and <= 10080, "Invalid JWT expiration.")
+                .Validate(settings => settings.RememberMeExpirationMinutes >= settings.ExpirationMinutes
+                    && settings.RememberMeExpirationMinutes <= 10080, "Remember-me expiration must be between the normal expiration and 7 days.")
                 .ValidateOnStart();
 
             services.AddAuthentication(options =>
@@ -160,12 +167,24 @@ namespace M.API.Configuration
                             context.Fail("The session is no longer valid.");
                             return;
                         }
+                        var employeeClaim = context.Principal?.FindFirst("employeeId")?.Value;
+                        if (employeeClaim != null)
+                        {
+                            var db = context.HttpContext.RequestServices.GetRequiredService<DatabaseContext>();
+                            if (!Guid.TryParse(employeeClaim, out var employeeId)
+                                || !await db.Employees.AsNoTracking().AnyAsync(e => e.Id == employeeId
+                                    && e.UserId == user.Id && !e.DeletedTime.HasValue, context.HttpContext.RequestAborted))
+                            {
+                                context.Fail("The employee link changed. Please sign in again.");
+                                return;
+                            }
+                        }
                         var expected = await users.GetRolesAsync(user);
                         var actual = context.Principal!.FindAll(System.Security.Claims.ClaimTypes.Role).Select(c => c.Value);
                         if (!expected.OrderBy(r => r).SequenceEqual(actual.OrderBy(r => r), StringComparer.OrdinalIgnoreCase))
                             context.Fail("Permissions changed. Please sign in again.");
                     },
-                    // Kh�ng c� token ho?c token sai
+                    // Reject missing or invalid tokens with a JSON challenge.
                     OnChallenge = async context =>
                     {
                         context.HandleResponse();
@@ -187,7 +206,7 @@ namespace M.API.Configuration
                     },
 
 
-                    // C� token nhung kh�ng d? quy?n Role
+                    // Authenticated actors still need the required role.
                     OnForbidden = async context =>
                     {
                         context.Response.StatusCode = StatusCodes.Status403Forbidden;
@@ -215,14 +234,14 @@ namespace M.API.Configuration
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
 
-                // C?u h�nh d? Swagger h? tr? DateOnly
+                // Expose calendar dates as OpenAPI date values.
                 c.MapType<DateOnly>(() => new OpenApiSchema
                 {
                     Type = "string",
-                    Format = "date", // �?m b?o Swagger hi?u r?ng d�y l� d?nh d?ng ng�y
+                    Format = "date",
                 });
 
-                // C?u h�nh Authorization
+                // Bearer authorization for Swagger requests.
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",

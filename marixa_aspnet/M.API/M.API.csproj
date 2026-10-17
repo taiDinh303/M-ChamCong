@@ -8,10 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="PDFsharp" Version="6.2.4" />
+    <!-- PDFsharp 6.2.x pulls Pkcs 8.0.1; pin Microsoft's patched net8 version. -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.2" />
     <Compile Remove="wwwroot - Copy\**" />
     <Content Remove="wwwroot - Copy\**" />
     <EmbeddedResource Remove="wwwroot - Copy\**" />
     <None Remove="wwwroot - Copy\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\Fonts\**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="..\sql\postgresql\*.sql" Link="Sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
 

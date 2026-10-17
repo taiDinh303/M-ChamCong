@@ -1,38 +1,32 @@
-# Kiến trúc Marixa Workforce V1
+# Kiến trúc backend Marixa hiện hành
 
-## Nền tảng hoạt động
+> Cập nhật 2026-10-17. ASP.NET Core 8/Identity JWT/EF Core; không dùng Next.js hoặc Supabase Auth làm đường chạy.
 
-- Next.js App Router + TypeScript trong `web/`; route handlers cung cấp API `/api/v1` và phục vụ UI tiếng Việt sẽ được bổ sung sau.
-- Supabase Auth quản lý email/mật khẩu. Hồ sơ `employees` độc lập với `app_users`; một partial unique index cùng trigger đảm bảo luôn có tối đa một và không thể vô hiệu hóa admin hoạt động cuối cùng.
-- Supabase Postgres lưu dữ liệu nghiệp vụ. RLS giới hạn hồ sơ/dữ liệu theo người dùng và vai trò. Ghi công, duyệt, sổ phép và kỳ công khóa đi qua RPC giao dịch; service-role chỉ được import ở server.
-- Supabase Storage dùng bucket `attendance-photos` private. Ảnh được tải theo quyền chủ sở hữu, đường dẫn không chứa tên, link xem có thời hạn 60 giây.
-- Tác vụ dọn ảnh chạy hằng ngày qua Vercel Cron, được bảo vệ bằng `CRON_SECRET`.
+## Phân lớp và cấu trúc
 
-## Dữ liệu và bảo toàn lịch sử
+| Project / folder | Trách nhiệm |
+| --- | --- |
+| M.Core | BaseEntity/exception/pagination/BusinessTime, actor contract/options; không HTTP/EF |
+| M.Contract.Repositories | Entity/Identity models và IUnitOfWork/IGenericRepository; không tham chiếu implementation persistence |
+| M.ModelViews | DTO/request/response và model file transport-neutral |
+| M.Contract.Services | Interface nghiệp vụ, storage/export/security |
+| M.Repositories | EF context/model/migrations, repository/UoW, SaveChanges period/audit guards |
+| M.Services | Business services theo Identity/HumanResources/Compensation/Timekeeping/Leave/Work/Audit/Shared; mappings/security |
+| M.API | Controller theo feature, Configuration/Bootstrap/Filters/Middleware/Storage/Export/Assets; composition root |
+| M.Tests | xUnit unit, HTTP/SQLite, SQL Server LocalDB/PostgreSQL fixtures và export QA |
 
-Migration SQL được quản lý theo thứ tự trong `supabase/migrations/` và áp dụng bằng `psql` trực tiếp đến Supabase hosted. Thời điểm lưu UTC; `work_date` và giờ nghiệp vụ tính theo `Asia/Ho_Chi_Minh`. Event chấm công gốc bất biến; ảnh và kết quả kiểm tra lưu metadata riêng. Chỉnh công và phép dùng record/giao dịch riêng. Snapshot kỳ công có phiên bản, chỉ HR đánh dấu đã kiểm tra sau khi ghi chú hết ngoại lệ; admin khóa và mở lại có lý do.
+Controller chuyển HTTP forms sang DTO/UploadedDocument, gọi service, trả JSON/file. Service dùng actor/clock/UoW/interfaces; M.API đăng ký adapters. M.Services còn dùng EF query extensions/IQueryable; đây là kiến trúc layered thực dụng, chưa phải domain model thuần hoặc DDD hoàn chỉnh.
 
-Mọi request nghiệp vụ có quyền ở cả API và database. Route không tin role từ client. RLS chặn đọc/sửa trái phép kể cả khi client dùng publishable key. Các hàm `SECURITY DEFINER` kiểm tra `auth.uid()`, vai trò, trạng thái tài khoản, quyền tự duyệt và khóa hàng liên quan trước khi thay đổi. Timestamp và lượt chấm gốc không bị sửa; metadata ảnh/trạng thái kiểm tra có thể đổi theo luồng được kiểm soát.
+## Bốn tính chất hướng đối tượng
 
-## Phạm vi đã dựng
+Trừu tượng: ICurrentUser, IUnitOfWork, storage/export/service interfaces. Kế thừa: BaseEntity bảo trì audit, BaseService chia sẻ actor/clock/guards/transaction, BaseApiController envelope, PhotoStorageBase validation. Đóng gói: private repository cache/transaction, private paths, AttendancePeriod factory/private setters/Review/Lock/Reopen. Đa hình: local/Supabase photo adapters, private storage mock, export interface, TimeProvider test. Không ép mọi class phải có lớp con; CRUD entities cũ còn public setters và một số response object cần giảm dần.
 
-- Auth server session, hồ sơ hiện tại, đổi mật khẩu tạm.
-- API chấm công online/offline idempotent; GPS và ảnh riêng tư đều tùy chọn, hỗ trợ PNG/JPEG/WebP khi có ảnh.
-- Tạo/yêu cầu/duyệt/hủy nghỉ, phép năm, tăng ca và sửa công.
-- Nhân viên, cấp/khóa tài khoản, reset mật khẩu, cấu hình văn phòng/giờ/lịch nghỉ/loại nghỉ.
-- Dashboard HR, danh sách chấm công và yêu cầu chờ.
-- Tính snapshot ngày công theo giây, tăng ca tự động ngày nghỉ, ghi chú ngoại lệ, khóa/mở lại admin, Excel và PDF.
-- Cấp phép năm hằng tháng idempotent; chấm offline tới sau kỳ khóa đi vào điều chỉnh riêng ở kỳ mở sau, có HR review và cột riêng trong Excel.
-- Dọn ảnh hết hạn trong cùng tác vụ cron hằng ngày.
+## Dữ liệu và transaction
 
-Phần UI nghiệp vụ, IndexedDB queue và kiểm thử tích hợp/e2e chưa được xây dựng; các API/backend chưa đủ để mở cho người dùng thật.
+Một AttendanceRule active; BreakStartTime/BreakMinutes cấu hình nghỉ, công thường và OT approved tách riêng theo 01. Identity/password/role do .NET quản lý; Supabase chỉ DB/Storage. Raw AttendanceLog không sửa/xóa; correction có audit. Period Open→Reviewed→Locked, snapshot/event append-only; SaveChanges kiểm mọi tháng gốc/mới bị tác động. Rule đổi làm mất review kỳ chưa khóa; snapshot cũ không tính lại.
 
-## Triển khai
+UoW dùng Serializable cho các luồng quan trọng; snapshot/source/job cùng DB transaction. Guard có tác dụng với SaveChanges, không chống DBA/raw SQL hoặc bulk bypass. DB unique constraints bảo vệ ngày công/rule/period/version/ledger. File và DB không có distributed transaction; write batch bù khi rollback, crash vẫn cần đối soát/backup.
 
-Vercel phục vụ ứng dụng Next.js từ `Marixa-ChamCong/web`; Supabase cung cấp Auth, Postgres và Storage. Dùng project Supabase hosted riêng cho thử nghiệm, không dùng Docker hoặc local Supabase stack. Cấu hình `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `NEXT_PUBLIC_APP_URL` và `CRON_SECRET` ở môi trường server phù hợp; secret key không bao giờ có tiền tố `NEXT_PUBLIC_`.
+Report/handover ở App_Data ngoài web root; legacy static path bị chặn, đọc cũ qua API có quyền. Ảnh public giữ quyết định. Worker ngày hiệu lực dùng AppliedAt, retry từng item/catch-up; không chạy trong test host. Các contract cũ chưa đồng nhất CancellationToken và Manager scope; xem rủi ro 34.
 
-Chính sách giờ, văn phòng, ngày nghỉ, số phép và thời hạn lưu ảnh phải được admin nhập trước khi mở chấm công. Backup database và object Storage là quy trình riêng; cần hoàn tất và thử restore trước khi dùng dữ liệu nhân viên thật. Xem `README.md` để biết giới hạn triển khai còn lại và rủi ro gói Vercel Hobby trong tài liệu đặc tả.
-
-## Chuyển đổi từ backend cũ
-
-Các thư mục `M.*`, solution .NET, dữ liệu mẫu và ảnh cũ được giữ lại làm nguồn đối chiếu/chuyển đổi; chúng không thuộc đường chạy hoặc triển khai V1 mới. Không nạp dữ liệu mẫu hay ảnh cũ vào Supabase trước khi có quy tắc chuyển đổi và kiểm tra quyền riêng tư.
+Tài liệu tiếp quản: [README](README.md), [AGENTS](AGENTS.md), [review](BACKEND_REVIEW.md), [API](../docs/15-api-contract.md), [migration](../docs/23-data-migration.md), [job](../docs/27-offline-realtime-jobs.md).

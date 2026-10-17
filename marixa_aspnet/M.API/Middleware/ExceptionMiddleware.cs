@@ -20,7 +20,13 @@ namespace M.API.Middleware
             {
                 await HandleExceptionAsync(context, ex.StatusCode, ex.ErrorDetail.ErrorCode, ex.ErrorDetail.ErrorMessage?.ToString());
             }
-            catch (DbUpdateException)
+            catch (DbUpdateConcurrencyException)
+            {
+                await HandleExceptionAsync(context, 409, "CONCURRENT_CHANGE", "A concurrent change was detected. Please retry.");
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is SqlException { Number: 2601 or 2627 or 547 }
+                or PostgresException { SqlState: "23505" or "23503" or "23514" or "23502" }
+                || ex.InnerException?.GetType().Name == "SqliteException")
             {
                 await HandleExceptionAsync(context, 409, "PERSISTENCE_CONFLICT", "The change conflicts with existing data. Refresh and retry.");
             }
@@ -57,7 +63,8 @@ namespace M.API.Middleware
                 statusCode,
                 code = errorCode,
                 message = errorMessage,
-                data = (object?)null
+                data = (object?)null,
+                traceId = context.TraceIdentifier
             };
 
             return context.Response.WriteAsJsonAsync(response);

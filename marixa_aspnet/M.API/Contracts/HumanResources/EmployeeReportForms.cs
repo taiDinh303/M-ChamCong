@@ -15,9 +15,11 @@ public class ReportSubmitForm
     public string? Results { get; set; }
     public string? Issues { get; set; }
     public string? Recommendations { get; set; }
+    public M.ModelViews.HumanResources.ReportSubmission ToSubmission() => new()
+    {
+        ReportId = ReportId, Title = Title, ReportType = ReportType, Period = Period, Deadline = Deadline,
+        Overview = Overview, Results = Results, Issues = Issues, Recommendations = Recommendations,
+        File = File == null ? null : new(File.FileName, File.Length, File.OpenReadStream),
+        Files = Files?.Select(file => new M.ModelViews.Files.UploadedDocument(file.FileName, file.Length, file.OpenReadStream)).ToList()
+    };
 }
-
-public class ReviewForm { public int Status { get; set; } public string? Comment { get; set; } }
-public class ForwardForm { public string Recipient { get; set; } = string.Empty; public Guid? RecipientEmployeeId { get; set; } public string? Note { get; set; } }
-public class UpperRequestForm { public int Status { get; set; } public string Request { get; set; } = string.Empty; public DateTime? Deadline { get; set; } }
-public class RespondForm { public string Comment { get; set; } = string.Empty; public bool TransferToEmployee { get; set; } }

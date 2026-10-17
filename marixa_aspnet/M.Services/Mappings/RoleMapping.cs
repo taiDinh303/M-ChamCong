@@ -2,7 +2,7 @@ using M.Contract.Repositories.AuthEntities;
 using M.Core.Utils;
 using M.ModelViews.RoleModelView;
 
-namespace Services.Mappings
+namespace M.Services.Mappings
 {
     public static class RoleMapping
     {

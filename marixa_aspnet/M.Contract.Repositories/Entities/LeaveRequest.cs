@@ -50,6 +50,9 @@ namespace M.Contract.Repositories.Entities
 
         // Thời gian duyệt
         public DateTime? ApprovedAt { get; set; }
+        public Guid? CancelledBy { get; set; }
+        public DateTime? CancelledAt { get; set; }
+        [MaxLength(500)] public string? CancellationReason { get; set; }
     }
 
     // Các trạng thái có thể của yêu cầu nghỉ phép

@@ -50,8 +50,7 @@ namespace M.Services.Services.Timekeeping
                 .Take(pageSize)
                 .ToListAsync();
 
-            foreach (Attendance a in attendances)
-                await EnrichAttendanceAsync(a);
+            await EnrichAttendancesAsync(attendances);
             List<AttendanceResponseModelView> result = attendances
                 .Select(x => x.ToViewModel())
                 .ToList();
@@ -106,8 +105,7 @@ namespace M.Services.Services.Timekeeping
                 .OrderByDescending(x => x.AttendanceDate)
                 .ToListAsync();
 
-            foreach (Attendance a in attendances)
-                await EnrichAttendanceAsync(a);
+            await EnrichAttendancesAsync(attendances);
             return attendances.Select(x => x.ToViewModel()).ToList();
         }
 
@@ -277,7 +275,7 @@ namespace M.Services.Services.Timekeeping
                 var ciUtc = new DateTimeOffset(checkIn.Value, TimeSpan.Zero);
                 var coUtc = new DateTimeOffset(checkOut.Value, TimeSpan.Zero);
                 var (netHours, otHours) =
-                    AttendanceTimeCalculator.Compute(ciUtc, coUtc, activeRule?.BreakMinutes, activeRule?.CheckOutTime);
+                    AttendanceTimeCalculator.Compute(ciUtc, coUtc, activeRule, await ApprovedOvertimeAsync(attendance.EmployeeId, attendance.AttendanceDate));
 
                 attendance.ActualHours = netHours;
                 attendance.OvertimeHours = otHours;
@@ -565,18 +563,25 @@ namespace M.Services.Services.Timekeeping
         // Enrich: tinh "Gio thuc" (net) + "Tang ca" theo AttendanceRule
         // truoc khi map ve view model -> du lieu hien thi NGAY, khong choi du HR.
         // =========================================================
-        private async Task EnrichAttendanceAsync(Attendance attendance)
+        private Task EnrichAttendanceAsync(Attendance attendance) => EnrichAttendancesAsync([attendance]);
+
+        private Task<List<OvertimeRequest>> ApprovedOvertimeAsync(Guid employeeId, DateTime date) =>
+            Repository<OvertimeRequest>().Entities.AsNoTracking().Where(r => r.EmployeeId == employeeId && r.WorkDate.Date == date.Date
+                && r.Status == OvertimeStatus.Approved && !r.DeletedTime.HasValue).ToListAsync();
+
+        private async Task EnrichAttendancesAsync(IReadOnlyList<Attendance> attendances)
         {
-            if (attendance == null) return;
-
-            IGenericRepository<AttendanceRule> ruleRepo =
-                UnitOfWork.GetRepository<AttendanceRule>();
-            AttendanceRule? activeRule = await ruleRepo.Entities
-                .Where(r => r.IsActive && !r.DeletedTime.HasValue)
-                .OrderByDescending(r => r.CreatedTime)
-                .FirstOrDefaultAsync();
-
-            AttendanceTimeCalculator.Enrich(attendance, activeRule);
+            if (attendances.Count == 0) return;
+            var rule = await GetActiveRuleAsync();
+            var ids = attendances.Select(a => a.EmployeeId).Distinct().ToArray();
+            var start = attendances.Min(a => a.AttendanceDate).Date;
+            var end = attendances.Max(a => a.AttendanceDate).Date.AddDays(1);
+            var overtime = await Repository<OvertimeRequest>().Entities.AsNoTracking()
+                .Where(r => ids.Contains(r.EmployeeId) && r.WorkDate >= start && r.WorkDate < end
+                    && r.Status == OvertimeStatus.Approved && !r.DeletedTime.HasValue).ToListAsync();
+            var byDay = overtime.ToLookup(r => (r.EmployeeId, r.WorkDate.Date));
+            foreach (var attendance in attendances)
+                AttendanceTimeCalculator.Enrich(attendance, rule, byDay[(attendance.EmployeeId, attendance.AttendanceDate.Date)]);
         }
 
         private async Task<string> ResolveEmployeeNameAsync(string username)
@@ -657,6 +662,8 @@ namespace M.Services.Services.Timekeeping
                     "Approver not found");
             }
 
+            if (attendance.EmployeeId == CurrentUser.EmployeeId && !CurrentUser.IsInRole(RoleNames.Admin) && !CurrentUser.IsInRole(RoleNames.HR))
+                throw new ErrorException(403, "SELF_APPROVAL_NOT_ALLOWED", "Only HR/Admin may review their own attendance.");
             attendance.ApprovalStatus = model.ApprovalStatus;
             attendance.Status = model.Status;
             attendance.ApprovedBy = model.ApprovedBy;
@@ -696,6 +703,9 @@ namespace M.Services.Services.Timekeeping
                     "NOT_FOUND",
                     "Attendance not found");
 
+            if (attendance.ApprovalStatus == AttendanceApprovalStatus.Approved)
+                throw new ErrorException(409, "APPROVED_ATTENDANCE", "Approved attendance must be corrected through a reviewed correction request.");
+
             string currentUser =
                 CurrentUserName;
 
@@ -719,6 +729,9 @@ namespace M.Services.Services.Timekeeping
                     "NOT_FOUND",
                     "Attendance not found");
 
+            if (attendance.ApprovalStatus == AttendanceApprovalStatus.Approved
+                || await Repository<AttendanceLog>().Entities.AnyAsync(log => log.AttendanceId == id))
+                throw new ErrorException(409, "ATTENDANCE_HISTORY_EXISTS", "Attendance with approval or raw events must be retained for audit.");
             await repo.DeleteAsync(attendance);
             await UnitOfWork.SaveAsync();
         }

@@ -42,12 +42,12 @@ public sealed class FoundationTests
     }
 
     [Fact]
-    public void Calculator_retains_existing_OT_policy()
+    public void Calculator_separates_normal_shift_hours_and_requires_approved_overtime()
     {
         var result = AttendanceTimeCalculator.Compute(DateTimeOffset.Parse("2026-10-16T01:00:00Z"),
-            DateTimeOffset.Parse("2026-10-16T11:00:00Z"), 60, new TimeOnly(17, 0));
-        Assert.Equal(9, result.ActualHours);
-        Assert.Equal(1m, result.OvertimeHours);
+            DateTimeOffset.Parse("2026-10-16T11:00:00Z"), new M.Contract.Repositories.Entities.AttendanceRule { BreakMinutes = 60 });
+        Assert.Equal(8m, result.ActualHours);
+        Assert.Equal(0m, result.OvertimeHours);
     }
 
     [Fact]

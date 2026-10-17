@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace M.API.Contracts.HumanResources;
+namespace M.ModelViews.HumanResources;
 
 public class PromotionRow
 {
@@ -44,7 +44,7 @@ public class PromotionRequest
     public string TargetRoleName { get; set; } = "Employee";
     public string Reason { get; set; } = string.Empty;
     public string? AdditionalNote { get; set; }
-    public DateTime EffectiveDate { get; set; } = DateTime.Today;
+    public DateTime EffectiveDate { get; set; }
 }
 
 public class PromotionReview

@@ -64,10 +64,17 @@ public sealed class UnitOfWork(DatabaseContext context) : IUnitOfWork
     public async Task RollBackAsync(CancellationToken cancellationToken = default)
     {
         var transaction = RequireTransaction();
-        await transaction.RollbackAsync(cancellationToken);
-        context.ChangeTracker.Clear();
-        await transaction.DisposeAsync();
-        _transaction = null;
+        try { await transaction.RollbackAsync(cancellationToken); }
+        catch (InvalidOperationException) when (transaction.GetDbTransaction().Connection == null)
+        {
+            // A deadlock victim can already have been rolled back by the server.
+        }
+        finally
+        {
+            context.ChangeTracker.Clear();
+            await transaction.DisposeAsync();
+            _transaction = null;
+        }
     }
 
     private void EnsureNoTransaction()

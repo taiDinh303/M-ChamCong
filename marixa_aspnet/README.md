@@ -1,39 +1,25 @@
-# Marixa Chấm Công — Backend V1
+# Marixa — Backend ASP.NET Core
 
-Phần đang triển khai là Next.js App Router trong `web/`, với Supabase Auth, Postgres/RLS và Storage private. Hiện chưa có giao diện nghiệp vụ; trang gốc vẫn là landing cho backend. Khi cấu hình Vercel, đặt Root Directory là `Marixa-ChamCong/web`.
+> Cập nhật 2026-10-17. Solution M.BE.sln, entry M.API, target `net8.0`. DB SQL Server local hoặc PostgreSQL. Frontend React/Vite ở ../marixa_react.
 
-## Môi trường phát triển
+Đọc [docs00](../docs/00-README.md), [quyết định](../docs/01-plan.md), [kiến trúc](ARCHITECTURE.md), [AGENTS](AGENTS.md) và [review](BACKEND_REVIEW.md) trước khi sửa. README/SQL Next.js cũ đã được phân loại legacy; không chạy supabase/migrations vào database EF hiện hành.
 
-- Node.js trực tiếp, PostgreSQL client `psql` trực tiếp.
-- Không dùng Docker, Dockerfile, docker-compose hoặc Supabase local stack.
-- Kết nối một Supabase project hosted riêng cho dev; không dùng dữ liệu nhân viên thật ở preview.
-- Migration ở `supabase/migrations/`, chạy theo thứ tự tên file. Migration `202610090012` bổ sung GPS/ảnh tùy chọn, cấp phép tháng idempotent và điều chỉnh cho chấm offline đến sau khi kỳ gốc khóa.
-- Đặt `MARIXA_DATABASE_URL` trong shell hiện tại rồi chạy `./scripts/apply-migrations.ps1`. Script áp dụng từng migration trong transaction, ghi checksum và từ chối sửa migration đã chạy.
-- Tạo Auth user và hồ sơ nhân viên admin, sau đó chạy `supabase/bootstrap-admin.sql` bằng `psql -v auth_user_id=... -v employee_id=...`.
-- App secrets nằm trong `web/.env.local` hoặc Vercel server environment. Dùng `SUPABASE_SECRET_KEY` chỉ ở server; tuyệt đối không đưa secret key vào bundle client.
+## Build và test
 
-## API hiện có
+Từ repo root, PowerShell:
 
-- Hồ sơ/công/đơn cá nhân: `GET /api/v1/me`, `GET /api/v1/me/attendance`, `GET /api/v1/me/requests`.
-- Chấm công: `POST /api/v1/attendance/events` nhận GPS tùy chọn và trạng thái ảnh dự kiến; upload/đọc signed ảnh WebP/JPEG/PNG qua `/api/v1/attendance/events/:id/photo`.
-- Đơn: `POST /api/v1/leave-requests`, `/api/v1/overtime-requests`, `/api/v1/attendance/corrections`; quyết định/hủy qua `/api/v1/requests/:type/:id/{decision|cancel}`.
-- Quản lý tài khoản, cấu hình, nhân viên, HR dashboard, bảng công, export và cron có route riêng dưới `/api/v1/admin/`, `/api/v1/hr/`, `/api/v1/reports/` và `/api/cron/`.
-- HR: dashboard, danh sách nhân viên và chấm công, hàng đợi duyệt; `GET/POST /api/v1/hr/timesheet-adjustments` để đối soát đồng bộ muộn sau kỳ khóa.
-- Admin: cấp/khóa/reset tài khoản, vị trí, giờ làm, lịch nghỉ, loại nghỉ và sổ phép.
-- Kỳ công: tạo/tính snapshot, ghi chú ngoại lệ, HR đối soát, admin khóa/mở lại.
-- Báo cáo: Excel từ snapshot và PDF đơn nghỉ theo phiên bản hiện tại.
-- Cron hằng ngày: dọn ảnh hết retention và cấp bù phép năm theo tháng theo cách idempotent; admin có thể chạy lại thủ công.
+```powershell
+dotnet restore .\marixa_aspnet\M.BE.sln
+dotnet build .\marixa_aspnet\M.BE.sln -c Release --no-restore -warnaserror
+dotnet test .\marixa_aspnet\M.BE.sln -c Release --no-build
+```
 
-## Đã kiểm tra
+Tests dùng SQLite riêng, LocalDB fixture tự tạo/drop DB Marixa_Verify_GUID; PostgreSQL runtime chỉ chạy khi MARIXA_TEST_POSTGRES trỏ loopback. CI có PostgreSQL container. Không trỏ test vào DB thật. Bằng chứng cuối ở worklog; build pass không thay E 2 E/cloud/restore.
 
-- `npm run typecheck`: đạt.
-- `npm run build`: đạt với Next.js 16.4.0.
-- `npm test`: 6 kiểm thử đơn vị tính công đạt.
-- `npm audit --audit-level=moderate`: 0 lỗ hổng đã biết sau override dependency.
-- Chưa áp dụng migration lên Supabase, chưa có credential/project dev, chưa chạy smoke test RLS/API hoặc restore; không có production deployment.
+## Chạy dev và phát hành
 
-## Chưa sẵn sàng dùng dữ liệu thật
+Setup/cổng/env theo [10](../docs/10-setup-local.md), registry tại [17](../docs/17-environment-config.md). Development mặc định init schema + role/rule, admin/sample opt-in có password riêng; Production mặc định không init/seed. .env không tự nạp. JWT key production tối thiểu 32 byte, khác marker local; Storage key chỉ server.
 
-Chưa có UI đăng nhập/đổi mật khẩu, trải nghiệm chấm công và hàng đợi IndexedDB offline; chưa thử trên điện thoại. Migration mới chưa áp dụng hoặc kiểm chứng trên PostgreSQL/Supabase test. Cần cấu hình đầy đủ office, policy, lịch nghỉ, retention; hoàn tất smoke test quyền/RLS, upload ảnh, duyệt, điều chỉnh kỳ sau, export, retention và backup/restore. Rủi ro điều kiện thương mại của Vercel Hobby đã ghi trong tài liệu triển khai và cần được xem lại nếu mục đích sử dụng chuyển sang thương mại.
+Schema mới theo [23](../docs/23-data-migration.md), backup trước apply. /health/ready kiểm DB/schema, /health/live chỉ process. Docker chạy user app; App_Data và local uploads cần storage bền trước production. Worker áp approved promotion/handover theo ngày VN mỗi phút/catch-up, xem 27.
 
-Backend .NET cũ, dữ liệu mẫu và ảnh cũ vẫn được giữ để đối chiếu/chuyển đổi; không thuộc đường chạy mới. Không xóa cho tới khi xác nhận dữ liệu cần di chuyển hoặc lưu trữ.
+API route/quyền tại [15](../docs/15-api-contract.md) và inventory; ảnh public, HR docs private. Khóa kỳ tạo snapshot/version để XLSX; PDF đơn nghỉ theo trạng thái hiện tại. UI backend mới chưa được nối/kiểm browser trong nhiệm vụ này.

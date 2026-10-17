@@ -84,6 +84,7 @@ namespace M.Services.Services.Timekeeping
 
         private async Task CreateAsyncCore(CreateAttendanceRuleModelView model)
         {
+            ValidateRule(model.CheckInTime, model.CheckOutTime, model.BreakStartTime, model.BreakMinutes, model.StandardHours, model.LateGraceMinutes, model.EarlyLeaveThresholdMinutes);
             IGenericRepository<AttendanceRule> repo = UnitOfWork.GetRepository<AttendanceRule>();
 
             bool codeExists = await repo.Entities
@@ -127,6 +128,7 @@ namespace M.Services.Services.Timekeeping
 
         private async Task UpdateAsyncCore(UpdateAttendanceRuleModelView model)
         {
+            ValidateRule(model.CheckInTime, model.CheckOutTime, model.BreakStartTime, model.BreakMinutes, model.StandardHours, model.LateGraceMinutes, model.EarlyLeaveThresholdMinutes);
             IGenericRepository<AttendanceRule> repo = UnitOfWork.GetRepository<AttendanceRule>();
 
             AttendanceRule entity = await repo.Entities
@@ -189,6 +191,19 @@ namespace M.Services.Services.Timekeeping
             await repo.DeleteAsync(entity);
             await UnitOfWork.SaveAsync();
         }
+        private static void ValidateRule(TimeOnly start, TimeOnly end, TimeOnly breakStart, int breakMinutes, int hours, int late, int early)
+        {
+            var startMinute = start.ToTimeSpan().TotalMinutes;
+            var endMinute = end.ToTimeSpan().TotalMinutes;
+            if (endMinute <= startMinute) endMinute += 1440;
+            var pause = breakStart.ToTimeSpan().TotalMinutes;
+            if (pause < startMinute) pause += 1440;
+            if (hours is < 1 or > 24 || breakMinutes < 0 || breakMinutes >= endMinute - startMinute
+                || late < 0 || early < 0 || late > 1440 || early > 1440
+                || (breakMinutes > 0 && (pause < startMinute || pause + breakMinutes > endMinute)))
+                throw new ErrorException(400, "INVALID_RULE", "Shift hours, break window and grace values are inconsistent.");
+        }
+
         private async Task DeactivateOtherRulesAsync(Guid? keepId)
         {
             var active = await Repository<AttendanceRule>().Entities

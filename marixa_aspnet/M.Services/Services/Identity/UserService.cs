@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using M.ModelViews.UserInfoModelView;
 using M.ModelViews.UserModelView;
-using Services.Mappings;
 using static M.Core.Base.BaseException;
 
 namespace M.Services.Services.Identity
@@ -39,7 +38,14 @@ namespace M.Services.Services.Identity
 
         #region Create - Get - Update - Delete
 
-        public async Task CreateAsync(CreateUserModelView model)
+        public Task CreateAsync(CreateUserModelView model)
+        {
+            RequireStaff();
+            if (string.Equals(model.Role?.Trim(), RoleNames.Admin, StringComparison.OrdinalIgnoreCase)) RequireAdmin();
+            return InTransactionAsync(async () => { await CreateCoreAsync(model); return true; });
+        }
+
+        private async Task CreateCoreAsync(CreateUserModelView model)
         {
             ApplicationUser user = new ApplicationUser
             {
@@ -120,6 +126,7 @@ namespace M.Services.Services.Identity
 
         public async Task<BasePaginatedList<UserResponseModelView>> GetAllAsync(int pageNumber, int pageSize)
         {
+            RequireStaff();
             (pageNumber, pageSize) = Pagination.Normalize(pageNumber, pageSize);
 
             IGenericRepository<ApplicationUser> userRepo = UnitOfWork.GetRepository<ApplicationUser>();
@@ -147,6 +154,7 @@ namespace M.Services.Services.Identity
 
         public async Task<UserResponseModelView> GetByIdAsync(Guid id)
         {
+            RequireStaff();
             ApplicationUser? user = await UnitOfWork.GetRepository<ApplicationUser>().Entities
                 .Where(u => u.Id == id && !u.DeletedTime.HasValue)
                 .FirstOrDefaultAsync()
@@ -163,6 +171,8 @@ namespace M.Services.Services.Identity
 
         public async Task UpdateAsync(UpdateUserModelView request)
         {
+            RequireStaff();
+            await _adminGuard.EnsureCanManageAsync(request.Id);
             var userRepo = UnitOfWork.GetRepository<ApplicationUser>();
 
             ApplicationUser user = await userRepo.Entities
@@ -178,8 +188,8 @@ namespace M.Services.Services.Identity
             user.LastUpdatedBy = CurrentUserName;
             user.LastUpdatedTime = UtcNow;
 
-            await userRepo.UpdateAsync(user);
-            await UnitOfWork.SaveAsync();
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded) throw new ErrorException(400, "INVALID_INPUT", "Could not update the account.");
         }
 
 
@@ -279,6 +289,8 @@ namespace M.Services.Services.Identity
         // Set password if user didn't have one (e.g., Google login)
         public async Task SetPasswordAsync(Guid userId, string token, string newPassword)
         {
+            if (!CurrentUser.IsAuthenticated) throw new ErrorException(401, "UNAUTHORIZED", "Authentication required.");
+            if (CurrentUser.UserId != userId) await _adminGuard.EnsureCanManageAsync(userId);
             ApplicationUser user = await _userManager.FindByIdAsync(userId.ToString())
                 ?? throw new ErrorException(
                     StatusCodes.Status404NotFound,
@@ -305,6 +317,8 @@ namespace M.Services.Services.Identity
         // Change password when user knows the current password
         public async Task ChangePasswordAsync(Guid userId, string currentPassword, string newPassword)
         {
+            if (!CurrentUser.IsAuthenticated || CurrentUser.UserId != userId)
+                throw new ErrorException(403, "FORBIDDEN", "You may change only your own password.");
             ApplicationUser user = await _userManager.FindByIdAsync(userId.ToString())
                 ?? throw new ErrorException(
                     StatusCodes.Status404NotFound,

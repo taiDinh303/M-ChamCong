@@ -32,6 +32,9 @@ namespace M.ModelViews.LeaveRequestModelView
         public string? ApproverName { get; set; }
 
         public DateTime? ApprovedAt { get; set; }
+        public Guid? CancelledBy { get; set; }
+        public DateTime? CancelledAt { get; set; }
+        public string? CancellationReason { get; set; }
 
         public DateTimeOffset CreatedTime { get; set; }
 

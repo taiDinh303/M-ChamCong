@@ -1,6 +1,6 @@
 # 09 — Design system và giao diện Marixa
 
-> Chủ tài liệu: **Đinh Văn Tài**. Đối chiếu mã nguồn: **16/10/2026**.
+> Chủ tài liệu: **Đinh Văn Tài**. Đối chiếu mã nguồn: **17/10/2026**.
 > **CURRENT** mô tả UI có mã nguồn; **TARGET** là tiêu chí thiết kế cần đạt; **NOT VERIFIED** nghĩa chưa có kiểm tra browser/thiết bị/Figma live trong lượt này.
 > **EN — Codex / Agnes:** Implement only authorized UI work. Keep current behavior and target UX separate. `theme.css` owns code token values; do not infer permissions or completed features from a design frame.
 
@@ -49,7 +49,7 @@ Inventory route đầy đủ và các redirect: [03](03-architecture.md), [`figm
 | --- | --- | --- |
 | `/login`, `/kich-hoat` | Form đăng nhập / kích hoạt và gọi API tương ứng. | Có loading, lỗi cạnh trường, lỗi mạng, trạng thái kích hoạt; không tuyên bố đã kiểm thử đủ khóa tài khoản/keyboard. |
 | `/home` | Trang tổng quan/module cards. | Chỉ hiện hành động phù hợp phiên và quyền; không bỏ route này khỏi mapping thiết kế. |
-| `/attendance` | Đồng hồ Việt Nam, camera, vào/ra, vị trí GPS dạng tọa độ, lịch tuần. UI yêu cầu ảnh mới và upload thành công trước mỗi lần chấm. | Chính sách nghiệp vụ ảnh/GPS tùy chọn đang khác UI; xem [02](02-business-analysis.md). GPS chưa gửi/lưu vào API; chưa có geofence. Không hiển thị “Trong/Ngoài văn phòng” như kết quả thật khi chưa tính. |
+| `/attendance` | Đồng hồ Việt Nam, camera, vào/ra, vị trí GPS dạng tọa độ, lịch tuần. UI yêu cầu ảnh mới và upload thành công trước mỗi lần chấm. | Chính sách nghiệp vụ ảnh/GPS tùy chọn đang khác UI; xem [02](02-business-analysis.md). Frontend chưa gửi GPS; backend đã nhận/lưu optional latitude/longitude/deviceId. Chưa có geofence. Không hiển thị “Trong/Ngoài văn phòng” như kết quả thật khi chưa tính. |
 | `/attendance/attendance-history`, `/attendance/statistics` | Lịch sử/thống kê, xem dữ liệu công; một số luồng có CSV dữ liệu hiện thời. | Loading, rỗng, thiếu mốc, lỗi API rõ ràng. “Kỳ khóa”, snapshot bất biến và export snapshot XLSX/PDF chưa triển khai. |
 | `/attendance/leave` | Tạo/xem đơn; API dùng Pending/Approved/Rejected/Cancelled theo transition thực tế. | Không thêm nút hủy đơn Approved hoặc gọi “hoàn phép” là hiện có; nháp UI không phải trạng thái DB nếu chưa hỗ trợ. |
 | Hợp đồng/lương/bảo hiểm/ngân hàng/quy định cá nhân | Các route/component hiện có dưới `/attendance/*`. | Phân biệt dữ liệu rỗng, thiếu liên kết nhân viên và thiếu quyền; chưa nghiệm thu đầy đủ màn hình. |
@@ -78,4 +78,4 @@ Nguồn luồng chấm công: [`AttendanceCard.jsx`](../marixa_react/src/modules
 
 Frame thiết kế chính theo quyết định chủ dự án: **mobile 375px**, **desktop 1440px**; kiểm tra bổ sung 768/1024px khi triển khai. **TARGET:** không cuộn ngang toàn trang mobile; bảng rộng có vùng cuộn riêng; form có label/lỗi; focus nhìn rõ, dialog hỗ trợ keyboard/Esc và trả focus; toast/lỗi được công nghệ hỗ trợ nhận biết. Dùng icon nhất quán, trạng thái không chỉ dựa vào màu. Emoji còn có trong code; không ghi như đã được thay hết.
 
-Trước khi đánh dấu UI hoàn thành: đối chiếu API/quyền và trạng thái lỗi, chạy build/lint phù hợp, kiểm tra browser ở kích thước mục tiêu và lưu bằng chứng. Kiểm tra camera/GPS cần thiết bị/quyền thực tế. Lượt **16/10/2026 chỉ chuẩn hóa tài liệu**, không xác nhận pixel match, font, tương phản hoặc accessibility đã đạt. Kịch bản kiểm thử: [06-testing.md](06-testing.md).
+Trước khi đánh dấu UI hoàn thành: đối chiếu API/quyền và trạng thái lỗi, chạy build/lint phù hợp, kiểm tra browser ở kích thước mục tiêu và lưu bằng chứng. Kiểm tra camera/GPS cần thiết bị/quyền thực tế. Lượt **16/10/2026 sửa backend/tài liệu, không sửa giao diện**, không xác nhận pixel match, font, tương phản hoặc accessibility đã đạt. Kịch bản kiểm thử: [06-testing.md](06-testing.md).

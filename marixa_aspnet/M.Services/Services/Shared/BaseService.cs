@@ -49,4 +49,20 @@ public abstract class BaseService
         if (!IsStaff)
             throw new ErrorException(403, ResponseCodeConstants.FORBIDDEN, "Staff access required.");
     }
+
+    protected async Task<T> InTransactionAsync<T>(Func<Task<T>> operation)
+    {
+        await UnitOfWork.BeginTransactionAsync();
+        try
+        {
+            var result = await operation();
+            await UnitOfWork.CommitTransactionAsync();
+            return result;
+        }
+        catch
+        {
+            await UnitOfWork.RollBackAsync();
+            throw;
+        }
+    }
 }

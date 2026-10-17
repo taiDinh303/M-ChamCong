@@ -23,6 +23,8 @@ namespace M.ModelViews.AttendanceRuleModelView
 
         public int EarlyLeaveThresholdMinutes { get; set; }
 
+        public TimeOnly BreakStartTime { get; set; } = new(12, 0);
+
         public int BreakMinutes { get; set; }
 
         public bool PhotoRequired { get; set; }
@@ -59,7 +61,9 @@ namespace M.ModelViews.AttendanceRuleModelView
 
         public int EarlyLeaveThresholdMinutes { get; set; } = 0;
 
-        public int BreakMinutes { get; set; } = 0;
+        public TimeOnly BreakStartTime { get; set; } = new(12, 0);
+
+        public int BreakMinutes { get; set; } = 60;
 
         public bool PhotoRequired { get; set; } = false;
 
@@ -93,6 +97,8 @@ namespace M.ModelViews.AttendanceRuleModelView
         public int LateGraceMinutes { get; set; }
 
         public int EarlyLeaveThresholdMinutes { get; set; }
+
+        public TimeOnly BreakStartTime { get; set; } = new(12, 0);
 
         public int BreakMinutes { get; set; }
 

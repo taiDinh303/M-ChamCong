@@ -46,7 +46,8 @@ namespace M.Contract.Repositories.Entities
         public int? PlannedHours { get; set; }
 
         // Số giờ làm thực tế (net: đã trừ giờ nghỉ giữa ca theo AttendanceRule)
-        public int? ActualHours { get; set; }
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal? ActualHours { get; set; }
 
         // Số giờ tăng ca (phần vượt mốc ra ca chuẩn). Transient: tính ở service,
         // KHÔNG lưu DB (tránh migration / lệch schema) — tính lại khi cần.

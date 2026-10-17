@@ -34,6 +34,15 @@ namespace M.Services.Services.Identity
                 .Where(x => !x.DeletedTime.HasValue)
                 .Include(x => x.Employee)
                 .OrderByDescending(x => x.CreatedTime);
+            RequireStaff();
+            if (!CurrentUser.IsInRole(RoleNames.Admin))
+            {
+                var adminUsers = Repository<ApplicationUserRole>().Entities
+                    .Join(Repository<ApplicationRole>().Entities.Where(role => role.Name == RoleNames.Admin),
+                        link => link.RoleId, role => role.Id, (link, role) => link.UserId);
+                query = query.Where(code => (!code.UserId.HasValue || !adminUsers.Contains(code.UserId.Value))
+                    && (code.Employee == null || !code.Employee.UserId.HasValue || !adminUsers.Contains(code.Employee.UserId.Value)));
+            }
 
             int totalItems = await query.CountAsync();
 
@@ -52,6 +61,7 @@ namespace M.Services.Services.Identity
 
         public async Task<ActivationCodeResponseModelView> GetByIdAsync(Guid id)
         {
+            RequireAdmin();
             IGenericRepository<ActivationCode> repo = UnitOfWork.GetRepository<ActivationCode>();
 
             ActivationCode item = await repo.Entities
@@ -68,6 +78,7 @@ namespace M.Services.Services.Identity
 
         public async Task CreateAsync(CreateActivationCodeModelView model)
         {
+            RequireAdmin();
             IGenericRepository<ActivationCode> repo = UnitOfWork.GetRepository<ActivationCode>();
 
             IGenericRepository<Employee> employeeRepo =
@@ -100,7 +111,7 @@ namespace M.Services.Services.Identity
             string currentUser =
                 CurrentUserName;
 
-            ActivationCode entity = model.ToEntity();
+            ActivationCode entity = model.ToEntity(UtcNow);
             entity.Code = model.Code.Trim();
             entity.CreatedBy = currentUser;
             entity.CreatedTime = UtcNow;
@@ -111,6 +122,7 @@ namespace M.Services.Services.Identity
 
         public async Task UpdateAsync(UpdateActivationCodeModelView model)
         {
+            RequireAdmin();
             IGenericRepository<ActivationCode> repo = UnitOfWork.GetRepository<ActivationCode>();
 
             ActivationCode entity = await repo.Entities
@@ -134,6 +146,7 @@ namespace M.Services.Services.Identity
 
         public async Task SoftDeleteAsync(Guid id)
         {
+            RequireAdmin();
             IGenericRepository<ActivationCode> repo = UnitOfWork.GetRepository<ActivationCode>();
 
             ActivationCode entity = await repo.Entities
@@ -155,6 +168,7 @@ namespace M.Services.Services.Identity
 
         public async Task DeleteAsync(Guid id)
         {
+            RequireAdmin();
             IGenericRepository<ActivationCode> repo = UnitOfWork.GetRepository<ActivationCode>();
 
             ActivationCode entity = await repo.Entities

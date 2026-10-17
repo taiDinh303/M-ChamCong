@@ -2,7 +2,7 @@
 using M.Contract.Repositories.Entities;
 using M.ModelViews.DepartmentModelView;
 
-namespace Services.Mappings
+namespace M.Services.Mappings
 {
     public static class DepartmentMapping
     {

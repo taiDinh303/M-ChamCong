@@ -21,7 +21,7 @@ namespace M.ModelViews.AttendanceModelView
         public Guid? PlannedShiftId { get; set; }
         public string? PlannedShiftName { get; set; }
         public int? PlannedHours { get; set; }
-        public int? ActualHours { get; set; }
+        public decimal? ActualHours { get; set; }
 
         // Số giờ tăng ca (net, tính theo AttendanceRule: phần vượt mốc ra ca chuẩn)
         public decimal? OvertimeHours { get; set; }
@@ -90,7 +90,7 @@ namespace M.ModelViews.AttendanceModelView
 
         public Guid? PlannedShiftId { get; set; }
         public int? PlannedHours { get; set; }
-        public int? ActualHours { get; set; }
+        public decimal? ActualHours { get; set; }
 
         // Số giờ tăng ca (net, tính theo AttendanceRule: phần vượt mốc ra ca chuẩn)
         public decimal? OvertimeHours { get; set; }

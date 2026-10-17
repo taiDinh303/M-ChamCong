@@ -1,115 +1,64 @@
 using M.Contract.Repositories.Entities;
 
-namespace M.Services.Services.Timekeeping
+namespace M.Services.Services.Timekeeping;
+
+/// <summary>Owner decision 2026-10-17: normal shift time and approved overtime are separate, minute-based quantities.</summary>
+public static class AttendanceTimeCalculator
 {
-    /// <summary>
-    /// Tiện ích dùng chung: tính "Giờ thực" (net, đã trừ giờ nghỉ giữa ca) và
-    /// "Tăng ca" (phần vượt mốc ra ca chuẩn) dựa trên mốc vào/ra thực tế.
-    /// Dùng cho cả luồng chấm công của nhân viên (vào/ra ca) và điều chỉnh của
-    /// HR/admin để đảm bảo một công thức duy nhất.
-    /// </summary>
-    public static class AttendanceTimeCalculator
+    public static (decimal? ActualHours, decimal? OvertimeHours) Compute(DateTimeOffset? checkIn,
+        DateTimeOffset? checkOut, AttendanceRule? rule, IEnumerable<OvertimeRequest>? overtime = null)
     {
-        /// <summary>Giờ VN (UTC+7) dùng để đọc mốc vào/ra và so với ca chuẩn.</summary>
-        public const int VnUtcOffsetHours = 7;
+        if (!checkIn.HasValue || !checkOut.HasValue || checkOut < checkIn) return (null, null);
+        var start = checkIn.Value;
+        var end = checkOut.Value;
+        if (start == end) return (0m, 0m);
+        var day = start.ToOffset(TimeSpan.FromHours(7)).Date;
+        DateTimeOffset At(TimeOnly time) => new(day.Add(time.ToTimeSpan()), TimeSpan.FromHours(7));
+        var shiftStart = At(rule?.CheckInTime ?? new TimeOnly(8, 0));
+        var shiftEnd = At(rule?.CheckOutTime ?? new TimeOnly(17, 0));
+        if (shiftEnd <= shiftStart) shiftEnd = shiftEnd.AddDays(1);
+        var breakStart = At(rule?.BreakStartTime ?? new TimeOnly(12, 0));
+        if (breakStart < shiftStart) breakStart = breakStart.AddDays(1);
+        var breakEnd = breakStart.AddMinutes(Math.Max(0, rule?.BreakMinutes ?? 60));
+        var windows = Merge((overtime ?? []).Where(r => r.Status == OvertimeStatus.Approved && !r.DeletedTime.HasValue
+                && r.StartAt.HasValue && r.EndAt > r.StartAt)
+            .Select(r => (Start: Max(start, r.StartAt!.Value), End: Min(end, r.EndAt!.Value)))
+            .Where(w => w.End > w.Start));
+        var normalStart = Max(start, shiftStart);
+        var normalEnd = Min(end, shiftEnd);
+        var normalMinutes = NetMinutes(normalStart, normalEnd, breakStart, breakEnd);
+        // An approved OT interval inside the shift is excluded from normal hours, so it is never counted twice.
+        normalMinutes -= windows.Sum(w => NetMinutes(Max(normalStart, w.Start), Min(normalEnd, w.End), breakStart, breakEnd));
+        normalMinutes = Math.Clamp(normalMinutes, 0, Math.Max(0, rule?.StandardHours ?? 8) * 60m);
+        var overtimeMinutes = windows.Sum(w => NetMinutes(w.Start, w.End, breakStart, breakEnd));
+        return (Hours(normalMinutes), Hours(overtimeMinutes));
+    }
 
-        /// <summary>Cửa sổ nghỉ trưa mặc định (khớp seeder "Ca hành chính": 12:00 - 13:00).</summary>
-        public static readonly TimeOnly LunchWindowStart = new(12, 0);
+    public static void Enrich(Attendance attendance, AttendanceRule? rule, IEnumerable<OvertimeRequest>? overtime = null)
+    {
+        var logs = attendance.AttendanceLogs.Where(l => !l.DeletedTime.HasValue);
+        var checkIn = attendance.CheckInTime ?? logs.Where(l => l.Type == AttendanceLogType.CheckIn).Select(l => (DateTimeOffset?)l.LogTime).Min();
+        var checkOut = attendance.CheckOutTime ?? logs.Where(l => l.Type == AttendanceLogType.CheckOut).Select(l => (DateTimeOffset?)l.LogTime).Max();
+        var hours = Compute(checkIn, checkOut, rule, overtime);
+        attendance.ActualHours = hours.ActualHours;
+        attendance.OvertimeHours = hours.OvertimeHours;
+    }
 
-        /// <summary>Mốc ra ca chuẩn mặc định khi không có quy định (17:00).</summary>
-        public static readonly TimeOnly DefaultStandardEnd = new(17, 0);
+    private static decimal Hours(decimal minutes) => Math.Round(decimal.Floor(Math.Max(0, minutes)) / 60m, 2, MidpointRounding.AwayFromZero);
+    private static decimal NetMinutes(DateTimeOffset start, DateTimeOffset end, DateTimeOffset breakStart, DateTimeOffset breakEnd) =>
+        Minutes(start, end) - Minutes(Max(start, breakStart), Min(end, breakEnd));
+    private static decimal Minutes(DateTimeOffset start, DateTimeOffset end) => Math.Max(0, (decimal)(end - start).TotalMinutes);
+    private static DateTimeOffset Min(DateTimeOffset a, DateTimeOffset b) => a < b ? a : b;
+    private static DateTimeOffset Max(DateTimeOffset a, DateTimeOffset b) => a > b ? a : b;
 
-        /// <summary>
-        /// Tính "Giờ thực" (net, tròn số giờ) và "Tăng ca" (decimal, >= 0).
-        /// </summary>
-        /// <param name="checkIn">Giờ vào ca (UTC, có thể null).</param>
-        /// <param name="checkOut">Giờ ra ca (UTC, có thể null).</param>
-        /// <param name="breakMinutes">Giờ nghỉ giữa ca được trừ (theo quy định/ca).</param>
-        /// <param name="standardEnd">Mốc ra ca chuẩn để tính tăng ca (null = 17:00).</param>
-        public static (int? ActualHours, decimal? OvertimeHours) Compute(
-            DateTimeOffset? checkIn,
-            DateTimeOffset? checkOut,
-            int? breakMinutes,
-            TimeOnly? standardEnd)
+    private static IReadOnlyList<(DateTimeOffset Start, DateTimeOffset End)> Merge(IEnumerable<(DateTimeOffset Start, DateTimeOffset End)> input)
+    {
+        var output = new List<(DateTimeOffset Start, DateTimeOffset End)>();
+        foreach (var item in input.OrderBy(w => w.Start))
         {
-            // Chưa đủ cặp vào - ra (hoặc ra trước vào) -> chưa tính được.
-            if (!checkIn.HasValue || !checkOut.HasValue || checkOut < checkIn)
-                return (null, null);
-
-            int breakMin = Math.Max(0, breakMinutes ?? 0);
-            TimeOnly stdEnd = standardEnd ?? DefaultStandardEnd;
-
-            var inVn = ToVnTimeOnly(checkIn.Value);
-            var outVn = ToVnTimeOnly(checkOut.Value);
-
-            int elapsedMin = MinutesBetween(inVn, outVn);
-            if (elapsedMin <= 0)
-                return (0, 0m);
-
-            // ===== GIỜ THỰC (net): trừ phần đè lên cửa sổ nghỉ trưa =====
-            int lunchBreakMin = 0;
-            if (breakMin > 0)
-            {
-                int lunchStartMin = ToMinutes(LunchWindowStart);
-                int lunchEndMin = lunchStartMin + breakMin;
-                int inMin = ToMinutes(inVn);
-                int outMin = ToMinutes(outVn);
-                int overlapStart = Math.Max(inMin, lunchStartMin);
-                int overlapEnd = Math.Min(outMin, lunchEndMin);
-                if (overlapEnd > overlapStart)
-                    lunchBreakMin = Math.Min(breakMin, overlapEnd - overlapStart);
-            }
-
-            int netMin = Math.Max(0, elapsedMin - lunchBreakMin);
-            int? actualHours = (int)Math.Round(netMin / 60.0);
-
-            // ===== TĂNG CA: phần vượt mốc ra ca chuẩn =====
-            int otMin = Math.Max(0, ToMinutes(outVn) - ToMinutes(stdEnd));
-            decimal overtimeHours = otMin > 0 ? Math.Round(otMin / 60m, 1) : 0m;
-
-            return (actualHours, overtimeHours);
+            if (output.Count == 0 || item.Start > output[^1].End) output.Add(item);
+            else output[^1] = (output[^1].Start, Max(output[^1].End, item.End));
         }
-
-        /// <summary>
-        /// Tính và gán lại ActualHours (net) + OvertimeHours (transient) cho một
-        /// bản ghi Attendance dựa trên giờ vào/ra thực (override nếu có, nếu không
-        /// lấy từ AttendanceLogs) và quy định đang áp dụng. Dùng trước khi map
-        /// về view model để "Tăng ca" luôn có giá trị khi đọc, không phải đợi HR.
-        /// </summary>
-        public static void Enrich(Attendance a, AttendanceRule? rule)
-        {
-            if (a == null) return;
-
-            var checkIn = a.CheckInTime
-                ?? a.AttendanceLogs?
-                    .Where(x => x.Type == AttendanceLogType.CheckIn)
-                    .Select(x => (DateTimeOffset?)x.LogTime)
-                    .Min();
-
-            var checkOut = a.CheckOutTime
-                ?? a.AttendanceLogs?
-                    .Where(x => x.Type == AttendanceLogType.CheckOut)
-                    .Select(x => (DateTimeOffset?)x.LogTime)
-                    .Max();
-
-            var (net, ot) = Compute(checkIn, checkOut, rule?.BreakMinutes, rule?.CheckOutTime);
-            a.ActualHours = net;
-            a.OvertimeHours = ot;
-        }
-
-        // ===== Helpers =====
-        private static TimeOnly ToVnTimeOnly(DateTimeOffset o)
-        {
-            var vn = o.ToOffset(TimeSpan.FromHours(VnUtcOffsetHours));
-            return new TimeOnly(vn.Hour, vn.Minute);
-        }
-
-        private static int ToMinutes(TimeOnly t) => t.Hour * 60 + t.Minute;
-
-        private static int MinutesBetween(TimeOnly a, TimeOnly b)
-        {
-            int diff = ToMinutes(b) - ToMinutes(a);
-            return diff < 0 ? diff + 24 * 60 : diff; // ca qua nửa đêm
-        }
+        return output;
     }
 }

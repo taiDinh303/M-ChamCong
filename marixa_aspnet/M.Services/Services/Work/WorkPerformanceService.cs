@@ -81,7 +81,7 @@ namespace M.Services.Services.Work
             var rater = await EmpRepo.Entities.FirstOrDefaultAsync(e => e.Id == raterId);
 
             var period = string.IsNullOrWhiteSpace(model.Period)
-                ? $"{DateTime.Now:yyyy-MM}"
+                ? $"{M.Core.Time.BusinessTime.DateAt(UtcNow):yyyy-MM}"
                 : model.Period;
 
             // Không trùng kỳ

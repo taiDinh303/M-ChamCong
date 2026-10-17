@@ -11,7 +11,7 @@ namespace M.ModelViews.UserModelView
         public string Username { get; set; } = string.Empty;
 
         [Required]
-        [MinLength(6)]
+        [MinLength(10)]
         [MaxLength(100)]
         public string Password { get; set; } = string.Empty;
 
@@ -20,7 +20,7 @@ namespace M.ModelViews.UserModelView
         public string Email { get; set; } = string.Empty;
 
         [MaxLength(50)]
-        public string Role { get; set; } = "User";
+        public string Role { get; set; } = "Employee";
 
         // Thông tin nhân viên (tuỳ chọn) - nếu null, service sẽ tự tạo Employee mặc định
         public CreateEmployeeModelView? CreateEmployeeModelView { get; set; }

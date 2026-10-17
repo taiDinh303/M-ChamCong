@@ -1,7 +1,7 @@
 # 00 — Chỉ dẫn tài liệu và quy tắc làm việc Marixa
 
-> Chủ tài liệu: **Đinh Văn Tài**. Cập nhật: **16/10/2026**.
-> Phạm vi kiểm chứng: mã nguồn trong checkout hiện tại. Hạ tầng và Figma live chưa được xác minh trong lần chuẩn hóa này.
+> Chủ tài liệu: **Đinh Văn Tài**. Cập nhật: **17/10/2026**.
+> Phạm vi kiểm chứng: mã nguồn trong checkout hiện tại. Backend có build/test cô lập được ghi ở worklog; hạ tầng và Figma live chưa được xác minh.
 
 ## 1. Bắt đầu ở đây
 
@@ -23,6 +23,21 @@
 | Thuật ngữ / Glossary | [12-glossary.md](12-glossary.md) |
 | Đồng bộ thiết kế và code / Figma sync | [13-figma-sync.md](13-figma-sync.md) |
 | Ma trận chức năng, sự kiện, đề xuất / Status and evidence | [worklog.md](worklog.md) |
+
+Backend có [ARCHITECTURE.md](../marixa_aspnet/ARCHITECTURE.md), [BACKEND_REVIEW.md](../marixa_aspnet/BACKEND_REVIEW.md) và [AGENTS.md](../marixa_aspnet/AGENTS.md): cấu trúc/OOP, chấm điểm nghiêm khắc và quy tắc bảo trì.
+
+Tài liệu mở rộng chọn lọc từ docs_mau ngày 17/10:
+
+| Công việc | Tài liệu |
+| --- | --- |
+| Tiếp nhận/agent | [PROJECT-INTAKE](PROJECT-INTAKE.md), [AGENTS](AGENTS.md), [AI-START-PROMPT](AI-START-PROMPT.md) |
+| Quyết định/API/quyền | [14 ADR](14-architecture-decisions.md), [15 API](15-api-contract.md), [inventory](api-inventory.md), [16 security](16-security-privacy.md) |
+| Config/release/CI | [17](17-environment-config.md), [18](18-release-checklist.md), [19](19-cicd.md) |
+| Quan sát/vận hành/restore | [20](20-observability.md), [21](21-operations-runbook.md), [22](22-backup-recovery.md) |
+| Migration/tích hợp/dung lượng | [23](23-data-migration.md), [24](24-integrations.md), [25](25-performance-capacity.md) |
+| Job/hướng dẫn/bàn giao/rủi ro | [27](27-offline-realtime-jobs.md), [30](30-user-guide.md), [31](31-handover.md), [34](34-risks-changes.md) |
+
+Các mẫu 26/28/29/32/33 không áp dụng, lý do trong PROJECT-INTAKE. Tài liệu CURRENT/TARGET không tự chứng nhận sản phẩm đã hoàn thành.
 
 ## 2. Nguồn chuẩn và cách giải quyết mâu thuẫn
 
@@ -46,7 +61,7 @@ Khi code khác yêu cầu nghiệp vụ, ghi cả hai và mở lỗi/việc cầ
 | **Chưa triển khai / PENDING** | Chưa có luồng đầy đủ trong stack hiện hành |
 | **Chưa xác minh / NOT VERIFIED** | Chưa chạy kiểm tra, chưa đọc cấu hình live hoặc chưa có bằng chứng đủ |
 
-Trong worklog, ✅ chỉ có nghĩa **có code**, 🟡 là **một phần/có sai khác**, ❌ là **chưa có**. Ghi riêng lệnh kiểm tra, ngày, kết quả và phạm vi. Build pass không chứng minh API/DB hoạt động; dotnet test không có test project không chứng minh đã có test; plugin scaffold không chứng minh Figma đã đồng bộ.
+Trong worklog, ✅ chỉ có nghĩa **có code**, 🟡 là **một phần/có sai khác**, ❌ là **chưa có**. Ghi riêng lệnh kiểm tra, ngày, kết quả và phạm vi. Build pass không chứng minh DB live hoạt động; test phải có số ca và phạm vi provider rõ; plugin scaffold không chứng minh Figma đã đồng bộ.
 
 ## 4. Quy tắc cập nhật cho Codex, Agnes và developer
 
@@ -56,7 +71,7 @@ Trong worklog, ✅ chỉ có nghĩa **có code**, 🟡 là **một phần/có sa
 4. Giữ quyết định còn hiệu lực; không tự chuyển ảnh sang private, đổi sang Supabase Auth, phục hồi Next.js hay thêm version/ngày hiệu lực cho ca làm chung.
 5. Không ghi secret vào tài liệu, chat, log hoặc commit. Ví dụ cấu hình dùng placeholder. Trước khi chỉnh file, kiểm tra git status; bảo toàn thay đổi đang có của người dùng.
 6. Chỉ cập nhật trạng thái hoàn thành sau kiểm tra phù hợp. Với lỗi chưa sửa code, mô tả rõ là đã sửa tài liệu, lỗi ứng dụng vẫn mở.
-7. Tên file giữ 00–13 + worklog.md; mỗi file có một H1 đúng số, ngày cập nhật, phạm vi và link liên quan. Dùng UTF-8, không ký tự điều khiển; Markdown link tương đối trong repo. Lệnh shell phải ghi rõ thư mục thực thi; đường dẫn checkout minh họa phải được thay theo máy đang chạy.
+7. Giữ tên 00–13 và worklog; bổ sung tài liệu 14+ phù hợp theo PROJECT-INTAKE, không tạo file không áp dụng chỉ để lấp số; mỗi file có một H 1 đúng số, ngày cập nhật, phạm vi và link liên quan. Dùng UTF-8, không ký tự điều khiển; Markdown link tương đối trong repo. Lệnh shell phải ghi rõ thư mục thực thi; đường dẫn checkout minh họa phải được thay theo máy đang chạy.
 8. Một thông tin có một nơi quản lý: không lặp bảng hosting/backlog/quy tắc này. Trích dẫn hoặc tóm tắt khi cần, kèm link về nguồn.
 
 **EN — Agent contract:** Work only within the user's authorized task. Read the current decision and actual implementation before editing. Keep CURRENT, TARGET, PENDING and NOT VERIFIED distinct. Maintain relevant docs with authorized changes; record evidence in worklog. Factual documentation corrections do not require a new approval. Unresolved policy changes require an owner decision, unless already authorized. Never treat code bugs as approved requirements or static review as runtime proof. Preserve user changes and never expose secrets.
@@ -66,7 +81,7 @@ Trong worklog, ✅ chỉ có nghĩa **có code**, 🟡 là **một phần/có sa
 - Stack trong repo: **ASP.NET Core 8 Web API** (marixa_aspnet/M.API), EF Core + Identity/JWT; **React 19 + Vite 6 + React Router 7** (marixa_react).
 - DB: SQL Server local theo mặc định; PostgreSQL cloud. Supabase dùng PostgreSQL và Storage; không dùng Supabase Auth làm nguồn danh tính ứng dụng.
 - Role seed: Admin, Manager, HR, Employee, Accountant, Sale, Marketing. Ba role cuối chưa có phân quyền module chuyên biệt; vẫn có thể dùng chức năng dành cho user theo logic hiện tại.
-- Ảnh: bucket public marixa-photos khi có cấu hình Storage hợp lệ; thiếu cấu hình thì lưu đĩa wwwroot/uploads. Tên env đúng theo code là SUPABASE__SERVICEKEY; tên SUPABASE__SERVICE_KEY còn trong comment/blueprint là sai khác cần sửa. Xem [08-deploy-detail.md](08-deploy-detail.md).
+- Ảnh: bucket public marixa-photos khi có cấu hình Storage hợp lệ; thiếu cấu hình thì lưu đĩa wwwroot/uploads. Tên env chuẩn là SUPABASE__SERVICEKEY; adapter còn đọc alias SUPABASE__SERVICE_KEY để tương thích cấu hình cũ. Xem [08-deploy-detail.md](08-deploy-detail.md).
 - marixa_aspnet/web (Next.js) đã xóa khỏi checkout. SQL cũ trong marixa_aspnet/supabase/ không chứng minh chức năng tương ứng đã có trong API .NET.
 - Repo: [taiDinh303/M-ChamCong](https://github.com/taiDinh303/M-ChamCong).
 

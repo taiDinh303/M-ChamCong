@@ -363,10 +363,10 @@ namespace M.Services.Services.Timekeeping
                 return;
 
             // Chỉ tính được giờ thực tế khi có đủ cặp vào - ra
-            attendance.ActualHours =
-                checkIn.HasValue && checkOut.HasValue
-                    ? (int)Math.Round((checkOut.Value - checkIn.Value).TotalHours)
-                    : null;
+            var rule = await Repository<AttendanceRule>().Entities.FirstOrDefaultAsync(r => r.IsActive && !r.DeletedTime.HasValue);
+            var overtime = await Repository<OvertimeRequest>().Entities.Where(r => r.EmployeeId == attendance.EmployeeId
+                && r.WorkDate == attendance.AttendanceDate && r.Status == OvertimeStatus.Approved && !r.DeletedTime.HasValue).ToListAsync();
+            attendance.ActualHours = AttendanceTimeCalculator.Compute(checkIn, checkOut, rule, overtime).ActualHours;
         }
     }
 }
