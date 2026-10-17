@@ -1,63 +1,48 @@
-# 01 — Quyết định và kế hoạch triển khai Marixa V1
+# 01 — Quyết định và kế hoạch Marixa
 
-> Chủ tài liệu: **Đinh Văn Tài**. Cập nhật: **16/10/2026**.
-> Đối chiếu mã nguồn; chưa nghiệm thu runtime/production trong lần chuẩn hóa tài liệu.
-
-Đọc [00-README.md](00-README.md) trước. File này quản lý quyết định và backlog; ma trận chức năng/bằng chứng ở [worklog.md](worklog.md). **EN:** Preserve approved decisions, distinguish source-confirmed behavior from requirements, and close tasks only with relevant evidence.
+> Chủ dự án Đinh Văn Tài. Cập nhật 2026-10-17; quyết định 12/10 được giữ, bổ sung kết quả phỏng vấn trực tiếp 17/10. Kiểm chứng ở worklog, production chưa nghiệm thu.
 
 ## 1. Quyết định đang có hiệu lực
 
-Quyết định 12/10/2026 được giữ từ lịch sử chủ dự án; chuẩn hóa ngày 16/10 không phải quyết định đổi nghiệp vụ.
-
-| Chủ đề | Quyết định / phạm vi |
+| Chủ đề | Quyết định / nguồn |
 | --- | --- |
-| Stack | ASP.NET Core 8 M.API + React 19/Vite; SQL Server local, PostgreSQL cloud; API Render, frontend Vercel. Hosting snapshot ở [00-README §5](00-README.md#5-thông-tin-nhanh-và-hosting). |
-| Danh tính | ASP.NET Identity + JWT. Không chuyển sang Supabase Auth/RLS trong phạm vi hiện hành. |
-| Role | Core Admin, Manager, HR, Employee; đã seed thêm Accountant, Sale, Marketing. Chưa có quyền nghiệp vụ chuyên biệt cho 3 role mới. |
-| Ảnh và bằng chứng | Giữ bucket **public** marixa-photos. Quyết định nghiệp vụ cho ảnh/GPS tùy chọn, ngoài văn phòng vẫn ghi nhận công. UI hiện bắt buộc ảnh là sai khác cần xử lý. |
-| Ca làm chung | Giữ đơn giản: một AttendanceRule active cho công ty. Đề xuất version + ngày hiệu lực đã rút ngày 12/10. Không tự bổ sung hệ đa ca riêng theo nhân viên vào V1. |
-| Phép năm | Giữ chính sách hiện hành; thay đổi cách cộng/trừ phép cần căn cứ chính sách đã chốt. |
-| Múi giờ | Nghiệp vụ Asia/Ho_Chi_Minh (UTC+7), lưu thời điểm UTC. Code dùng ngày UTC là sai khác cần sửa. |
-| Next.js cũ | marixa_aspnet/web đã xóa; không thuộc đường chạy. SQL/RPC cũ phải phân loại trước khi sử dụng. |
-| Hạ tầng | Một project Supabase theo snapshot; chưa có project test cloud riêng được xác nhận. |
-| Figma | Dev Mode copy; UI Kit trước; màn hình được chọn có frame mobile 375px + desktop 1440px. [13-figma-sync.md](13-figma-sync.md) định nghĩa coverage/scaffold. |
+| Stack/danh tính | ASP.NET Core 8 + Identity JWT + React/Vite; SQL Server local/PostgreSQL cloud. Không dùng Supabase Auth/khôi phục Next.js. Quyết định 12/10. |
+| Role | Admin/Manager/HR/Employee core; Accountant/Sale/Marketing đã seed, chưa có quyền quản lý chuyên biệt. |
+| Ảnh/GPS | Bằng chứng tùy chọn theo rule, ngoài văn phòng vẫn ghi nhận. Ảnh chấm công public marixa-photos. UI còn sai khác; quyết định 12/10. |
+| Ca chung | Một AttendanceRule active, không version/ngày hiệu lực cho rule. Snapshot lưu bản rule đã dùng khi khóa, không thêm hệ version ca. |
+| Giờ công | Công thường trong khung ca trừ phần nghỉ thực sự giao với thời gian làm; tách OT; tính theo phút, trả decimal 2 chữ số. Chủ dự án đồng ý 17/10. |
+| Nghỉ giữa ca | Mặc định 12:00–13:00; BreakStartTime/BreakMinutes cấu hình theo ca. Chủ dự án xác nhận 17/10. |
+| OT | Chỉ phần giao thời gian làm thực tế và cửa sổ đơn Approved; union khoảng chồng để không cộng đôi. OT nhập tay không là nguồn công nhận. Xác nhận 17/10. |
+| Tự duyệt | HR/Admin tự duyệt công/OT/sửa công; Manager không tự duyệt. Đơn nghỉ luôn cần người khác. Xác nhận 17/10. |
+| Hủy nghỉ Approved | HR/Admin khác chủ hủy có lý do 5–500 ký tự, giữ phê duyệt cũ/ghi metadata hủy/hoàn đúng Deduct một lần. Chủ dự án giao Codex quyết định 17/10. |
+| Cấp phép | Giữ MaxDays/ledger hiện hành, HR quản lý Grant/Adjust; chưa bật cấp phép tự động khi thiếu mức/lịch/đối tượng/carryover. Lựa chọn trong quyền được giao 17/10. |
+| Ngày hiệu lực HR | Promotion từ ngày hiệu lực VN; nghỉ việc sau ngày làm cuối; worker mỗi phút khi app chạy và catch-up, AppliedAt chống áp lặp. Chủ dự án giao Codex quyết định 17/10. |
+| Kỳ công | HR/Admin review; Admin lock/reopen có lý do, snapshot version bất biến. Open→Reviewed→Locked; thay nguồn/rule ở kỳ Reviewed phải review lại. |
+| Múi giờ | Asia/Ho_Chi_Minh UTC+7; timestamp UTC, nhãn ngày VN. Không tự dịch/backfill toàn bộ ngày cũ. |
+| Hạ tầng/Figma | Snapshot chỉ tại 00, một Supabase project; staging riêng chưa xác nhận. Figma Dev Mode copy, UI Kit trước, frames 375/1440. |
 
-**Các điểm cần thống nhất trước khi thực hiện:** OT hiện được code tự tính sau mốc ra ca, tài liệu cũ lại mô tả lấy giao với đơn đã duyệt; ngoại lệ HR/Admin tự duyệt OT/sửa công khác nguyên tắc cấm tự duyệt; hủy đơn nghỉ Approved chưa hỗ trợ. Ghi hiện trạng/đề xuất ở worklog §5, không tự chọn một phương án nghiệp vụ từ các mô tả cũ mâu thuẫn.
+Không suy OT ngày lễ/hệ số lương, ca biên, phép qua năm hoặc retention từ tên entity. Các chính sách đó cần tiếp tục chốt trước mở rộng; rủi ro 34 ghi phạm vi chưa hoàn tất.
 
 ## 2. Việc tiếp theo
 
-P0: ưu tiên trước nghiệm thu sử dụng thật. P1: hoàn thiện độ đúng và vận hành. P2: mở rộng theo nhu cầu. **Backlog không tự cấp quyền thực hiện các hạng mục trong nhiệm vụ chỉ sửa tài liệu.**
+### 2.1 Đã có backend và kiểm thử trong nhiệm vụ 17/10
 
-### 2.1 Độ đúng, cấu hình và phân quyền
+- Tách HR controller qua service, actor/clock/storage/export abstractions, guards tài khoản Admin và JWT/lockout; private report/handover, log gốc bất biến.
+- Khóa/mở/review kỳ, snapshot/version/hash, XLSX theo quyền và PDF tiếng Việt; chống ghi tháng khóa và mất review khi nguồn đổi.
+- Công/OT/nghỉ theo phỏng vấn, hủy/hoàn phép một lần, unique ledger; promotion/handover ngày hiệu lực và guard admin cuối.
+- Rate limit/correlation/readiness, migration/scripts đúng provider, CI và docs chọn lọc. Số ca/lệnh/kết quả chính thức ở worklog.
 
-- [ ] **P0 — Quyền phía server:** lập ma trận endpoint × role × quyền sở hữu; xác minh/sửa việc truyền EmployeeId người khác ở chấm công/xem công/đơn nghỉ. Test 401/403 và truy cập chéo dữ liệu; không coi sidebar là bảo vệ dữ liệu.
-- [ ] **P0 — Auth và bootstrap:** rà soát register/change-password, seed tài khoản trên production, bảo vệ admin hoạt động cuối và route guard thiếu registry entry. Chỉ kết luận sau kiểm tra API thực tế.
-- [ ] **P0 — Storage và kết nối DB:** sửa/đồng bộ SUPABASE__SERVICEKEY với Supabase:ServiceKey; kiểm tra header cho loại key thực tế; xác minh SSL options vì URI normalizer chưa giữ đầy đủ sslmode. Xem [08-deploy-detail.md](08-deploy-detail.md).
-- [ ] **P0 — Ngày công Việt Nam và chống trùng:** sửa boundary ngày UTC/VN; đảm bảo một NV/ngày ở DB/transaction khi hai request đồng thời, kể cả cửa sổ chặn log 2 phút.
-- [ ] **P1 — Ảnh/GPS:** thống nhất UI/API theo quyết định bằng chứng tùy chọn; phân biệt GPS hiển thị với dữ liệu gửi/lưu và cờ trong/ngoài văn phòng. Giữ bucket public.
-- [ ] **P1 — Ca làm ổn định:** xử lý seeder ghi đè DEFAULT-CA khi restart; bảo đảm một rule active; thống nhất mốc tính trạng thái/tính giờ, nghỉ trưa và rounding. Không thêm version/ngày hiệu lực.
-- [ ] **P1 — OT và luồng duyệt:** chốt quy tắc tự tính hay theo đơn; thống nhất tự duyệt công/OT/sửa công; ghi tiêu chí chấp nhận trước khi đổi công thức.
-- [ ] **P1 — Nghỉ phép/ledger:** thống nhất hai cách tổng hợp Adjust/xóa mềm giữa LeaveLedgerService và LeaveRequestService; xác minh số dư, chống trừ/hoàn trùng và quyền sửa/xóa; chốt yêu cầu hủy Approved trước khi thêm luồng mới.
+### 2.2 Còn mở trước dùng thật hoặc mở rộng
 
-### 2.2 Chức năng và vận hành còn thiếu
-
-- [ ] **P0 — Khóa/mở kỳ tháng + snapshot:** thiết kế trạng thái/quyền/audit/lý do mở lại và bất biến snapshot; chưa có trong API hiện hành.
-- [ ] **P0 — Export theo kỳ:** XLSX bảng công khóa/mở và PDF đơn nghỉ theo quyền/phiên bản. CSV công hiện thời và XLSX hồ sơ đã có code, không thay export snapshot.
-- [ ] **P0 — Bộ kiểm thử:** xây unit/integration/E2E cho luồng hiện có, mở rộng khi khóa kỳ/export được triển khai; xem [06-testing.md](06-testing.md). Chưa có suite tự động.
-- [ ] **P0 — Xác minh deployment live:** đối chiếu env/seeder/schema/Storage, khác biệt plan standard trong render.yaml và snapshot Free; chạy smoke test trên dữ liệu được phép. Ghi bằng chứng riêng.
-- [ ] **P1 — Backup/restore:** quy trình DB + ảnh/retention và thử restore trên môi trường test được chỉ định; chưa có bằng chứng restore.
-- [ ] **P1 — Offline/IndexedDB:** hàng đợi đồng bộ trễ; thiết kế quan hệ kỳ khóa trước khi triển khai, tránh âm thầm sửa snapshot.
-- [ ] **P1 — Cộng phép định kỳ:** job idempotent theo chính sách đã xác nhận; chưa có job hiện hành.
-- [ ] **P1 — Audit và schema:** xác minh coverage audit; quy trình migration/backfill/rollback cho thay đổi vượt khả năng ADD COLUMN của schema sync.
-- [ ] **P2 — Role nghiệp vụ:** thiết kế quyền riêng Accountant/Sale/Marketing trước khi cấp thêm endpoint/module.
-- [ ] **P2 — Figma:** hoàn thiện token binding/UI Kit/coverage; chỉ đánh dấu đồng bộ khi có kiểm tra thiết kế và code.
-- [ ] **P2 — Ảnh:** retention/dọn ảnh/giới hạn vận hành; private chỉ khi có quyết định thay thế lựa chọn public.
+| Ưu tiên | Việc / điều kiện đóng |
+| --- | --- |
+| P0 | Preflight/migration/backup-restore, grants/RLS bảng cũ, env/secret/CORS/volume live và smoke trên môi trường được phép. |
+| P1 | UI ảnh tùy chọn/GPS, form BreakStartTime/số lẻ, period/export/PDF và trạng thái Approved chờ AppliedAt; browser/mobile E 2 E. |
+| P1 | Phạm vi Manager toàn bộ module; chính sách biên/ca qua đêm, ngày nghỉ/lễ và phép qua năm; đối soát dữ liệu cũ. |
+| P1 | RPO/RTO/on-call/retention/cấp phép định kỳ và cảnh báo job; chỉ triển khai sau quyết định cần thiết. |
+| P1 | Offline queue/idempotency/late adjustment kỳ sau; hiện API trả 409 khi ghi kỳ khóa. |
+| P2 | Giảm service lớn/response object/IQueryable, bổ sung CancellationToken theo rủi ro; quyền role chuyên biệt và Figma coverage. |
 
 ## 3. Cách đóng một hạng mục
 
-1. Chỉ rõ yêu cầu/hiện trạng và phạm vi được giao.
-2. Thay đổi cùng tài liệu liên quan; không sửa lịch sử thành công giả.
-3. Chạy kiểm tra phù hợp, ghi môi trường/ngày/lệnh/kết quả và giới hạn ở worklog §4.
-4. Cập nhật worklog §2–§3; đánh dấu checkbox khi tiêu chí thật sự đạt. Nếu chỉ sửa tài liệu, giữ lỗi code/chức năng thiếu ở trạng thái mở.
-
-Đề xuất chưa chốt ở [worklog §5](worklog.md#5-vấn-đề--rủi-ro-đang-mở). Triển khai: [07-deploy-overview.md](07-deploy-overview.md). File này không quản lý giá/giới hạn nhà cung cấp hoặc secret.
+Gắn REQ/API/TC và nguồn quyết định, sửa đúng layer cùng tài liệu, chạy kiểm tra phù hợp và ghi bằng chứng/phạm vi chưa test. Checkbox hoặc điểm không thay chứng nhận production. Quy tắc chung tại [00](00-README.md), rủi ro tại [34](34-risks-changes.md), phát hành tại [18](18-release-checklist.md).

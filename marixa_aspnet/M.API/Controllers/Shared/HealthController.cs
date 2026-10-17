@@ -19,6 +19,10 @@ public sealed class HealthController(DatabaseContext db) : BaseApiController
         try
         {
             await db.Employees.AsNoTracking().AnyAsync(cancellationToken);
+            await db.AttendancePeriods.AsNoTracking().AnyAsync(cancellationToken);
+            await db.AttendanceRules.AsNoTracking().Select(r => r.BreakStartTime).Take(1).ToListAsync(cancellationToken);
+            await db.EmployeeHandovers.AsNoTracking().Select(h => h.AppliedAt).Take(1).ToListAsync(cancellationToken);
+            await db.LeaveRequests.AsNoTracking().Select(r => r.CancelledAt).Take(1).ToListAsync(cancellationToken);
             return Success(new { status = "ready" });
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }

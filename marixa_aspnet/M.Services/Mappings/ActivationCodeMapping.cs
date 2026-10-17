@@ -32,7 +32,7 @@ namespace M.Services.Mappings
         }
 
         // CreateActivationCodeModelView -> Entity
-        public static ActivationCode ToEntity(this CreateActivationCodeModelView model)
+        public static ActivationCode ToEntity(this CreateActivationCodeModelView model, DateTimeOffset now)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
@@ -41,7 +41,7 @@ namespace M.Services.Mappings
             {
                 Code = model.Code,
                 EmployeeId = model.EmployeeId,
-                ExpiresAt = DateTime.UtcNow.AddMinutes(model.ValidMinutes ?? 1440)
+                ExpiresAt = now.UtcDateTime.AddMinutes(model.ValidMinutes ?? 1440)
             };
 
             return entity;

@@ -1,3 +1,4 @@
+using M.Contract.Services.Security;
 using M.Contract.Repositories.Entities;
 using M.Contract.Repositories.AuthEntities;
 using M.Contract.Services.Interface;
@@ -23,31 +24,35 @@ namespace M.Services.Services.Identity
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
-        private readonly IConfiguration _configuration;
         private readonly JwtGenerator _jwtGenerator;
+        private readonly IAdminAccountGuard _adminGuard;
 
         public AuthService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<ApplicationRole> roleManager,
-            IConfiguration configuration,
             IUnitOfWork unitOfWork,
             ICurrentUser currentUser,
             TimeProvider clock,
-            JwtGenerator jwtGenerator) : base(unitOfWork, currentUser, clock)
+            JwtGenerator jwtGenerator, IAdminAccountGuard adminGuard) : base(unitOfWork, currentUser, clock)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
-            _configuration = configuration;
             _jwtGenerator = jwtGenerator;
+            _adminGuard = adminGuard;
         }
 
         #region Register
 
-        public async Task RegisterAsync(RegisterModelView model)
+        public Task RegisterAsync(RegisterModelView model)
         {
             RequireStaff();
+            return InTransactionAsync(async () => { await RegisterCoreAsync(model); return true; });
+        }
+
+        private async Task RegisterCoreAsync(RegisterModelView model)
+        {
             model.Email = model.Email.Trim();
             model.Username = model.Username.Trim();
 
@@ -100,13 +105,11 @@ namespace M.Services.Services.Identity
                     ?? "Unknown error occurred");
             }
 
-            // Chỉ gán role nếu tồn tại (DB chỉ có Admin/Employee)
+            // Assign the default employee role when configured.
             bool roleExists =
                 await _roleManager.RoleExistsAsync("Employee");
-            if (roleExists)
-            {
-                await _userManager.AddToRoleAsync(user, "Employee");
-            }
+            if (!roleExists || !(await _userManager.AddToRoleAsync(user, "Employee")).Succeeded)
+                throw new BadRequestException("INVALID_ROLE", "The default Employee role is not configured.");
 
             Employee employee = new()
             {
@@ -119,7 +122,7 @@ namespace M.Services.Services.Identity
                 Gender = GenderType.RatherNotSay,
                 Status = EmployeeStatus.Probation,
                 LaborType = LaborType.FullTime,
-                StartDate = DateTime.UtcNow
+                StartDate = UtcNow.UtcDateTime
             };
 
             await Repository<Employee>().InsertAsync(employee);
@@ -177,9 +180,9 @@ namespace M.Services.Services.Identity
             if (user == null)
             {
                 throw new ErrorException(
-                    StatusCodes.Status404NotFound,
-                    ResponseCodeConstants.NOT_FOUND,
-                    "Account not found.");
+                    StatusCodes.Status401Unauthorized,
+                    ResponseCodeConstants.UNAUTHORIZED,
+                    "Username, email/phone/employee code or password is incorrect.");
             }
 
             if (user.DeletedTime.HasValue)
@@ -192,11 +195,10 @@ namespace M.Services.Services.Identity
 
             // Kiểm tra password (cho phép lockout khi sai)
             SignInResult result =
-                await _signInManager.PasswordSignInAsync(
+                await _signInManager.CheckPasswordSignInAsync(
                     user,
                     loginModelView.Password,
-                    loginModelView.RememberMe,
-                    lockoutOnFailure: false);
+                    lockoutOnFailure: true);
 
             if (!result.Succeeded)
             {
@@ -213,9 +215,8 @@ namespace M.Services.Services.Identity
                     !x.DeletedTime.HasValue);
 
             // Generate JWT (thông qua JwtGenerator - đã gán claim role)
-            DateTime expires = DateTime.UtcNow.AddMinutes(
-                int.Parse(_configuration["Jwtsettings:ExpirationMinutes"]!));
-            string token = await _jwtGenerator.GenerateAsync(user, employee);
+            DateTime expires = _jwtGenerator.GetExpiresAt(loginModelView.RememberMe);
+            string token = await _jwtGenerator.GenerateAsync(user, employee, expires);
 
             return new AuthResponseModelView
             {
@@ -284,7 +285,7 @@ namespace M.Services.Services.Identity
                     "Activation code has already been used.");
             }
 
-            if (activationCode.ExpiresAt < DateTime.UtcNow)
+            if (activationCode.ExpiresAt < UtcNow.UtcDateTime)
             {
                 throw new ErrorException(
                     StatusCodes.Status400BadRequest,
@@ -352,10 +353,10 @@ namespace M.Services.Services.Identity
 
             // Đánh dấu mã đã dùng
             activationCode.IsUsed = true;
-            activationCode.UsedAt = DateTime.UtcNow;
+            activationCode.UsedAt = UtcNow.UtcDateTime;
             activationCode.ActivatedBy = user.UserName;
             activationCode.UserId = userId;
-            activationCode.LastUpdatedTime = CoreHelper.SystemTimeNow;
+            activationCode.LastUpdatedTime = UtcNow;
 
             await UnitOfWork.SaveAsync();
         }
@@ -372,6 +373,8 @@ namespace M.Services.Services.Identity
                     ResponseCodeConstants.NOT_FOUND,
                     "Employee not found.");
 
+            RequireStaff();
+            if (employee.UserId.HasValue) await _adminGuard.EnsureCanManageAsync(employee.UserId.Value);
             bool codeExists = await Repository<ActivationCode>().Entities
                 .AnyAsync(x =>
                     x.Code == model.Code &&
@@ -395,7 +398,7 @@ namespace M.Services.Services.Identity
             }
 
             // (2) Vô hiệu hóa các mã kích hoạt cũ (chưa dùng, chưa hết hạn)
-            DateTime now = DateTime.UtcNow;
+            DateTime now = UtcNow.UtcDateTime;
             List<ActivationCode> previousCodes = await Repository<ActivationCode>().Entities
                 .Where(x => x.EmployeeId == employee.Id && !x.IsUsed && x.ExpiresAt > now && !x.DeletedTime.HasValue)
                 .ToListAsync();
@@ -404,12 +407,12 @@ namespace M.Services.Services.Identity
                 previousCode.ExpiresAt = now;
                 previousCode.LastUpdatedTime = now;            }
 
-            ActivationCode entity = model.ToEntity();
+            ActivationCode entity = model.ToEntity(UtcNow);
             entity.EmployeeId = employee.Id;
             entity.UserId = employee.UserId;
             entity.Code = model.Code.Trim();
             entity.CreatedBy = employee.UserId.HasValue ? "Reissue" : "System";
-            entity.CreatedTime = CoreHelper.SystemTimeNow;
+            entity.CreatedTime = UtcNow;
 
             await Repository<ActivationCode>().InsertAsync(entity);
             await UnitOfWork.SaveAsync();

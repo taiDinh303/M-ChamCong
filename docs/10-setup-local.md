@@ -1,9 +1,9 @@
 # 10 — Thiết lập và chạy môi trường local
 
-> Chủ tài liệu: **Đinh Văn Tài**. Đối chiếu mã nguồn: **16/10/2026**.
-> Hướng dẫn PowerShell cho ASP.NET Core 8 + React 19/Vite, SQL Server local. Các lệnh chạy API sẽ migrate/seed DB; lần cập nhật tài liệu này chưa thực thi chúng.
+> Chủ tài liệu: **Đinh Văn Tài**. Đối chiếu mã nguồn: **17/10/2026**.
+> Hướng dẫn PowerShell cho ASP.NET Core 8 + React 19/Vite, SQL Server local. Development có thể init/seed theo §3; build/test đã chạy cô lập, đã chạy fixture SQL Server LocalDB riêng; chưa chạy app vào DB ứng dụng/live.
 
-**CURRENT** = cấu hình/lệnh phù hợp checkout; **NOT VERIFIED** = kết quả chạy trên máy dev; **PENDING** = test suite chưa được triển khai.
+**CURRENT** = cấu hình/lệnh phù hợp checkout; **NOT VERIFIED** = kết quả chạy trên máy dev; **PENDING** = nghiệm thu DB/provider/browser còn thiếu.
 
 ## 1. Yêu cầu và phạm vi
 
@@ -25,7 +25,9 @@ Các ví dụ dùng checkout hiện tại; thay đường dẫn nếu đặt rep
 ```powershell
 Set-Location -LiteralPath 'D:\My Project\marixa_aspnet_react\marixa_aspnet'
 dotnet restore .\M.BE.sln
-dotnet build .\M.BE.sln -c Debug --no-restore
+dotnet build .\M.BE.sln -c Release --no-restore -warnaserror
+dotnet test .\M.BE.sln -c Release --no-build
+dotnet tool restore
 ```
 
 ```powershell
@@ -51,7 +53,9 @@ $env:JWTSETTINGS__KEY = '<LOCAL_RANDOM_SIGNING_KEY_AT_LEAST_32_CHARACTERS>'
 
 Để dùng nhánh lưu ảnh đĩa, bảo đảm cấu hình hiệu lực không có đủ `Supabase:Url` + `Supabase:ServiceKey`. Nếu máy đã cấu hình Storage qua env/user secrets, kiểm tra nguồn đó trước khi chạy. Quy tắc tên biến đúng và lỗi tên cũ nằm tại `08` §2.
 
-**Tác động startup cần biết:** SQL Server chạy `MigrateAsync`; các seeder role/admin/dữ liệu mẫu/ca làm đều được gọi. Seeder ca có thể ghi lại rule mặc định; seeder mẫu chưa được giới hạn theo môi trường. Tài khoản bootstrap đọc `Seed:Admin:Username/Email/Password` và có fallback trong code; đặt credential riêng qua cấu hình riêng tư, không sao chép mặc định vào tài liệu. Không mặc định mọi seeder đã chạy thành công: xem warning và kiểm tra dữ liệu.
+**Tác động startup:** Development mặc định init DB + seed role/rule; có thể tắt bằng DATABASEINITIALIZATION__ENABLED=false và SEED__ENABLED=false. Admin/sample mặc định không tạo. Muốn bootstrap admin local: đặt SEED__ENABLED=true, SEED__ADMIN__ENABLED=true và password riêng SEED__ADMIN__PASSWORD (10+ ký tự mạnh), username/email qua cấu hình riêng tư. Sample cần SEED__SAMPLE__ENABLED + SEED__SAMPLE__PASSWORD, chỉ Development. Production mặc định tắt cả init/seed. Seeder không ghi đè rule tùy chỉnh, lỗi quan trọng fail startup.
+
+Không có mật khẩu admin/sample mặc định. Trước khi init DB có dữ liệu cũ, kiểm trùng công/ngày và rule active theo [08](08-deploy-detail.md).
 
 ## 4. Cấu hình frontend
 
@@ -101,11 +105,12 @@ Mở URL Vite in ra terminal (thường port `5173`; có thể đổi khi bị c
 3. Upload ảnh hợp lệ → kiểm tra body thành công và URL đọc được → check-in/check-out → lịch sử công. Các bước ghi DB phải dùng dữ liệu giả; xem `06` cho sai khác ảnh/GPS/ngày công.
 4. Kiểm tra Network: request `/api`/`/uploads` qua Vite đúng target; không nhận HTML SPA thay JSON.
 
-**Chưa có test suite tự động trong checkout:** solution chưa có test project; `package.json` không có script `test`. Không dùng `dotnet test` exit 0 hoặc chạy `npm test` để tuyên bố đã kiểm thử. Các lệnh sẵn có:
+**Backend có M.Tests** với xUnit/HTTP SQLite riêng, LocalDB fixture tự tạo/drop DB thử và PostgreSQL loopback khi được cấu hình; không ghi DB ứng dụng/live. Frontend chưa có script test; không dùng npm test như lệnh sẵn có. Chạy:
 
 ```powershell
 Set-Location -LiteralPath 'D:\My Project\marixa_aspnet_react\marixa_aspnet'
-dotnet build .\M.BE.sln -c Debug
+dotnet build .\M.BE.sln -c Release -warnaserror
+dotnet test .\M.BE.sln -c Release --no-build
 ```
 
 ```powershell
@@ -114,7 +119,7 @@ npm run build
 npm run lint
 ```
 
-Ghi kết quả thực tế; lint/build là kiểm tra tĩnh, không thay thế các ca nghiệp vụ trong `06`. Test tự động là việc cần bổ sung theo [01-plan.md](01-plan.md).
+Ghi kết quả thực tế; lint/build là kiểm tra tĩnh, không thay thế các ca nghiệp vụ trong `06`. SQL Server fixture đã có; PostgreSQL theo CI và browser E 2 E/live còn mở theo [01-plan.md](01-plan.md).
 
 ## 7. Lỗi local thường gặp
 
@@ -123,9 +128,9 @@ Ghi kết quả thực tế; lint/build là kiểm tra tĩnh, không thay thế 
 | Vite proxy `ECONNREFUSED` | API đã chạy đúng HTTP `57432`; target trong `.env.local` khớp log; restart Vite. |
 | SQL login/migration lỗi | SQL Server đã cài/chạy, connection string và quyền DB local đúng; không đổi sang production để chữa lỗi. |
 | Ảnh không hiện | Body upload có thành công, file local tồn tại, `/uploads` được proxy; nếu trả URL Supabase thì Storage đang được cấu hình. |
-| Upload HTTP 200 nhưng thất bại | Đọc `statusCode`/`code` trong JSON theo `08`, không chỉ nhìn HTTP status. |
+| Upload 400/502 |400: file/size/signature;502: credential/bucket/network Storage, xem 08. |
 | Tài khoản mẫu không đăng nhập được | Kiểm tra seeder/log và dữ liệu local; không suy ra mật khẩu hoặc dùng credential production. |
 
 ## 8. Contract for Codex / Agnes
 
-Run each command from its stated directory. Use a local SQL Server database and the HTTP API at `57432` with Vite's `/api` and `/uploads` proxy. API startup writes schema/seed data. No automated test suite is currently configured; report builds, lint and manual scenarios separately. Do not claim a successful runtime check from documentation review alone.
+Run each command from its stated directory. Use a local SQL Server database and the HTTP API at `57432` with Vite's `/api` and `/uploads` proxy. Development bootstrap is configurable; production defaults off. M.Tests uses isolated SQLite and a per-host clock. Report unit/HTTP test results separately from real-provider, browser and cloud checks. Do not claim a successful runtime check from documentation review alone.

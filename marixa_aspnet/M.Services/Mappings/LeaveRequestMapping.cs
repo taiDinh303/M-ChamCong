@@ -32,6 +32,7 @@ namespace M.Services.Mappings
                 ApprovedBy = entity.ApprovedBy,
                 ApproverName = entity.Approver?.FullName,
                 ApprovedAt = entity.ApprovedAt,
+                CancelledBy = entity.CancelledBy, CancelledAt = entity.CancelledAt, CancellationReason = entity.CancellationReason,
 
                 CreatedTime = entity.CreatedTime,
                 LastUpdatedTime = entity.LastUpdatedTime

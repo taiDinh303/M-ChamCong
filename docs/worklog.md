@@ -2,18 +2,18 @@
 
 > **Tác giả & chủ tài liệu: Đinh Văn Tài.** (File này được Tài tổ chức lại 12/10/2026 thành "bản đồ chức năng" theo trang & module để AI/Agnes và dev đọc nhanh.)
 
-Điểm vào tài liệu là [00-README.md](00-README.md). File này quản lý ma trận chức năng, bằng chứng thực hiện và lịch sử. Cập nhật hiện trạng: **16/10/2026** theo mã nguồn; chưa kiểm thử runtime/production.
+Điểm vào tài liệu là [00-README.md](00-README.md). File này quản lý ma trận chức năng, bằng chứng thực hiện và lịch sử. Cập nhật hiện trạng: **17/10/2026** theo source và kiểm thử backend cô lập; production chưa nghiệm thu.
 
 **Quy tắc cập nhật:** theo [00-README.md §4](00-README.md#4-quy-tắc-cập-nhật-cho-codex-agnes-và-developer). Quyền chuẩn hóa tài liệu đã được chủ dự án cấp ngày 16/10/2026. Quy tắc “chỉ sửa worklog / đặc tả đông băng” trong lịch sử không còn là hướng dẫn hiện hành. **EN:** Code presence is not runtime proof; record evidence separately and preserve approved requirements.
 
-## 1. Trạng thái hiện tại (cập nhật 16/10/2026, múi giờ Asia/Ho_Chi_Minh)
+## 1. Trạng thái hiện tại (cập nhật 17/10/2026, múi giờ Asia/Ho_Chi_Minh)
 
 - **Stack trong mã nguồn (chưa xác minh live):** backend `marixa_aspnet/M.API` (ASP.NET Core 8, EF Core, JWT/Identity, Swagger) · frontend `marixa_react` (React 19 + Vite SPA, React Router 7) · DB linh hoạt **SQL Server (dev) / PostgreSQL Supabase (prod)** · ảnh **Supabase Storage bucket public `marixa-photos`** (dev fallback `wwwroot/uploads`) · deploy **Render (API, Docker) + Vercel (web) + Supabase**.
 - **Role:** 4 core đã map quyền `Admin`, `Manager`, `HR`, `Employee` (frontend `marixa_react/src/constants/modules.js`) + 3 role nghiệp vụ **đã seed** `Accountant`, `Sale`, `Marketing` (`M.API/Seed/RoleSeeder.cs`, **chưa** có quyền module chuyên biệt; các chức năng access user vẫn theo logic hiện tại).
 - **Next.js `marixa_aspnet/web`: ĐÃ XÓA** (12/10/2026, không liên quan — không còn bị tham chiếu bởi Dockerfile/solution).
 - **Repository:** `origin = github.com/taiDinh303/M-ChamCong`.
 - **Hosting snapshot (chủ dự án cung cấp 12/10, chưa xác minh live 16/10):** bảng đầy đủ ở [00-README.md §5](00-README.md#5-thông-tin-nhanh-và-hosting). Blueprint hiện khai báo plan standard, khác snapshot Free.
-- Chấm công, nghỉ phép, tăng ca, sửa công, hồ sơ nhân sự, bảng lương, hợp đồng, BHXH, công việc, quản trị tài khoản/role **đều đã có code** (backend + frontend). Các mục **chưa có** tập trung ở: offline queue, khóa kỳ + snapshot, export Excel/PDF kỳ công, cộng phép năm tự động, audit log đầy đủ (xem ma trận §2).
+- Chấm công, nghỉ phép, tăng ca, sửa công, hồ sơ nhân sự, bảng lương, hợp đồng, BHXH, công việc, quản trị tài khoản/role **đều đã có code** (backend + frontend). Các mục **chưa có** tập trung ở: offline queue, UI nối chức năng mới, cộng phép tự động/retention, audit đầy đủ và nghiệm thu live (xem ma trận §2).
 
 ## 2. Ma trận chức năng theo module & trang
 
@@ -26,19 +26,19 @@
 | `/login` đăng nhập (username/email/sđt + mật khẩu, remember me) | ✅ | `modules/login` (LoginPage, LoginForm), `POST /api/Auth/login` | Login linh hoạt nhiều định danh. |
 | `/kich-hoat` kích hoạt bằng mã + đặt mật khẩu | ✅ | `modules/activate`, `POST /api/Auth/activate`, `ActivationCodeController` | Quy trình bàn giao NV. |
 | `/unauthorized` thiếu quyền | ✅ | `modules/unauthorized` | |
-| Đổi mật khẩu | 🟡 | `POST /api/Auth/change-password`, `AuthService.ChangePasswordAsync` | Action thiếu [Authorize]; service kiểm tra mật khẩu cũ. Cần kiểm tra contract xác thực/quyền sở hữu, không coi comment là bảo vệ token. |
+| Đổi mật khẩu | ✅ | AuthService/SessionTests | Auth/owner/password cũ, stamp thu hồi phiên; live chưa nghiệm thu. |
 | Link Google (connect/disconnect) | 🟡 | `UserLoginController` | Có API; UI gắn vào chưa rõ. |
 
 ### B. Module Nhân viên (`/attendance/*`, module `me`)
 
 | Trang / chức năng | Trạng thái | Code chính | Ghi chú |
 | --- | --- | --- | --- |
-| `/attendance` chấm vào/ra + chụp camera | 🟡 | `modules/me/pages/ClockInPage`, `CameraCapture.jsx`, `POST /api/Attendance/checkin` | Có log vào/ra; UI bắt buộc ảnh, ngày công lấy UTC, kiểm tra quyền sở hữu/chống race còn mở. |
+| `/attendance` chấm vào/ra + camera | 🟡 | AttendanceService/ClockInPage | Server owner/ngàyVN/transaction; UI còn bắt ảnh/chưa gửiGPS. |
 | Ảnh chấm công (upload) | ✅ | `POST /api/Upload/photo` + `SupabaseStorageService` | Storage khi đọc được cấu hình hợp lệ; thiếu cấu hình dùng đĩa /uploads. Env đúng SUPABASE__SERVICEKEY; xem08. Không có fallback đĩa khi Storage đã config nhưng upload lỗi. |
-| GPS chấm công | 🟡 | `AttendanceCard.jsx`, `relatedApi.checkin`, `AttendanceService.CheckInAsync` | UI có geolocation; chưa gửi/lưu tọa độ hoặc tính cờ bán kính trong luồng .NET. |
+| GPS chấm công | 🟡 | AttendanceCard/AttendanceService | API nhận/lưu/bounds; UI mới hiển thị, chưa gửi; chưa geofence. |
 | `/attendance/attendance-history` lịch sử + sửa công | ✅ | `modules/me/pages/HistoryPage`, `AttendanceCorrectionController` | Chấm lại trùng bị chặn (~2 phút). |
 | `/attendance/statistics` thống kê công | ✅ | `modules/me/pages/StatisticsPage`, StatKpis/StatWarnings | |
-| `/attendance/leave` đơn nghỉ phép | 🟡 | `modules/me/pages/LeavePage`, `LeaveRequestController`, `LeaveLedgerController` | Có ledger; hiện chỉ hủy Pending, chưa hủy/hoàn Approved qua luồng cancel. Quyền đọc danh sách cần rà soát. |
+| `/attendance/leave` đơn nghỉ | 🟡 | LeaveRequestService/WorkforcePolicyTests | Backend hủy Approved có reason/Refund; UI/live cần nghiệm thu. |
 | `/attendance/salary` bảng lương (của tôi) | ✅ | `modules/me/pages/SalaryPage`, `EmployeeSalaryController`, `PayrollController` | |
 | `/attendance/contracts` hợp đồng | ✅ | `modules/me/pages/ContractPage`, `EmployeeContractController` | |
 | `/attendance/insurance` BHXH & thuế | ✅ | `modules/me/pages/InsurancePage`, `EmployeeInsuranceController` | |
@@ -89,23 +89,35 @@
 ## 3. Chức năng "nền" (backend/cross-cutting) — đã có vs chưa có
 
 | Chức năng | Trạng thái | Ghi chú / nơi làm |
-| --- | --- | --- |
-| Auth JWT + Identity, phân quyền 4 role core | 🟡 | Có cài đặt; cần kiểm tra endpoint/quyền sở hữu và route registry. [03-architecture.md](03-architecture.md), [06-testing.md](06-testing.md). |
-| DB linh hoạt SQL Server/PostgreSQL + boot DDL + schema sync | ✅ | `DatabaseConfig.cs`, `PostgresSchemaSync.cs`, `NpgsqlConnectionStringNormalizer.cs`. |
+  | --- | --- | --- |
+| Auth JWT + Identity, quyền core | 🟡 | Server guards/JWT revoke/lockout có test; Manager scope/frontend route registry và live còn mở. |
+| DB linh hoạt SQL Server/PostgreSQL | 🟡 | Model/scripts/SQL Server fixture và PostgreSQL CI; live chưa nghiệm thu. |
 | Soft delete + audit (trên bảng công) | 🟡 | `AuditLog` entity + `AuditLogController` có; kiểm tra mọi module có ghi audit đều hay chưa. |
-| Chấm công online + ảnh camera + tính giờ thực tế/tăng ca | 🟡 | Có code; sai khác ảnh tùy chọn/ngày UTC/mốc ca/rounding/quyền sở hữu còn mở. |
+| Chấm công online + ảnh + tính công/OT | 🟡 | Server có owner/ngày VN/break/phút/approved OT; UI ảnh/GPS và live còn mở. |
 | **Offline / đồng bộ trễ (IndexedDB queue)** | ❌ | Chưa có. Event đến sau khi khóa kỳ cần "điều chỉnh kỳ mở sau". Xem `01-plan.md`. |
-| **Khóa/mở kỳ công + snapshot không đổi** | ❌ | Chưa có luồng lock kỳ tháng. |
-| **XLSX bảng công snapshot & PDF đơn nghỉ theo kỳ** | ❌ | Chưa có; XLSX hồ sơ nhân sự và CSV công/danh sách đã có code, không phải export snapshot. |
+| **Khóa/mở kỳ công + snapshot** | 🟡 | Backend period/guard/version/hash có test; UI/live chưa nghiệm thu. |
+| **XLSX snapshot & PDF nghỉ** | 🟡 | Backend có export theo quyền, Unicode/multipage; UI mới chưa nối. |
 | **Cộng phép năm tự động hằng tháng (idempotent)** | ❌ | Chưa có; cần job/cron + giao dịch ledger. |
 | **Role nghiệp vụ (Kế toán, Sale, Marketing)** | 🟡 | Đã **seed** trong `RoleSeeder` (`Accountant`, `Sale`, `Marketing` — "Accountant" khớp `SampleDataSeeder`). **Chưa gán quyền module** (chưa map `MODULES`/endpoint). Khi cần cấp quyền thật → thêm vào `[Authorize(Roles=...)]`. (12/10/2026, code trước theo yêu cầu.) |
-| **Ca làm chung** | 🟡 | Mục tiêu 1 rule active, không version/ngày hiệu lực; seeder ghi đè DEFAULT-CA khi restart và mốc evaluator/calculator chưa đồng nhất. |
+| **Ca làm chung** | ✅ | Một active, không version ca; break cấu hình, seeder giữ rule, DB unique. |
 | **Giới hạn dung lượng / dọn ảnh (retention, cron)** | ❌ | Chưa có job dọn ảnh. |
 | **Backup/restore chạy thật** | 🟡 | Chưa có bằng chứng; cần quy trình DB + ảnh và thử restore trên môi trường test được chỉ định. |
-| **Integration/E2E test** | ❌ | Chưa có bộ test; cần theo `06-testing.md`. |
+| **Integration/E 2 E test** | 🟡 | Unit/HTTP/real SQL Server/PG-CI có suite; browser E 2 E chưa làm. |
 | Supabase Auth / Data API và RLS | 🟡 | Ứng dụng dùng .NET Identity/JWT. Data API/grants/RLS của DB live chưa xác minh; không suy ra an toàn dữ liệu chỉ vì ứng dụng không gọi Supabase Auth. |
 
 ## 4. Log sự kiện (mới trên cùng)
+
+### 17/10/2026 — Codex: bộ tài liệu chọn lọc và hoàn thiện backend
+
+- Đối chiếu docs_mau, thêm tài liệu phù hợp 14–25/27/30/31/34 và meta guides; N/A 26/28/29/32/33 có lý do trong intake. Sửa backend README/ARCHITECTURE mô tả nhầm Next.js, bổ sung score/risk/API inventory.
+- Phỏng vấn chủ dự án: OT giao actual×Approved, công thường trong ca trừ nghỉ mặc định 12–13 cấu hình được, phút→2 số; HR/Admin self-review công/OT/sửa, leave cần người khác. Chủ dự án giao Codex chọn ngày hiệu lực và phần phép: worker đúng ngày/catch-up, hủy Approved có reason/Refund một lần, chưa auto accrual.
+- Khôi phục/hoàn thiện HR service/private storage, account/JWT/lockout/guards; thêm period/snapshot/version/XLSX/PDF, raw log/ledger retention, trace/rate/readiness, migration/scripts và provider tests.
+- Kiểm chứng local sau bản vá Pkcs 8.0.2: restore -warnaserror PASS; Release build: 0 warning / 0 error; M.Tests: 85 PASS / 0 FAIL / 1 SKIP (PostgreSQL local không có),86 ca tổng, TRX verified-local.trx trong TEMP/marixa-v2-artifacts/test-results. SQL Server LocalDB chạy migration từ schema trước release, kiểm default nghỉ 12:00, period transaction/version/constraint trên DB giả đã xóa sau test.
++- EF has-pending-model-changes: không drift; đã sinh/đọc idempotent SQL cho 2 migration mới, không DROP TABLE/COLUMN trong Up. Publish Release PASS, có font/license/SQL scripts. NuGet audit 8 project gồm transitive: 0 package có advisory sau ghim Pkcs 8.0.2; trước vá có 2 advisory qua PDFsharp.
++- Export QA độc lập: pypdf đọc đúng tên/loại nghỉ Unicode, 35 đoạn lý do / 200 ký tự token dài, font embedded; Poppler render và xem đủ 2 trang. openpyxl mở XLSX 2 sheet, giờ numeric/0.00, ô '=CMD()' là text, style/filter/freeze hợp lệ. Markdown: 43 file / 317 link / 7 anchor / 1 JSON: 0 lỗi; PowerShell code blocks parse 0 lỗi. Frontend npm run build PASS, có cảnh báo bundle lớn; không browser E2E.
++- CI remote [run 39001331032](https://github.com/taiDinh303/M-ChamCong/actions/runs/39001331032), source commit f3a344b: SUCCESS toàn bộ restore/build/test/Markdown/publish/Docker. TRX: 85 PASS / 0 FAIL / 1 SKIP SQL Server (Linux); PostgreSQL schema/additive upgrade lặp/period transaction/constraints PASS. Kết hợp fixture Windows đã kiểm cả hai provider. PR nháp [#1](https://github.com/taiDinh303/M-ChamCong/pull/1); nhánh codex/docs-backend-completion đã push. Không apply/deploy DB live trong nhiệm vụ này.
+- Điểm theo rubric backend:5.3→8.4/10, chỉ chốt cùng kiểm chứng cuối; [BACKEND_REVIEW](../marixa_aspnet/BACKEND_REVIEW.md). Nhánh công việc codex/docs-backend-completion tránh autoDeploy khi schema live chưa nâng.
+
 
 > Lịch sử trước lần chuẩn hóa 16/10 được giữ để truy vết. Số file, trạng thái, quyết định đã rút hoặc quyền sửa tài liệu trong các entry cũ không thay hướng dẫn hiện hành ở 00/01.
 
@@ -230,22 +242,7 @@ Câu trả lời của chủ dự án → cập nhật tài liệu (chỉ sửa 
 
 ## 5. Vấn đề / rủi ro đang mở
 
-**Hiện hành sau chuẩn hóa 16/10:** các lỗi mô tả được sửa trong docs; các sai khác ứng dụng chưa được sửa code. Backlog duy nhất ở [01-plan.md §2](01-plan.md#2-việc-tiếp-theo). Các đề xuất OT/tự duyệt/hủy Approved chưa có quyết định thống nhất phải giữ trạng thái mở.
-
-- **Quyền dữ liệu:** kiểm tra quyền sở hữu ở chấm công/xem công/danh sách nghỉ; [Authorize] chỉ chứng minh xác thực hoặc role, không chứng minh giới hạn đúng nhân viên. Route guard thiếu registry entry trả true.
-- **Cấu hình Storage:** code đọc Supabase:ServiceKey, cần SUPABASE__SERVICEKEY; tên __SERVICE_KEY còn ở blueprint/comment/mẫu env không tương đương. Kiểu key/header upload chưa được chứng minh chạy live.
-- **Kết nối và startup:** normalizer URI không giữ đầy đủ SSL Mode/query options; startup có thể ghi warning rồi tiếp tục khi DB/seed lỗi. Swagger trả được không chứng minh DB sẵn sàng.
-- **Chấm công:** ngày UTC, UI bắt buộc ảnh, GPS chỉ hiển thị, làm tròn giờ, mốc evaluator 16:30 khác rule17:00, seeder reset DEFAULT-CA; test concurrency/unique constraint còn thiếu.
-- **Duyệt và dữ liệu:** ngoại lệ HR/Admin tự duyệt OT/sửa công, duyệt công nhận ApprovedBy từ client, quyền sửa bản ghi Approved cần kiểm chứng từng endpoint. Hai service tổng ledger khác cách tính Adjust và lọc DeletedTime; giữ chính sách phép, mở việc đối soát công thức.
-- **Hạ tầng/Figma:** hosting snapshot khác plan trong blueprint; env examples có thông tin cũ; plugin60 variable definitions, UI Kit placeholder, chưa có bằng chứng chạy hoặc binding. Không suy ra trạng thái live từ file repo.
-
-
-- **Offline + khóa kỳ:** chưa có queue/điều chỉnh kỳ sau — cần thiết kế trước khi dùng thật (event đến muộn không được sửa snapshot cũ).
-- **Ảnh bucket public:** lộ URL công khai; cân nhắc bucket private + đọc theo quyền (quyết định trước khi làm, cập nhật `docs/02`).
-- **Audit log chưa đồng nhất** giữa các module (chấm công có ghi `ChangeSummary`; các module khác cần kiểm tra có ghi `AuditLog`).
-- **Hạ tầng:** đối chiếu plan/giới hạn/điều kiện hiện hành với dashboard và tài liệu chính thức; xem [07-deploy-overview.md](07-deploy-overview.md).
-- **Chưa có test/backup/restore:** chưa chạy integration/e2e, chưa thử khôi phục dữ liệu.
-
+**Hiện hành 17/10:** quyết định nghiệp vụ ở 01, danh mục rủi ro ở 34. Ownership/JWT/bootstrap/timezone/storage/seed đã được sửa phía server; không giữ lỗi đã sửa như backlog mở. Còn cần UI ảnh/GPS/period/export, schema/grants/volume/restore và smoke live, Manager scope, biên dữ liệu cũ, offline/accrual/retention. Chỉ gọi production đạt khi có bằng chứng riêng.
 
 ### Rà soát ban đầu 16/10/2026 — bằng chứng trước chuẩn hóa
 

@@ -1,6 +1,6 @@
 # 12 — Thuật ngữ dùng chung Marixa
 
-> Chủ tài liệu: **Đinh Văn Tài**. Cập nhật: **16/10/2026**.
+> Chủ tài liệu: **Đinh Văn Tài**. Cập nhật: **17/10/2026**.
 > Quy ước trạng thái/cập nhật: [00-README.md](00-README.md). **EN:** A definition does not prove implementation. Read the status and source before assuming a workflow exists.
 
 | Thuật ngữ | Ý nghĩa trong dự án | Trạng thái / lưu ý |
@@ -9,20 +9,20 @@
 | TARGET / Mục tiêu | Kết quả nghiệp vụ hoặc thiết kế cần đạt | Sai khác với code được ghi thành việc cần làm |
 | PENDING / Chưa triển khai | Chưa có luồng đầy đủ trong stack hiện hành | Backlog ở [01-plan.md](01-plan.md) |
 | NOT VERIFIED / Chưa xác minh | Chưa có bằng chứng đủ cho kết luận | Áp dụng cho runtime, cloud, Figma và test chưa chạy |
-| Ca làm chung / AttendanceRule | Quy tắc giờ làm chung; mục tiêu một rule active | Seed 08:00–17:00, nghỉ 60 phút; hiện có ghi đè khi restart và mốc trong code chưa đồng nhất. Không version/ngày hiệu lực |
+| Ca làm chung / AttendanceRule | Một rule active, không version/ngày hiệu lực | Default 08:00–17:00/nghỉ 60 phút; seeder giữ cấu hình; unique filtered active + replacement transaction trong model/service |
 | Shift / EmployeeShift | Entity ca kế hoạch và gán ca theo nhân viên | Có code, không suy ra V1 có hệ đa ca hoàn chỉnh |
-| Ngày công / AttendanceDate | Ngày nghiệp vụ của bản ghi công | Mục tiêu ngày VN; check-in hiện lấy ngày UTC |
-| Attendance | Bản ghi tổng hợp trạng thái/duyệt/giờ công theo NV/ngày | Một NV/ngày là invariant cần đảm bảo, chưa chứng minh unique constraint/concurrency an toàn |
+| Ngày công / AttendanceDate | Nhãn ngày VN, không phải thời điểm | BusinessTime UTC+7, DateTime UTC-kind để tương thích PG; chưa backfill dữ liệu cũ |
+| Attendance | Tổng hợp NV/ngày | Unique EmployeeId+date khi chưa xóa; DB live cần áp constraint sau preflight |
 | AttendanceLog | Lượt vào/ra, thời điểm, phương pháp, ảnh, ghi chú | Sửa công giữ log gốc; không có nghĩa mọi API CRUD bất biến |
 | AttendanceCorrection | Yêu cầu sửa mốc chấm và kết quả duyệt | Có code; ngoại lệ tự duyệt xem [02-business-analysis.md](02-business-analysis.md) |
-| ActualHours / Giờ thực | Giờ net calculator trả | Hiện làm tròn số giờ nguyên, không phải số phút chính xác |
-| OvertimeHours / Giờ tăng ca | Phần giờ ra vượt mốc kết thúc theo calculator | Làm tròn 1 chữ số thập phân; chưa lấy giao với đơn OT duyệt |
-| OvertimeRequest / Đơn OT | Yêu cầu ngày/khoảng giờ tăng ca và xét duyệt | Có service riêng; không chứng minh calculator sử dụng đơn |
-| LeaveRequest / Đơn nghỉ | Loại nghỉ, thời gian và trạng thái | Chỉ Pending được hủy; chưa có luồng hủy Approved |
+| ActualHours / Giờ công thường | Trong khung ca sau trừ nghỉ và tránh đếm đôi OT | Decimal 2 số, tính theo phút; quyết định 17/10 |
+| OvertimeHours / Giờ OT công nhận | Giao actual×window Approved, union khoảng chồng, trừ nghỉ | Tách công thường, decimal 2 số; không tự cộng giờ ra muộn |
+| OvertimeRequest / Đơn OT | Đề xuất window và xét duyệt | Chỉ Approved window hợp lệ dùng vào calculator/snapshot |
+| LeaveRequest / Đơn nghỉ | Loại/ngày/trạng thái | Approved hủy bởi HR/Admin khác chủ có lý do, giữ audit/hoàn đúng Deduct |
 | LeaveLedger / Sổ phép | Giao dịch cấp/trừ/hoàn/điều chỉnh | Số dư theo loại giao dịch; chưa có job cộng phép tháng |
-| Kỳ công / Snapshot | Kỳ tháng và bản tổng hợp cố định khi khóa | TARGET/PENDING; chưa có khóa/mở kỳ + snapshot trong API |
-| Export hiện có | XLSX hồ sơ nhân sự, CSV công/một số danh sách | Khác XLSX bảng công snapshot/PDF đơn nghỉ chưa triển khai |
-| Idempotent | Gọi lặp không tạo tác động nghiệp vụ ngoài lần đầu | Kiểm tra theo thao tác/concurrency; seeder không tạo trùng vẫn có thể ghi đè cấu hình |
+| Kỳ công / Snapshot | Open→Reviewed→Locked; version bất biến khi khóa | CURRENT backend, UI/live chưa nghiệm thu |
+| Export hiện có | XLSX hồ sơ/CSV hiện thời ở UI; XLSX snapshot và PDF nghỉ ở backend | Quyền/version khác nhau, xem 15 |
+| Idempotent | Gọi lặp không tạo hiệu ứng ngoài lần đầu | Test từng thao tác/concurrency; không suy từ check-then-insert hoặc một ca HTTP tuần tự |
 | Soft delete | Đánh dấu DeletedTime thay xóa vật lý | Không đồng nghĩa mọi truy vấn tự lọc bản ghi xóa |
 | Identity / JWT | ASP.NET Identity quản lý tài khoản/role; JWT xác thực request | Nguồn danh tính ứng dụng, không phải Supabase Auth |
 | Role core / nghiệp vụ | Core: Admin/Manager/HR/Employee; nghiệp vụ: Accountant/Sale/Marketing | 7 role seed; 3 role mới chưa có quyền module riêng |

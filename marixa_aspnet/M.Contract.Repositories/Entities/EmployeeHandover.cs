@@ -19,6 +19,7 @@ public class EmployeeHandover : BaseEntity
     public Guid? ReviewedByEmployeeId { get; set; }
     [MaxLength(150)] public string? ReviewedByName { get; set; }
     public DateTime? ReviewedAt { get; set; }
+    public DateTime? AppliedAt { get; set; }
 }
 
 public static class EmployeeHandoverStatus

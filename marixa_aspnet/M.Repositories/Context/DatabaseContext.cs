@@ -1,3 +1,4 @@
+using M.Core.Security;
 using M.Contract.Repositories.Entities;
 using M.Contract.Repositories.AuthEntities;
 using System.Threading;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace M.Repositories.Context
 {
-    public class DatabaseContext : IdentityDbContext<
+    public partial class DatabaseContext : IdentityDbContext<
         ApplicationUser,
         ApplicationRole,
         Guid,
@@ -17,10 +18,15 @@ namespace M.Repositories.Context
         ApplicationUserToken>
     {
         public DatabaseContext(
-            DbContextOptions<DatabaseContext> options)
+            DbContextOptions<DatabaseContext> options, ICurrentUser? actor = null, TimeProvider? clock = null)
             : base(options)
         {
+            _actor = actor;
+            _clock = clock ?? TimeProvider.System;
         }
+
+        private readonly ICurrentUser? _actor;
+        private readonly TimeProvider _clock;
 
         // =====================================================
         // =====================================================
@@ -36,29 +42,13 @@ namespace M.Repositories.Context
         // SQL Server (local dev), which ignores DateTime.Kind.
         // =====================================================
 
-        public override int SaveChanges(bool acceptAllChangesOnSuccess)
-        {
-            if (Database.IsNpgsql())
-                NormalizeDateTimePropertiesToUtc();
-            return base.SaveChanges(acceptAllChangesOnSuccess);
-        }
+        public override int SaveChanges(bool acceptAllChangesOnSuccess) => Persist(acceptAllChangesOnSuccess);
 
-        public override Task<int> SaveChangesAsync(
-            bool acceptAllChangesOnSuccess,
-            CancellationToken cancellationToken = default)
-        {
-            if (Database.IsNpgsql())
-                NormalizeDateTimePropertiesToUtc();
-            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        }
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default) => PersistAsync(acceptAllChangesOnSuccess, cancellationToken);
 
-        public override Task<int> SaveChangesAsync(
-            CancellationToken cancellationToken = default)
-        {
-            if (Database.IsNpgsql())
-                NormalizeDateTimePropertiesToUtc();
-            return base.SaveChangesAsync(cancellationToken);
-        }
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
+            PersistAsync(true, cancellationToken);
 
         private void NormalizeDateTimePropertiesToUtc()
         {
@@ -210,6 +200,20 @@ public DbSet<AuditLog> AuditLogs { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<AttendanceRule>().Property(r => r.BreakStartTime).HasDefaultValue(new TimeOnly(12, 0)).ValueGeneratedNever();
+            builder.Entity<AttendancePeriod>().HasIndex(p => p.YearMonth).IsUnique();
+            builder.Entity<AttendancePeriodSnapshot>().HasIndex(p => new { p.PeriodId, p.Version }).IsUnique();
+            builder.Entity<AttendancePeriodSnapshot>().HasOne<AttendancePeriod>().WithMany()
+                .HasForeignKey(p => p.PeriodId).OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<AttendancePeriodSnapshot>().Property(p => p.PayloadJson)
+                .HasColumnType(Database.IsNpgsql() ? "text" : "nvarchar(max)");
+            builder.Entity<AttendancePeriodEvent>().HasOne<AttendancePeriod>().WithMany()
+                .HasForeignKey(p => p.PeriodId).OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<AttendancePeriodEvent>().HasIndex(p => new { p.PeriodId, p.CreatedTime });
+            builder.Entity<LeaveLedger>().HasIndex(l => new { l.LeaveRequestId, l.Year, l.EntryType }).IsUnique()
+                .HasDatabaseName("UX_LeaveLedger_Request_Year_Type")
+                .HasFilter(Database.IsNpgsql() ? "\"LeaveRequestId\" IS NOT NULL AND \"EntryType\" IN (3, 4)" : "[LeaveRequestId] IS NOT NULL AND [EntryType] IN (3, 4)");
+
             builder.Entity<AttendanceRule>().HasIndex(r => r.IsActive).IsUnique()
                 .HasDatabaseName("UX_AttendanceRules_Active")
                 .HasFilter(Database.IsNpgsql() ? "\"IsActive\" = TRUE AND \"DeletedTime\" IS NULL" : "[IsActive] = 1 AND [DeletedTime] IS NULL");
@@ -512,5 +516,9 @@ public DbSet<AuditLog> AuditLogs { get; set; }
                 .OnDelete(DeleteBehavior.SetNull);
             builder.Entity<AttendanceCorrection>().HasIndex(c => new { c.EmployeeId, c.WorkDate });
         }
+        public DbSet<AttendancePeriod> AttendancePeriods => Set<AttendancePeriod>();
+        public DbSet<AttendancePeriodSnapshot> AttendancePeriodSnapshots => Set<AttendancePeriodSnapshot>();
+        public DbSet<AttendancePeriodEvent> AttendancePeriodEvents => Set<AttendancePeriodEvent>();
+
     }
 }

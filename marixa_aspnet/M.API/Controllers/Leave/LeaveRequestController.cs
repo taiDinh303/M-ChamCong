@@ -16,10 +16,20 @@ namespace M.API.Controllers.Leave
     public class LeaveRequestController : BaseApiController
     {
         private readonly ILeaveRequestService _leaveRequestService;
+        private readonly ILeaveDocumentService _documents;
 
-        public LeaveRequestController(ILeaveRequestService leaveRequestService)
+        public LeaveRequestController(ILeaveRequestService leaveRequestService, ILeaveDocumentService documents)
         {
             _leaveRequestService = leaveRequestService;
+            _documents = documents;
+        }
+
+        [HttpGet("{id:guid}/pdf")]
+        public async Task<IActionResult> Pdf(Guid id)
+        {
+            var file = await _documents.PdfAsync(id);
+            Response.Headers.CacheControl = "no-store";
+            return File(file.Content, file.ContentType, file.FileName);
         }
 
         // ---------- Helpers ----------

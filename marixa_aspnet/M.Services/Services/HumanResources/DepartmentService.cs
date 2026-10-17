@@ -7,7 +7,7 @@ using M.Core.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using M.ModelViews.DepartmentModelView;
-using Services.Mappings;
+using M.Services.Mappings;
 using static M.Core.Base.BaseException;
 
 namespace M.Services.Services.HumanResources

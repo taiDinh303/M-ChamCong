@@ -32,15 +32,18 @@ namespace M.Services.Security
 
         public async Task<string> GenerateAsync(
             ApplicationUser user,
-            Employee? employee)
+            Employee? employee, DateTime? expiresAt = null)
         {
-            var expireMinutes = _settings.ExpirationMinutes;
-            DateTime expires = _clock.GetUtcNow().UtcDateTime.AddMinutes(expireMinutes);
+            DateTime expires = expiresAt ?? ExpiresAt;
 
             List<Claim> claims =
                 await BuildClaimsAsync(user, employee);
             return GenerateJwtToken(claims, expires);
         }
+
+        public DateTime ExpiresAt => GetExpiresAt(false);
+        public DateTime GetExpiresAt(bool rememberMe) => _clock.GetUtcNow().UtcDateTime.AddMinutes(
+            rememberMe ? _settings.RememberMeExpirationMinutes : _settings.ExpirationMinutes);
 
         private async Task<List<Claim>> BuildClaimsAsync(
             ApplicationUser user,

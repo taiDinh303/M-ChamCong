@@ -39,7 +39,9 @@ namespace M.Contract.Repositories.Entities
         public int EarlyLeaveThresholdMinutes { get; set; } = 0;
 
         // Số phút nghỉ giữa ca được trừ (0 = không trừ)
-        public int BreakMinutes { get; set; } = 0;
+        public TimeOnly BreakStartTime { get; set; } = new(12, 0);
+
+        public int BreakMinutes { get; set; } = 60;
 
         // Bắt buộc chụp ảnh khi chấm công (mỗi lần)
         public bool PhotoRequired { get; set; } = true;

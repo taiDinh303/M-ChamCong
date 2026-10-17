@@ -23,13 +23,25 @@ public sealed class DatabaseInitializer(IServiceProvider services, IConfiguratio
         {
             if (db.Database.IsNpgsql())
             {
-                foreach (var statement in db.Database.GenerateCreateScript()
-                    .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                var statements = db.Database.GenerateCreateScript()
+                    .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                foreach (var statement in statements.Where(s => s.StartsWith("CREATE TABLE", StringComparison.OrdinalIgnoreCase)))
                 {
                     try { await db.Database.ExecuteSqlRawAsync(statement, cancellationToken); }
                     catch (PostgresException error) when (error.SqlState is "42P07" or "42710" or "42701") { }
                 }
+                var periodUpgrade = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory,
+                    "Sql", "20261017-attendance-periods.sql"), cancellationToken);
+                await db.Database.ExecuteSqlRawAsync(periodUpgrade, cancellationToken);
+                var policyUpgrade = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory,
+                    "Sql", "20261017-workforce-policies.sql"), cancellationToken);
+                await db.Database.ExecuteSqlRawAsync(policyUpgrade, cancellationToken);
                 await PostgresSchemaSync.EnsureColumnsAsync(db, services);
+                foreach (var statement in statements.Where(s => !s.StartsWith("CREATE TABLE", StringComparison.OrdinalIgnoreCase)))
+                {
+                    try { await db.Database.ExecuteSqlRawAsync(statement, cancellationToken); }
+                    catch (PostgresException error) when (error.SqlState is "42P07" or "42710" or "42701") { }
+                }
             }
             else await db.Database.MigrateAsync(cancellationToken);
         }

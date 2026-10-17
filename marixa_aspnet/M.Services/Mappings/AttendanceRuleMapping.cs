@@ -23,6 +23,7 @@ namespace M.Services.Mappings
                 CheckOutTime = entity.CheckOutTime,
                 LateGraceMinutes = entity.LateGraceMinutes,
                 EarlyLeaveThresholdMinutes = entity.EarlyLeaveThresholdMinutes,
+                BreakStartTime = entity.BreakStartTime,
                 BreakMinutes = entity.BreakMinutes,
                 PhotoRequired = entity.PhotoRequired,
                 GpsRequired = entity.GpsRequired,
@@ -50,6 +51,7 @@ namespace M.Services.Mappings
                 CheckOutTime = model.CheckOutTime,
                 LateGraceMinutes = model.LateGraceMinutes,
                 EarlyLeaveThresholdMinutes = model.EarlyLeaveThresholdMinutes,
+                BreakStartTime = model.BreakStartTime,
                 BreakMinutes = model.BreakMinutes,
                 PhotoRequired = model.PhotoRequired,
                 GpsRequired = model.GpsRequired,
@@ -82,6 +84,7 @@ namespace M.Services.Mappings
             entity.CheckOutTime = model.CheckOutTime;
             entity.LateGraceMinutes = model.LateGraceMinutes;
             entity.EarlyLeaveThresholdMinutes = model.EarlyLeaveThresholdMinutes;
+            entity.BreakStartTime = model.BreakStartTime;
             entity.BreakMinutes = model.BreakMinutes;
             entity.PhotoRequired = model.PhotoRequired;
             entity.GpsRequired = model.GpsRequired;

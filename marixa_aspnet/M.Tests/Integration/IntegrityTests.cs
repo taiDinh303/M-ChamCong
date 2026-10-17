@@ -105,7 +105,7 @@ public sealed class IntegrityTests
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         using var scope = app.Services.CreateScope();
         var rules = await scope.ServiceProvider.GetRequiredService<IUnitOfWork>().GetRepository<AttendanceRule>().Entities.ToListAsync();
-        Assert.Equal("NEW", Assert.Single(rules.Where(r => r.IsActive)).Code);
+        Assert.Equal("NEW", Assert.Single(rules, r => r.IsActive).Code);
         Assert.False(rules.Single(r => r.Code == "TEST").IsActive);
     }
 

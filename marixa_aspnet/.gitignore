@@ -494,7 +494,7 @@ $RECYCLE.BIN/
 # ============================================================
 .agnes/
 .agneshints
-AGENTS.md
+# AGENTS.md is a shared, versioned working agreement.
 agneshints
 
 # Local debug / scratch scripts at repo root

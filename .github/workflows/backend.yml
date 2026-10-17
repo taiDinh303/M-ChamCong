@@ -2,9 +2,10 @@ name: Backend verification
 
 on:
   push:
-    paths: ["marixa_aspnet/**", ".github/workflows/backend.yml"]
+    paths: ["marixa_aspnet/**", "docs/**", "scripts/verify_docs.py", ".github/workflows/backend.yml"]
   pull_request:
-    paths: ["marixa_aspnet/**", ".github/workflows/backend.yml"]
+    paths: ["marixa_aspnet/**", "docs/**", "scripts/verify_docs.py", ".github/workflows/backend.yml"]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -12,16 +13,36 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: marixa_test
+          POSTGRES_PASSWORD: isolated_ci_only
+          POSTGRES_DB: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      MARIXA_TEST_POSTGRES: Host=127.0.0.1;Port=5432;Database=postgres;Username=marixa_test;Password=isolated_ci_only
+      MARIXA_ARTIFACT_DIR: ${{ github.workspace }}/TestResults/artifacts
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 8.0.x
-      - run: dotnet restore marixa_aspnet/M.BE.sln
+      - run: dotnet restore marixa_aspnet/M.BE.sln -warnaserror
       - run: dotnet build marixa_aspnet/M.BE.sln -c Release --no-restore -warnaserror
       - run: dotnet test marixa_aspnet/M.BE.sln -c Release --no-build --logger trx --results-directory TestResults
+      - run: python3 scripts/verify_docs.py
+      - run: dotnet publish marixa_aspnet/M.API/M.API.csproj -c Release --no-build -o publish
+      - run: docker build -f marixa_aspnet/Dockerfile -t marixa-backend-verify marixa_aspnet
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: backend-test-results
-          path: TestResults/*.trx
+          path: TestResults/

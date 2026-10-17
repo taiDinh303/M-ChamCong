@@ -2,6 +2,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using M.Contract.Repositories.Entities;
+using M.Contract.Services.Storage;
 using M.Repositories.Context;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
@@ -20,10 +21,11 @@ namespace M.Tests.Infrastructure;
 
 public sealed class FixedClock(DateTimeOffset now) : TimeProvider
 {
-    public override DateTimeOffset GetUtcNow() => now;
+    public DateTimeOffset Now { get; set; } = now;
+    public override DateTimeOffset GetUtcNow() => Now;
 }
 
-public sealed class ApiFactory(bool realJwt = false) : WebApplicationFactory<Program>
+public sealed class ApiFactory(bool realJwt = false, int authLimit = 20) : WebApplicationFactory<Program>
 {
     private readonly SqliteConnection _connection = new("Data Source=:memory:");
     public static readonly Guid EmployeeA = Guid.Parse("11111111-1111-1111-1111-111111111111");
@@ -31,6 +33,7 @@ public sealed class ApiFactory(bool realJwt = false) : WebApplicationFactory<Pro
     public static readonly Guid UserA = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
     public FixedClock Clock { get; } = new(realJwt ? DateTimeOffset.UtcNow : DateTimeOffset.Parse("2026-10-16T18:05:00Z"));
     public string? AuthenticationFailure { get; private set; }
+    public MemoryDocuments Documents { get; } = new();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -39,6 +42,7 @@ public sealed class ApiFactory(bool realJwt = false) : WebApplicationFactory<Pro
         builder.ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection(new Dictionary<string, string?>
         {
             ["DatabaseInitialization:Enabled"] = "false", ["Seed:Enabled"] = "false",
+            ["RateLimiting:AuthRequestsPerMinute"] = authLimit.ToString(System.Globalization.CultureInfo.InvariantCulture),
             ["Database:Provider"] = "SqlServer", ["ConnectionStrings:MyCnn"] = "Server=(localdb)\\MSSQLLocalDB;Database=UnusedTestPlaceholder",
             ["JwtSettings:Key"] = "TEST-HOST-ONLY-NOT-A-REAL-SIGNING-KEY-123456",
             ["Supabase:Url"] = "", ["Supabase:ServiceKey"] = "", ["Supabase:Service_Key"] = ""
@@ -47,10 +51,13 @@ public sealed class ApiFactory(bool realJwt = false) : WebApplicationFactory<Pro
         {
             services.RemoveAll<DbContextOptions<DatabaseContext>>();
             services.RemoveAll<DatabaseContext>();
-            services.AddScoped<DatabaseContext>(_ => new TestDatabaseContext(
-                new DbContextOptionsBuilder<DatabaseContext>().UseSqlite(_connection).Options));
+            services.AddScoped<DatabaseContext>(sp => new TestDatabaseContext(
+                new DbContextOptionsBuilder<DatabaseContext>().UseSqlite(_connection).Options,
+                sp.GetRequiredService<M.Core.Security.ICurrentUser>(), sp.GetRequiredService<TimeProvider>()));
             services.RemoveAll<TimeProvider>();
             services.AddSingleton<TimeProvider>(Clock);
+            services.RemoveAll<IPrivateDocumentStorage>();
+            services.AddSingleton<IPrivateDocumentStorage>(Documents);
             if (realJwt) services.PostConfigure<Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions>("Bearer", options =>
             {
                 var previous = options.Events.OnChallenge;
@@ -83,11 +90,12 @@ public sealed class ApiFactory(bool realJwt = false) : WebApplicationFactory<Pro
         db.SaveChanges();
     }
 
-    public HttpClient Actor(string role = "Employee", Guid? employee = null)
+    public HttpClient Actor(string role = "Employee", Guid? employee = null, Guid? user = null)
     {
         var client = CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
         client.DefaultRequestHeaders.Add("X-Test-Role", role);
         client.DefaultRequestHeaders.Add("X-Test-Employee", (employee ?? EmployeeA).ToString());
+        client.DefaultRequestHeaders.Add("X-Test-User", (user ?? UserA).ToString());
         return client;
     }
 
@@ -104,7 +112,8 @@ public sealed class ApiFactory(bool realJwt = false) : WebApplicationFactory<Pro
     }
 }
 
-internal sealed class TestDatabaseContext(DbContextOptions<DatabaseContext> options) : DatabaseContext(options)
+internal sealed class TestDatabaseContext(DbContextOptions<DatabaseContext> options, M.Core.Security.ICurrentUser actor,
+    TimeProvider clock) : DatabaseContext(options, actor, clock)
 {
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -128,7 +137,7 @@ internal sealed class TestAuthenticationHandler(IOptionsMonitor<AuthenticationSc
             return Task.FromResult(AuthenticateResult.NoResult());
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, ApiFactory.UserA.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, Request.Headers["X-Test-User"].FirstOrDefault() ?? ApiFactory.UserA.ToString()),
             new Claim(ClaimTypes.Name, "test-actor"), new Claim(ClaimTypes.Role, role.ToString()),
             new Claim("employeeId", Request.Headers["X-Test-Employee"].ToString())
         };

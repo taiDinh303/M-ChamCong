@@ -2,7 +2,7 @@ using M.Contract.Repositories.AuthEntities;
 using M.ModelViews.UserInfoModelView;
 using M.ModelViews.UserModelView;
 
-namespace Services.Mappings
+namespace M.Services.Mappings
 {
     public static class UserMapping
     {
@@ -87,6 +87,8 @@ namespace Services.Mappings
         public static void ToEntity(this UpdateUserModelView model, ApplicationUser user)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
+            if (model.Email != null) user.Email = model.Email.Trim();
+            if (model.PhoneNumber != null) user.PhoneNumber = model.PhoneNumber.Trim();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace M.API.Bootstrap;
 /// <summary>
 /// Generic PostgreSQL schema sync. Compares the current EF Core model to the
 /// actual PostgreSQL schema and adds any missing columns (idempotent).
-/// Runs on every app boot; safe to call repeatedly.
+/// Runs only during explicit initialization. Required columns need a reviewed migration.
 ///
 /// Uses raw ADO.NET (DbConnection/DbCommand) instead of EF SqlQueryRaw so
 /// no EF query compilation happens (no EF1002 / 10103 warnings, no
@@ -29,7 +29,7 @@ public static class PostgresSchemaSync
             .Where(e => !e.IsOwned() && !string.IsNullOrEmpty(e.GetTableName()))
             .ToList();
 
-        int tablesChecked = 0, columnsAdded = 0, tablesMissing = 0;
+        int tablesChecked = 0, columnsAdded = 0;
 
         var connection = db.Database.GetDbConnection();
         var openedHere = connection.State != ConnectionState.Open;
@@ -62,12 +62,7 @@ public static class PostgresSchemaSync
 
                 if (actualTable is null)
                 {
-                    tablesMissing++;
-                    logger.LogWarning(
-                        "PostgreSQL: table '{EfTable}' not found. If this is a new entity, " +
-                        "delete the database and let EnsureCreated recreate it, or create it manually.",
-                        efTableName);
-                    continue;
+                    throw new InvalidOperationException($"PostgreSQL table '{efTableName}' is missing. Apply a reviewed additive migration; never delete the database to repair a schema.");
                 }
 
                 tablesChecked++;
@@ -89,7 +84,9 @@ public static class PostgresSchemaSync
 
                     if (!actualSet.Contains(colName))
                     {
-                        var pgType = MapToPostgresType(prop.ClrType);
+                        if (!prop.IsNullable)
+                            throw new InvalidOperationException($"Required column '{actualTable}.{colName}' is missing. Apply a migration with an explicit backfill before initialization.");
+                        var pgType = prop.GetRelationalTypeMapping().StoreType;
                         // Identifiers below come from EF model metadata and
                         // information_schema - never from user input - so the
                         // interpolated DDL is safe.
@@ -114,8 +111,8 @@ public static class PostgresSchemaSync
         }
 
         logger.LogInformation(
-            "PostgreSQL schema sync complete: {Tables} tables checked, {Added} columns added, {Missing} tables missing.",
-            tablesChecked, columnsAdded, tablesMissing);
+            "PostgreSQL schema sync complete: {Tables} tables checked, {Added} columns added, ",
+            tablesChecked, columnsAdded);
     }
 
     /// <summary>
@@ -146,37 +143,4 @@ public static class PostgresSchemaSync
         return list;
     }
 
-    /// <summary>
-    /// Maps a .NET CLR type to the equivalent PostgreSQL column type.
-    /// Uses timestamptz for DateTime/DateTimeOffset to match Npgsql's default
-    /// EnsureCreated DDL.
-    /// </summary>
-    private static string MapToPostgresType(Type type)
-    {
-        type = Nullable.GetUnderlyingType(type) ?? type;
-
-        if (type == typeof(byte[])) return "bytea";
-        if (type.IsArray && type != typeof(byte[])) return "text"; // fallback
-
-        return type.Name switch
-        {
-            "Guid" => "uuid",
-            "String" => "text",
-            "Int32" => "integer",
-            "Int64" => "bigint",
-            "Int16" => "smallint",
-            "UInt32" => "integer",
-            "UInt64" => "bigint",
-            "Double" => "double precision",
-            "Single" => "real",
-            "Decimal" => "numeric",
-            "Boolean" => "boolean",
-            "DateTime" => "timestamptz",
-            "DateTimeOffset" => "timestamptz",
-            "DateOnly" => "date",
-            "TimeOnly" => "time",
-            "TimeSpan" => "interval",
-            _ => "text" // safe fallback
-        };
-    }
 }

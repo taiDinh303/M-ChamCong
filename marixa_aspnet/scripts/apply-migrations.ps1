@@ -1,4 +1,8 @@
+param([switch]$LegacyNextSchema)
 $ErrorActionPreference = 'Stop'
+if (-not $LegacyNextSchema) {
+  throw 'Archived Next.js/Supabase Auth migrations. For the current ASP.NET schema, read docs/23-data-migration.md. Use -LegacyNextSchema only for an explicitly authorized legacy recovery.'
+}
 $databaseUrl = [System.Environment]::GetEnvironmentVariable('MARIXA_DATABASE_URL')
 if ([string]::IsNullOrWhiteSpace($databaseUrl)) { throw 'Set MARIXA_DATABASE_URL to the Supabase dev PostgreSQL connection string first.' }
 $psql = Get-Command psql -ErrorAction Stop

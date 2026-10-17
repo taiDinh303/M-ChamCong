@@ -108,6 +108,10 @@ namespace M.Services.Services.Leave
         public async Task CreateEntryAsync(CreateLeaveLedgerEntryModelView model)
         {
             RequireStaff();
+            if (!Enum.IsDefined(model.EntryType) || model.Days == 0 || (model.EntryType != LeaveLedgerEntryType.Adjust && model.Days < 0))
+                throw new ErrorException(400, "INVALID_ENTRY", "Ledger entries need a valid type and a nonzero amount; only adjustments may be negative.");
+            if (model.EntryType is LeaveLedgerEntryType.Deduct or LeaveLedgerEntryType.Refund)
+                throw new ErrorException(409, "MANAGED_LEAVE_ENTRY", "Deductions and refunds are created by the leave approval/cancellation workflow. Use an audited adjustment for a manual correction.");
             IGenericRepository<LeaveLedger> repo = UnitOfWork.GetRepository<LeaveLedger>();
 
             // Nhân viên tồn tại
@@ -125,33 +129,6 @@ namespace M.Services.Services.Leave
                     .AnyAsync(x => x.Id == typeId && !x.DeletedTime.HasValue);
                 if (!typeExists)
                     throw new ErrorException(StatusCodes.Status404NotFound, "NOT_FOUND", "Leave type not found");
-            }
-
-            // Trừ/hoàn (Deduct/Refund) liên quan đơn nghỉ phải là đơn Đã duyệt
-            if (model.EntryType is LeaveLedgerEntryType.Deduct or LeaveLedgerEntryType.Refund)
-            {
-                if (model.LeaveRequestId is Guid reqId && reqId != Guid.Empty)
-                {
-                    // Idempotent: đã có giao dịch cùng loại + cùng đơn thì bỏ qua
-                    bool already = await repo.Entities.AnyAsync(x =>
-                        x.EntryType == model.EntryType &&
-                        x.LeaveRequestId == reqId &&
-                        !x.DeletedTime.HasValue);
-                    if (already) return;
-
-                    IGenericRepository<LeaveRequest> reqRepo = UnitOfWork.GetRepository<LeaveRequest>();
-                    LeaveRequest? request = await reqRepo.Entities
-                        .FirstOrDefaultAsync(x => x.Id == reqId && !x.DeletedTime.HasValue);
-                    bool valid = request is not null &&
-                        (model.EntryType == LeaveLedgerEntryType.Deduct
-                            ? request.Status == LeaveRequestStatus.Approved
-                            : request.Status is LeaveRequestStatus.Cancelled or LeaveRequestStatus.Rejected);
-                    if (!valid)
-                        throw new ErrorException(StatusCodes.Status400BadRequest, "INVALID_STATE",
-                            model.EntryType == LeaveLedgerEntryType.Deduct
-                                ? "Deducting leave requires an approved leave request"
-                                : "Refunding leave requires a cancelled/rejected request");
-                }
             }
 
             string currentUser = CurrentUserName;
