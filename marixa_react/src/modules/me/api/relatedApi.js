@@ -1,3 +1,4 @@
+import { getAllPages } from "../../../services/api/lists";
 import axiosClient from "../../../services/api/axiosClient";
 
 // API cho các entity liên quan đến nhân viên (đang đăng nhập)
@@ -19,12 +20,13 @@ const relatedApi = {
     },
 
     // Chấm công thực tế (VÀO CA / RA CA)
-    checkin(employeeId, type, photoUrl, note) {
+    checkin(employeeId, type, photoUrl, note, coordinates = {}) {
         return axiosClient.post("/Attendance/checkin", {
             employeeId,
             type,
             photoUrl,
             note,
+            ...coordinates,
         });
     },
 
@@ -49,14 +51,21 @@ const relatedApi = {
         );
     },
 
-    leavesByEmployee(employeeId) {
-        return axiosClient.get(
-            `/LeaveRequest/by-employee/${employeeId}`
-        );
+    myLeaves() {
+        return axiosClient.get("/LeaveRequest/mine");
     },
 
     createLeaveRequest(payload) {
         return axiosClient.post("/LeaveRequest/create", payload);
+    },
+    leaveBalance(employeeId, year) {
+        return axiosClient.get(`/LeaveLedger/summary/${employeeId}/year/${year}`);
+    },
+    cancelLeave(id, reason) {
+        return axiosClient.post(`/LeaveRequest/cancel/${id}`, { reason });
+    },
+    leavePdf(id) {
+        return axiosClient.get(`/LeaveRequest/${id}/pdf`, { responseType: "blob" });
     },
 
     contractsByEmployee(employeeId) {
@@ -85,14 +94,12 @@ const relatedApi = {
 
     // Dữ liệu cho thống kê: loại nghỉ phép (mức "phép còn lại")
     leaveTypesAll() {
-        return axiosClient.get("/LeaveType/get-all?pageNumber=1&pageSize=100");
+        return getAllPages("/LeaveType/get-all");
     },
 
     // Lịch lễ của công ty (đánh dấu ngày lễ trên lệnh công)
     holidayCalendarAll() {
-        return axiosClient.get(
-            "/HolidayCalendar/get-all?pageNumber=1&pageSize=400"
-        );
+        return getAllPages("/HolidayCalendar/get-all");
     },
 
     // Quy định chấm công (quy tắc hiện hành) - trang "Quy định"

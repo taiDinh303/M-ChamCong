@@ -38,7 +38,7 @@ const downloadUnlinkedEmployees = (employees) => {
 
 // Bộ lọc nhanh
 const FILTERS = {
-    all:   (s) => true,
+    all:   () => true,
     ready: (s) => s.key === "none",
     has:   (s) => s.key === "has" || s.key === "activated",
     none:  (s) => s.key === "none",

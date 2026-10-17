@@ -36,7 +36,7 @@ namespace M.API.Seed
         {
             Code = "DEFAULT-CA",
             Name = "Ca hành chính",
-            Description = "Làm việc từ 08:00 đến 17:00. Nghỉ trưa 12:00 - 13:00 (1 giờ), 13:00 vào làm lại. Vượt quá 17:00 được tính là tăng ca (OT).",
+            Description = "Ca 08:00–17:00, nghỉ 12:00–13:00. Công thường tính trong ca sau khi trừ giờ nghỉ; OT tính riêng theo thời gian làm thực tế trong đơn tăng ca đã duyệt.",
             StandardHours = 8,
             CheckInTime = new TimeOnly(8, 0),
             CheckOutTime = new TimeOnly(17, 0),

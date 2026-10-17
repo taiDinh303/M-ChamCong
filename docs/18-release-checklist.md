@@ -4,7 +4,7 @@
 
 ## 1. Gate trước khi push
 
-- Build Release warnings-as-errors, tests có số pass/fail/skip; provider, export và Markdown được xác minh theo [19](19-cicd.md).
+- Build Release warnings-as-errors, tests có số pass/fail/skip; provider, export và Markdown theo [19](19-cicd.md). Nếu sửa React: npm test/lint/build và browser smoke trên API/database cô lập; không dùng VITE env trỏ cloud.
 - Review diff/secret/license, bảo toàn migration lịch sử; schema mới có script và duplicate preflight theo [23](23-data-migration.md).
 - Chính sách đã phỏng vấn ghi trong 01; API mới/decimal giờ công/BreakStartTime/cancellation metadata được mô tả tại 15.
 - Không tuyên bố frontend/live/restore đã pass từ kiểm thử backend. Báo điểm và giới hạn tại [BACKEND_REVIEW](../marixa_aspnet/BACKEND_REVIEW.md).
@@ -16,7 +16,7 @@
 | Schema upgrade | Backup + preflight + chạy script ở staging tương đương, kiểm index/columns/readiness | Local provider/CI theo worklog; DB live chưa áp |
 | Storage bền | Volume App_Data/ảnh local nếu dùng, quyền user app và restore thử | NOT VERIFIED live |
 | Config/identity | Secret riêng, CORS origin, init/seed tắt, login + lockout + vai trò | Có test cô lập; live chưa test |
-| Nghiệp vụ | Checkin, duyệt, hủy/hoàn phép, OT riêng, khóa/mở/version/export; smoke có dữ liệu được phép | Backend test; browser E 2 E chưa làm |
+| Nghiệp vụ | Checkin, duyệt, hủy/hoàn phép, OT riêng, khóa/mở/version/export; smoke có dữ liệu được phép | Backend/Node test và browser smoke cô lập theo worklog; hosting/thiết bị thật chưa nghiệm thu |
 | Job ngày hiệu lực | Pending-due count, AppliedAt, retry/last-admin, kiểm khởi động lại | Có test processor; job live chưa test |
 | Backup/rollback | Bản DB + files, người vận hành, restore kiểm quyền và hash | Quy trình 22; restore thật chưa làm |
 

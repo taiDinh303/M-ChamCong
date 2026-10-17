@@ -1,8 +1,8 @@
-import { formatVnTime, calcOvertime, formatOvertime } from "../../../utils/vnTime";
+import { formatVnTime, businessDate, calcOvertime, formatOvertime } from "../../../utils/vnTime";
 import { pad2 } from "./statUtils";
 
 // Bảng chi tiết chấm công trong tháng (đồng bộ lịch sử chấm công).
-const StatDetailTable = ({ monthRows, holidayMap }) => {
+const StatDetailTable = ({ monthRows }) => {
     if (!monthRows.length) {
         return (
             <div className="att-card att-stat-card">
@@ -32,7 +32,7 @@ const StatDetailTable = ({ monthRows, holidayMap }) => {
                     </thead>
                     <tbody>
                         {monthRows.map((row) => {
-                            const dd = new Date(row.attendanceDate);
+                            const dd = businessDate(row.attendanceDate);
                             const inT = row.checkInTime
                                 ? formatVnTime(row.checkInTime)
                                 : "";

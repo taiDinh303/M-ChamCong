@@ -4,6 +4,11 @@ import AppLayout from "../../../components/layout/AppLayout";
 import relatedApi from "../api/relatedApi";
 import { useLanguage, localeForLanguage } from "../../../services/i18n/LanguageProvider";
 import PageBanner from "../components/PageBanner";
+import ReasonDialog from "../../../components/common/ReasonDialog";
+import { downloadResponse } from "../../../utils/download";
+import { apiErrorMessage } from "../../../services/api/contracts";
+import LeaveLedgerDialog from "../components/LeaveLedgerDialog";
+import { vnTodayKey, businessDate } from "../../../utils/vnTime";
 import "../attendance.css";
 import "../leave.css";
 
@@ -118,7 +123,7 @@ const LeaveFormModal = ({ types, remaining, language, onClose, onSubmit }) => {
                     </fieldset>
                     <div className="leave-days-preview"><span>Tổng số ngày</span><strong>{formatDayCount(totalDays, language)}</strong></div>
                     <label>Lý do <span>*</span><textarea required rows="3" maxLength="500" value={form.reason} onChange={(e) => update("reason", e.target.value)} placeholder="Nhập lý do xin nghỉ phép" /></label>
-                    {remaining != null && <div className="leave-balance-note">{language === "zh" ? `ℹ️ 您还剩 ${remaining} 天年假。提交后还剩 ${Math.max(0, remaining - totalDays)} 天。` : language === "en" ? `ℹ️ You have ${formatDayCount(remaining, language)} of leave remaining. After this request, you will have ${formatDayCount(Math.max(0, remaining - totalDays), language)} left.` : `ℹ️ Bạn còn ${remaining} ngày phép. Sau khi đăng ký còn ${Math.max(0, remaining - totalDays)} ngày.`}</div>}
+                    {remaining != null && <div className="leave-balance-note">{language === "zh" ? `ℹ️ 您还剩 ${remaining} 天年假。提交后还剩 ${Math.max(0, remaining - totalDays)} 天。` : language === "en" ? `ℹ️ You have ${formatDayCount(remaining, language)} of leave remaining. If approved, you would have ${formatDayCount(Math.max(0, remaining - totalDays), language)} left.` : `ℹ️ Bạn còn ${remaining} ngày phép. Tạm còn nếu được duyệt: ${Math.max(0, remaining - totalDays)} ngày.`}</div>}
                     {error && <p className="leave-form-error">{error}</p>}
                     <footer className="leave-modal-actions">
                         <button type="button" className="leave-btn secondary" onClick={onClose} disabled={saving}>Hủy</button>
@@ -130,7 +135,7 @@ const LeaveFormModal = ({ types, remaining, language, onClose, onSubmit }) => {
     );
 };
 
-const LeaveDetailsModal = ({ request, onClose, locale, language }) => {
+const LeaveDetailsModal = ({ request, onClose, locale, language, onCancel, onDownload }) => {
     const status = statusOf(request.status);
     const created = request.createdTime ? new Date(request.createdTime) : null;
     const approved = request.approvedAt ? new Date(request.approvedAt) : null;
@@ -146,12 +151,18 @@ const LeaveDetailsModal = ({ request, onClose, locale, language }) => {
                     <p className="leave-detail-dates">📅 {formatDate(request.fromDate, locale)} → {formatDate(request.toDate, locale)} <span>·</span> {formatDayCount(request.totalDays ?? daysBetween(request.fromDate, request.toDate), language)}</p>
                     <div className="leave-detail-field"><span>Lý do</span><p>{request.reason || "—"}</p></div>
                     <div className="leave-detail-field"><span>Người duyệt</span><p>{request.approverName || "Chưa có thông tin"}</p></div>
+                    {request.cancelledAt && <div className="leave-detail-field"><span>Đã hủy ngày {new Date(request.cancelledAt).toLocaleString(locale)}</span><p>{request.cancellationReason || "—"}</p></div>}
                     <div className="leave-timeline">
                         <h3>Lịch sử</h3>
                         <div className="leave-timeline-item"><i /> <div><strong>Tạo và gửi đơn</strong><span>{created ? created.toLocaleString(locale) : "—"}</span></div></div>
-                        <div className="leave-timeline-item"><i className={approved ? "complete" : ""} /> <div><strong>{approved ? status.label : "Chờ quản lý duyệt"}</strong><span>{approved ? approved.toLocaleString(locale) : "Chưa xử lý"}</span></div></div>
+                        <div className="leave-timeline-item"><i className={approved ? "complete" : ""} /> <div><strong>{approved ? "Đã xử lý phê duyệt" : "Chờ quản lý duyệt"}</strong><span>{approved ? approved.toLocaleString(locale) : "Chưa xử lý"}</span></div></div>
                     </div>
                 </div>
+                <footer className="leave-modal-actions">
+                    <button type="button" className="leave-btn secondary" onClick={onDownload}>Tải PDF</button>
+                    {request.status === 1 && <button type="button" className="leave-btn secondary" onClick={onCancel}>Hủy đơn chờ duyệt</button>}
+                    <button type="button" className="leave-btn secondary" onClick={onClose}>Đóng</button>
+                </footer>
             </section>
         </div>
     );
@@ -204,13 +215,18 @@ const LeavePage = () => {
     const [showForm, setShowForm] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [view, setView] = useState("list");
-    const [month, setMonth] = useState(() => new Date());
+    const [month, setMonth] = useState(() => businessDate(vnTodayKey()));
     const [statusFilter, setStatusFilter] = useState("");
     const [typeFilter, setTypeFilter] = useState("");
     const [search, setSearch] = useState("");
     const [fromFilter, setFromFilter] = useState("");
     const [toFilter, setToFilter] = useState("");
     const [page, setPage] = useState(1);
+    const [balance, setBalance] = useState(null);
+    const [cancelling, setCancelling] = useState(null);
+    const [cancelBusy, setCancelBusy] = useState(false);
+    const [cancelError, setCancelError] = useState("");
+    const [ledgerOpen, setLedgerOpen] = useState(false);
 
     const load = useCallback(async () => {
         if (!employeeId) {
@@ -220,29 +236,44 @@ const LeavePage = () => {
         }
         setLoading(true);
         setError("");
-        const [requestResult, typeResult, profileResult] = await Promise.allSettled([
-            relatedApi.leavesByEmployee(employeeId),
+        const [requestResult, typeResult, profileResult, balanceResult] = await Promise.allSettled([
+            relatedApi.myLeaves(),
             relatedApi.leaveTypesAll(),
             userId ? relatedApi.employeeByUser(userId) : Promise.resolve(null),
+            relatedApi.leaveBalance(employeeId, Number(vnTodayKey().slice(0, 4))),
         ]);
         if (requestResult.status === "fulfilled") setRequests(requestResult.value.data.data || []);
         else setError(requestResult.reason.response?.data?.message || requestResult.reason.message || "Không tải được đơn nghỉ phép.");
         if (typeResult.status === "fulfilled") {
             const data = typeResult.value.data.data;
             setTypes((data?.items || data || []).filter((type) => type.isActive !== false));
-        }
+        } else setError(apiErrorMessage(typeResult.reason));
         if (profileResult.status === "fulfilled" && profileResult.value) setProfile(profileResult.value.data.data || null);
+        if (balanceResult.status === "fulfilled") setBalance(balanceResult.value.data.data);
+        else { setBalance(null); setError(apiErrorMessage(balanceResult.reason)); }
         setLoading(false);
     }, [employeeId, userId]);
 
     useEffect(() => { load(); }, [load]);
 
     const annualType = useMemo(() => types.find((type) => /năm|annual|year/i.test(`${type.name} ${type.code}`) && type.maxDays != null) || types.find((type) => type.isPaid && type.maxDays != null), [types]);
-    const year = new Date().getFullYear();
+    const year = Number(vnTodayKey().slice(0, 4));
     const annualRequests = useMemo(() => requests.filter((request) => request.leaveTypeId === annualType?.id && request.status !== 4), [requests, annualType]);
-    const used = roundDays(annualRequests.filter((request) => request.status === 2).reduce((sum, request) => sum + rangeInYear(request, year), 0));
+    const used = balance?.totalUsed;
     const pending = roundDays(annualRequests.filter((request) => request.status === 1).reduce((sum, request) => sum + rangeInYear(request, year), 0));
-    const remaining = annualType ? roundDays(Math.max(0, Number(annualType.maxDays) - used)) : null;
+    const remaining = balance?.remaining ?? null;
+    const cancelRequest = async (reason) => {
+        setCancelBusy(true); setCancelError("");
+        try {
+            await relatedApi.cancelLeave(cancelling.id, reason);
+            setCancelling(null); setSelectedRequest(null); setNotice("Đã hủy đơn nghỉ phép."); await load();
+        } catch (err) { setCancelError(apiErrorMessage(err)); }
+        finally { setCancelBusy(false); }
+    };
+    const downloadPdf = async (request) => {
+        try { downloadResponse(await relatedApi.leavePdf(request.id), `Don-nghi-${request.id}.pdf`); }
+        catch (err) { setError(apiErrorMessage(err)); }
+    };
 
     const filtered = useMemo(() => requests.filter((request) => {
         const from = localDate(request.fromDate);
@@ -294,14 +325,14 @@ const LeavePage = () => {
                     kpis={[
                         {
                             icon: "◇",
-                            label: "Phép năm",
-                            value: annualType ? formatDayCount(annualType.maxDays, language) : "Chưa có",
+                            label: "Phép đã cấp",
+                            value: balance ? formatDayCount(balance.totalGranted, language) : "—",
                             tone: "blue",
                         },
                         {
                             icon: "≡",
                             label: "Đã dùng",
-                            value: annualType ? formatDayCount(used, language) : "—",
+                            value: balance ? formatDayCount(used, language) : "—",
                             tone: "gold",
                         },
                         {
@@ -319,6 +350,7 @@ const LeavePage = () => {
                     ]}
                 />
                 {notice && <div className="leave-notice">{notice}</div>}
+                <button type="button" className="wf-btn" onClick={() => setLedgerOpen(true)}>Xem sổ phép</button>
                 {error && <div className="att-error">{error}</div>}
                 {loading ? <div className="att-loading">Đang tải...</div> : (
                     <>
@@ -342,7 +374,11 @@ const LeavePage = () => {
                 )}
             </div>
             {showForm && <LeaveFormModal types={types} remaining={remaining} language={language} onClose={() => setShowForm(false)} onSubmit={createRequest} />}
-            {selectedRequest && <LeaveDetailsModal request={selectedRequest} onClose={() => setSelectedRequest(null)} locale={locale} language={language} />}
+            {selectedRequest && <LeaveDetailsModal request={selectedRequest} onClose={() => setSelectedRequest(null)} locale={locale} language={language}
+                onDownload={() => downloadPdf(selectedRequest)} onCancel={() => { setCancelError(""); setCancelling(selectedRequest); setSelectedRequest(null); }} />}
+            {cancelling && <ReasonDialog title="Hủy đơn nghỉ phép đang chờ duyệt" minLength={0} maxLength={500} busy={cancelBusy} error={cancelError}
+                onClose={() => setCancelling(null)} onSubmit={cancelRequest} />}
+            {ledgerOpen && <LeaveLedgerDialog employeeId={employeeId} onClose={() => setLedgerOpen(false)} />}
         </AppLayout>
     );
 };

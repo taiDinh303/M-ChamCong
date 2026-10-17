@@ -30,7 +30,7 @@ const LoginForm = () => {
       const response = await authApi.login(form);
       const data = response.data?.data ?? response.data;
 
-      saveAuth(data);
+      saveAuth(data, form.rememberMe);
       window.location.href = "/home";
     } catch (err) {
       const responseMessage = err.response?.data?.message;

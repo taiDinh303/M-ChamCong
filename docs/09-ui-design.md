@@ -1,7 +1,7 @@
 # 09 — Design system và giao diện Marixa
 
 > Chủ tài liệu: **Đinh Văn Tài**. Đối chiếu mã nguồn: **17/10/2026**.
-> **CURRENT** mô tả UI có mã nguồn; **TARGET** là tiêu chí thiết kế cần đạt; **NOT VERIFIED** nghĩa chưa có kiểm tra browser/thiết bị/Figma live trong lượt này.
+> **CURRENT** theo source và browser smoke cô lập tại worklog; **TARGET** là tiêu chí thiết kế; thiết bị thật/Figma/hosting live vẫn **NOT VERIFIED**.
 > **EN — Codex / Agnes:** Implement only authorized UI work. Keep current behavior and target UX separate. `theme.css` owns code token values; do not infer permissions or completed features from a design frame.
 
 ## 1. Nguồn thiết kế và phạm vi
@@ -41,7 +41,7 @@ Các giá trị dưới đây đã đối chiếu [`theme.css`](../marixa_react/
 - Trang dùng chung: `/home`, `/work`, `/profile`; `/login`, `/kich-hoat`, `/unauthorized` cho truy cập/phiên/quyền.
 - `/finance` chỉ chuyển tới `/attendance/salary`; `/employees/payroll` chuyển tới `/employees`. Không thiết kế chúng như màn hình mới đang hoạt động.
 
-Inventory route đầy đủ và các redirect: [03](03-architecture.md), [`figma/files-map.md`](../figma/files-map.md). Wrapper route/menu hiện còn thiếu kiểm tra; thiết kế “ẩn nút” không thay thế quyền API.
+Inventory route đầy đủ và các redirect: [03](03-architecture.md), [`figma/files-map.md`](../figma/files-map.md). Route nội bộ có RequireSession, menu/guard áp quyền prefix dài nhất; thiết kế “ẩn nút” không thay thế quyền API.
 
 ## 4. Màn hình: hiện trạng và tiêu chí cần đạt
 
@@ -49,16 +49,18 @@ Inventory route đầy đủ và các redirect: [03](03-architecture.md), [`figm
 | --- | --- | --- |
 | `/login`, `/kich-hoat` | Form đăng nhập / kích hoạt và gọi API tương ứng. | Có loading, lỗi cạnh trường, lỗi mạng, trạng thái kích hoạt; không tuyên bố đã kiểm thử đủ khóa tài khoản/keyboard. |
 | `/home` | Trang tổng quan/module cards. | Chỉ hiện hành động phù hợp phiên và quyền; không bỏ route này khỏi mapping thiết kế. |
-| `/attendance` | Đồng hồ Việt Nam, camera, vào/ra, vị trí GPS dạng tọa độ, lịch tuần. UI yêu cầu ảnh mới và upload thành công trước mỗi lần chấm. | Chính sách nghiệp vụ ảnh/GPS tùy chọn đang khác UI; xem [02](02-business-analysis.md). Frontend chưa gửi GPS; backend đã nhận/lưu optional latitude/longitude/deviceId. Chưa có geofence. Không hiển thị “Trong/Ngoài văn phòng” như kết quả thật khi chưa tính. |
-| `/attendance/attendance-history`, `/attendance/statistics` | Lịch sử/thống kê, xem dữ liệu công; một số luồng có CSV dữ liệu hiện thời. | Loading, rỗng, thiếu mốc, lỗi API rõ ràng. “Kỳ khóa”, snapshot bất biến và export snapshot XLSX/PDF chưa triển khai. |
-| `/attendance/leave` | Tạo/xem đơn; API dùng Pending/Approved/Rejected/Cancelled theo transition thực tế. | Không thêm nút hủy đơn Approved hoặc gọi “hoàn phép” là hiện có; nháp UI không phải trạng thái DB nếu chưa hỗ trợ. |
+| `/attendance` | Đồng hồ Việt Nam, camera, vào/ra, vị trí GPS dạng tọa độ, lịch tuần. Ảnh/GPS bắt buộc theo rule, camera tùy chọn khi rule không yêu cầu; UI gửi tọa độ đã lấy. | Ảnh/GPS theo quyết định [02](02-business-analysis.md); UI gửi latitude/longitude khi người dùng bật vị trí. Chưa có geofence. Không hiển thị “Trong/Ngoài văn phòng” như kết quả thật khi chưa tính. |
+| `/attendance/attendance-history`, `/attendance/statistics` | Lịch sử/thống kê, xem dữ liệu công; một số luồng có CSV dữ liệu hiện thời. | Loading, rỗng, thiếu mốc, lỗi API rõ ràng. Thẻ kỳ/version/XLSX nằm trong Thống kê; tab OT và sửa công nằm trong Lịch sử; PDF đơn nghỉ ở Nghỉ phép. Live cần nghiệm thu riêng. |
+| `/attendance/leave` | Tạo/xem đơn; API dùng Pending/Approved/Rejected/Cancelled theo transition thực tế. | Chủ hủy Pending; HR/Admin khác chủ có nút hủy Approved bằng lý do và hoàn số đã trừ; nháp UI không phải trạng thái DB nếu chưa hỗ trợ. |
 | Hợp đồng/lương/bảo hiểm/ngân hàng/quy định cá nhân | Các route/component hiện có dưới `/attendance/*`. | Phân biệt dữ liệu rỗng, thiếu liên kết nhân viên và thiếu quyền; chưa nghiệm thu đầy đủ màn hình. |
 | Báo cáo/thăng chức/bàn giao | Có route và quy trình API theo module. | Thể hiện người xử lý/trạng thái đúng API; báo cáo file không đồng nghĩa export bảng công. |
 | `/employees/*` | Bảng nhân sự, đối soát, lịch làm, đơn, tài khoản/báo cáo; HR có Excel import/export hồ sơ. | Lọc, sort, phân trang, trạng thái duyệt và quyền theo thao tác; UI hiện có không chứng minh scope phòng ban được enforce tại API. |
-| `/admin/*` | Dashboard, tài khoản, role, hợp đồng, phép, lương, nghỉ việc, công việc và báo cáo. | Đồng bộ registry/guard cho route còn thiếu; cảnh báo cấu hình/storage chỉ là mục tiêu khi chưa có UI cụ thể. |
+| `/admin/*` | Dashboard, tài khoản, role, hợp đồng, phép, lương, nghỉ việc, công việc và báo cáo. | Subroute Admin kế thừa quyền prefix /admin, menu/header lọc quyền; cảnh báo cấu hình/storage chỉ là mục tiêu khi chưa có UI cụ thể. |
 | `/work`, `/profile`, `/unauthorized` | Component/route tương ứng đã đăng ký. | Quyền, lỗi rỗng/loading, hành vi responsive phải kiểm tra riêng. |
 
-Nguồn luồng chấm công: [`AttendanceCard.jsx`](../marixa_react/src/modules/me/components/AttendanceCard.jsx), [`relatedApi.js`](../marixa_react/src/modules/me/api/relatedApi.js). `ClockInPage` và lịch tuần còn dùng ngày của trình duyệt ở một số phép so sánh; không khẳng định mọi phép ngày đã dùng `Asia/Ho_Chi_Minh`.
+Nguồn luồng chấm công: [`AttendanceCard.jsx`](../marixa_react/src/modules/me/components/AttendanceCard.jsx), [`relatedApi.js`](../marixa_react/src/modules/me/api/relatedApi.js). `ClockInPage`/lịch tuần dùng nhãn ngày VN; thống kê dùng actualHours/overtimeHours và số dư ledger của API. Giờ tay HR dùng UTC+7 và rollover tháng/năm. Không tự suy OT hoặc cố định giờ nghỉ trong form.
+
+Admin có nút Chỉnh quy định (giờ ca/nghỉ/ảnh/GPS) tại Quy định. HR/Admin có sổ phép và hộp thoại Grant/Adjust có lý do tại Nghỉ phép; Employee chỉ xem lịch sử/số dư. Tự cấp phép hằng tháng vẫn chưa làm. Không thay đổi bố cục/menu chính để thêm các luồng này.
 
 ## 5. Nội dung và phản hồi cho người dùng
 
@@ -68,7 +70,7 @@ Nguồn luồng chấm công: [`AttendanceCard.jsx`](../marixa_react/src/modules
 | --- | --- |
 | Chấm thành công | API hiện có thông báo “Đã ghi nhận VÀO CA.” / “Đã ghi nhận RA CA.”; cần làm mới bản ghi. |
 | Chấm lặp gần đây | API trả `alreadyRecorded = true`; diễn đạt “Đã có lần chấm cùng loại gần đây. Không cần bấm lại.” |
-| Camera bị chặn / không có ảnh | Giải thích cách cấp quyền, chụp lại; hiện UI không cho chấm khi thiếu ảnh. Việc hỗ trợ bỏ qua ảnh cần sửa theo quyết định nghiệp vụ. |
+| Camera bị chặn / không có ảnh | Giải thích cách cấp quyền, chụp lại; chỉ chặn chấm khi rule bắt ảnh. Khi ảnh tùy chọn có thể bỏ qua; GPS cũng theo rule, không gọi tọa độ là kết quả geofence. |
 | Lỗi mạng/máy chủ | “Không kết nối được máy chủ. Vui lòng thử lại sau.” Thông tin cổng/backend/biến môi trường dành cho log và tài liệu dev, không đưa vào thông báo người dùng cuối. |
 | Thiếu quyền / hết phiên | Phân biệt thiếu quyền với hết phiên; không hiển thị dữ liệu của người khác hoặc dùng “rỗng” để che lỗi quyền. |
 
@@ -78,4 +80,4 @@ Nguồn luồng chấm công: [`AttendanceCard.jsx`](../marixa_react/src/modules
 
 Frame thiết kế chính theo quyết định chủ dự án: **mobile 375px**, **desktop 1440px**; kiểm tra bổ sung 768/1024px khi triển khai. **TARGET:** không cuộn ngang toàn trang mobile; bảng rộng có vùng cuộn riêng; form có label/lỗi; focus nhìn rõ, dialog hỗ trợ keyboard/Esc và trả focus; toast/lỗi được công nghệ hỗ trợ nhận biết. Dùng icon nhất quán, trạng thái không chỉ dựa vào màu. Emoji còn có trong code; không ghi như đã được thay hết.
 
-Trước khi đánh dấu UI hoàn thành: đối chiếu API/quyền và trạng thái lỗi, chạy build/lint phù hợp, kiểm tra browser ở kích thước mục tiêu và lưu bằng chứng. Kiểm tra camera/GPS cần thiết bị/quyền thực tế. Lượt **16/10/2026 sửa backend/tài liệu, không sửa giao diện**, không xác nhận pixel match, font, tương phản hoặc accessibility đã đạt. Kịch bản kiểm thử: [06-testing.md](06-testing.md).
+Trước khi đánh dấu UI hoàn thành: đối chiếu API/quyền và trạng thái lỗi, chạy build/lint phù hợp, kiểm tra browser ở kích thước mục tiêu và lưu bằng chứng. Kiểm tra camera/GPS cần thiết bị/quyền thực tế. Đợt **17/10/2026** giữ layout chính, bổ sung luồng đã được chủ dự án đồng ý. Native dialog mới có focus/Escape/busy/error; không xác nhận pixel match, WCAG toàn app hoặc Figma đã đồng bộ. Kịch bản kiểm thử: [06-testing.md](06-testing.md).

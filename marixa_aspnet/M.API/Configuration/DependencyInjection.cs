@@ -115,7 +115,8 @@ namespace M.API.Configuration
             services.AddOptions<JwtSettings>().Bind(configuration.GetSection(JwtSettings.SectionName))
                 .Validate(settings => !string.IsNullOrWhiteSpace(settings.Key) && Encoding.UTF8.GetByteCount(settings.Key) >= 32
                     && (!isProduction || (!settings.Key.Contains("CHANGE_ME", StringComparison.OrdinalIgnoreCase)
-                        && !settings.Key.Contains("DEVELOPMENT", StringComparison.OrdinalIgnoreCase))), "A private JWT signing key of at least 32 bytes is required.")
+                        && !settings.Key.Contains("DEVELOPMENT", StringComparison.OrdinalIgnoreCase))),
+                    "JwtSettings:Key is missing, too short, or a placeholder. Set JWTSETTINGS__KEY to a private random signing secret of at least 32 UTF-8 bytes. Production cannot use the development or CHANGE_ME key.")
                 .Validate(settings => !string.IsNullOrWhiteSpace(settings.Issuer) && !string.IsNullOrWhiteSpace(settings.Audience),
                     "JWT issuer and audience are required.")
                 .Validate(settings => settings.ExpirationMinutes is >= 1 and <= 10080, "Invalid JWT expiration.")

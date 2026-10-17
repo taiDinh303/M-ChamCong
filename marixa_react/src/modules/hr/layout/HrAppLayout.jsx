@@ -7,7 +7,7 @@ import "../employee.css";
 
 const COLLAPSE_KEY = "marixa_hr_sidebar_collapsed";
 
-const HrAppLayout = ({ title, subtitle, children }) => {
+const HrAppLayout = ({ children }) => {
     usePillNavActiveInView();
     const [collapsed, setCollapsed] = useState(() => {
         try {

@@ -8,6 +8,8 @@ import { translate, useLanguage } from "../../../../services/i18n/LanguageProvid
 import "../../../../modules/me/attendance.css";
 import "../../employee.css";
 import HrHero from "../../HrHero";
+import AttendancePeriodPanel from "../../../me/components/AttendancePeriodPanel";
+import { attendanceTimes, vnTodayKey } from "../../../../utils/vnTime";
 import { ChartCard, HBarChart } from "../../../../components/charts/charts";
 import "../../../../components/charts/charts.css";
 
@@ -21,10 +23,7 @@ const EmployeeStatisticsPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    const now = new Date();
-    const [month, setMonth] = useState(
-        `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`
-    );
+    const [month, setMonth] = useState(() => vnTodayKey().slice(0, 7));
     const [showAll, setShowAll] = useState(true);
     const [search, setSearch] = useState("");
 
@@ -33,6 +32,7 @@ const EmployeeStatisticsPage = () => {
     const L = (text) => translate(text, language);
     const [detailEmpId, setDetailEmpId] = useState(null);
     const [editRow, setEditRow] = useState(null);
+    const [periodRevision, setPeriodRevision] = useState(0);
 
     const empMap = useMemo(
         () => Object.fromEntries(employees.map((e) => [e.id, e])),
@@ -40,6 +40,8 @@ const EmployeeStatisticsPage = () => {
     );
 
     const load = async () => {
+        setLoading(true);
+        setError("");
         try {
             const [a, e] = await Promise.all([
                 employeeAttendanceApi.attendanceAll(),
@@ -115,16 +117,9 @@ const EmployeeStatisticsPage = () => {
             .slice(0, 8)
             .map(({ emp, stat }) => ({
                 name: emp.fullName || emp.employeeCode,
-                value: Math.round(stat.hours * 10) / 10,
+                value: Math.round(stat.hours * 100) / 100,
             }));
     }, [perEmployee]);
-    const latestRowOf = (empId) =>
-        rows
-            .filter((r) => r.employeeId === empId && monthOf(r.attendanceDate) === month)
-            .sort(
-                (a, b) =>
-                    new Date(b.attendanceDate) - new Date(a.attendanceDate)
-            )[0] || null;
 
     const submitModal = async (form, isEdit) => {
         const payload = {
@@ -132,12 +127,9 @@ const EmployeeStatisticsPage = () => {
             employeeId: form.employeeId,
             attendanceDate: form.attendanceDate,
             status: form.status === "" ? null : Number(form.status),
-            actualHours:
-                form.actualHours === "" ? null : Number(form.actualHours),
             approvalStatus: Number(form.approvalStatus),
             note: form.note || null,
-            checkInTime: form.checkInTime ? new Date(`${form.attendanceDate}T${form.checkInTime}:00`).toISOString() : null,
-            checkOutTime: form.checkOutTime ? new Date(`${form.attendanceDate}T${form.checkOutTime}:00`).toISOString() : null,
+            ...attendanceTimes(form.attendanceDate, form.checkInTime, form.checkOutTime),
         };
         try {
             if (isEdit) {
@@ -149,10 +141,13 @@ const EmployeeStatisticsPage = () => {
                     attendanceDate: payload.attendanceDate,
                     status: payload.status,
                     note: payload.note,
+                    checkInTime: payload.checkInTime,
+                    checkOutTime: payload.checkOutTime,
                 });
             }
             setModalOpen(false);
             setEditRow(null);
+            setPeriodRevision((revision) => revision + 1);
             load();
         } catch (err) {
             setError(err.response?.data?.message || err.message);
@@ -166,10 +161,11 @@ const EmployeeStatisticsPage = () => {
         <PageLayout
         >
             <div className="att-content">
+                <AttendancePeriodPanel key={month} refreshKey={periodRevision} year={Number(month.slice(0, 4))} month={Number(month.slice(5, 7))} staff onChanged={load} />
                 {error && <div className="att-error">{error}</div>}
                 {loading ? (
                     <div className="att-loading">{L("Đang tải...")}</div>
-                ) : (
+                ) : !error && (
                     <>
                         <HrHero
                             ico="📊"

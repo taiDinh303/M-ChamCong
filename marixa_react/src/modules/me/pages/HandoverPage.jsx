@@ -9,17 +9,8 @@ import "../handover.css";
 
 const dataOf = (response) => response?.data?.data;
 const statusLabels = ["Chờ duyệt", "Đã duyệt", "Từ chối"];
-const initialAssets = (language) => [
-    { assetType: translate("Màn hình máy tính", language), assetCode: "TS-MH-001", condition: "Tốt", note: "" },
-    { assetType: "CPU", assetCode: "TS-CPU-001", condition: "Tốt", note: "" },
-    { assetType: "PC", assetCode: "TS-PC-001", condition: "Đang sử dụng", note: "" },
-    { assetType: translate("Bàn phím", language), assetCode: "TS-BP-001", condition: "Tốt", note: "" },
-    { assetType: translate("Chuột", language), assetCode: "TS-CH-001", condition: "Tốt", note: "" },
-];
-const initialProjects = (language) => [
-    { projectCode: "DA-001", projectName: "Website ABC", partner: translate("Công ty ABC", language), progress: 80, documents: [], handoverFiles: [] },
-    { projectCode: "DA-002", projectName: "Mobile App XYZ", partner: translate("Công ty XYZ", language), progress: 45, documents: [], handoverFiles: [] },
-];
+const initialAssets = () => [];
+const initialProjects = () => [];
 const parseJson = (value) => { try { return JSON.parse(value || "[]"); } catch { return []; } };
 const assetsOf = (row) => parseJson(row.assetsJson ?? row.AssetsJson).map((x) => ({ assetType: x.assetType ?? x.AssetType, assetCode: x.assetCode ?? x.AssetCode, condition: x.condition ?? x.Condition, note: x.note ?? x.Note }));
 const projectsOf = (row) => parseJson(row.projectsJson ?? row.ProjectsJson).map((x) => ({
@@ -40,9 +31,9 @@ const L = (text, language) => language === "vi" ? text : translate(text, languag
 
 // ===== Thành phần xem (cùng dùng cho card lịch sử + dialog duyệt) =====
 
-const StatusBadge = ({ status }) => (
+const StatusBadge = ({ status, appliedAt }) => (
     <span className={`hv-badge hv-badge--${status}`}>
-        {statusLabels[status] || L("Không rõ")}
+        {status === 1 ? (appliedAt ? "Đã áp dụng nghỉ việc" : "Đã duyệt, chờ hiệu lực") : statusLabels[status] || L("Không rõ")}
     </span>
 );
 
@@ -372,7 +363,7 @@ const HandoverCard = ({ row, locale, reviewMode, onDownload, onReview }) => {
                         </p>
                     </div>
                 </div>
-                <StatusBadge status={row.status} />
+                <StatusBadge status={row.status} appliedAt={row.appliedAt} />
             </div>
 
             <div className="hv-card-facts">
@@ -452,7 +443,7 @@ const ReviewDialog = ({ selected, locale, saving, onDownload, onApprove, onRejec
                     <button type="button" className="hv-btn hv-btn--danger" disabled={saving || !note.trim()}
                         onClick={() => onReject(note)}>Từ chối</button>
                     <button type="button" className="hv-btn hv-btn--primary" disabled={saving}
-                        onClick={() => onApprove(note)}>Duyệt & chuyển nghỉ việc</button>
+                        onClick={() => onApprove(note)}>Duyệt bàn giao</button>
                 </footer>
             </section>
         </div>
@@ -540,7 +531,7 @@ export default function HandoverPage({ reviewMode = false, admin = false }) {
         setNotice("");
         try {
             await axiosClient.post(`/EmployeeHandover/review/${selected.id}`, { approve, note });
-            setNotice(approve ? "Đã duyệt bàn giao. Nhân viên đã được chuyển sang danh sách nghỉ việc." : "Đã từ chối yêu cầu bàn giao.");
+            setNotice(approve ? "Đã duyệt bàn giao. Hồ sơ sẽ chuyển nghỉ việc sau ngày làm việc cuối cùng." : "Đã từ chối yêu cầu bàn giao.");
             setSelected(null);
             await load();
         } catch (e) {
@@ -550,7 +541,6 @@ export default function HandoverPage({ reviewMode = false, admin = false }) {
         }
     };
 
-    const pendingCount = rows.filter((r) => r.status === 0).length;
 
     const content = (
         <div className="hv-page">

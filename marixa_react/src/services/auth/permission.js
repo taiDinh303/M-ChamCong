@@ -1,5 +1,5 @@
-import { getAuth } from "../../services/auth/auth";
-import { MODULES } from "../../constants/modules";
+import { getAuth } from "./auth.js";
+import { MODULES } from "../../constants/modules.js";
 
 // Role "điều hành / quản trị" (nhiều module hơn nhân viên thường).
 export const ADMIN_ROLES = ["Admin"];
@@ -22,7 +22,8 @@ const hasAnyRole = (roles) =>
 // - "access: admin": chỉ role quản trị (Admin).
 // - "access: user" / không khai báo: mọi tài khoản đã đăng nhập.
 export const canAccessModule = (to) => {
-    const m = MODULES.find((x) => x.to === to);
+    const m = MODULES.filter((x) => x.to === to || to.startsWith(`${x.to}/`))
+        .sort((a, b) => b.to.length - a.to.length)[0];
     if (!m) return true; // đường dẫn tự do (login, hồ sơ...)
     if (m.roles) return hasAnyRole(m.roles);
     if (m.access === "admin") return hasAdminRole();

@@ -65,8 +65,8 @@ const StatKpis = ({ stats }) => {
                     <span className="att-stat-unit">ngày</span>
                     <span className="att-stat-sub">
                         {stats.hasQuota
-                            ? `Phép còn lại: ${Math.round(stats.remainingLeave)} ngày`
-                            : "Chưa cấu hình hạn mức phép"}
+                            ? `Phép còn lại: ${stats.remainingLeave} ngày`
+                            : "Chưa tải được số dư sổ phép"}
                     </span>
                 </div>
             </div>

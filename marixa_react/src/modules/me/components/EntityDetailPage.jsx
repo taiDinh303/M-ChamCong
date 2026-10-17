@@ -33,7 +33,7 @@ const KPI_LABEL = {
     bank: "tài khoản",
 };
 
-const EntityDetailPage = ({ kind, title, subtitle, columns, emptyMessage }) => {
+const EntityDetailPage = ({ kind, columns, emptyMessage }) => {
     const auth = getAuth();
     const userId = auth?.userId;
     const employeeId = auth?.employeeId;

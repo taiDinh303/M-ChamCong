@@ -8,6 +8,7 @@ Ghi thời điểm UTC/VN, phiên bản/commit triển khai, correlation ID, end
 
 | Triệu chứng | Kiểm tra | Khắc phục có kiểm soát |
 | --- | --- | --- |
+| Image build xong, startup thoát 134 / JWT OptionsValidationException | Biến JWTSETTINGS__KEY có tồn tại ở đúng service và không phải key mẫu/ngắn | Đặt key hợp lệ rồi redeploy theo [08 §2.1](08-deploy-detail.md#21-render-build-xong-nhưng-ứng-dụng-thoát-134-vì-jwt-key); giữ validation, không commit secret. |
 | Ready 503 sau release | Column/table/index mới, migration đúng provider, kết nối/TLS | Nâng schema đã review hoặc quay app tương thích; không bật seed mẫu/xóa DB. |
 | Login 401 hàng loạt | JWT issuer/key/clock/stamp/role, lockout và liên kết NV | Chỉnh cấu hình đúng hoặc đăng nhập lại sau thay đổi hợp lệ; không cấp token bỏ kiểm. |
 | Auth 429 | PeerIP/proxy, số retry, Retry-After | Đợi window; xác minh proxy trước cấu hình IP thật, không trust mọi forwarded header. |
@@ -21,3 +22,7 @@ Ghi thời điểm UTC/VN, phiên bản/commit triển khai, correlation ID, end
 Thay đổi cloud/schema phải có backup, kế hoạch quay lại và dữ liệu thử được cho phép. Khi xác nhận lộ credential, thu hồi/rotate tại nguồn, đổi key/stamp cần thiết, kiểm phạm vi log/file/Git; không dán secret vào ticket. Khi mất files, tránh ghi đè backup; quy trình [22](22-backup-recovery.md).
 
 Sau khắc phục: smoke đúng luồng ảnh hưởng và quyền owner/outsider, hash snapshot, số Deduct/Refund, pending-due. Ghi nguyên nhân, hành động, commit, khoảng thời gian và bằng chứng vào worklog; mở việc phòng ngừa có owner. Không đánh dấu incident closed từ một lần Swagger trả 200.
+
+## 3. Sự cố schema và lỗi 500 ngày 17/10
+
+Log có PostgreSQL 42703 EmployeeHandovers.AppliedAt; metadata chỉ đọc xác nhận thiếu AppliedAt, metadata hủy nghỉ, BreakStartTime và ba bảng period, ActualHours còn integer. Frontend không thể bổ sung schema bằng đổi endpoint. Sau backup/preflight, áp lần lượt script kỳ công rồi chính sách tại [23](23-data-migration.md), kiểm readiness và các request lỗi. Chủ dự án chọn tự chạy SQL; agent chưa áp lên DB live. Không bật initializer/seed production để né quy trình migration, không sửa UI để nuốt 500. API gốc / trả 404 có envelope là fallback, dùng /swagger hoặc health để kiểm API.

@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { usePillNavActiveInView } from "./usePillNav";
@@ -6,9 +6,9 @@ import "./header.css";
 
 const COLLAPSE_KEY = "marixa_sidebar_collapsed";
 
-// Layout dÃ¹ng chung má»i trang Ä‘Ã£ Ä‘Äƒng nháº­p:
-// header nav (100% width) trÃªn cÃ¹ng, bÃªn dÆ°á»›i lÃ  sidebar (kÃ©o ra/vÃ o) + main.
-const AppLayout = ({ title, subtitle, profile, children }) => {
+// Shared authenticated layout: header, sidebar and content.
+// The header spans the page; the sidebar can collapse.
+const AppLayout = ({ profile, children }) => {
     usePillNavActiveInView();
     const [collapsed, setCollapsed] = useState(() => {
         try {
@@ -24,13 +24,13 @@ const AppLayout = ({ title, subtitle, profile, children }) => {
             try {
                 localStorage.setItem(COLLAPSE_KEY, next ? "1" : "0");
             } catch {
-                // localStorage bá»‹ cháº·n: bá» qua, khÃ´ng cháº·n luá»“ng.
+                // Storage can be unavailable in a restricted browser.
             }
             return next;
         });
     }, []);
 
-    // KÃ©o ra/vÃ o báº±ng phÃ­m táº¯t "[" (khÃ´ng cáº§n focus input).
+    // Toggle with [ when the focus is outside an editable field.
     useEffect(() => {
         const onKey = (e) => {
             if (e.key === "[") toggle();

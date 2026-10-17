@@ -1,7 +1,10 @@
-// ===== Tiện ích CSV / Excel =====
+import { downloadResponse } from "../../utils/download.js";
+
+// CSV cells supplied by users must stay text when opened in a spreadsheet.
 const esc = (v) => {
-    const s = v == null ? "" : String(v);
-    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    let s = v == null ? "" : String(v);
+    if (typeof v === "string" && (/^[\t\r\n]/.test(s) || /^\s*[=+@-]/.test(s))) s = "'" + s;
+    return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
 };
 
 export const toCsv = (rows, headers) => {
@@ -15,12 +18,7 @@ export const toCsv = (rows, headers) => {
 
 export const downloadCsv = (filename, content) => {
     const blob = new Blob([content], { type: "text/csv;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    link.click();
-    URL.revokeObjectURL(url);
+    downloadResponse({ data: blob }, filename);
 };
 
 export const downloadExcel = async (filename, rows) => {
@@ -32,12 +30,7 @@ export const downloadExcel = async (filename, rows) => {
     const blob = new Blob([await workbook.xlsx.writeBuffer()], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    link.click();
-    URL.revokeObjectURL(url);
+    downloadResponse({ data: blob }, filename);
 };
 
 // Một schema dùng chung cho tiêu đề, mẫu, xuất file và nhập file.

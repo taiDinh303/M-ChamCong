@@ -20,12 +20,15 @@ const AdminListPage = ({
     approve,
     reject,
     pendingOf,
+    rowActions,
+    toolbarActions,
     emptyText,
     hrMode = false,
 }) => {
     const { rows, loading, error, reload } = useAdminList(fetcher);
     const [search, setSearch] = useState("");
     const [filterVal, setFilterVal] = useState("");
+    const [busyId, setBusyId] = useState(null);
 
     const filtered = useMemo(() => {
         const q = search.trim().toLowerCase();
@@ -44,16 +47,18 @@ const AdminListPage = ({
     }, [rows, search, filterVal, searchKeys, filter]);
 
     const act = async (row, fn) => {
+        if (busyId) return;
+        setBusyId(row.id);
         try {
             await fn(row);
-            reload();
+            await reload();
         } catch (e) {
             alert(
                 (fn === reject ? "Từ chối" : "Duyệt") +
                     " thất bại: " +
                     (e.response?.data?.message || e.message)
             );
-        }
+        } finally { setBusyId(null); }
     };
 
     const exportCsv = () => {
@@ -90,6 +95,7 @@ const AdminListPage = ({
                 {!loading && !error && (
                     <div className="att-card">
                         <div className="admin-toolbar">
+                            {toolbarActions}
                             <label className="admin-search">
                                 <span aria-hidden="true">⌕</span>
                                 <input
@@ -134,7 +140,7 @@ const AdminListPage = ({
                                         {columns.map((c) => (
                                             <th key={c.key}>{c.label}</th>
                                         ))}
-                                        {approve && <th />}
+                                        {(approve || rowActions) && <th />}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -143,7 +149,7 @@ const AdminListPage = ({
                                             <td
                                                 colSpan={
                                                     columns.length +
-                                                    (approve ? 1 : 0)
+                                                    (approve || rowActions ? 1 : 0)
                                                 }
                                                 className="att-muted"
                                             >
@@ -159,9 +165,9 @@ const AdminListPage = ({
                                                         {cell(c, x)}
                                                     </td>
                                                 ))}
-                                                {approve && (
+                                                {(approve || rowActions) && (
                                                     <td>
-                                                        <ApproveButtons
+                                                        {approve && <ApproveButtons disabled={Boolean(busyId)}
                                                             pending={pendingOf?.(
                                                                 x
                                                             )}
@@ -177,7 +183,8 @@ const AdminListPage = ({
                                                                     reject
                                                                 )
                                                             }
-                                                        />
+                                                        />}
+                                                        {rowActions?.(x, reload)}
                                                     </td>
                                                 )}
                                             </tr>

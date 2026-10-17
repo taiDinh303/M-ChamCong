@@ -4,7 +4,7 @@
 
 ## 1. Danh tính và quyền
 
-Identity quản lý password/hash/role/securityStamp; JWT HMAC key riêng server. Password mới tối thiểu 10, có hoa/thường/số/ký tự đặc biệt. Sai mật khẩu 5 lần kích hoạt lockout; Auth có rate limit theo peer IP. JWT bị từ chối sau lockout, xóa user, đổi stamp/role hoặc tháo liên kết Employee. RememberMe lấy thời hạn cấu hình riêng, tối đa 7 ngày; không có refresh token.
+Identity quản lý password/hash/role/securityStamp; JWT HMAC key riêng server. Password mới tối thiểu 10, có hoa/thường/số/ký tự đặc biệt. Sai mật khẩu 5 lần kích hoạt lockout; Auth có rate limit theo peer IP. JWT bị từ chối sau lockout, xóa user, đổi stamp/role hoặc tháo liên kết Employee. RememberMe lấy thời hạn cấu hình riêng, tối đa 7 ngày; không có refresh token. React lưu JWT trong sessionStorage nếu không Ghi nhớ; localStorage nếu có, không lưu mật khẩu. Đây vẫn là browser storage có rủi ro XSS; không coi route/menu như quyền server.
 
 | Dữ liệu/thao tác | Employee | Manager | HR | Admin |
 | --- | --- | --- | --- | --- |
@@ -24,7 +24,7 @@ Manager chưa có phạm vi phòng ban đồng nhất ở mọi module; nhiều 
 
 Ảnh chấm công public theo quyết định chủ dự án; URL là quyền đọc thực tế của người có link. Không đưa hồ sơ HR vào bucket này. Report/handover nằm App_Data ngoài web root, endpoint kiểm quyền; legacy /uploads/handovers bị chặn qua cả static providers. Adapter kiểm path/length và dọn file ghi dở; chưa có antivirus/CDR. File mới tối đa 20 MiB ở adapter, handover thêm giới hạn 10 MiB/file và 20 MiB/request; ảnh 5 MiB có signature check.
 
-Rủi ro truy cập chéo, forged reviewer, sửa log gốc, đổi snapshot và xóa chứng từ được chặn/test. Period/event/snapshot và Deduct/Refund append-only ở SaveChanges; DBA/raw SQL có thể vượt lớp này. Hash SHA-256 phát hiện lệch payload, không phải chữ ký chống DBA sửa cả payload lẫn hash. Export dùng ô text cho dữ liệu người nhập, không phát sinh công thức XLSX.
+Rủi ro truy cập chéo, forged reviewer, sửa log gốc, đổi snapshot và xóa chứng từ được chặn/test. Period/event/snapshot và Deduct/Refund append-only ở SaveChanges; DBA/raw SQL có thể vượt lớp này. Hash SHA-256 phát hiện lệch payload, không phải chữ ký chống DBA sửa cả payload lẫn hash. Export dùng ô text cho dữ liệu người nhập, không phát sinh công thức XLSX. CSV phía React thêm dấu nháy đơn cho chuỗi có thể bị diễn giải thành công thức; số âm dạng numeric vẫn giữ kiểu số.
 
 Script PostgreSQL kỳ công bật RLS và revoke PUBLIC/anon/authenticated cho 3 bảng mới. .NET dùng kết nối DB có quyền server; không đổi sang Supabase Auth. Grants/RLS của các bảng cũ phải audit live riêng, không suy an toàn vì frontend chỉ gọi .NET.
 

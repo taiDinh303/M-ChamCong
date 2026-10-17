@@ -1,57 +1,55 @@
-﻿import axiosClient from "../../../services/api/axiosClient";
+import { getAllPages } from "../../../services/api/lists";
+import axiosClient from "../../../services/api/axiosClient";
 
 // API cấp công ty (admin) - dùng get-all với pageSize lớn, tính phía client.
-const P = "pageNumber=1&pageSize=500";
 
 const adminApi = {
     employees() {
-        return axiosClient.get(`/Employee/get-all?${P}`);
+        return getAllPages("/Employee/get-all");
     },
     attendanceLogs() {
-        return axiosClient.get(
-            `/AttendanceLog/get-all?pageNumber=1&pageSize=2000`
-        );
+        return getAllPages("/AttendanceLog/get-all");
     },
     leaveRequests() {
-        return axiosClient.get(`/LeaveRequest/get-all?${P}`);
+        return getAllPages("/LeaveRequest/get-all");
     },
     payrolls() {
-        return axiosClient.get(`/Payroll/get-all?${P}`);
+        return getAllPages("/Payroll/get-all");
     },
     contracts() {
-        return axiosClient.get(`/EmployeeContract/get-all?${P}`);
+        return getAllPages("/EmployeeContract/get-all");
     },
     activationCodes() {
-        return axiosClient.get(`/ActivationCode/get-all?${P}`);
+        return getAllPages("/ActivationCode/get-all");
     },
     users() {
-        return axiosClient.get(`/User/get-all?${P}`);
+        return getAllPages("/User/get-all");
     },
     // Thêm: dữ liệu cần cho bộ lọc + KPI
     departments() {
-        return axiosClient.get(`/Department/get-all?${P}`);
+        return getAllPages("/Department/get-all");
     },
     positions() {
-        return axiosClient.get(`/Position/get-all?${P}`);
+        return getAllPages("/Position/get-all");
     },
     insurance() {
-        return axiosClient.get(`/EmployeeInsurance/get-all?${P}`);
+        return getAllPages("/EmployeeInsurance/get-all");
     },
     bankAccounts() {
-        return axiosClient.get(`/EmployeeBankAccount/get-all?${P}`);
+        return getAllPages("/EmployeeBankAccount/get-all");
     },
     salaries() {
-        return axiosClient.get(`/EmployeeSalary/get-all?${P}`);
+        return getAllPages("/EmployeeSalary/get-all");
     },
     banks() {
-        return axiosClient.get(`/Bank/get-all?${P}`);
+        return getAllPages("/Bank/get-all");
     },
     createActivationCode(payload) {
         return axiosClient.post("/Auth/create-activation-code", payload);
     },
     // === Quản trị: chấm công / hợp đồng / nghỉ phép / tài khoản ===
     attendances() {
-        return axiosClient.get(`/Attendance/get-all?${P}`);
+        return getAllPages("/Attendance/get-all");
     },
     employeeReports(params = {}) {
         return axiosClient.get("/EmployeeReport/get-all", { params });
@@ -130,7 +128,7 @@ const adminApi = {
     },
     // === Phân quyền (Roles / gán role cho user) ===
     roles() {
-        return axiosClient.get(`/Role/get-all?${P}`);
+        return getAllPages("/Role/get-all");
     },
     createRole(payload) {
         return axiosClient.post("/Role/create", payload);

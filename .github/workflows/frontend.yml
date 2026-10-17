@@ -1,0 +1,31 @@
+name: Frontend verification
+
+on:
+  push:
+    paths: ["marixa_react/**", "scripts/verify_docs.py", ".github/workflows/frontend.yml"]
+  pull_request:
+    paths: ["marixa_react/**", "scripts/verify_docs.py", ".github/workflows/frontend.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: marixa_react
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: marixa_react/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run lint
+      - run: npm run build
+      - run: python3 ../scripts/verify_docs.py

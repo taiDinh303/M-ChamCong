@@ -33,12 +33,8 @@ const contractStateOf = (e, contracts) => {
     return "signed";
 };
 
-const normalizeSearch = (v) =>
-    String(v || "")
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/đ/gi, "d")
-        .toLocaleLowerCase("vi-VN");
+
+const PRIORITY = { pending: 1, none: 2, expired: 3, expiring: 4, signed: 5 };
 
 const AdminContractPage = ({ hrMode = false }) => {
     const [employees, setEmployees] = useState([]);
@@ -52,8 +48,6 @@ const AdminContractPage = ({ hrMode = false }) => {
 
     // Modal tạo hợp đồng
     const [showModal, setShowModal] = useState(false);
-    const [empSearch, setEmpSearch] = useState("");
-    const [showEmpOptions, setShowEmpOptions] = useState(false);
     const [form, setForm] = useState({
         employeeId: "",
         contractNumber: "",
@@ -96,7 +90,6 @@ const AdminContractPage = ({ hrMode = false }) => {
         [employees, contracts]
     );
 
-    const PRIORITY = { pending: 1, none: 2, expired: 3, expiring: 4, signed: 5 };
 
     const filtered = useMemo(() => {
         const q = search.trim().toLowerCase();
@@ -148,8 +141,7 @@ const AdminContractPage = ({ hrMode = false }) => {
                 startDate: "",
                 endDate: "",
             });
-            setEmpSearch("");
-            load();
+                load();
         } catch (err) {
             alert(L("Tạo thất bại:") + " " + (err.response?.data?.message || err.message));
         }
@@ -158,20 +150,9 @@ const AdminContractPage = ({ hrMode = false }) => {
     const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
     const openModal = () => {
-        setEmpSearch("");
-        setShowEmpOptions(false);
         setShowModal(true);
     };
 
-    const empTerm = normalizeSearch(empSearch.trim());
-    const empOptions = empTerm
-        ? employees
-              .filter((e) => [1, 2, 3].includes(e.status))
-              .filter((e) =>
-                  normalizeSearch(`${e.fullName} ${e.employeeCode}`).includes(empTerm)
-              )
-              .slice(0, 8)
-        : [];
 
     return (
         <PageLayout
