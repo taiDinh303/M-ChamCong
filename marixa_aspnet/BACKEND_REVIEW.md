@@ -25,4 +25,4 @@ Thay đổi phải có regression và schema đúng provider. Các tính năng m
 
 Chưa restore thật/volume bền/E 2 E/mobile, chưa audit grants/RLS cũ và Manager scope toàn bộ. Chính sách accrual/retention/cross-year/ca biên và đối soát dữ liệu cũ còn cần chốt; chưa có offline queue, nhiều contract CRUD vẫn object/IQueryable/cancellation chưa đồng nhất. [34](../docs/34-risks-changes.md) là danh mục đóng từng rủi ro. Không thêm broker/microservice/lớp rỗng hoặc test mirror để tăng điểm.
 
-Kiểm chứng local cuối: Release: 0 warning / 0 error, 85 PASS / 1 SKIP PostgreSQL; SQL Server fixture và export QA đạt, NuGet audit 8 project: 0 advisory, Markdown 43 file hợp lệ. PostgreSQL/Docker CI theo record worklog; production/restore/browser chưa nghiệm thu.
+Kiểm chứng local cuối: Release: 0 warning / 0 error, 85 PASS / 1 SKIP PostgreSQL; SQL Server fixture và export QA đạt, NuGet audit 8 project: 0 advisory, Markdown 43 file hợp lệ. CI [run 39001331032](https://github.com/taiDinh303/M-ChamCong/actions/runs/39001331032) source f3a344b SUCCESS: PostgreSQL runtime + Docker build/publish và 85 PASS / 1 SKIP SQL Server trên Linux. Production/restore/browser chưa nghiệm thu.
