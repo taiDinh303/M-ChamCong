@@ -8,7 +8,7 @@
 | --- | --- |
 | Stack/danh tính | ASP.NET Core 8 + Identity JWT + React/Vite; SQL Server local/PostgreSQL cloud. Không dùng Supabase Auth/khôi phục Next.js. Quyết định 12/10. |
 | Role | Admin/Manager/HR/Employee core; Accountant/Sale/Marketing đã seed, chưa có quyền quản lý chuyên biệt. |
-| Ảnh/GPS | Bằng chứng tùy chọn theo rule, ngoài văn phòng vẫn ghi nhận. Ảnh chấm công public marixa-photos. UI còn sai khác; quyết định 12/10. |
+| Ảnh/GPS | Bằng chứng tùy chọn theo rule, ngoài văn phòng vẫn ghi nhận. Ảnh chấm công public marixa-photos. UI đọc yêu cầu ảnh/GPS theo rule; quyết định 12/10, hoàn thiện UI 17/10. |
 | Ca chung | Một AttendanceRule active, không version/ngày hiệu lực cho rule. Snapshot lưu bản rule đã dùng khi khóa, không thêm hệ version ca. |
 | Giờ công | Công thường trong khung ca trừ phần nghỉ thực sự giao với thời gian làm; tách OT; tính theo phút, trả decimal 2 chữ số. Chủ dự án đồng ý 17/10. |
 | Nghỉ giữa ca | Mặc định 12:00–13:00; BreakStartTime/BreakMinutes cấu hình theo ca. Chủ dự án xác nhận 17/10. |
@@ -19,6 +19,7 @@
 | Ngày hiệu lực HR | Promotion từ ngày hiệu lực VN; nghỉ việc sau ngày làm cuối; worker mỗi phút khi app chạy và catch-up, AppliedAt chống áp lặp. Chủ dự án giao Codex quyết định 17/10. |
 | Kỳ công | HR/Admin review; Admin lock/reopen có lý do, snapshot version bất biến. Open→Reviewed→Locked; thay nguồn/rule ở kỳ Reviewed phải review lại. |
 | Múi giờ | Asia/Ho_Chi_Minh UTC+7; timestamp UTC, nhãn ngày VN. Không tự dịch/backfill toàn bộ ngày cũ. |
+| Bố trí UI 17/10 | Chủ dự án đồng ý: kỳ/XLSX trong Thống kê; tab OT và sửa công trong Lịch sử; Admin sửa rule bằng hộp thoại; HR/Admin cấp/điều chỉnh phép thủ công trong Nghỉ phép. Giữ layout chính, chưa cấp phép tự động. |
 | Hạ tầng/Figma | Snapshot chỉ tại 00, một Supabase project; staging riêng chưa xác nhận. Figma Dev Mode copy, UI Kit trước, frames 375/1440. |
 
 Không suy OT ngày lễ/hệ số lương, ca biên, phép qua năm hoặc retention từ tên entity. Các chính sách đó cần tiếp tục chốt trước mở rộng; rủi ro 34 ghi phạm vi chưa hoàn tất.
@@ -37,7 +38,7 @@ Không suy OT ngày lễ/hệ số lương, ca biên, phép qua năm hoặc rete
 | Ưu tiên | Việc / điều kiện đóng |
 | --- | --- |
 | P0 | Preflight/migration/backup-restore, grants/RLS bảng cũ, env/secret/CORS/volume live và smoke trên môi trường được phép. |
-| P1 | UI ảnh tùy chọn/GPS, form BreakStartTime/số lẻ, period/export/PDF và trạng thái Approved chờ AppliedAt; browser/mobile E 2 E. |
+| P1 | Nghiệm thu các luồng frontend mới trên hosting và thiết bị thật sau nâng schema; kiểm camera/GPS, responsive và các role còn lại. Code UI/bằng chứng cô lập xem worklog. |
 | P1 | Phạm vi Manager toàn bộ module; chính sách biên/ca qua đêm, ngày nghỉ/lễ và phép qua năm; đối soát dữ liệu cũ. |
 | P1 | RPO/RTO/on-call/retention/cấp phép định kỳ và cảnh báo job; chỉ triển khai sau quyết định cần thiết. |
 | P1 | Offline queue/idempotency/late adjustment kỳ sau; hiện API trả 409 khi ghi kỳ khóa. |

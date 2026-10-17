@@ -4,9 +4,9 @@
 
 ## 1. Dự án và nhiệm vụ
 
-Web quản lý nhân sự/chấm công tiếng Việt, quy mô đã ghi nhận dưới 15 người. Repo taiDinh 303/M-ChamCong, checkout D:/My Project/marixa_aspnet_react; backend marixa_aspnet, baseline main `f9585fb`; nhánh công việc codex/docs-backend-completion. Stack bắt buộc ASP.NET 8/Identity JWT/EF, React/Vite, SQL Server local/PostgreSQL cloud, ảnh Supabase Storage public. Múi giờ nghiệp vụ VN UTC+7, instant lưu UTC.
+Web quản lý nhân sự/chấm công tiếng Việt, quy mô đã ghi nhận dưới 15 người. Repo taiDinh 303/M-ChamCong, checkout D:/My Project/marixa_aspnet_react; backend marixa_aspnet, baseline backend đã merge main `2555a25`; đợt frontend tiếp theo trên codex/frontend-api-alignment. Stack bắt buộc ASP.NET 8/Identity JWT/EF, React/Vite, SQL Server local/PostgreSQL cloud, ảnh Supabase Storage public. Múi giờ nghiệp vụ VN UTC+7, instant lưu UTC.
 
-Nhiệm vụ 2026-10-17: tham khảo docs_mau, bổ sung tài liệu phù hợp, hoàn thiện backend theo yêu cầu có đủ đặc tả, build/test, chấm nghiêm khắc, sửa lỗi và push. Không bao gồm sửa Figma, xây native app, mua dịch vụ, chuyển Auth hoặc ghi database production.
+Nhiệm vụ 2026-10-17: tham khảo docs_mau, bổ sung tài liệu phù hợp, hoàn thiện backend theo yêu cầu có đủ đặc tả, build/test, chấm nghiêm khắc, sửa lỗi và push. Không bao gồm sửa Figma, xây native app, mua dịch vụ, chuyển Auth hoặc ghi database production. Phần tiếp theo do chủ dự án giao: hoàn thiện React khớp API, giữ giao diện và phỏng vấn trước khi thêm luồng. Chủ dự án chọn tự chạy hai SQL live; agent chỉ đọc metadata để chẩn đoán.
 
 ## 2. Áp dụng bộ mẫu
 
@@ -38,6 +38,11 @@ YES là áp dụng tài liệu, không xác nhận chức năng đã hoàn thàn
 | REQ-POL-01 | Công thường/OT/break/phút/tự duyệt đúng phỏng vấn 17/10. | Backend. |
 | REQ-LEAVE-01 | HR/Admin khác chủ hủy Approved có lý do, Refund một lần, giữ audit. | Backend; chưa auto accrual. |
 | REQ-HR-01 | Áp hồ sơ/quyền đúng ngày VN, idempotent, bảo vệ admin cuối. | Worker/processor. |
+| REQ-UI-01 | Ảnh/GPS theo rule; công thường/OT/số lẻ/ngày VN đúng API; lỗi API không giả dữ liệu 0. | React cá nhân/HR. |
+| REQ-UI-02 | Tab OT và sửa công trong Lịch sử, đúng role/self-review. | Chủ dự án đồng ý 17/10. |
+| REQ-UI-03 | Kỳ công/version/XLSX trong Thống kê; PDF và hủy/hoàn phép trong Nghỉ phép. | Chủ dự án đồng ý 17/10. |
+| REQ-UI-04 | Admin chỉnh rule; HR/Admin cấp/điều chỉnh phép có reason/history, chưa auto accrual. | Hộp thoại trong trang cũ, chủ dự án đồng ý. |
+| REQ-UI-05 | Session/route/own API/phân trang đúng; test/lint/build và kiểm browser cô lập. | API vẫn enforce quyền. |
 | REQ-DOC-01 | Không placeholder mẫu còn sót; links/source/trạng thái/bằng chứng và rubric điểm rõ. | docs và backend guide. |
 
 ## 4. Điều còn thiếu thông tin
@@ -47,6 +52,6 @@ YES là áp dụng tài liệu, không xác nhận chức năng đã hoàn thàn
 | Q-POL-01 | Đã xác nhận 17/10: OT giao actual×Approved, tách công thường, nghỉ theo ca, phút→2 số; HR/Admin tự duyệt công/OT/sửa, nghỉ không tự duyệt. | Chủ dự án | Quyết định 01; test AttendanceTime/WorkforcePolicy. |
 | Q-POL-02 | Mức/lịch/đối tượng cấp phép, carryover và retention ảnh? | Chủ dự án | Chưa bật job accrual/retention; hủy Approved có Refund do Codex chọn trong quyền được giao. |
 | Q-OPS-01 | RPO/RTO, staging riêng, hạn chót/ngân sách/người trực? | Chủ dự án | CHƯA XÁC ĐỊNH; quy trình và đề xuất tại 22/25/31. |
-| Q-UX-01 | UI tùy chọn ảnh/GPS, queue offline và module snapshot? | Chủ dự án/developer UI | Ghi sai khác, không tuyên bố đã làm frontend từ backend API. |
+| Q-UX-01 | Đã đồng ý UI period/XLSX, OT, sửa công, chỉnh rule và sổ phép thủ công. Offline vẫn chưa làm. | Chủ dự án 17/10 | Hiện trạng/bằng chứng 09/06/worklog; không suy nghiệm thu live từ local. |
 
 Nguồn: quyết định trong 01, source bắt đầu `f9585fb`, nhiệm vụ trực tiếp 2026-10-17. Hồ sơ không chứa credential hoặc dữ liệu nhân viên thật.

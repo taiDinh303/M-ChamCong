@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { getAuth } from "../../../services/auth/auth";
 import AppLayout from "../../../components/layout/AppLayout";
 import relatedApi from "../api/relatedApi";
+import { breakLabel } from "../../../utils/vnTime";
+import RuleEditor from "../components/RuleEditor";
 import PageBanner from "../components/PageBanner";
 import "../attendance.css";
 
@@ -11,6 +13,7 @@ const AttendanceRulesPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [profile, setProfile] = useState(null);
+    const [editing, setEditing] = useState(null);
 
     useEffect(() => {
         if (!auth?.userId) {
@@ -85,8 +88,8 @@ const AttendanceRulesPage = () => {
                     </div>
                     <div className="rule-tile rule-tile--break">
                         <span>Nghỉ giữa ca</span>
-                        <strong>{r.breakMinutes ? "12:00 - 13:00" : "—"}</strong>
-                        <small>{r.breakMinutes ? "Nghỉ trưa 1 giờ, 13:00 vào làm lại" : "Không trừ giờ nghỉ"}</small>
+                        <strong>{breakLabel(r)}</strong>
+                        <small>{r.breakMinutes ? `${r.breakMinutes} phút theo cấu hình ca` : "Không trừ giờ nghỉ"}</small>
                     </div>
                     <div className="rule-tile">
                         <span>Dung sai đi trễ</span>
@@ -115,8 +118,9 @@ const AttendanceRulesPage = () => {
                 </div>
 
                 <footer className="rule-foot">
+                    {auth?.roles?.includes("Admin") && <button type="button" className="wf-btn" onClick={() => setEditing(r)}>Chỉnh quy định</button>}
                     <span className="rule-code">{r.code}</span>
-                    <small>Hiệu lực từ {new Date(r.createdTime).toLocaleDateString("vi-VN")}</small>
+                    <small>Tạo ngày {new Date(r.createdTime).toLocaleDateString("vi-VN")}</small>
                 </footer>
             </article>
         );
@@ -124,6 +128,11 @@ const AttendanceRulesPage = () => {
 
     return (
         <AppLayout profile={profile}>
+            {editing && <RuleEditor rule={editing} onClose={() => setEditing(null)} onSaved={async () => {
+                setEditing(null);
+                try { const response = await relatedApi.attendanceRulesActive(); setRules(response.data.data || []); }
+                catch (err) { setError(err.message); }
+            }} />}
             <div className="att-content">
                 {!loading && !error && rules.length > 0 && (
                     <PageBanner

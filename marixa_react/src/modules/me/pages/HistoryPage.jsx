@@ -3,6 +3,8 @@ import { getAuth } from "../../../services/auth/auth";
 import AppLayout from "../../../components/layout/AppLayout";
 import HistoryTable from "../components/HistoryTable";
 import PageBanner from "../components/PageBanner";
+import OvertimePanel from "../components/OvertimePanel";
+import CorrectionPanel from "../components/CorrectionPanel";
 import relatedApi from "../api/relatedApi";
 import "../attendance.css";
 import "../../hr/employee.css";
@@ -16,6 +18,8 @@ const AttendanceHistoryPage = () => {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [tab, setTab] = useState("attendance");
+    const [correctionDraft, setCorrectionDraft] = useState(null);
 
     useEffect(() => {
         const load = async () => {
@@ -52,6 +56,12 @@ const AttendanceHistoryPage = () => {
     return (
         <AppLayout profile={profile}>
             <div className="att-content">
+                <div className="wf-tabs" role="tablist" aria-label="Lịch sử công và tăng ca">
+                    <button type="button" className="wf-btn" role="tab" aria-selected={tab === "attendance"} onClick={() => setTab("attendance")}>Chấm công</button>
+                    <button type="button" className="wf-btn" role="tab" aria-selected={tab === "overtime"} onClick={() => setTab("overtime")}>Tăng ca</button>
+                    <button type="button" className="wf-btn" role="tab" aria-selected={tab === "correction"} onClick={() => setTab("correction")}>Yêu cầu sửa công</button>
+                </div>
+                {tab === "overtime" ? <OvertimePanel /> : tab === "correction" ? <CorrectionPanel draft={correctionDraft} onDraftClosed={() => setCorrectionDraft(null)} /> : <>
                 {error && <div className="att-error">{error}</div>}
                 {!loading && !error && (
                     <PageBanner
@@ -65,9 +75,10 @@ const AttendanceHistoryPage = () => {
                 )}
                 {loading ? (
                     <div className="att-loading">Đang tải...</div>
-                ) : (
-                    <HistoryTable history={history} />
+                ) : !error && (
+                    <HistoryTable history={history} onRequestCorrection={(row) => { setCorrectionDraft(row); setTab("correction"); }} />
                 )}
+                </>}
             </div>
         </AppLayout>
     );

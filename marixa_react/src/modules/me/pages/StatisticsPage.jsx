@@ -9,6 +9,8 @@ import StatDetailTable from "../components/StatDetailTable";
 import StatWarnings from "../components/StatWarnings";
 import StatSummary from "../components/StatSummary";
 import PageBanner from "../components/PageBanner";
+import AttendancePeriodPanel from "../components/AttendancePeriodPanel";
+import { regularHours, businessDate, vnTodayKey } from "../../../utils/vnTime";
 import { ChartCard, ColumnChart } from "../../../components/charts/charts";
 import "../../../components/charts/charts.css";
 import {
@@ -17,6 +19,7 @@ import {
     dayStatusOf,
     buildCalendar,
     buildWarnings,
+    hoursShort,
 } from "../components/statUtils";
 
 const StatisticsPage = () => {
@@ -24,7 +27,7 @@ const StatisticsPage = () => {
     const userId = auth?.userId;
     const employeeId = auth?.employeeId;
 
-    const now = new Date();
+    const now = businessDate(vnTodayKey());
     const [ym, setYm] = useState({
         y: now.getFullYear(),
         m: now.getMonth(),
@@ -34,11 +37,16 @@ const StatisticsPage = () => {
     const [leaveTypes, setLeaveTypes] = useState([]);
     const [leaves, setLeaves] = useState([]);
     const [holidays, setHolidays] = useState([]);
+    const [rule, setRule] = useState(null);
+    const [balance, setBalance] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
     useEffect(() => {
+        let active = true;
         const load = async () => {
+            setLoading(true);
+            setError("");
             try {
                 if (!employeeId) {
                     setError("Chưa xác định được nhân viên đang đăng nhập.");
@@ -58,32 +66,40 @@ const StatisticsPage = () => {
                     userId ? relatedApi.employeeByUser(userId) : Promise.resolve(null),
                     relatedApi.leaveTypesAll(),
                     relatedApi.holidayCalendarAll(),
-                    relatedApi.leavesByEmployee(employeeId),
+                    relatedApi.myLeaves(),
+                    relatedApi.leaveBalance(employeeId, ym.y),
+                    relatedApi.attendanceRulesActive(),
                 ]);
+                const failure = results.find((result) => result.status === "rejected");
+                if (failure) throw failure.reason;
+                if (!active) return;
                 setHistory(list(results[0]));
-                if (results[1]?.status === "fulfilled")
-                    setProfile(results[1].value.data.data || null);
+                setProfile(results[1].value?.data?.data || null);
                 setLeaveTypes(pageList(results[2]));
                 setHolidays(pageList(results[3]));
                 setLeaves(list(results[4]));
+                setBalance(results[5].value.data.data);
+                setRule(results[6].value.data.data?.[0] || null);
             } catch (err) {
+                if (!active) return;
                 setError(
                     err.response?.data?.message ||
                         err.message ||
                         "Không thể tải dữ liệu thống kê."
                 );
             } finally {
-                setLoading(false);
+                if (active) setLoading(false);
             }
         };
         load();
-    }, [userId, employeeId]);
+        return () => { active = false; };
+    }, [userId, employeeId, ym.y]);
 
     const monthRows = useMemo(
         () =>
             history
                 .filter((r) => {
-                    const d = new Date(r.attendanceDate);
+                    const d = businessDate(r.attendanceDate);
                     return d.getFullYear() === ym.y && d.getMonth() === ym.m;
                 })
                 .sort((a, b) => new Date(a.attendanceDate) - new Date(b.attendanceDate)),
@@ -92,22 +108,22 @@ const StatisticsPage = () => {
 
     const byDate = useMemo(() => {
         const m = {};
-        monthRows.forEach((r) => (m[dkey(new Date(r.attendanceDate))] = r));
+        monthRows.forEach((r) => (m[r.attendanceDate.slice(0, 10)] = r));
         return m;
     }, [monthRows]);
 
     const holidayMap = useMemo(() => {
         const m = {};
         holidays.forEach((h) => {
-            if (h.isActive !== false) m[dkey(new Date(h.date))] = h.type;
+            if (h.isActive !== false) m[dkey(businessDate(h.date))] = h.type;
         });
         return m;
     }, [holidays]);
 
     const stats = useMemo(
         () =>
-            computeStats(monthRows, leaveTypes, leaves, holidayMap, ym),
-        [monthRows, leaveTypes, leaves, holidayMap, ym]
+            computeStats(monthRows, leaveTypes, leaves, holidayMap, ym, { standardHours: rule?.standardHours, leaveBalance: balance }),
+        [monthRows, leaveTypes, leaves, holidayMap, ym, rule, balance]
     );
 
     const dayStatus = (date) =>
@@ -115,7 +131,7 @@ const StatisticsPage = () => {
             byDate,
             holidayMap,
             stats,
-            todayKey: dkey(new Date()),
+            todayKey: vnTodayKey(),
         });
 
     const calendar = useMemo(
@@ -133,11 +149,8 @@ const StatisticsPage = () => {
     const dailyHours = useMemo(
         () =>
             monthRows.map((r) => {
-                const d = new Date(r.attendanceDate);
-                const mins = r.checkInTime && r.checkOutTime
-                    ? Math.round((new Date(r.checkOutTime) - new Date(r.checkInTime)) / 60000)
-                    : (r.actualHours || 0) * 60;
-                return { name: String(d.getDate()), value: Math.round((mins / 60) * 10) / 10 };
+                const d = businessDate(r.attendanceDate);
+                return { name: String(d.getDate()), value: regularHours(r) };
             }),
         [monthRows]
     );
@@ -161,7 +174,7 @@ const StatisticsPage = () => {
                                 {
                                     icon: "⏱",
                                     label: "Giờ làm",
-                                    value: `${Math.round(stats.hoursWorked / 60)}h`,
+                                    value: hoursShort(stats.hoursWorked),
                                     tone: "blue",
                                 },
                                 {
@@ -179,7 +192,7 @@ const StatisticsPage = () => {
                                 {
                                     icon: "▲",
                                     label: "Tăng ca",
-                                    value: `${Math.round((stats.otWeekday + stats.otWeekend + stats.otHoliday) / 60)}h`,
+                                    value: hoursShort(stats.otWeekday + stats.otWeekend + stats.otHoliday),
                                     tone: "red",
                                 },
                             ]}
@@ -210,6 +223,7 @@ const StatisticsPage = () => {
                                 &rsaquo;
                             </button>
                         </div>
+                        <AttendancePeriodPanel key={`${ym.y}-${ym.m}`} year={ym.y} month={ym.m + 1} />
                         <div className="att-stat-overview">
                             <StatWarnings warnings={warnings} />
                             <StatSummary stats={stats} />

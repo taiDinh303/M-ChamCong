@@ -1,12 +1,12 @@
 # 05 — Luồng nghiệp vụ hiện hành
 
-> Cập nhật 2026-10-17. CURRENT backend theo source/test; UI mới và production chưa nghiệm thu. Quyết định gốc tại 01, contract tại 15.
+> Cập nhật 2026-10-17. CURRENT backend theo source/test; UI mới có kiểm cô lập tại worklog; production chưa nghiệm thu. Quyết định gốc tại 01, contract tại 15.
 
 ## 1. Danh tính và chấm công
 
 Admin/staff được phép cấp tài khoản/kích hoạt theo guard; nhân viên đặt password mạnh rồi login JWT. Login sai 5 lần có lockout; rate limit Auth theo peerIP. Change-password đúng chủ và mật khẩu cũ, stamp/role/link thay đổi làm phiên cũ không còn hợp lệ. Admin thuần không cần hồ sơ NV cho chức năng account, nhưng thao tác nghiệp vụ cần employee claim theo contract.
 
-Checkin lấy timestamp server UTC và ngày VN, kiểm owner/staff/employee/enum/GPS bounds/rule, transaction Serializable tìm/tạo ngày công; log cùng loại trong 2 phút trả alreadyRecorded. Unique công-ngày phải có trên DB. API nhận ảnh/GPS/device tùy chọn theo rule; UI đang còn bắt ảnh/chưa gửiGPS. Raw log không sửa/xóa; correction là đường thay giờ có review/audit. Không có offline queue hoặc idempotency key.
+Checkin lấy timestamp server UTC và ngày VN, kiểm owner/staff/employee/enum/GPS bounds/rule, transaction Serializable tìm/tạo ngày công; log cùng loại trong 2 phút trả alreadyRecorded. Unique công-ngày phải có trên DB. API nhận ảnh/GPS/device tùy chọn theo rule; UI đọc PhotoRequired/GpsRequired, gửi lat/lon khi có và không buộc camera khi rule không yêu cầu. Raw log không sửa/xóa; correction là đường thay giờ có review/audit. Không có offline queue hoặc idempotency key.
 
 ## 2. Tính giờ và duyệt công
 

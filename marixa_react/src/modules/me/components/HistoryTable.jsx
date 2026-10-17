@@ -2,11 +2,9 @@ import { formatVnTime, formatVnDate, calcOvertime, formatOvertime } from "../../
 import PhotoCell from "./PhotoCell";
 import { statusLabel, statusClass, approvalLabel, approvalClass } from "../../hr/attendance/labels";
 
-// Bảng lịch sử chấm công của NHÂN VIÊN (display-only).
-// Cùng phong cách compact với trang /employees/attendance-history nhưng
-// KHÔNG hiện nút Sửa / Xóa / Xem chi tiết — chỉ hiển thị.
+// Own records are read-only; changes go through correction requests.
 // Các ô <td data-label> dùng để CSS mobile biến bảng thành thẻ xếp dọc.
-const HistoryTable = ({ history }) => {
+const HistoryTable = ({ history, onRequestCorrection }) => {
     if (!history || history.length === 0) {
         return (
             <section className="att-card">
@@ -26,11 +24,12 @@ const HistoryTable = ({ history }) => {
                                 <th className="att-col-status">Trạng thái</th>
                                 <th>Giờ vào</th>
                                 <th>Giờ ra</th>
-                                <th className="att-col-actual">Giờ thực</th>
+                                <th className="att-col-actual">Công thường</th>
                                 <th className="att-col-ot">Tăng ca</th>
                                 <th className="att-col-photo">Ảnh vào ca</th>
                                 <th className="att-col-photo">Ảnh ra ca</th>
                                 <th className="att-col-approval">Duyệt</th>
+                                {onRequestCorrection && <th>Yêu cầu</th>}
                             </tr>
                         </thead>
                         <tbody>
@@ -44,7 +43,7 @@ const HistoryTable = ({ history }) => {
                                     </td>
                                     <td data-label="Giờ vào">{formatVnTime(row.checkInTime) || "—"}</td>
                                     <td data-label="Giờ ra">{formatVnTime(row.checkOutTime) || "—"}</td>
-                                    <td className="att-col-actual" data-label="Giờ thực">{row.actualHours != null ? `${row.actualHours}h` : "—"}</td>
+                                    <td className="att-col-actual" data-label="Công thường">{row.actualHours != null ? `${row.actualHours}h` : "—"}</td>
                                     <td className="att-col-ot" data-label="Tăng ca">{(() => { const ot = calcOvertime(row); return ot > 0 ? <i className="att-badge warn">+{formatOvertime(ot)}</i> : <span className="att-muted">—</span>; })()}</td>
                                     <td className="att-col-photo" data-label="Ảnh vào ca"><PhotoCell src={row.checkInPhoto} alt="Vào ca" hideYesBadge /></td>
                                     <td className="att-col-photo" data-label="Ảnh ra ca"><PhotoCell src={row.checkOutPhoto} alt="Ra ca" hideYesBadge /></td>
@@ -56,6 +55,7 @@ const HistoryTable = ({ history }) => {
                                             {row.approvedAt && <small>{formatVnTime(row.approvedAt)} · {formatVnDate(row.approvedAt)}</small>}
                                         </div>
                                     </td>
+                                    {onRequestCorrection && <td data-label="Yêu cầu"><button type="button" className="wf-btn" onClick={() => onRequestCorrection(row)}>Yêu cầu sửa công</button></td>}
                                 </tr>
                             ))}
                         </tbody>

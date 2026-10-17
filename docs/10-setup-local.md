@@ -105,7 +105,7 @@ Mở URL Vite in ra terminal (thường port `5173`; có thể đổi khi bị c
 3. Upload ảnh hợp lệ → kiểm tra body thành công và URL đọc được → check-in/check-out → lịch sử công. Các bước ghi DB phải dùng dữ liệu giả; xem `06` cho sai khác ảnh/GPS/ngày công.
 4. Kiểm tra Network: request `/api`/`/uploads` qua Vite đúng target; không nhận HTML SPA thay JSON.
 
-**Backend có M.Tests** với xUnit/HTTP SQLite riêng, LocalDB fixture tự tạo/drop DB thử và PostgreSQL loopback khi được cấu hình; không ghi DB ứng dụng/live. Frontend chưa có script test; không dùng npm test như lệnh sẵn có. Chạy:
+**Backend có M.Tests** với xUnit/HTTP SQLite riêng, LocalDB fixture tự tạo/drop DB thử và PostgreSQL loopback khi được cấu hình; không ghi DB ứng dụng/live. Frontend có Node test runner `npm test`, không cần API/secret cho các test này. Chạy:
 
 ```powershell
 Set-Location -LiteralPath 'D:\My Project\marixa_aspnet_react\marixa_aspnet'
@@ -115,8 +115,9 @@ dotnet test .\M.BE.sln -c Release --no-build
 
 ```powershell
 Set-Location -LiteralPath 'D:\My Project\marixa_aspnet_react\marixa_react'
-npm run build
+npm test
 npm run lint
+npm run build
 ```
 
 Ghi kết quả thực tế; lint/build là kiểm tra tĩnh, không thay thế các ca nghiệp vụ trong `06`. SQL Server fixture đã có; PostgreSQL theo CI và browser E 2 E/live còn mở theo [01-plan.md](01-plan.md).

@@ -46,7 +46,6 @@ const WorkPage = () => {
     const auth = getAuth();
     const roles = auth?.roles || [];
     const canManage = roles.some((r) => /admin|manager|hr/i.test(String(r)));
-    const isFullScope = roles.some((r) => /admin|hr/i.test(String(r)));
 
     const [q, setQ] = useState("");
     const [tasks, setTasks] = useState([]);
@@ -89,8 +88,7 @@ const WorkPage = () => {
             const p = await (canManage ? adminApi.allWorkPerformance() : adminApi.myWorkPerformance());
             setPerfs(p.data.data || []);
             if (canManage) {
-                const [a, pr, sub, asg] = await Promise.all([
-                    adminApi.assignableEmployees(),
+                const [pr, sub, asg] = await Promise.all([
                     adminApi.workProjects(),
                     adminApi.selectableEmployees(),
                     adminApi.assignedWorkTasks(),
@@ -99,7 +97,7 @@ const WorkPage = () => {
                 setProjects(pr.data.data || []);
                 setAssigned(asg.data.data || []);
             }
-        } finally { setDataReady(true); }
+        } catch (err) { setError(err.message || "Không tải được dữ liệu công việc."); } finally { setDataReady(true); }
     }, [canManage]);
     useEffect(() => { loadAll(); }, [loadAll]);
 
@@ -202,14 +200,14 @@ const WorkPage = () => {
 
     const T = todayISO();
     const T3 = shiftDayISO(3);
-    const openTasks = tasks.filter((t) => t.status !== 2);
+    const openTasks = useMemo(() => tasks.filter((t) => t.status !== 2), [tasks]);
     const counts = useMemo(() => ({
         overdue: openTasks.filter((t) => dueStr(t.dueDate) < T).length,
         dueToday: openTasks.filter((t) => dueStr(t.dueDate) === T).length,
         dueSoon: openTasks.filter((t) => dueStr(t.dueDate) > T && dueStr(t.dueDate) <= T3).length,
         awaitingReview: canManage ? assigned.filter((t) => t.status === 1).length : 0,
         needAssign: canManage ? projects.filter((p) => p.status !== 1 && p.memberCount === 0).length : 0,
-    }), [tasks, assigned, projects, canManage, T, T3]);
+    }), [openTasks, assigned, projects, canManage, T, T3]);
 
     const week = useMemo(() => {
         const s = startOfWeek();
@@ -222,10 +220,8 @@ const WorkPage = () => {
 
 
     const completion = tasks.length ? Math.round(tasks.filter((t) => t.status === 2).length / tasks.length * 100) : 0;
-    const kpi = { open: openTasks.length, doing: tasks.filter((t) => t.status === 1).length, done: tasks.filter((t) => t.status === 2).length, perf: perfs.length ? avg(perfs[perfs.length - 1]) : 0 };
     const myPerfs = canManage ? perfs.filter((p) => p.status !== 0) : perfs;
     const total = tasks.length;
-    const done = kpi.done, doing = kpi.doing, blocked = tasks.filter((t) => t.status === 3).length;
 
     const statusData = [
         { name: L("Chưa bắt đầu"), value: tasks.filter((t) => t.status === 0).length, color: "#8A99AB" },

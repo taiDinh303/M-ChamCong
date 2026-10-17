@@ -28,9 +28,12 @@ API trả Cache-Control no-store và X-Correlation-ID. Exception/rate-limit có 
 | API-PER-03 | POST /lock, /reopen | Admin; reason 5–1000; lock cần Reviewed | Lock tạo version mới; reopen giữ các version cũ. |
 | API-EXP-01 | GET /snapshot hoặc /export.xlsx?version=1 | Employee chỉ hàng của mình; staff toàn kỳ | Dữ liệu/hash theo phạm vi, hoặc XLSX từ snapshot. Bỏ version lấy bản chốt mới nhất, kể cả kỳ đã mở lại. |
 | API-EXP-02 | GET /api/LeaveRequest/{id}/pdf | Chủ đơn hoặc HR/Admin | PDF trạng thái dữ liệu hiện tại, thời điểm xuất; không phải chữ ký số. |
+| API-UI-01 | GET /api/LeaveRequest/mine | User có hồ sơ nhân viên | Đơn của chính mình; /by-employee và /get-all cần staff. |
+| API-LEDGER-01 | GET /api/LeaveLedger/summary/{employeeId}/year/{year} và /by-employee/{employeeId}/year/{year} | Owner/staff theo guard | Số dư và lịch sử, không dùng MaxDays trừ đơn để đoán. |
+| API-LEDGER-02 | POST /api/LeaveLedger/create-entry | HR/Admin; employeeId/year/entryType/days/reason, leaveTypeId tùy chọn | Grant=1 dương, Adjust=2 số có dấu khác 0, [-999,999]; reason 5–500. Deduct/Refund do workflow. |
 | API-LEAVE-01 | POST /api/LeaveRequest/cancel/{id} | Pending: chủ/Admin. Approved: HR/Admin khác chủ, reason 5–500 | Giữ người duyệt cũ, ghi người/lúc/lý do hủy; hoàn đúng Deduct; gọi lại không hoàn thêm. |
 
-ActualHours giữ tên JSON nhưng nay là decimal công thường; OvertimeHours là OT được công nhận, tách riêng. BreakStartTime bổ sung vào rule, mặc định 12:00; BreakMinutes mặc định 60. OT phải có StartAt/EndAt; OvertimeHours nhập tay không là nguồn công nhận. UI hiện hữu cần nghiệm thu định dạng số và cập nhật form cấu hình giờ nghỉ.
+ActualHours giữ tên JSON nhưng nay là decimal công thường; OvertimeHours là OT được công nhận, tách riêng. BreakStartTime bổ sung vào rule, mặc định 12:00; BreakMinutes mặc định 60. OT phải có StartAt/EndAt; OvertimeHours nhập tay không là nguồn công nhận. Frontend đọc trực tiếp số lẻ từ API, form HR không tự tính/làm tròn công hoặc gửi OT suy đoán; Admin có form cấu hình giờ nghỉ. Kiểm browser/local xem 06, live chưa nghiệm thu.
 
 Không tự retry checkin như có idempotency key: cửa sổ chống lặp 2 phút chỉ là cơ chế hiện hành. Thao tác period state sai trả 409; cancellation lặp hợp lệ không tạo Refund thứ hai. Đồng bộ offline và versioned /api/v1 không có trong stack hiện hành.
 

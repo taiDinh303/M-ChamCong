@@ -23,7 +23,7 @@ flowchart LR
 | Ảnh chấm công | [`SupabasePhotoStorage.cs`](../marixa_aspnet/M.API/Storage/SupabasePhotoStorage.cs): khi đủ URL/service key, upload vào bucket public `marixa-photos`; thiếu cấu hình thì [`UploadController`](../marixa_aspnet/M.API/Controllers/Files/UploadController.cs) lưu đĩa local. | Không suy ra bucket/quyền live từ tên bucket trong code. |
 | Triển khai | Cấu hình dự án dùng Render cho API, Vercel cho SPA, Supabase cho PostgreSQL/Storage. | Instance và cấu hình triển khai xem [08](08-deploy-detail.md), [11](11-setup-cloud.md); trạng thái online chưa kiểm tra. |
 
-Frontend dùng [`apiConfig.js`](../marixa_react/src/services/api/apiConfig.js): `VITE_API_BASE_URL` nếu có, mặc định `/api`. Local có Vite proxy; triển khai web/API khác origin cần CORS đúng origin. [`axiosClient.js`](../marixa_react/src/services/api/axiosClient.js) đính Bearer token từ `marixa_auth` trong localStorage; HTTP 401 khi đang có token sẽ xóa phiên và chuyển về `/login`.
+Frontend dùng [`apiConfig.js`](../marixa_react/src/services/api/apiConfig.js): `VITE_API_BASE_URL` nếu có, mặc định `/api`. Local có Vite proxy; triển khai web/API khác origin cần CORS đúng origin. [`axiosClient.js`](../marixa_react/src/services/api/axiosClient.js) đính Bearer token từ `marixa_auth`: sessionStorage nếu không Ghi nhớ, localStorage nếu có. JWT hết hạn hoặc 401 của đúng phiên xóa auth và về `/login`; 401 đến muộn của token cũ không xóa phiên mới.
 
 Ứng dụng dùng **ASP.NET Identity + JWT**, không dùng Supabase Auth cho phiên đăng nhập hiện tại. `marixa_aspnet/web` (Next.js cũ) đã bị xóa khỏi checkout; SQL/RPC của kiến trúc cũ không phải bằng chứng API .NET đang thực thi quy tắc đó.
 
@@ -48,15 +48,15 @@ Nguồn route: [`App.jsx`](../marixa_react/src/App.jsx). Nguồn hiển thị mo
 
 | Nhóm | Route hiển thị hiện có | Quyền / guard trong mã nguồn |
 | --- | --- | --- |
-| Public / tổng quan | `/login`, `/kich-hoat`, `/unauthorized`, `/home` | Không bọc `RequireModule` tại `App.jsx`; page/component có xử lý phiên riêng tùy nơi. |
+| Public / tổng quan | `/login`, `/kich-hoat`, `/unauthorized`; `/home` cần phiên | `RequireSession` bọc các route nội bộ, public nằm ngoài wrapper. |
 | Cá nhân `me` | `/attendance`, `/attendance/attendance-history`, `/attendance/attendance-rules`, `/attendance/statistics`, `/attendance/leave`, `/attendance/contracts`, `/attendance/salary`, `/attendance/insurance`, `/attendance/bank-accounts` | Registry khai báo `access: user`; các route này không bọc `RequireModule` tại `App.jsx`. |
 | Cá nhân có wrapper | `/attendance/reports`, `/attendance/promotions`, `/attendance/handover`, `/work` | Bọc `RequireModule`, registry là `access: user`. |
 | Hồ sơ | `/profile` | Registry `access: user`, không bọc `RequireModule` tại `App.jsx`. |
 | Nhân sự | `/employees`, `/employees/attendance-history`, `/employees/work-schedule`, `/employees/statistics`, `/employees/contracts`, `/employees/leaves`, `/employees/reports`, `/employees/accounts`, `/employees/promotions`, `/employees/handover` | Bọc `RequireModule`; registry cho `HR`, `Manager`, `Admin`. Đây không tự động cấp quyền cho mọi API đằng sau màn hình. |
 | Admin có registry | `/admin`, `/admin/contracts`, `/admin/leaves`, `/admin/payroll`, `/admin/resigned`, `/admin/reports`, `/admin/accounts` | Bọc `RequireModule`; registry là `access: admin`, `ADMIN_ROLES = ["Admin"]`. |
-| Admin thiếu registry | `/admin/work`, `/admin/roles`, `/admin/block-accounts`, `/admin/employees/leaves`, `/admin/employees/handover`, `/admin/employees/reports`, `/admin/employees/contracts` | Có wrapper nhưng không có mục tương ứng trong `MODULES`; `canAccessModule` hiện trả `true` khi không tìm thấy đường dẫn. Đây là khoảng trống cần sửa, không phải quyền được phê duyệt. |
+| Admin kế thừa quyền | `/admin/work`, `/admin/roles`, `/admin/block-accounts`, `/admin/employees/leaves`, `/admin/employees/handover`, `/admin/employees/reports`, `/admin/employees/contracts` | Các subroute kế thừa quyền Admin từ prefix `/admin` qua lookup đường dẫn dài nhất; không mở quyền vì thiếu mục registry riêng. |
 
-[`permission.js`](../marixa_react/src/services/auth/permission.js) hiện chỉ kiểm tra role cho mục có `roles` hoặc `access: admin`; nhánh `access: user` và đường dẫn không đăng ký đều trả `true`, không kiểm tra token tại đây. [`RequireModule.jsx`](../marixa_react/src/components/common/RequireModule.jsx) chỉ chuyển tới `/unauthorized` khi hàm này trả `false`. **TARGET:** hoàn thiện kiểm tra phiên/route và kiểm tra quyền tại API; ẩn sidebar không phải biện pháp bảo vệ dữ liệu.
+[`RequireSession.jsx`](../marixa_react/src/components/common/RequireSession.jsx) kiểm token/expiry cho toàn bộ route nội bộ. [`permission.js`](../marixa_react/src/services/auth/permission.js) lấy mục/prefix dài nhất; [`RequireModule.jsx`](../marixa_react/src/components/common/RequireModule.jsx) chuyển thiếu role tới `/unauthorized`. Menu/header cũng lọc quyền. API tiếp tục enforce role/owner; ẩn nút không thay kiểm dữ liệu phía server.
 
 Redirect hiện tại, không phải màn hình riêng:
 
@@ -108,7 +108,7 @@ Ví dụ payload **hiện tại** cho API chấm công (GUID minh họa, không 
 
 ### 4.3 Bảo mật cần hoàn thiện
 
-**TARGET:** API phải quyết định quyền dựa trên JWT hợp lệ, role và quyền sở hữu/phạm vi quản lý; client ids và localStorage không phải nguồn cấp quyền. Ownership/change-password đã sửa phía server; route registry frontend còn cần hoàn thiện. Ma trận endpoint/role/scope cần mở rộng khi sửa từng module và kèm test HTTP 401/403/cross-user. Không khẳng định toàn API đã audit bảo mật.
+**TARGET:** API phải quyết định quyền dựa trên JWT hợp lệ, role và quyền sở hữu/phạm vi quản lý; client ids và localStorage không phải nguồn cấp quyền. Ownership/change-password đã sửa phía server; route nội bộ đã có session guard và subroute Admin kế thừa quyền; còn cần nghiệm thu đủ role trên hosting. Ma trận endpoint/role/scope cần mở rộng khi sửa từng module và kèm test HTTP 401/403/cross-user. Không khẳng định toàn API đã audit bảo mật.
 
 ## 5. Thời gian, bootstrap và tính nhất quán
 

@@ -8,6 +8,7 @@ from urllib.parse import unquote
 ROOT = Path(__file__).resolve().parents[1]
 FILES = sorted(set(list((ROOT / "docs").glob("*.md"))
                    + list((ROOT / "figma").glob("*.md"))
+                   + list((ROOT / "marixa_react").glob("*.md"))
                    + [ROOT / "AGENTS.md"]
                    + [ROOT / "marixa_aspnet" / name for name in ("README.md", "ARCHITECTURE.md", "BACKEND_REVIEW.md", "AGENTS.md")]
                    + [ROOT / "marixa_aspnet/supabase/README.md"]))

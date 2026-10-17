@@ -26,6 +26,7 @@ import EmployeeContractPage from "./modules/hr/contracts/pages/EmployeeContractP
 import HomePage from "./modules/home/pages/HomePage";
 import UnauthorizedPage from "./modules/unauthorized/pages/UnauthorizedPage";
 import RequireModule from "./components/common/RequireModule";
+import RequireSession from "./components/common/RequireSession";
 import PromotionsPage from "./modules/hr/pages/PromotionsPage";
 
 // ===== Module "me": các trang nhân viên xem thông tin của mình =====
@@ -66,6 +67,7 @@ function App() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/kich-hoat" element={<ActivatePage />} />
                 <Route path="/unauthorized" element={<UnauthorizedPage />} />
+                <Route element={<RequireSession />}>
                 <Route path="/" element={<Navigate to="/home" replace />} />
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/finance" element={<Navigate to="/attendance/salary" replace />} />
@@ -195,6 +197,7 @@ function App() {
                     <Route key={from} path={from} element={<Navigate to={to} replace />} />
                 ))}
 
+                </Route>
                 <Route path="*" element={<Navigate to="/home" replace />} />
             </Routes>
         </BrowserRouter>

@@ -70,7 +70,7 @@ export default function ReportsPage({ admin = false } = {}) {
     const auth = getAuth();
     const { language } = useLanguage();
     const locale = localeForLanguage(language);
-    const L = (text) => translate(text, language);
+    const L = useCallback((text) => translate(text, language), [language]);
     activeLocale = localeForLanguage(language);
     const [reports, setReports] = useState([]);
     const [departments, setDepartments] = useState([]);
@@ -92,7 +92,6 @@ export default function ReportsPage({ admin = false } = {}) {
     const [dialogDeadline, setDialogDeadline] = useState("");
     const [busy, setBusy] = useState(false);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const load = useCallback(async () => {
         setLoading(true); setError("");
         try {
@@ -103,7 +102,7 @@ export default function ReportsPage({ admin = false } = {}) {
             setEmployees(employeeResponse.data.data?.items || []);
         } catch (err) { setError(err.response?.data?.message || err.message || L("Không tải được báo cáo file.")); }
         finally { setLoading(false); }
-    }, [filters, search]);
+    }, [filters, search, L]);
     useEffect(() => { load(); }, [load]);
     useEffect(() => {
         if (!loading && sessionStorage.getItem(SCROLL_TO_OUTBOUND_KEY) === "1") {
@@ -230,7 +229,7 @@ function Kpi({ icon, label, value, tone = "" }) { return <article className={`hr
 function ReportSection({ id, title, children }) { return <section id={id} className="hr-file-section"><header><h2>{title}</h2></header>{children}</section>; }
 function ReportTable({ reports, columns, open, onAction, complete, isUpperRecipient = () => false }) {
     const { language } = useLanguage();
-    const L = (text) => translate(text, language);
+    const L = useCallback((text) => translate(text, language), [language]);
     activeLocale = localeForLanguage(language);
     const empty = reports.length === 0;
     return <div className="att-card hr-file-table-wrap"><table className="hr-file-table"><thead><tr><th>{L("Mã BC")}</th><th>{L("Tên báo cáo")}</th><th>{columns === "outbound" ? L("Bộ phận") : L("Phòng ban")}</th>{columns !== "outbound" && columns !== "requests" && <th>{L("Người gửi")}</th>}{columns === "outbound" && <><th>{L("Người nhận")}</th><th>{L("Ngày gửi")}</th></>}{columns === "requests" && <><th>{L("Nội dung yêu cầu")}</th><th>{L("Người gửi")}</th><th>{L("Hạn xử lý")}</th></>}{columns === "all" && <th>{L("Cấp hiện tại")}</th>}{columns !== "requests" && columns !== "outbound" && <th>{L("Deadline")}</th>}<th>{L("Trạng thái")}</th><th>{L("Thao tác")}</th></tr></thead><tbody>
@@ -255,7 +254,7 @@ function ReportTable({ reports, columns, open, onAction, complete, isUpperRecipi
 
 function ReportModal({ report, close, openDialog, complete, download, isUpperRecipient }) {
     const { language } = useLanguage();
-    const L = (text) => translate(text, language);
+    const L = useCallback((text) => translate(text, language), [language]);
     activeLocale = localeForLanguage(language);
     const steps = [L("Nhân viên gửi"), L("Quản lý duyệt"), L("Cấp trên"), L("Hoàn tất")];
     const active = report.status === S.complete ? 3 : report.status >= S.sent ? 2 : report.status >= S.approved ? 1 : 0;
@@ -279,7 +278,7 @@ function ReportModal({ report, close, openDialog, complete, download, isUpperRec
 
 function ActionDialog({ type, report, comment, setComment, recipient, setRecipient, employees, currentEmployeeId, deadline, setDeadline, close, submit, busy, error }) {
     const { language } = useLanguage();
-    const L = (text) => translate(text, language);
+    const L = useCallback((text) => translate(text, language), [language]);
     activeLocale = localeForLanguage(language);
     const configs = {
         forward: [L("Duyệt và gửi cấp trên"), L("Người nhận tiếp theo"), L("Ghi chú gửi cấp trên")],

@@ -14,7 +14,7 @@ import {
 } from "recharts";
 
 // Bảng màu nhất quán theo theme.css (đỏ = block, xanh = primary).
-export const CHART_COLORS = [
+const CHART_COLORS = [
   "#1647C8", // primary
   "#00BFD0", // cyan
   "#F3B928", // gold

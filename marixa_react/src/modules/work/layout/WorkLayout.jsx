@@ -12,7 +12,7 @@ const COLLAPSE_KEY = "marixa_work_sidebar_collapsed";
 
 // Layout khu "CÃ´ng viá»‡c": header + sidebar (Tá»•ng quan / Viá»‡c cá»§a tÃ´i / BÃ¡o cÃ¡o + tÃ¬m kiáº¿m).
 // "search" do cha sá»Ÿ há»¯u (controlled) Ä‘á»ƒ thanh tÃ¬m kiáº¿m lá»c chung cáº£ 3 view.
-const WorkLayout = ({ title, subtitle, search, onSearchChange, children }) => {
+const WorkLayout = ({ search, onSearchChange, children }) => {
     usePillNavActiveInView();
     const [collapsed, setCollapsed] = useState(() => {
         try { return localStorage.getItem(COLLAPSE_KEY) === "1"; } catch { return false; }

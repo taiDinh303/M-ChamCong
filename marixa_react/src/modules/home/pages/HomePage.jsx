@@ -37,6 +37,7 @@ const HomePage = () => {
             day: "2-digit",
             month: "2-digit",
             year: "numeric",
+            timeZone: "Asia/Ho_Chi_Minh",
         }).format(now);
         return {
             date: dateStr,
@@ -59,7 +60,7 @@ const HomePage = () => {
                             <Link className="home-cta" to="/attendance">
                                 Bắt đầu chấm công <span aria-hidden="true">↗</span>
                             </Link>
-                            <Link className="home-cta--ghost" to="/admin">Xem dashboard</Link>
+                            {canAccessModule("/admin") && <Link className="home-cta--ghost" to="/admin">Xem dashboard</Link>}
                         </div>
                     </div>
 

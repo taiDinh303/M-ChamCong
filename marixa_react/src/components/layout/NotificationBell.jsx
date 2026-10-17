@@ -2,20 +2,22 @@ import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { getAuth } from "../../services/auth/auth";
 import employeeApi from "../../modules/hr/api/employeeApi";
 import axiosClient from "../../services/api/axiosClient";
+import relatedApi from "../../modules/me/api/relatedApi";
+import { itemsOf } from "../../services/api/contracts";
 
 // Chuông thông báo toàn cục:
 // - Admin: nghỉ phép chờ duyệt, bàn giao chờ duyệt, báo cáo cần xử lý.
 // - Employee: phép của mình chờ duyệt, báo cáo cần chỉnh sửa.
 // Trạng thái "đã đọc" lưu localStorage theo user.
 const READ_KEY = (userId) => `marixa_notif_read_${userId}`;
-const PAGE = "pageNumber=1&pageSize=500";
 
 // Status (camelCase từ API): leave: Pending=1; report: 0=chờ duyệt,4=đã gửi,6=cấp trên yêu cầu; handover: 0=chờ duyệt
 const fmtDate = (v) => (v ? new Date(v).toLocaleDateString("vi-VN") : "");
 
 const NotificationBell = () => {
     const auth = getAuth();
-    const isAdmin = (auth?.roles || []).some((r) => /admin/i.test(String(r)));
+    const isAdmin = (auth?.roles || []).some((r) => ["Admin", "HR", "Manager"].includes(r));
+    const [loadFailed, setLoadFailed] = useState(false);
     const [items, setItems] = useState([]);
     const [readIds, setReadIds] = useState(() => {
         try {
@@ -36,13 +38,14 @@ const NotificationBell = () => {
 
     const load = useCallback(async () => {
         const list = [];
+        if (!auth?.token) return;
         try {
             const jobs = [];
 
             // Nghỉ phép (trả về { items })
             jobs.push(
-                employeeApi.leaveRequests().then((r) => {
-                    const arr = r.data.data?.items || [];
+                (isAdmin ? employeeApi.leaveRequests() : auth?.employeeId ? relatedApi.myLeaves() : Promise.resolve(null)).then((r) => {
+                    const arr = itemsOf(r);
                     arr.forEach((x) => {
                         if (x.status === 1) {
                             const me = x.employeeId === auth?.employeeId;
@@ -62,11 +65,11 @@ const NotificationBell = () => {
 
             // Báo cáo (trả về mảng trực tiếp)
             jobs.push(
-                employeeApi.employeeReports({}).then((r) => {
-                    const arr = Array.isArray(r.data.data) ? r.data.data : [];
+                (isAdmin ? employeeApi.employeeReports({}) : axiosClient.get("/EmployeeReport/mine")).then((r) => {
+                    const arr = itemsOf(r);
                     arr.forEach((x) => {
                         const pending = isAdmin ? [0, 3, 4, 6].includes(x.status) : [3, 6].includes(x.status);
-                        if (pending && (!isAdmin || x.employeeId === auth?.employeeId))
+                        if (pending && (isAdmin || x.employeeId === auth?.employeeId))
                             list.push({
                                 id: `report-${x.id}`,
                                 title: isAdmin
@@ -82,7 +85,7 @@ const NotificationBell = () => {
             // Bàn giao (trả về mảng trực tiếp) - chỉ admin
             if (isAdmin) {
                 jobs.push(
-                    axiosClient.get(`/EmployeeHandover/get-all?${PAGE}`).then((r) => {
+                    axiosClient.get("/EmployeeHandover/get-all").then((r) => {
                         const arr = Array.isArray(r.data.data) ? r.data.data : [];
                         arr.forEach((x) => {
                             if (x.status === 0)
@@ -93,17 +96,18 @@ const NotificationBell = () => {
                                     time: x.createdTime,
                                 });
                         });
-                    }).catch(() => {})
+                    })
                 );
             }
 
-            await Promise.all(jobs);
+            const results = await Promise.allSettled(jobs);
+            setLoadFailed(results.some((result) => result.status === "rejected"));
             list.sort((a, b) => new Date(b.time || 0) - new Date(a.time || 0));
             setItems(list);
         } catch {
             setItems([]);
         }
-    }, [isAdmin, auth?.employeeId]);
+    }, [isAdmin, auth?.employeeId, auth?.token]);
 
     useEffect(() => { load(); }, [load]);
 
@@ -148,6 +152,7 @@ const NotificationBell = () => {
                         )}
                     </div>
                     <div className="app-header-bell-list">
+                        {loadFailed && <p className="app-header-bell-empty" role="status">Chưa tải được một số thông báo. <button type="button" onClick={load}>Thử lại</button></p>}
                         {items.length === 0 ? (
                             <p className="app-header-bell-empty">Không có thông báo nào.</p>
                         ) : (

@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Header from "../../../components/layout/Header";
 import AdminSidebar from "./AdminSidebar";
 import "../../../components/layout/header.css";
@@ -8,7 +8,7 @@ import { usePillNavActiveInView } from "../../../components/layout/usePillNav";
 const COLLAPSE_KEY = "marixa_sidebar_collapsed";
 
 // Layout Ä‘á»™c láº­p cho khu quáº£n trá»‹: header + sidebar Dashboard + ná»™i dung trang.
-const AdminAppLayout = ({ title, subtitle, children }) => {
+const AdminAppLayout = ({ children }) => {
     usePillNavActiveInView();
     const [collapsed, setCollapsed] = useState(() => {
         try {

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { clearAuth, getAuth } from "../../services/auth/auth";
+import { canAccessModule } from "../../services/auth/permission";
 import {
     fileToAvatarDataUrl,
     getAvatar,
@@ -29,10 +30,10 @@ const Header = ({ profile, onToggleSidebar, collapsed, minimal = false, navItems
 
     // Đường dẫn "phân khu" theo vai trò: Admin -> dashboard,
     // HR/Manager -> module HR, nhân viên thường -> module Me.
-    const roles = getAuth()?.roles || [];
-    const roleHome = roles.some((r) => /admin/i.test(String(r)))
+    const roles = auth?.roles || [];
+    const roleHome = roles.includes("Admin")
         ? "/admin"
-        : roles.some((r) => /hr|manager/i.test(String(r)))
+        : roles.some((r) => ["HR", "Manager"].includes(r))
             ? "/employees"
             : "/attendance";
 
@@ -112,7 +113,7 @@ const Header = ({ profile, onToggleSidebar, collapsed, minimal = false, navItems
 
                 {navItems && (
                     <nav className="app-header-nav" aria-label="Phân mục">
-                        {navItems.map((item) => (
+                        {navItems.filter((item) => canAccessModule(item.href)).map((item) => (
                             <Link
                                 key={item.label}
                                 to={item.href}

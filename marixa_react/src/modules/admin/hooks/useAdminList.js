@@ -1,26 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { itemsOf, apiErrorMessage } from "../../../services/api/contracts";
 
 // Kéo danh sách từ một API get-all (Promise) -> { items, loading, error, reload }.
 export const useAdminList = (fetcher) => {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const request = useRef(0);
 
-    const reload = async () => {
+    const reload = useCallback(async () => {
+        const current = ++request.current;
+        setLoading(true);
+        setError("");
         try {
             const r = await fetcher();
-            setRows(r.data.data?.items || []);
+            if (current === request.current) setRows(itemsOf(r));
         } catch (e) {
-            setError(e.response?.data?.message || e.message);
+            if (current === request.current) setError(apiErrorMessage(e));
         } finally {
-            setLoading(false);
+            if (current === request.current) setLoading(false);
         }
-    };
+    }, [fetcher]);
 
     useEffect(() => {
         reload();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        return () => { request.current += 1; };
+    }, [reload]);
 
     return { rows, loading, error, reload };
 };

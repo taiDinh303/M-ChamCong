@@ -11,7 +11,7 @@ ASP.NET nạp appsettings, file theo environment, user-secrets trong Development
 | ASPNETCORE_ENVIRONMENT | Development/Production; test host dùng Testing | API |
 | DATABASE__PROVIDER | SqlServer; chỉ nhận SqlServer/PostgreSQL | API |
 | CONNECTIONSTRINGS__MYCNN | LocalDB trong appsettings; cloud phải override đúng DB/TLS | API secret |
-| JWTSETTINGS__KEY | Local-development marker; Production phải thay, tối thiểu 32 byte | API secret |
+| JWTSETTINGS__KEY | Production bắt buộc secret ngẫu nhiên riêng >=32 byte UTF-8, không nhận key mẫu; Blueprint generateValue chỉ tạo khi chưa có | API secret |
 | JWTSETTINGS__ISSUER / AUDIENCE | API / APIUser; không trống | API |
 | JWTSETTINGS__EXPIRATIONMINUTES | 60;1–10080 | API |
 | JWTSETTINGS__REMEMBERMEEXPIRATIONMINUTES | 10080; >=thời hạn thường, <=10080 | API |
@@ -34,3 +34,5 @@ ASP.NET nạp appsettings, file theo environment, user-secrets trong Development
 Local: SQL Server LocalDB hoặc PostgreSQL riêng, không lấy credential production. Test: SQLite per-host và provider fixture với dữ liệu giả. CI: PostgreSQL container riêng; Linux skip LocalDB. Production: init/seed tắt, storage bền, schema được nâng trước app. Hosting snapshot chỉ ở [00](00-README.md); staging riêng CHƯA XÁC ĐỊNH.
 
 Startup validate key/issuer/audience/expiry/rate option và allowlist provider. URI Postgres giữ SSL/query options hỗ trợ, lỗi option lạ fail rõ; không tắt certificate validation để chữa kết nối. Connection string không được in ra log. Chưa có secret rotation scheduler hoặc cấu hình reload nghiệp vụ trực tiếp; restart/redeploy có kiểm soát khi đổi cấu hình, không ghi mật khẩu vào lệnh được lưu lịch sử.
+
+Frontend kiểm thử cô lập phải override cả VITE_API_BASE_URL=/api và VITE_API_PROXY_TARGET trỏ API local có DB giả. Không chạy giao diện thử với biến môi trường cũ đang trỏ Render/live. Ghi nhớ đăng nhập chỉ đổi nơi lưu phiên và thời hạn login, không cần biến env mới.

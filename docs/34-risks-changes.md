@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | R-01 P0 | DB live/schema/grants/RLS cũ chưa audit, chưa restore thật | Preflight 23, test staging + backup/restore 22, audit anon/authenticated trước rollout |
 | R-02 P0 | App_Data và photo fallback chưa volume bền trong blueprint | Chọn persistent volume/private object adapter phù hợp, backup và thử redeploy/restore |
-| R-03 P1 | UI bắt ảnh, chưa gửiGPS; chưa nối period/PDF/new rule/job pending state | Sửa UI theo 09/15/30, browser/mobile E 2 E |
+| R-03 P1 | UI mới có kiểm cô lập, chưa nghiệm thu hosting/camera/GPS/đủ role/thiết bị thật; bundle lớn | Smoke sau nâng schema; kiểm mobile/keyboard, phân quyền từng luồng; tách bundle khi có kiểm soát CSS/layout |
 | R-04 P1 | Manager scope rộng ở nhiều CRUD, role nghiệp vụ chưa có ma trận riêng | Chủ dự án chốt phạm vi, test từng module; không coi role attribute là đủ |
 | R-05 P1 | Dữ liệu ngày cũ, OT thiếu range, leave qua năm, ca qua đêm và thay rule trước khóa | Đối soát bản sao; chốt chính sách biên, không tự backfill/gộp dữ liệu |
 | R-06 P1 | Worker phụ thuộc uptime, chưa có cảnh báo/durable scheduler ngoài app | Kiểm pending-due/AppliedAt, baseline và alert; catch-up có test |

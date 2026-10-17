@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 
+import { getAuth } from "../../../../services/auth/auth";
 import { useSearchParams } from "react-router-dom";
 
 
@@ -16,7 +17,7 @@ import PhotoCell from "../../../../modules/me/components/PhotoCell";
 
 import { statusLabel, statusClass, approvalLabel, approvalClass } from "../labels";
 
-import { formatVnTime, formatVnDate, calcOvertime, formatOvertime } from "../../../../utils/vnTime";
+import { formatVnTime, formatVnDate, calcOvertime, formatOvertime, attendanceTimes } from "../../../../utils/vnTime";
 
 import { toCsv, downloadCsv } from "../../hrUtils";
 import { localeForLanguage, translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
@@ -25,6 +26,8 @@ import "../../../../modules/me/attendance.css";
 
 import "../../employee.css";
 import HrHero from "../../HrHero";
+import OvertimePanel from "../../../me/components/OvertimePanel";
+import CorrectionPanel from "../../../me/components/CorrectionPanel";
 
 
 
@@ -39,6 +42,7 @@ const vnToday = () => new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Bangkok
 // xuất file theo tháng và báo cáo công việc.
 
 const EmployeeAttendanceHistoryPage = () => {
+    const [tab, setTab] = useState("attendance");
 
     const [rows, setRows] = useState([]);
 
@@ -99,7 +103,8 @@ const EmployeeAttendanceHistoryPage = () => {
 
 
     const load = async () => {
-
+        setLoading(true);
+        setError("");
         try {
 
             const [a, e, lg, es, s] = await Promise.all([
@@ -292,7 +297,7 @@ const EmployeeAttendanceHistoryPage = () => {
 
         };
 
-    }, [rows, logs, employees, employeeShifts, shifts, selectedDate]);
+    }, [logs, employees, employeeShifts, shifts, selectedDate]);
 
 
 
@@ -368,17 +373,7 @@ const EmployeeAttendanceHistoryPage = () => {
 
         }
 
-        const asDateTimeOffset = (time, isCheckout = false) => {
-
-            if (!time) return null;
-
-            const day = (isCheckout && form.checkInTime && time < form.checkInTime)
-                ? form.attendanceDate.slice(0, 8) + String(Number(form.attendanceDate.slice(8)) + 1).padStart(2, "0")
-                : form.attendanceDate;
-
-            return new Date(`${day}T${time}:00+07:00`).toISOString();
-
-        };
+        const times = attendanceTimes(form.attendanceDate, form.checkInTime, form.checkOutTime);
 
         const payload = {
 
@@ -388,15 +383,13 @@ const EmployeeAttendanceHistoryPage = () => {
 
             status: form.status === "" ? null : Number(form.status),
 
-            actualHours: form.actualHours === "" ? null : Number(form.actualHours),
-
             approvalStatus: Number(form.approvalStatus),
 
             note: form.note || null,
 
-            checkInTime: asDateTimeOffset(form.checkInTime),
+            checkInTime: times.checkInTime,
 
-            checkOutTime: asDateTimeOffset(form.checkOutTime, true),
+            checkOutTime: times.checkOutTime,
 
         };
 
@@ -406,7 +399,10 @@ const EmployeeAttendanceHistoryPage = () => {
 
                 payload.id = editRow.id;
 
-                await employeeAttendanceApi.update(payload);
+                if (editRow?._approvalDecision) {
+                    await employeeAttendanceApi.approve({ id: payload.id, approvalStatus: payload.approvalStatus,
+                        status: payload.status, note: payload.note, approvedBy: getAuth()?.employeeId });
+                } else await employeeAttendanceApi.update(payload);
 
             } else {
 
@@ -436,11 +432,9 @@ const EmployeeAttendanceHistoryPage = () => {
 
                     status: payload.status,
 
-                    actualHours: payload.actualHours,
+                    checkInTime: times.checkInTime,
 
-                    checkInTime: asDateTimeOffset(form.checkInTime),
-
-                    checkOutTime: asDateTimeOffset(form.checkOutTime, true),
+                    checkOutTime: times.checkOutTime,
 
                     note: payload.note,
 
@@ -509,6 +503,14 @@ const EmployeeAttendanceHistoryPage = () => {
         <PageLayout>
 
             <div className="att-content attendance-history-compact">
+                <div className="wf-tabs" role="tablist" aria-label="Quản lý công và tăng ca">
+                    <button type="button" className="wf-btn" role="tab" aria-selected={tab === "attendance"} onClick={() => setTab("attendance")}>Chấm công</button>
+                    <button type="button" className="wf-btn" role="tab" aria-selected={tab === "overtime"} onClick={() => setTab("overtime")}>Tăng ca</button>
+                    <button type="button" className="wf-btn" role="tab" aria-selected={tab === "correction"} onClick={() => setTab("correction")}>Duyệt sửa công</button>
+                </div>
+                <div hidden={tab !== "overtime"}>{tab === "overtime" && <OvertimePanel reviewMode onChanged={load} />}</div>
+                {tab === "correction" && <CorrectionPanel staff onChanged={load} />}
+                <div hidden={tab !== "attendance"}>
 
                 {error && <div className="att-error">{error}</div>}
 
@@ -516,7 +518,7 @@ const EmployeeAttendanceHistoryPage = () => {
 
                     <div className="att-loading">{L("Đang tải...")}</div>
 
-                ) : (
+                ) : !error && (
 
                     <>
 
@@ -909,6 +911,7 @@ const EmployeeAttendanceHistoryPage = () => {
 
             </div>
 
+                </div>
         </PageLayout>
 
     );

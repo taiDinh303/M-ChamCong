@@ -2,6 +2,8 @@
 // Tách khỏi StatisticsPage để page mỏng, test được, không phụ thuộc React.
 // Mọi hàm ở đây là pure (không có state / DOM).
 
+import { calcOvertime, regularHours, businessDate } from "../../../utils/vnTime.js";
+
 export const pad2 = (n) => String(n).padStart(2, "0");
 export const dkey = (d) =>
     `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
@@ -10,13 +12,14 @@ export const durMin = (inIso, outIso) =>
 // "8h04"
 export const durHm = (min) => {
     if (min == null || min <= 0) return "0h";
-    const h = Math.floor(min / 60);
-    const m = Math.round(min % 60);
+    const total = Math.round(min);
+    const h = Math.floor(total / 60);
+    const m = total % 60;
     return `${h}h${m ? pad2(m) : ""}`;
 };
 // "8h"
 export const hoursShort = (min) =>
-    `${Math.max(0, Math.round(min / 60))}h`;
+    `${Number(Math.max(0, min / 60).toFixed(2))}h`;
 
 // Trạng thái chấm công (đồng bộ AttendanceStatus).
 export const statusLabel = (s) =>
@@ -61,7 +64,8 @@ export const computeStats = (
     leaveTypes,
     leaves,
     holidayMap,
-    ym
+    ym,
+    options = {}
 ) => {
     const last = new Date(ym.y, ym.m + 1, 0).getDate();
     let expectedWorkdays = 0;
@@ -81,57 +85,32 @@ export const computeStats = (
         }
         if (!weekend) expectedWorkdays++;
     }
-    const standardMin = expectedWorkdays * 8 * 60;
+    const standardMin = expectedWorkdays * (Number(options.standardHours) || 8) * 60;
 
     const worked = monthRows.filter((r) => r.checkInTime);
     const daysWorked = worked.length;
-    const hoursWorked = worked.reduce(
-        (sum, r) =>
-            sum +
-            (r.checkInTime && r.checkOutTime
-                ? durMin(r.checkInTime, r.checkOutTime)
-                : (r.actualHours || 0) * 60),
-        0
-    );
+    const hoursWorked = worked.reduce((sum, r) => sum + regularHours(r) * 60, 0);
     const late = monthRows.filter((r) => r.status === 2).length;
     const leaveDays = monthRows.filter((r) => r.status === 5).length;
 
-    // Phép còn lại
-    const usedByType = {};
-    leaves
-        .filter((l) => l.status === 2)
-        .forEach((l) => {
-            usedByType[l.leaveTypeId] =
-                (usedByType[l.leaveTypeId] || 0) + (Number(l.totalDays) || 0);
-        });
-    let remainingLeave = 0;
-    let hasQuota = false;
-    leaveTypes
-        .filter((t) => t.isActive !== false)
-        .forEach((t) => {
-            if (t.maxDays) {
-                hasQuota = true;
-                remainingLeave += Math.max(
-                    0,
-                    t.maxDays - (usedByType[t.id] || 0)
-                );
-            }
-        });
+    // The ledger is authoritative (including grants, adjustments and refunds).
+    const hasQuota = options.leaveBalance != null;
+    const remainingLeave = hasQuota ? Number(options.leaveBalance.remaining) : null;
 
     // Tăng ca
     let otWeekday = 0;
     let otWeekend = 0;
     let otHoliday = 0;
-    monthRows
-        .filter((r) => r.checkInTime && r.checkOutTime)
-        .forEach((r) => {
-            const key = dkey(new Date(r.attendanceDate));
-            const mins = durMin(r.checkInTime, r.checkOutTime);
-            const dow = new Date(r.attendanceDate).getDay();
-            if (makeup.has(key)) otHoliday += mins;
-            else if (dow === 0 || dow === 6) otWeekend += mins;
-            else otWeekday += Math.max(0, mins - 8 * 60);
-        });
+    monthRows.forEach((r) => {
+        const date = businessDate(r.attendanceDate);
+        if (!date) return;
+        const key = dkey(date);
+        const mins = calcOvertime(r) * 60;
+        const dow = date.getDay();
+        if ([1, 2, 4].includes(holidayMap[key])) otHoliday += mins;
+        else if ((dow === 0 || dow === 6) && !makeup.has(key)) otWeekend += mins;
+        else otWeekday += mins;
+    });
 
     return {
         expectedWorkdays,

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
+import { vnTodayKey } from "../../../../utils/vnTime";
 
 // Modal thêm / sửa bản ghi chấm công (admin).
 // row = null -> thêm mới; row có giá trị -> sửa.
@@ -27,40 +28,7 @@ const normalizeEmployeeSearch = (value) =>
         .replace(/đ/gi, "d")
         .toLocaleLowerCase("vi-VN");
 
-// Khớp với AttendanceTimeCalculator (backend): cửa sổ nghỉ trưa 12:00–13:00
-const LUNCH_START_MIN = 720; // 12:00
-const LUNCH_END_MIN = 780;   // 13:00
-
-/**
- * Tính actualHours (net) khớp AttendanceTimeCalculator.Compute:
- * 1. elapsed = |out − in| (quá nửa đêm → +24h)
- * 2. lunchOverlap = phần trùng cửa sổ 12:00–13:00 (max 60 phút)
- * 3. net = elapsed − lunchOverlap, actualHours = round(net / 60)
- */
-const computeActualHours = (inTime, outTime) => {
-    const [inH, inM] = inTime.split(":").map(Number);
-    const [outH, outM] = outTime.split(":").map(Number);
-    const inMin = inH * 60 + inM;
-    const outMin = outH * 60 + outM;
-
-    let elapsed = outMin - inMin;
-    if (elapsed < 0) elapsed += 24 * 60;
-
-    let lunch = 0;
-    if (inMin <= outMin) {
-        const s = Math.max(inMin, LUNCH_START_MIN);
-        const e = Math.min(outMin, LUNCH_END_MIN);
-        if (e > s) lunch = Math.min(60, e - s);
-    } else {
-        // Ca quá nửa đêm
-        if (inMin < LUNCH_END_MIN) lunch += 1440 - Math.max(inMin, LUNCH_START_MIN);
-        if (outMin > LUNCH_START_MIN) lunch += outMin - LUNCH_START_MIN;
-        lunch = Math.min(60, lunch);
-    }
-
-    const netMin = Math.max(0, elapsed - lunch);
-    return String(Math.round(netMin / 60));
-};
+// Normal hours and OT are calculated by the API using its active rule.
 
 // Chuyển ISO (UTC) → "HH:MM" VN (khớp formatVnTime / formatVnTime dùng ở bảng)
 const toVnHHMM = (iso) =>
@@ -87,7 +55,7 @@ const buildDraft = (row) =>
           }
         : {
               employeeId: "",
-              attendanceDate: new Date().toISOString().slice(0, 10),
+              attendanceDate: vnTodayKey(),
               checkInTime: "",
               checkOutTime: "",
               status: "",
@@ -101,6 +69,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
     const [error, setError] = useState("");
     const [employeeSearch, setEmployeeSearch] = useState("");
     const [showEmployeeOptions, setShowEmployeeOptions] = useState(false);
+    const [saving, setSaving] = useState(false);
     const { language } = useLanguage();
     const L = (text) => translate(text, language);
 
@@ -122,9 +91,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
 
     const setTime = (key) => (event) => {
         const next = { ...form, [key]: event.target.value };
-        if (next.checkInTime && next.checkOutTime) {
-            next.actualHours = computeActualHours(next.checkInTime, next.checkOutTime);
-        }
+        next.actualHours = "";
         setForm(next);
     };
 
@@ -150,12 +117,13 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
             return;
         }
         setError("");
+        setSaving(true);
         try {
             await onSubmit(form, !!row);
             setForm(null);
-        } catch {
-            // giữ form để người dùng sửa lỗi
-        }
+        } catch (err) {
+            setError(err.response?.data?.message || err.message || "Không lưu được bản ghi chấm công.");
+        } finally { setSaving(false); }
     };
 
     return (
@@ -170,6 +138,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                         }}>
                             <input
                                 required
+                                disabled={row?._approvalDecision || saving}
                                 role="combobox"
                                 aria-autocomplete="list"
                                 aria-expanded={showEmployeeOptions && employeeOptions.length > 0}
@@ -215,6 +184,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                             <input
                                 type="date"
                                 required
+                                disabled={row?._approvalDecision || saving}
                                 value={form.attendanceDate}
                                 onChange={set("attendanceDate")}
                             />
@@ -233,20 +203,20 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                     </div>
 
                     <div className="att-form-row">
-                            <label>{L("Giờ vào ca")}<input type="time" value={form.checkInTime} onChange={setTime("checkInTime")} /></label>
-                            <label>{L("Giờ ra ca")}<input type="time" value={form.checkOutTime} onChange={setTime("checkOutTime")} /></label>
+                            <label>Giờ vào ca (VN)<input type="time" disabled={row?._approvalDecision || saving} value={form.checkInTime} onChange={setTime("checkInTime")} /></label>
+                            <label>Giờ ra ca (VN)<input type="time" disabled={row?._approvalDecision || saving} value={form.checkOutTime} onChange={setTime("checkOutTime")} /></label>
                         </div>
 
                     <div className="att-form-row">
                         <label>
-                            {L("Giờ thực tế")}
+                            Giờ công thường (API tính)
                             <input
                                 type="number"
                                 min="0"
-                                step="1"
+                                step="0.01"
                                 value={form.actualHours}
-                                onChange={set("actualHours")}
-                                placeholder={L("Tùy chọn")}
+                                readOnly
+                                placeholder="Tính lại sau khi lưu"
                             />
                         </label>
 
@@ -254,6 +224,7 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                             {L("Phê duyệt")}
                             <select
                                 value={form.approvalStatus}
+                                disabled={!row}
                                 onChange={set("approvalStatus")}
                             >
                                 {APPROVAL_OPTIONS.map((o) => (
@@ -282,11 +253,12 @@ const AttendanceFormModal = ({ open, row, employees, onClose, onSubmit }) => {
                         <button
                             type="button"
                             className="att-cam-btn-remove"
+                            disabled={saving}
                             onClick={onClose}
                         >
                             {L("Hủy")}
                         </button>
-                        <button type="submit" className="admin-link-btn">
+                        <button type="submit" className="admin-link-btn" disabled={saving}>
                             {row?._approvalDecision ? (row.approvalStatus === 1 ? "Xác nhận duyệt" : "Xác nhận từ chối") : row ? "Lưu sửa" : "Thêm mới"}
                         </button>
                     </div>

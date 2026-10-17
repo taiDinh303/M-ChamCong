@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import employeeApi from "../api/employeeApi";
+import { itemsOf, apiErrorMessage } from "../../../services/api/contracts";
 
 const items = (r) =>
-    r?.status === "fulfilled" ? r.value.data.data?.items || [] : [];
+    r?.status === "fulfilled" ? itemsOf(r.value) : [];
 
 // Kéo dữ liệu HR (không còn logs chấm công - đã bỏ KPI chấm công).
 export const useHrData = () => {
@@ -20,8 +21,11 @@ export const useHrData = () => {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const request = useRef(0);
 
     const load = useCallback(async () => {
+        const current = ++request.current;
+        setLoading(true);
         setError("");
         try {
             const r = await Promise.allSettled([
@@ -36,6 +40,9 @@ export const useHrData = () => {
                 employeeApi.activationCodes(),
                 employeeApi.users(),
             ]);
+            if (current !== request.current) return;
+            const failure = r.find((result) => result.status === "rejected");
+            if (failure) throw failure.reason;
             setData({
                 employees: items(r[0]),
                 archivedEmployees: items(r[1]).map((employee) => ({ ...employee, status: 4, isArchived: true })),
@@ -49,18 +56,15 @@ export const useHrData = () => {
                 users: items(r[9]),
             });
         } catch (e) {
-            setError(
-                e.response?.data?.message ||
-                    e.message ||
-                    "Không thể tải dữ liệu nhân sự."
-            );
+            if (current === request.current) setError(apiErrorMessage(e));
         } finally {
-            setLoading(false);
+            if (current === request.current) setLoading(false);
         }
     }, []);
 
     useEffect(() => {
         load();
+        return () => { request.current += 1; };
     }, [load]);
 
     return { ...data, loading, error, reload: load };

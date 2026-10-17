@@ -2,6 +2,12 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import HrAppLayout from "../../layout/HrAppLayout";
 import HrHero from "../../HrHero";
 import employeeApi from "../../api/employeeApi";
+import { getAuth } from "../../../../services/auth/auth";
+import relatedApi from "../../../me/api/relatedApi";
+import { downloadResponse } from "../../../../utils/download";
+import { apiErrorMessage } from "../../../../services/api/contracts";
+import ReasonDialog from "../../../../components/common/ReasonDialog";
+import LeaveLedgerDialog from "../../../me/components/LeaveLedgerDialog";
 import "../../employee.css";
 import "../leaves.css";
 
@@ -24,7 +30,12 @@ const avaColor = (seed = "") => {
 const fmtDay = (v, locale) => (v ? new Date(v).toLocaleDateString(locale) : "—");
 
 // ===== Trang Nghỉ phép (nhân sự) — giao diện riêng, mobile-friendly =====
-const EmployeeLeavePage = ({ hrMode = false }) => {
+const EmployeeLeavePage = () => {
+    const auth = getAuth();
+    const canCancelApproved = auth?.roles?.some((role) => ["Admin", "HR"].includes(role));
+    const [cancellation, setCancellation] = useState(null);
+    const [cancelError, setCancelError] = useState("");
+    const [ledgerOpen, setLedgerOpen] = useState(false);
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -63,7 +74,8 @@ const EmployeeLeavePage = ({ hrMode = false }) => {
         }
     };
     const reject = async (row) => {
-        const note = window.prompt(`Lý do từ chối đơn của ${row.employeeName} (không bắt buộc):`) || "";
+        const note = window.prompt(`Lý do từ chối đơn của ${row.employeeName} (không bắt buộc):`);
+        if (note === null) return;
         setBusy("reject-" + row.id);
         try {
             await employeeApi.rejectLeave(row.id, note);
@@ -74,6 +86,17 @@ const EmployeeLeavePage = ({ hrMode = false }) => {
         } finally {
             setBusy("");
         }
+    };
+
+    const cancel = async (reason) => {
+        setBusy("cancel"); setCancelError("");
+        try { await employeeApi.cancelLeave(cancellation.id, reason); setCancellation(null); flash("Đã hủy đơn và ghi nhận hoàn phép theo sổ."); await load(); }
+        catch (err) { setCancelError(apiErrorMessage(err)); }
+        finally { setBusy(""); }
+    };
+    const pdf = async (row) => {
+        try { downloadResponse(await relatedApi.leavePdf(row.id), `Don-nghi-${row.id}.pdf`); }
+        catch (err) { setError(apiErrorMessage(err)); }
     };
 
     const filtered = useMemo(() => {
@@ -110,6 +133,7 @@ const EmployeeLeavePage = ({ hrMode = false }) => {
                 />
                 {error && <div className="lp-err">{error}<button onClick={() => setError("")}>×</button></div>}
                 {notice && <div className="lp-notice">✓ {notice}</div>}
+                {canCancelApproved && <button type="button" className="wf-btn" onClick={() => setLedgerOpen(true)}>Sổ phép · Cấp / điều chỉnh</button>}
 
                 {loading ? (
                     <div className="att-loading">Đang tải...</div>
@@ -188,7 +212,7 @@ const EmployeeLeavePage = ({ hrMode = false }) => {
                                                     {r.approverName && <small className="lp-approver">{r.approverName}</small>}
                                                 </td>
                                                 <td className="lp-th-act">
-                                                    {r.status === 1 ? (
+                                                    {r.status === 1 && r.employeeId !== auth?.employeeId ? (
                                                         <div className="lp-actions">
                                                             <button
                                                                 type="button"
@@ -210,6 +234,10 @@ const EmployeeLeavePage = ({ hrMode = false }) => {
                                                     ) : (
                                                         <span className="lp-muted">—</span>
                                                     )}
+                                                    <button type="button" className="lp-btn" onClick={() => pdf(r)}>PDF</button>
+                                                    {r.status === 1 && r.employeeId === auth?.employeeId && <small>Cần người khác duyệt</small>}
+                                                    {r.status === 2 && canCancelApproved && r.employeeId !== auth?.employeeId && <button type="button" className="lp-btn lp-btn--bad"
+                                                        onClick={() => { setCancelError(""); setCancellation(r); }}>Hủy đơn đã duyệt</button>}
                                                 </td>
                                             </tr>
                                         ))
@@ -220,6 +248,9 @@ const EmployeeLeavePage = ({ hrMode = false }) => {
                     </div>
                 )}
             </div>
+            {cancellation && <ReasonDialog title="Hủy đơn nghỉ đã duyệt" hint="Lý do được lưu cùng lịch sử hủy; phần phép đã trừ sẽ được hoàn một lần."
+                maxLength={500} busy={busy === "cancel"} error={cancelError} onClose={() => setCancellation(null)} onSubmit={cancel} />}
+            {ledgerOpen && <LeaveLedgerDialog employeeId={auth?.employeeId} manage onClose={() => setLedgerOpen(false)} onChanged={load} />}
         </HrAppLayout>
     );
 };

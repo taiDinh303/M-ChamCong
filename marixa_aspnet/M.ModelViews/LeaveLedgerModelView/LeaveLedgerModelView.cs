@@ -66,9 +66,9 @@ namespace M.ModelViews.LeaveLedgerModelView
         [Required]
         public LeaveLedgerEntryType EntryType { get; set; }
 
-        // Số ngày (mức tuyệt đối, dương)
+        // Grant must be positive; Adjust may be signed. Nonzero/type checks live in the service.
         [Required]
-        [Range(0.01, 999)]
+        [Range(-999, 999)]
         public decimal Days { get; set; }
 
         // Mối nối về đơn nghỉ phép (idempotent)

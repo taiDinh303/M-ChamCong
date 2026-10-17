@@ -23,10 +23,13 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      # Đặt SECRET (DB/JWT) trong Render Dashboard -> Environment, KHÔNG commit:
+      # Blueprint sinh secret một lần khi chưa có biến; không thay key hiện hữu.
+      # Service tạo thủ công: tự đặt JWTSETTINGS__KEY trong Dashboard -> Environment.
+      - key: JWTSETTINGS__KEY
+        generateValue: true
+      # Đặt các SECRET còn lại trong Render Dashboard -> Environment, KHÔNG commit:
       #   DATABASE__PROVIDER     = PostgreSQL
       #   CONNECTIONSTRINGS__MYCNN = postgresql://postgres.REF:PASS@host:5432/postgres?sslmode=require
-      #   JWTSETTINGS__KEY       = (secret 32+ ký tự)
       #   SUPABASE__SERVICEKEY  = (secret service_role – đặt trực tiếp trong Render Dashboard, KHÔNG commit)
       # Ảnh chấm công upload lên Supabase Storage (bền, không mất khi redeploy Render).
       - key: SUPABASE__URL

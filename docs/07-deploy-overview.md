@@ -47,7 +47,7 @@ Các ô dưới đây **chưa được xác nhận** bởi lần rà soát tài 
 - [ ] Web build đúng API URL; refresh một route con vẫn mở SPA; Network không lỗi CORS.
 - [ ] Đăng nhập trả JWT hợp lệ; tài khoản sai/token hết hạn/quyền thiếu được xử lý đúng.
 - [ ] Upload ảnh trả kết quả thành công trong **response body**; ảnh được đọc từ đúng Storage hoặc nhánh local đã chọn.
-- [ ] Check-in/check-out và lịch sử công phản ánh dữ liệu thực; xác minh ngày VN và phần UI ảnh/GPS chưa đồng bộ theo 06.
+- [ ] Check-in/check-out và lịch sử công phản ánh dữ liệu thực; xác minh ngày VN và UI ảnh/GPS theo rule trên thiết bị thật, theo 06.
 - [ ] Tạo/duyệt đơn nghỉ và OT theo quyền thực tế; kiểm tra người không đủ quyền và tự duyệt theo từng loại đơn.
 - [ ] Kiểm tra các dạng export đang có nếu thuộc phạm vi phát hành: CSV công hiện thời, Excel hồ sơ HR; không ghi nhận chúng là snapshot bảng công đã khóa.
 - [ ] Đã xác minh secret không xuất hiện trong diff, log công khai, bundle frontend hoặc bằng chứng đính kèm.
