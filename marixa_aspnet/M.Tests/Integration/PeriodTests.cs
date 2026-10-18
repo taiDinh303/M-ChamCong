@@ -1,8 +1,11 @@
 using System.IO.Compression;
 using System.Net;
 using System.Net.Http.Json;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using M.Contract.Repositories.Entities;
+using M.ModelViews.AttendancePeriodModelView;
 using M.Repositories.Context;
 using M.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +15,60 @@ namespace M.Tests.Integration;
 
 public sealed class PeriodTests
 {
+    [Theory]
+    [InlineData("upper", true)]
+    [InlineData("lower", true)]
+    [InlineData("changed-payload", false)]
+    [InlineData("invalid-hex", false)]
+    public async Task Snapshot_hash_accepts_equivalent_hex_case_but_rejects_tampering(string format, bool valid)
+    {
+        using var app = Prepare();
+        string storedJson;
+        string storedHash;
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+            var period = AttendancePeriod.Open(2026, 10);
+            period.Review(ApiFactory.UserA, app.Clock.GetUtcNow(), "Fixture reviewed");
+            var version = period.Lock(app.Clock.GetUtcNow());
+            var rows = await db.Attendances.Include(a => a.Employee).ToListAsync();
+            var payload = new PeriodSnapshot(2026, 10, version, app.Clock.GetUtcNow(),
+                new SnapshotRule("TEST", new(8, 0), new(17, 0), 60, 8),
+                rows.Select(a => new SnapshotRow(a.Id, a.EmployeeId, a.Employee!.EmployeeCode, a.Employee.FullName,
+                    a.AttendanceDate, a.Status, a.ApprovalStatus, a.CheckInTime, a.CheckOutTime, 8m, 0m)).ToArray());
+            storedJson = JsonSerializer.Serialize(payload, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+            storedHash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(storedJson)));
+            if (format == "lower") storedHash = storedHash.ToLowerInvariant();
+            if (format == "invalid-hex") storedHash = new string('Z', 64);
+            if (format == "changed-payload") storedJson = storedJson.Replace("TEST-A", "ALTERED");
+            db.AttendancePeriods.Add(period);
+            db.AttendancePeriodSnapshots.Add(AttendancePeriodSnapshot.Capture(period.Id, version, storedJson,
+                storedHash, "fixture", app.Clock.GetUtcNow()));
+            await db.SaveChangesAsync();
+        }
+        using var employee = app.Actor();
+        var snapshot = await employee.GetAsync("/api/AttendancePeriod/2026/10/snapshot?version=1");
+        var export = await employee.GetAsync("/api/AttendancePeriod/2026/10/export.xlsx?version=1");
+        Assert.Equal(valid ? HttpStatusCode.OK : HttpStatusCode.Conflict, snapshot.StatusCode);
+        Assert.Equal(valid ? HttpStatusCode.OK : HttpStatusCode.Conflict, export.StatusCode);
+        if (valid)
+        {
+            var result = JsonDocument.Parse(await snapshot.Content.ReadAsStringAsync());
+            var row = Assert.Single(result.RootElement.GetProperty("data").GetProperty("data").GetProperty("rows").EnumerateArray());
+            Assert.Equal(ApiFactory.EmployeeA, row.GetProperty("employeeId").GetGuid());
+            using var zip = new ZipArchive(new MemoryStream(await export.Content.ReadAsByteArrayAsync()));
+            using var reader = new StreamReader(zip.GetEntry("xl/worksheets/sheet1.xml")!.Open());
+            var xml = await reader.ReadToEndAsync();
+            Assert.Contains("TEST-A", xml);
+            Assert.DoesNotContain("TEST-B", xml);
+        }
+        else Assert.Contains("SNAPSHOT_INTEGRITY", await snapshot.Content.ReadAsStringAsync());
+        using var check = app.Services.CreateScope();
+        var stored = await check.ServiceProvider.GetRequiredService<DatabaseContext>().AttendancePeriodSnapshots.AsNoTracking().SingleAsync();
+        Assert.Equal(storedJson, stored.PayloadJson);
+        Assert.Equal(storedHash, stored.Sha256);
+    }
+
     [Fact]
     public async Task Period_requires_hr_review_and_admin_lock_and_exports_only_the_actors_rows()
     {

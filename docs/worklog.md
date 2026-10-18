@@ -107,6 +107,14 @@
 
 ## 4. Log sự kiện (mới trên cùng)
 
+### 18/10/2026 — Codex: menu điện thoại toàn màn hình và kiểm chứng sau PR #3
+
+- **Quyền triển khai:** chủ dự án xác nhận “Đồng ý merge và triển khai sau khi CI đạt”. PR #3 đã merge main `1dc83a8`; CI PR/main xanh, Vercel production READY đúng SHA, Render readiness 200 và nộp báo cáo DEMO mới 200/mã 30 ký tự xác nhận bản sửa đã hoạt động.
+- **Yêu cầu tiếp:** menu điện thoại toàn màn hình hợp lý với danh sách nhiều mục. Panel dùng toàn viewport/dynamic height, nút đóng sticky, safe area, cuộn trong menu; giữ native dialog/Escape/focus/khóa cuộn nền và tự đóng khi chọn trang. Desktop giữ hành vi cũ. REQ-UI-06/TC-UI-09.
+- **Snapshot:** smoke live phát hiện DEMO tháng 9 dùng digest lowercase, API so sánh Ordinal với uppercase gây 409 snapshot/XLSX. Sửa so sánh OrdinalIgnoreCase (vẫn phải khớp đủ digest); seed mới uppercase. Không sửa payload/hash lịch sử hoặc bỏ guard bất biến. PeriodTests kiểm hai kiểu chữ, tampering/invalid hex, quyền owner và export; DemoScenarioTests kiểm seed→snapshot→XLSX.
+- **Kiểm chứng bản tiếp theo:** Release warnings-as-errors 0 warning/0 error; backend **101 PASS / 0 FAIL / 0 SKIP**, SQLite/LocalDB/PostgreSQL loopback; frontend **21 PASS**, lint/build PASS, còn cảnh báo chunk lớn cũ. Browser local 375×667 xác nhận menu phủ đủ 375×667, header đóng sticky, chọn Thăng chức tự đóng, Escape trả focus/nền cuộn lại. Chưa dùng thiết bị thật.
+- **Storage FAIL live:** sau redeploy, ba report DEMO tải PDF 404; phục hồi có guard đúng ID/marker/trạng thái fixture, ghi event và nộp lại qua API owner, ba PDF trở lại 200. Tạo thêm một report DEMO smoke xác minh lỗi mã report đã sửa. App_Data chưa bền; không khẳng định sẵn sàng lưu hồ sơ thật. Bản menu/hash tiếp theo đang chờ CI/rollout và kiểm lại snapshot/XLSX/private download.
+
 ### 18/10/2026 — Codex: dữ liệu DEMO live và header/menu responsive
 
 - **Yêu cầu:** chủ dự án xác nhận thêm dữ liệu giả thực tế vào Supabase hiện tại để test web, giữ dữ liệu cũ. Đồng thời bỏ ngày Home, đưa tiêu đề/mô tả lên header desktop/dưới hàng logo mobile, thay sidebar kéo ngang bằng nút cạnh logo. REQ-UI-06/REQ-DEMO-01; hướng dẫn bộ test tại [Marixa.Demo](../marixa_aspnet/tools/Marixa.Demo/README.md).

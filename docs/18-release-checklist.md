@@ -14,7 +14,7 @@
 | Gate | Bằng chứng bắt buộc | Tình trạng lần này |
 | --- | --- | --- |
 | Schema upgrade | Backup + preflight + chạy script ở staging tương đương, kiểm index/columns/readiness | Đã restore thử và nâng live 18/10: 46 bảng/730 cột, dữ liệu 43 bảng cũ giữ nguyên, readiness 200; chi tiết worklog |
-| Storage bền | Volume App_Data/ảnh local nếu dùng, quyền user app và restore thử | NOT VERIFIED live |
+| Storage bền | Volume App_Data/ảnh local nếu dùng, quyền user app và restore thử | FAIL live 18/10: PDF DEMO trong App_Data mất sau redeploy, metadata DB còn; khôi phục DEMO không đóng gate dùng hồ sơ thật |
 | Config/identity | Secret riêng, CORS origin, init/seed tắt, login + lockout + vai trò | Có test cô lập; live đã dùng phiên Employee/Admin kiểm quyền cá nhân/HR, chưa audit toàn bộ config/lockout |
 | Nghiệp vụ | Checkin, duyệt, hủy/hoàn phép, OT riêng, khóa/mở/version/export; smoke có dữ liệu được phép | Backend/Node test và browser cô lập; live đã đọc lịch sử/thống kê/kỳ công/nghỉ phép/bàn giao, chưa nghiệm thu các luồng ghi và thiết bị thật |
 | Job ngày hiệu lực | Pending-due count, AppliedAt, retry/last-admin, kiểm khởi động lại | Có test processor; job live chưa test |

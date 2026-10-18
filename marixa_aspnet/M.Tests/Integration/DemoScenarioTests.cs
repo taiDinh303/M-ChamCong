@@ -1,3 +1,6 @@
+using System.Net;
+using System.Net.Http.Json;
+using System.Text.Json;
 using M.API.Seed;
 using M.Contract.Repositories.AuthEntities;
 using M.Contract.Repositories.Entities;
@@ -47,7 +50,13 @@ public sealed class DemoScenarioTests
         Assert.Equal(4, await db.LeaveRequests.CountAsync());
         Assert.Equal(10, await db.LeaveLedger.CountAsync());
         Assert.Equal(AttendancePeriodState.Locked, (await db.AttendancePeriods.SingleAsync()).State);
-        Assert.Single(await db.AttendancePeriodSnapshots.ToListAsync());
+        var seededSnapshot = Assert.Single(await db.AttendancePeriodSnapshots.ToListAsync());
+        Assert.Matches("^[0-9A-F]{64}$", seededSnapshot.Sha256);
+        using var demo = app.Actor("Employee", DemoScenarioSeeder.Id("employee-0"), DemoScenarioSeeder.Id("user-0"));
+        var snapshot = await demo.GetFromJsonAsync<JsonElement>("/api/AttendancePeriod/2026/9/snapshot?version=1");
+        var ownRow = Assert.Single(snapshot.GetProperty("data").GetProperty("data").GetProperty("rows").EnumerateArray());
+        Assert.Equal(DemoScenarioSeeder.Id("employee-0"), ownRow.GetProperty("employeeId").GetGuid());
+        Assert.Equal(HttpStatusCode.OK, (await demo.GetAsync("/api/AttendancePeriod/2026/9/export.xlsx?version=1")).StatusCode);
         Assert.Equal(2, await db.AttendancePeriodEvents.CountAsync());
         var missingCheckout = await db.Attendances.SingleAsync(a => a.Id == DemoScenarioSeeder.Id("attendance-2-16"));
         Assert.Null(missingCheckout.ActualHours);
