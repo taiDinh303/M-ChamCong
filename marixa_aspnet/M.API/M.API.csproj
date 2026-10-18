@@ -45,4 +45,10 @@
     <ProjectReference Include="..\M.Services\M.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Publish only reviewed safe defaults; keep local files available for dotnet run. -->
+    <Content Update="**/appsettings*.json;.env*;**/.env*;**/.keys/**;App_Data/**;wwwroot/uploads/**" CopyToPublishDirectory="Never" />
+    <Content Update="appsettings.Production.json" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

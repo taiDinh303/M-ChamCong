@@ -43,3 +43,13 @@ marixa_aspnet/M.API/wwwroot/uploads/
 
 # --- Docker / CI local ---
 .docker/
+
+# Local verification, private exports and per-machine settings
+artifacts/
+**/appsettings.*.Local.json
+**/.keys/
+.vercel/
+**/appsettings.Local.json
+.env
+.env.*
+!.env.example

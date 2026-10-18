@@ -47,6 +47,7 @@ WORKDIR /app
 
 # Copy artifacts build
 COPY --from=build /publish ./
+COPY certificates/supabase-prod-ca-2021.crt /app/certificates/supabase-prod-ca-2021.crt
 
 # Render inject env var PORT lúc runtime (thường 10000, khớp EXPOSE).
 # Lệnh ENV không mở rộng shell var khi build, nên dùng shell-form CMD để

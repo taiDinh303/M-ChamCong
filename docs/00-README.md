@@ -1,5 +1,7 @@
 # 00 — Chỉ dẫn tài liệu và quy tắc làm việc Marixa
 
+> Chuẩn cấu hình hiện hành: [CONFIGURATION-STANDARD](CONFIGURATION-STANDARD.md) — JSON Production sạch, sáu biến triển khai cơ bản, kiểm cấu hình không chạm DB và script chung cho NTC/Marixa.
+
 > Chủ tài liệu: **Đinh Văn Tài**. Cập nhật: **18/10/2026**.
 > Phạm vi kiểm chứng: mã nguồn, build/test cô lập và nâng schema Supabase/đọc các trang cá nhân, HR live theo bằng chứng ở worklog. Các luồng ghi production, thiết bị thật và Figma chưa nghiệm thu toàn bộ.
 

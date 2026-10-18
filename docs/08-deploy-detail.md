@@ -1,10 +1,14 @@
 # 08 — Triển khai và xử lý cấu hình
 
+> Dashboard 2026-10-18 đã lưu job=true, MyCnn VerifyFull/CA Linux và Vercel Vite; **cần image mới chứa CA trước deploy**, chưa áp biến mới vào process hiện tại. Password cloud giữ nguyên, khác local; không import đè toàn bộ export local. Bằng chứng tại [worklog](worklog.md).
+
+> Chuẩn cấu hình hiện hành: [CONFIGURATION-STANDARD](CONFIGURATION-STANDARD.md) — JSON Production sạch, sáu biến triển khai cơ bản, kiểm cấu hình không chạm DB và script chung cho NTC/Marixa.
+
 > Cập nhật 2026-10-17. CURRENT theo source; dashboard/credential/schema live NOT VERIFIED. Registry env tại 17, gate release 18, nâng schema 23.
 
 ## 1. Đường chạy
 
-ASP.NET Core 8 M.API trong Docker Render, React/Vite static trên Vercel, PostgreSQL/ảnh public Supabase; Identity JWT do .NET quản lý. [Dockerfile](../marixa_aspnet/Dockerfile) build/publish bằng SDK 8, runtime user app, nghe PORT mặc định 10000. [render.yaml](../render.yaml) health/ready, autoDeploy=true, plan standard; khác snapshot plan Free do chủ dự án cung cấp tại 00, phải đối chiếu dashboard/cost trước áp blueprint.
+ASP.NET Core 8 M.API trong Docker Render, React/Vite static trên Vercel, PostgreSQL/ảnh public Supabase; Identity JWT do .NET quản lý. [Dockerfile](../marixa_aspnet/Dockerfile) build/publish bằng SDK 8, runtime user app, nghe PORT mặc định 10000. [render.yaml](../render.yaml) health/ready, autoDeployTrigger=off, plan không khai báo (giữ gói service hiện hữu); phải đối chiếu dashboard/cost trước áp Blueprint vì service tạo thủ công không tự được liên kết bằng tên trong YAML.
 
 ## 2. Hợp đồng biến môi trường
 
@@ -32,7 +36,7 @@ try {
 } finally { $marixaRng.Dispose() }
 ```
 
-Blueprint hiện khai báo `generateValue: true` cho key: Render tạo secret nếu biến chưa tồn tại và giữ giá trị hiện hữu theo [Blueprint reference](https://render.com/docs/blueprint-spec#generating-random-secrets). Cấu hình này chỉ có hiệu lực khi service được quản lý/sync bằng Blueprint; push mã không tự thêm env cho service tạo thủ công. Không tạo/sync Blueprint mới chỉ để chữa service hiện tại: tên service/plan trong repo cần được đối chiếu trước.
+Blueprint mới dùng sync:false cho JWT key để operator giữ key cloud hợp lệ hiện hữu; file mẫu không tự xoay/tạo signing key. Cấu hình này chỉ có hiệu lực khi service được quản lý/sync bằng Blueprint; push mã không tự thêm env cho service tạo thủ công. Không tạo/sync Blueprint mới chỉ để chữa service hiện tại: tên service/plan trong repo cần được đối chiếu trước.
 
 ## 3. Database và startup
 
@@ -44,7 +48,7 @@ Hai release migration mới phải preflight dữ liệu/backup/script đúng pr
 
 ## 4. File và Storage
 
-SupabasePhotoStorage gửi apikey; legacy JWT thêm Bearer, sb_secret_* không dùng Bearer, theo [API keys](https://supabase.com/docs/guides/getting-started/api-keys). ServiceKey là tên chuẩn, Service_Key là alias cũ. Thiếu cấu hình chọn local photo adapter; đã config nhưng upload lỗi trả 502, không fallback âm thầm. File sai/size/signature trả 400; ảnh tối đa 5 MiB. URL Storage public hoặc /uploads/attendance theo adapter. [Bucket access](https://supabase.com/docs/guides/storage/buckets/fundamentals).
+SupabasePhotoStorage gửi apikey; legacy JWT thêm Bearer, sb_secret_* không dùng Bearer, theo [API keys](https://supabase.com/docs/guides/getting-started/api-keys). ServiceKey là tên chuẩn, Service_Key là alias cũ. Development thiếu cấu hình chọn local photo adapter; Production mặc định Storage:Provider=Supabase yêu cầu URL/key ngay startup, upload lỗi trả 502, không fallback âm thầm. File sai/size/signature trả 400; ảnh tối đa 5 MiB. URL Storage public hoặc /uploads/attendance theo adapter. [Bucket access](https://supabase.com/docs/guides/storage/buckets/fundamentals).
 
 Report/handover dùng private App_Data, có quyền khi tải; legacy handover ngoài đó chỉ đọc qua API, đường public bị chặn. Docker tạo folder và quyền user app nhưng chưa có persistent volume trong blueprint: phải bổ sung storage bền hoặc adapter private phù hợp trước dùng thật. Backup DB không chứa binary ảnh/tài liệu, xem 22.
 

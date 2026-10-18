@@ -25,7 +25,7 @@ Không ghi key, mật khẩu DB, connection string đầy đủ hoặc token và
 ## 3. Render: API Docker
 
 1. Chọn service/Blueprint hiện có; với lần thiết lập mới được yêu cầu, dùng `render.yaml` ở root theo [Render Blueprint reference](https://render.com/docs/blueprint-spec).
-2. Đối chiếu Dockerfile `marixa_aspnet/Dockerfile` và context `marixa_aspnet`. Blueprint hiện có `plan: standard`, `autoDeploy: true`; xác nhận plan/auto deploy phù hợp trước khi áp cấu hình, không coi đây là trạng thái hosting đã xác minh.
+2. Đối chiếu Dockerfile `marixa_aspnet/Dockerfile` và context `marixa_aspnet`. Blueprint mới bỏ khai báo plan trả phí và dùng `autoDeployTrigger: off`; đối chiếu service hiện hữu trước khi áp cấu hình, không coi đây là trạng thái hosting đã xác minh.
 3. Điền biến API theo bảng `08` §2. Kiểm tra riêng tên `SUPABASE__SERVICEKEY`, DB của đúng project, JWT key riêng và cấu hình bootstrap admin.
 4. Production init/seed mặc định tắt. Preflight hai unique indexes, backup và script provider đúng trước thay schema; chỉ bật bootstrap có chủ đích, sample bị cấm ngoài Development.
 5. Health check Blueprint là /health/ready; schema/query lỗi trả 503. /health/live chỉ process; init lỗi quan trọng fail startup.
