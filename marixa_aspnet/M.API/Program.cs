@@ -4,8 +4,11 @@ using M.API.Middleware;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
+M.API.Configuration.StartupConfiguration.Validate(builder.Configuration, builder.Environment,
+    M.Repositories.Configuration.PostgresConnectionString.Normalize);
 builder.Services.AddScoped<M.API.Filters.EmployeeScopeFilter>();
 builder.Services.AddControllers(options =>
 {
@@ -25,9 +28,21 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddConfig(builder.Configuration, builder.Environment);
 builder.Services.AddAuthRateLimits(builder.Configuration);
 builder.Services.AddScoped<IDatabaseInitializer, DatabaseInitializer>();
-if (!builder.Environment.IsEnvironment("Testing")) builder.Services.AddHostedService<EmploymentChangeWorker>();
+if (!builder.Environment.IsEnvironment("Testing")
+    && (!bool.TryParse(builder.Configuration["BackgroundJobs:Enabled"], out var jobsEnabled) || jobsEnabled))
+    builder.Services.AddHostedService<EmploymentChangeWorker>();
+var keysDirectory = builder.Configuration["DataProtection:KeysDirectory"];
+if (!string.IsNullOrWhiteSpace(keysDirectory))
+    builder.Services.AddDataProtection().SetApplicationName("Marixa").PersistKeysToFileSystem(new DirectoryInfo(keysDirectory));
 
 var app = builder.Build();
+M.API.Configuration.StartupConfiguration.ReportWarnings(app.Configuration, app.Environment, app.Logger);
+app.Services.GetService<Microsoft.Extensions.Options.IStartupValidator>()?.Validate();
+if (args.Contains("--check-config", StringComparer.Ordinal))
+{
+    Console.WriteLine("CONFIGURATION_OK: configuration validated; no database, migration, seed or email operation was performed.");
+    return;
+}
 await using (var scope = app.Services.CreateAsyncScope())
     await scope.ServiceProvider.GetRequiredService<IDatabaseInitializer>().InitializeAsync();
 
@@ -56,8 +71,11 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PublicFilesProvider(new PhysicalFileProvider(uploads), privateHandovers),
     RequestPath = "/uploads"
 });
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Testing") || app.Configuration.GetValue<bool>("Swagger:Enabled"))
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 app.UseAuthentication();
 app.UseRateLimiter();
 app.UseAuthorization();

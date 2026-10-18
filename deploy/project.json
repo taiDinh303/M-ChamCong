@@ -1,0 +1,14 @@
+{
+  "name": "Marixa",
+  "apiProject": "marixa_aspnet/M.API/M.API.csproj",
+  "frontendDirectory": "marixa_react",
+  "apiBaseUrl": "https://marixa001-asp.onrender.com/api",
+  "clientUrl": "https://marixa001.vercel.app",
+  "renderServiceId": "srv-db4hmnks728c73aq6h90",
+  "vercelTeam": "taiteam",
+  "vercelProject": "marixa_001",
+  "supabaseProjectRef": "zphqfcwrwitrqdeueonu",
+  "sessionPoolerHost": "aws-0-ap-northeast-2.pooler.supabase.com",
+  "supabaseStorage": true,
+  "reserveSupabaseStorage": false
+}

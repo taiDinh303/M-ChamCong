@@ -47,3 +47,7 @@ build-verify/
 **/TestResults/
 M.API/App_Data/
 .env*
+**/appsettings*.json
+!M.API/appsettings.Production.json
+**/artifacts/
+**/.keys/

@@ -42,4 +42,5 @@ export default [
       ],
     },
   },
+  { files: ["vite.config.js", "config/**/*.mjs", "tests/**/*.js"], languageOptions: { globals: globals.node } },
 ]

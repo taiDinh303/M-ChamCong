@@ -8,3 +8,5 @@ Read docs/00-README.md, docs/PROJECT-INTAKE.md, docs/01-plan.md and the current 
 - Use meaningful regression/provider tests. Never point tests/migrations at the owner's live DB or bucket without authorization for that action. Push authorization does not imply deploy or destructive data migration.
 - Do not bypass SaveChanges guards with bulk writes/raw SQL. Preserve old migration bodies and immutable history. Keep credentials and real employee files outside Git.
 - Report actual verification counts, skipped scopes and remaining risks. Follow docs/18-release-checklist.md before rollout.
+
+- Configuration changes follow docs/CONFIGURATION-STANDARD.md and deploy/project.json. Keep safe Production JSON separate from local secrets; maintain configuration checks and update worklog with actual verification.

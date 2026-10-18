@@ -1,12 +1,12 @@
 # 19 — CI và kiểm tra lặp lại
 
-> Cập nhật 2026-10-17. Nguồn [backend.yml](../.github/workflows/backend.yml) và [frontend.yml](../.github/workflows/frontend.yml). Kết quả từng lần ở worklog; cấu hình workflow không chứng minh job remote đã chạy.
+> Cập nhật 2026-10-18. Nguồn [backend.yml](../.github/workflows/backend.yml) và [frontend.yml](../.github/workflows/frontend.yml). Kết quả từng lần ở worklog; cấu hình workflow không chứng minh job remote đã chạy.
 
 ## 1. Workflow
 
-Push/PR chạm backend/docs/validator chạy GitHub Actions; có workflow_dispatch. Quyền contents:read, timeout 15 phút. Runner Ubuntu, SDK 8, PostgreSQL 17 container riêng với credential thử nghiệm. Restore → Release build -warnaserror → tests/TRX/artifacts → Markdown → publish → Docker build. Artifacts gồm TRX, API inventory và sample export giả. Test PostgreSQL chỉ nhận loopback, tạo/drop DB có prefix Marixa_Verify_; không dùng GitHub production secret.
+Push/PR chạm backend/docs/scripts/deploy/render.yaml chạy GitHub Actions; có workflow_dispatch. Quyền contents:read, timeout 15 phút. Runner Ubuntu, SDK 8, PostgreSQL 17 container riêng với credential thử nghiệm. Restore → Release build -warnaserror → tests/TRX/artifacts → Markdown → exporter dùng secret giả → publish sạch/kiểm cấu hình tĩnh → Docker build. Artifacts gồm TRX, API inventory và sample export giả. Test PostgreSQL chỉ nhận loopback, tạo/drop DB có prefix Marixa_Verify_; không dùng GitHub production secret.
 
-Frontend workflow khi push/PR chạm marixa_react hoặc workflow: Ubuntu, Node 22, npm ci → npm test → npm run lint → npm run build → kiểm Markdown. Không dùng secret hoặc gọi API/DB cloud. Browser smoke cô lập là bằng chứng riêng; CI hiện chưa tự chạy browser.
+Frontend workflow khi push/PR chạm marixa_react hoặc workflow: Ubuntu, Node 24, npm ci → npm test → npm run lint -- --max-warnings 0 → npm run build → kiểm Markdown. Không dùng secret hoặc gọi API/DB cloud. Browser smoke cô lập là bằng chứng riêng; CI hiện chưa tự chạy browser.
 
 ## 2. Chạy local
 

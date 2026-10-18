@@ -34,7 +34,7 @@ Trình duyệt → React/Vite trên Vercel → ASP.NET Core 8 API trên Render
 ## 3. Điều kiện trước khi phát hành
 
 - Xác định commit, project, môi trường và dữ liệu chịu ảnh hưởng. Preview frontend trỏ cùng API vẫn có thể ghi vào cùng database; preview không tạo môi trường dữ liệu riêng.
-- Đối chiếu plan thực tế trước khi áp Blueprint: `render.yaml` hiện đặt `plan: standard`, khác snapshot hosting do chủ dự án báo. Không tự suy ra plan live từ file này.
+- Đối chiếu plan thực tế trước khi áp Blueprint: `render.yaml` mới không đặt plan và dùng autoDeployTrigger:off; giữ gói service hiện hữu, không tạo lại service từ template. Không tự suy ra plan live từ file này.
 - Kiểm tra biến DB/JWT/Storage theo `08`; không commit secret hoặc đưa chúng vào `VITE_*`.
 - Đánh giá tác động startup: production mặc định tắt init/seed; chỉ opt-in mới ghi schema/seed. Hai constraint mới cần duplicate preflight. Sao lưu và có phương án khôi phục trước thay đổi dữ liệu/schema.
 - Xác định rõ phần được phát hành theo ma trận trạng thái. Khóa kỳ, snapshot bảng công và export theo snapshot vẫn là việc chưa triển khai.

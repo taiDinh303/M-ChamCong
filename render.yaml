@@ -1,43 +1,29 @@
-# ============================================================
-# Render Blueprint - M.API (ASP.NET 8) -> PostgreSQL (Supabase)
-#
-# Cách dùng:
-#   Render Dashboard -> your Org -> Blueprints -> "Deploy from repo"
-#   Chọn repo này, Render đọc render.yaml ở repo root.
-#   Sau đó vào từng service đặt Environment Variables (secret DB/JWT).
-#
-# Docker build context = thư mục "marixa_aspnet" (chứa M.API, M.Core, ...)
-# Dockerfile           = marixa_aspnet/Dockerfile
-# ============================================================
-
+# Reference for the existing service; this file does not bind a manually created service.
+# Do not create another service or deploy automatically. See docs/CONFIGURATION-STANDARD.md.
 services:
-  # ---------- M.API backend (.NET 8, PostgreSQL/Supabase) ----------
   - type: web
-    name: marixa-api
+    name: marixa001_asp
     runtime: docker
-    dockerfilePath: marixa_aspnet/Dockerfile
-    dockerContext: marixa_aspnet
-    plan: standard
+    dockerfilePath: ./marixa_aspnet/Dockerfile
+    dockerContext: ./marixa_aspnet
     healthCheckPath: /health/ready
-    autoDeploy: true
+    autoDeployTrigger: "off"
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      # Blueprint sinh secret một lần khi chưa có biến; không thay key hiện hữu.
-      # Service tạo thủ công: tự đặt JWTSETTINGS__KEY trong Dashboard -> Environment.
+      - key: DATABASE__PROVIDER
+        value: PostgreSQL
+      - key: CONNECTIONSTRINGS__MYCNN
+        sync: false
       - key: JWTSETTINGS__KEY
-        generateValue: true
-      # Đặt các SECRET còn lại trong Render Dashboard -> Environment, KHÔNG commit:
-      #   DATABASE__PROVIDER     = PostgreSQL
-      #   CONNECTIONSTRINGS__MYCNN = postgresql://postgres.REF:PASS@host:5432/postgres?sslmode=require
-      #   SUPABASE__SERVICEKEY  = (secret service_role – đặt trực tiếp trong Render Dashboard, KHÔNG commit)
-      # Ảnh chấm công upload lên Supabase Storage (bền, không mất khi redeploy Render).
+        sync: false
+      - key: CORS__ALLOWEDORIGINS__0
+        value: https://marixa001.vercel.app
+      - key: APPSETTINGS__CLIENTURL
+        value: https://marixa001.vercel.app
       - key: SUPABASE__URL
         value: https://zphqfcwrwitrqdeueonu.supabase.co
-
-  # ---------- (Tùy chọn) Render PostgreSQL managed DB ----------
-  # Nếu không dùng Supabase mà muốn DB trực tiếp trên Render thì bỏ comment:
-  # - type: psyc
-  #   name: marixa-db
-  #   plan: starter
-  #   ipAllowList: []
+      - key: SUPABASE__SERVICE_KEY
+        sync: false
+      - key: BACKGROUNDJOBS__ENABLED
+        value: "true"

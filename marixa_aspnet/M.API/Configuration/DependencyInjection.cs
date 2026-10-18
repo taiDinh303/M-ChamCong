@@ -41,11 +41,7 @@ namespace M.API.Configuration
             services.AddMemoryCache();
             services.AddAuthorization(options => options.FallbackPolicy =
                 new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
-            services.AddHttpClient<SupabasePhotoStorage>(client => client.Timeout = TimeSpan.FromSeconds(30));
-            services.AddScoped<LocalPhotoStorage>();
-            services.AddScoped<IPrivateDocumentStorage, LocalPrivateDocumentStorage>();
-            services.AddScoped<IPhotoStorage>(sp => SupabasePhotoStorage.IsConfigured(configuration)
-                ? sp.GetRequiredService<SupabasePhotoStorage>() : sp.GetRequiredService<LocalPhotoStorage>());
+            services.AddPhotoStorage(configuration);
 
             services.AddCors(options =>
             {
@@ -63,6 +59,20 @@ namespace M.API.Configuration
                 });
             });
         }
+        public static void AddPhotoStorage(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHttpClient<SupabasePhotoStorage>(client => client.Timeout = TimeSpan.FromSeconds(30));
+            services.AddScoped<LocalPhotoStorage>();
+            services.AddScoped<IPrivateDocumentStorage, LocalPrivateDocumentStorage>();
+            services.AddScoped<IPhotoStorage>(sp => configuration["Storage:Provider"]?.ToUpperInvariant() switch
+            {
+                "LOCAL" => sp.GetRequiredService<LocalPhotoStorage>(),
+                "SUPABASE" => sp.GetRequiredService<SupabasePhotoStorage>(),
+                _ => SupabasePhotoStorage.IsConfigured(configuration)
+                    ? sp.GetRequiredService<SupabasePhotoStorage>() : sp.GetRequiredService<LocalPhotoStorage>()
+            });
+        }
+
         public static void ConfigRoute(this IServiceCollection services)
         {
             services.Configure<RouteOptions>(options =>
@@ -72,10 +82,9 @@ namespace M.API.Configuration
         }
         public static void AddDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            var dbConfig = DatabaseConfig.FromConfiguration(configuration);
-
-            services.AddDbContext<DatabaseContext>(options =>
+            services.AddDbContext<DatabaseContext>((provider, options) =>
             {
+                var dbConfig = DatabaseConfig.FromConfiguration(provider.GetRequiredService<IConfiguration>());
                 if (dbConfig.IsPostgres)
                 {
                     options.UseNpgsql(dbConfig.ConnectionString);

@@ -9,7 +9,8 @@ public sealed class SupabasePhotoStorage(HttpClient client, IConfiguration confi
     public const string Bucket = "marixa-photos";
 
     public static string? ServiceKey(IConfiguration configuration) =>
-        configuration["Supabase:ServiceKey"] ?? configuration["Supabase:Service_Key"];
+        !string.IsNullOrWhiteSpace(configuration["Supabase:ServiceKey"])
+            ? configuration["Supabase:ServiceKey"] : configuration["Supabase:Service_Key"];
 
     public static bool IsConfigured(IConfiguration configuration) =>
         !string.IsNullOrWhiteSpace(configuration["Supabase:Url"])

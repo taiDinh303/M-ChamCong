@@ -20,6 +20,6 @@
 | Job ngày hiệu lực | Pending-due count, AppliedAt, retry/last-admin, kiểm khởi động lại | Có test processor; job live chưa test |
 | Backup/rollback | Bản DB + files, người vận hành, restore kiểm quyền và hash | Đã thử restore snapshot public trên PostgreSQL 17.11; binary/files, bản ngoài máy và disaster recovery đầy đủ chưa nghiệm thu; xem 22 |
 
-Render blueprint autoDeploy=true. Nhánh thay đổi có migration được push riêng để review; merge vào nhánh deploy chỉ khi các gate production liên quan đã đạt. Quyền push không tự xác nhận dữ liệu/hạ tầng đã sẵn sàng.
+Render blueprint tham chiếu hiện đặt autoDeployTrigger=off; cài đặt auto deploy của service trên dashboard phải kiểm tra riêng. Nhánh thay đổi được push riêng để review; merge vào nhánh deploy chỉ khi các gate production liên quan đã đạt. Quyền push không tự xác nhận dữ liệu/hạ tầng đã sẵn sàng.
 
 Sau rollout: /health/ready 200, smoke một luồng có ghi bằng dữ liệu được phép, kiểm logs/429/5 xx, xác minh private download và file cũ, so hash snapshot cũ. Khi rollback ưu tiên đổi app về bản tương thích schema mở rộng; không chạy Down xóa snapshot hoặc ép decimal về int khi chưa bảo toàn dữ liệu.
