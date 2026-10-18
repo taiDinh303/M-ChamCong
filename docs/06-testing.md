@@ -8,8 +8,12 @@ M.Tests là xUnit, WebApplicationFactory/TestServer + SQLite per-host, fake HTTP
 
 ## 2. Traceability tối thiểu
 
+Bổ sung 18/10: DemoScenarioTests và PostgresDemoScenarioTests kiểm bộ DEMO chạy lặp, giữ hồ sơ cũ, tài khoản chỉ Employee, trừ/hoàn phép và OT đúng trạng thái; reviewer bootstrap không có EmployeeId không được chọn làm người duyệt fixture. HumanResourcesTests kiểm mã report mới <=30 ký tự để tránh lỗi 500 trên provider có giới hạn cột thật. Kết quả cuối: **97 PASS / 0 FAIL / 0 SKIP** với cả SQL Server LocalDB và PostgreSQL loopback; không áp test fixture lên live. Live có bước seed được cấp quyền và kiểm API đọc/tải PDF riêng, xem worklog.
+
 | REQ / TC | Bằng chứng tự động | Tiêu chí |
 | --- | --- | --- |
+| REQ-DEMO-01 / TC-DEMO-01 | DemoScenarioTests, PostgresDemoScenarioTests; tool verify-only và browser live ghi riêng tại worklog | Chạy lặp không thêm trùng/sửa hồ sơ cũ; role Employee; OT Pending không công nhận, ledger và guard kỳ khóa đúng; PDF thật tải được. |
+| REQ-UI-06 / TC-UI-09 | Browser local desktop, khung iframe 375/390px; kiểm lint/build | Tiêu đề đúng vị trí, Home không ngày, mobile không sidebar ngang; mở/chọn link/Escape/focus của menu. Không thay thiết bị thật bằng iframe. |
 | REQ-SEC-01 / TC-SEC-01 | Authorization/AccountManagement/Session/HumanResources/PrivateDocumentStorage |401/403 cross-user, staff không quản trị Admin, stamp/lock/link revoke, private path/rollback files |
 | REQ-PER-01 / TC-PER-01 | PeriodTests, ProviderDatabaseTests | HR review/Admin lock, invalid/pending gate, version/hash/audit và scope export |
 | REQ-PER-02 / TC-PER-02 | PeriodTests/AuditRetentionTests | Chặn 5 đường mutation tháng khóa, reopen/review lại, source đổi invalidates review, log/snapshot không xóa |

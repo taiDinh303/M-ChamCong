@@ -12,6 +12,8 @@ Bổ sung 18/10/2026: sau khi chẩn đoán thiếu schema, chủ dự án xác 
 
 ## 2. Áp dụng bộ mẫu
 
+Nhiệm vụ tiếp 18/10: chủ dự án yêu cầu dữ liệu giả thực tế để test, xác nhận **“Thêm vào Supabase hiện tại để test trên web”**. Phạm vi: thêm bộ DEMO có nhãn, giữ hồ sơ cũ; không tạo giả token/claim/đăng nhập ngoài/lịch sử migration chỉ để lấp bảng. Cho phép bổ sung tài khoản nhân viên DEMO; không mở thêm quyền HR/Admin. Đồng thời bỏ ngày Home, đưa tiêu đề lên header desktop/xuống dưới hàng logo mobile và thay sidebar ngang bằng nút mở menu. Không suy quyền đổi gói/volume hoặc tự merge/deploy từ quyền thêm dữ liệu.
+
 | File/nhóm mẫu | Áp dụng | Phạm vi/lý do |
 | --- | --- | --- |
 | 00–13, worklog | YES | Giữ nội dung hiện hành, sửa sai khác source, không chép đè thư viện. |
@@ -45,6 +47,8 @@ YES là áp dụng tài liệu, không xác nhận chức năng đã hoàn thàn
 | REQ-UI-03 | Kỳ công/version/XLSX trong Thống kê; PDF và hủy/hoàn phép trong Nghỉ phép. | Chủ dự án đồng ý 17/10. |
 | REQ-UI-04 | Admin chỉnh rule; HR/Admin cấp/điều chỉnh phép có reason/history, chưa auto accrual. | Hộp thoại trong trang cũ, chủ dự án đồng ý. |
 | REQ-UI-05 | Session/route/own API/phân trang đúng; test/lint/build và kiểm browser cô lập. | API vẫn enforce quyền. |
+| REQ-UI-06 | Bỏ ngày Home; tiêu đề trong header desktop/dưới hàng logo mobile; nút menu cạnh logo, bỏ sidebar ngang. | Chủ dự án yêu cầu 18/10; shell dùng chung. |
+| REQ-DEMO-01 | Dữ liệu nghiệp vụ giả có nhãn trên Supabase hiện tại; giữ hồ sơ cũ, tài khoản chỉ Employee, không fake dữ liệu bảo mật. | Chủ dự án xác nhận 18/10; seed/kiểm chứng ở worklog. |
 | REQ-DOC-01 | Không placeholder mẫu còn sót; links/source/trạng thái/bằng chứng và rubric điểm rõ. | docs và backend guide. |
 
 ## 4. Điều còn thiếu thông tin

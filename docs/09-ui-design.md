@@ -1,6 +1,6 @@
 # 09 — Design system và giao diện Marixa
 
-> Chủ tài liệu: **Đinh Văn Tài**. Đối chiếu mã nguồn: **17/10/2026**.
+> Chủ tài liệu: **Đinh Văn Tài**. Đối chiếu mã nguồn: **18/10/2026**.
 > **CURRENT** theo source và browser smoke cô lập tại worklog; **TARGET** là tiêu chí thiết kế; thiết bị thật/Figma/hosting live vẫn **NOT VERIFIED**.
 > **EN — Codex / Agnes:** Implement only authorized UI work. Keep current behavior and target UX separate. `theme.css` owns code token values; do not infer permissions or completed features from a design frame.
 
@@ -15,6 +15,8 @@
 | Nghiệp vụ / trạng thái | [02-business-analysis.md](02-business-analysis.md), [05-workflow.md](05-workflow.md) | Không thêm trạng thái có thể thao tác nếu API chưa hỗ trợ. |
 
 Thiết kế hướng tới nhận diện Marixa: xanh lam/cyan, điểm nhấn vàng; nền sáng, nội dung rõ, ưu tiên thao tác chấm công trên mobile và đối soát/bảng dữ liệu trên desktop. Logo tham chiếu: [`marixa-logo.png`](../marixa_react/public/marixa-logo.png). Màu asset và tương phản thực tế **NOT VERIFIED** trong lượt này.
+
+Quyết định UI 18/10: Home bỏ nhãn ngày. Các layout đã đăng nhập dùng [AuthenticatedShell](../marixa_react/src/components/layout/AuthenticatedShell.jsx): tiêu đề/mô tả trang nằm trong header trên desktop, thành hàng toàn chiều rộng dưới logo/nút tài khoản trên mobile. [HrHero](../marixa_react/src/modules/hr/HrHero.jsx) chuyển tiêu đề qua portal, giữ các ô KPI ở nội dung; tiêu đề dự phòng theo route bảo đảm có tên trang cả khi đang tải. Điện thoại <=768px dùng nút cạnh logo mở dialog điều hướng từ trái, đóng khi chọn trang, chạm ngoài hoặc Escape; native dialog quản lý focus và shell khóa cuộn nền. Sidebar desktop vẫn thu gọn được. Bỏ thanh sidebar kéo ngang và hook tự cuộn pill cũ; bảng dữ liệu rộng vẫn được cuộn riêng. Menu phân mục Home trên điện thoại là danh sách thả xuống từ nút cạnh logo. Chưa coi khung browser 390px là kiểm thử thiết bị thật.
 
 ## 2. Token hiện tại và chuẩn đo lường mục tiêu
 

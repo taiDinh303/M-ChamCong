@@ -3,7 +3,7 @@
    Loaded LAST so it wins the cascade at small viewports.
    Target: phones / small tablets (<=768px) + small phones (<=480px).
    Strategy:
-   - Turn the shared side sidebar into a horizontal pill nav bar.
+   - Use the shared navigation drawer on phones.
    - Compact the header + main content.
    - Collapse multi-column KPI / stat / grid layouts.
    - Make wide tables scroll horizontally.
@@ -38,8 +38,7 @@
         padding: 8px 12px;
         gap: 8px;
     }
-    /* Pill bar is always visible, so the desktop collapse toggle is redundant */
-    .app-header-toggle { display: none; }
+    /* The menu button remains available next to the brand on phones. */
 
     .app-header-brand { gap: 8px; }
     .app-header-logo { width: 30px; height: 30px; font-size: 14px; }
@@ -112,83 +111,11 @@
     }
 }
 
-/* ============================================================
-   SIDEBAR  →  horizontal pill nav bar
-   ============================================================ */
+/* Navigation is a modal drawer on phones; no horizontal sidebar strip. */
 @media (max-width: 768px) {
-    .app-body { flex-direction: column; }
-
-    /* Reserve vertical space so content never hides behind the fixed pill bar */
-    .app-body { padding-top: 52px; }
-
-    /* Fix the pill nav bar in place (pinned under the header) so it stays
-       still when you switch tabs / the page scroll resets */
-    .att-sidebar,
-    .att-sidebar.collapsed {
-        /* Force visible on mobile even if "collapsed" was saved in localStorage */
-        display: block !important;
-        position: fixed;
-        top: 56px;           /* just under the sticky header */
-        left: 0;
-        right: 0;
-        z-index: 45;
-        width: 100%;
-        min-height: 52px;
-        box-sizing: border-box;
-        padding: 10px 8px;
-        margin: 0;
-        background: #fff;
-        border-right: none;
-        border-bottom: 1px solid #e8edf2;
-        box-shadow: 0 4px 14px rgba(14, 26, 38, 0.06);
-        overflow-x: auto;
-        overflow-y: hidden;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    /* Hide the thin scrollbar on the pill bar */
-    .att-sidebar { scrollbar-width: none; }
-    .att-sidebar::-webkit-scrollbar { display: none; }
-
-    .att-sidebar-nav {
-        flex-direction: row;
-        flex-wrap: nowrap;
-        gap: 8px;
-        white-space: nowrap;
-    }
-
-    .att-nav-item {
-        flex: 0 0 auto;
-        white-space: nowrap;
-        min-height: 0;
-        padding: 8px 14px;
-        border-radius: 999px;
-        border: 1px solid #e2e8f0;
-        background: #fff;
-        font-size: 13px;
-        line-height: 1.2;
-    }
-    .att-nav-item.active {
-        background: #005b94;
-        color: #fff;
-        border-color: #005b94;
-        box-shadow: none;
-    }
-
-    /* Work sidebar: collapse the vertical inner wrapper (search + back) */
-    .work-sidebar-inner { display: flex; flex-direction: column; }
-    .work-search, .work-back-wrap { display: none; }
-    .work-sidebar .att-sidebar-nav { gap: 8px; }
-
-    /* HR sidebar: keep just the pill row */
-    .hr-sidebar .att-sidebar-nav,
-    .work-sidebar .att-sidebar-nav { padding: 0; }
-}
-
-/* Small phones: tighter pill bar */
-@media (max-width: 480px) {
-    .att-sidebar { padding: 8px 6px; }
-    .att-nav-item { padding: 7px 12px; font-size: 12.5px; }
+    .app-body { flex-direction: column; padding-top: 0; }
+    .app-header-toggle { display: flex; }
+    .navigation-drawer .work-search, .navigation-drawer .work-back-wrap { display: flex; }
 }
 
 /* ============================================================

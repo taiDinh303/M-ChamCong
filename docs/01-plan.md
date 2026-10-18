@@ -20,6 +20,7 @@
 | Kỳ công | HR/Admin review; Admin lock/reopen có lý do, snapshot version bất biến. Open→Reviewed→Locked; thay nguồn/rule ở kỳ Reviewed phải review lại. |
 | Múi giờ | Asia/Ho_Chi_Minh UTC+7; timestamp UTC, nhãn ngày VN. Không tự dịch/backfill toàn bộ ngày cũ. |
 | Bố trí UI 17/10 | Chủ dự án đồng ý: kỳ/XLSX trong Thống kê; tab OT và sửa công trong Lịch sử; Admin sửa rule bằng hộp thoại; HR/Admin cấp/điều chỉnh phép thủ công trong Nghỉ phép. Giữ layout chính, chưa cấp phép tự động. |
+| Điều hướng và dữ liệu test 18/10 | Bỏ ngày Home; tiêu đề ở header desktop/dưới hàng logo mobile, menu điện thoại mở từ nút cạnh logo, không dùng sidebar ngang. Thêm DEMO vào Supabase hiện tại theo xác nhận trực tiếp, giữ dữ liệu cũ; tài khoản DEMO chỉ Employee, không fake token/claim/migration history. |
 | Hạ tầng/Figma | Snapshot chỉ tại 00, một Supabase project; staging riêng chưa xác nhận. Figma Dev Mode copy, UI Kit trước, frames 375/1440. |
 
 Không suy OT ngày lễ/hệ số lương, ca biên, phép qua năm hoặc retention từ tên entity. Các chính sách đó cần tiếp tục chốt trước mở rộng; rủi ro 34 ghi phạm vi chưa hoàn tất.
