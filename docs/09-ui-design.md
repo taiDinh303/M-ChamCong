@@ -18,6 +18,8 @@ Thiết kế hướng tới nhận diện Marixa: xanh lam/cyan, điểm nhấn 
 
 Quyết định UI 18/10: Home bỏ nhãn ngày. Các layout đã đăng nhập dùng [AuthenticatedShell](../marixa_react/src/components/layout/AuthenticatedShell.jsx): tiêu đề/mô tả trang nằm trong header trên desktop, thành hàng toàn chiều rộng dưới logo/nút tài khoản trên mobile. [HrHero](../marixa_react/src/modules/hr/HrHero.jsx) chuyển tiêu đề qua portal, giữ các ô KPI ở nội dung; tiêu đề dự phòng theo route bảo đảm có tên trang cả khi đang tải. Theo yêu cầu tiếp theo cùng ngày, điện thoại <=768px dùng nút cạnh logo mở dialog điều hướng **toàn màn hình**, trượt từ trái; nút đóng nằm cố định phía trên khi cuộn, chừa safe area và đóng khi chọn trang hoặc Escape. Native dialog quản lý focus, shell khóa cuộn nền và trả focus về nút menu khi đóng. Sidebar desktop vẫn thu gọn được. Bỏ thanh sidebar kéo ngang và hook tự cuộn pill cũ; bảng dữ liệu rộng vẫn được cuộn riêng. Menu phân mục Home trên điện thoại là danh sách thả xuống từ nút cạnh logo. Chưa coi browser viewport là kiểm thử thiết bị thật.
 
+Nút ngôn ngữ dạng chỉ cờ trên Header căn giữa cờ trong khung 42×42 desktop/40×40 mobile; không dành khoảng trống cho caret. Picker có nhãn ở login/kích hoạt vẫn hiển thị tên và caret. Kiểm bằng vị trí thực trên browser và thao tác chọn cả ba ngôn ngữ; không suy từ CSS rằng đã đạt trên thiết bị thật.
+
 ## 2. Token hiện tại và chuẩn đo lường mục tiêu
 
 Các giá trị dưới đây đã đối chiếu [`theme.css`](../marixa_react/src/theme.css); đầy đủ hiện có **55 biến `--th-*`** (50 màu, 4 shadow, 1 font). [`figma/tokens/tokens.json`](../figma/tokens/tokens.json) là bản mirror, không thay thế CSS trong app.

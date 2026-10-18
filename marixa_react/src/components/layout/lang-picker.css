@@ -58,6 +58,10 @@
     color: #8aa0b0;
 }
 
+.lang-picker--flag-only .lang-toggle .caret {
+    display: none;
+}
+
 .lang-menu {
     position: absolute;
     top: 44px;
