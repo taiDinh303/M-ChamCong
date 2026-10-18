@@ -1,10 +1,10 @@
 # 34 — Rủi ro và quản lý thay đổi
 
-> Cập nhật 2026-10-17. Owner sản phẩm: Đinh Văn Tài. Rủi ro còn lại không được ẩn sau điểm đánh giá backend.
+> Cập nhật 2026-10-18. Owner sản phẩm: Đinh Văn Tài. Rủi ro còn lại không được ẩn sau điểm đánh giá backend.
 
 | ID / mức | Rủi ro hiện hành | Cách xử lý / tiêu chí đóng |
 | --- | --- | --- |
-| R-01 P0 | DB live/schema/grants/RLS cũ chưa audit, chưa restore thật | Preflight 23, test staging + backup/restore 22, audit anon/authenticated trước rollout |
+| R-01 P0 | Cần backup ngoài máy, restore binary và disaster recovery đầy đủ; quyền function hệ thống còn cảnh báo advisory | Schema live và restore public đã kiểm 18/10 theo 22/23; 46 bảng có RLS. Advisor còn hai WARN về quyền gọi function event-trigger rls_auto_enable có sẵn; rà soát hardening riêng, không mở quyền Data API để chữa lỗi 500 |
 | R-02 P0 | App_Data và photo fallback chưa volume bền trong blueprint | Chọn persistent volume/private object adapter phù hợp, backup và thử redeploy/restore |
 | R-03 P1 | UI mới có kiểm cô lập, chưa nghiệm thu hosting/camera/GPS/đủ role/thiết bị thật; bundle lớn | Smoke sau nâng schema; kiểm mobile/keyboard, phân quyền từng luồng; tách bundle khi có kiểm soát CSS/layout |
 | R-04 P1 | Manager scope rộng ở nhiều CRUD, role nghiệp vụ chưa có ma trận riêng | Chủ dự án chốt phạm vi, test từng module; không coi role attribute là đủ |

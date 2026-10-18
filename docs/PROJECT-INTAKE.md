@@ -1,12 +1,14 @@
 # Hồ sơ tiếp nhận và phạm vi Marixa
 
-> Chủ dự án: Đinh Văn Tài. Cập nhật 2026-10-17. Trạng thái REVIEW; ghi nhận nhiệm vụ trong cuộc trò chuyện, không tự chứng nhận sản phẩm.
+> Chủ dự án: Đinh Văn Tài. Cập nhật 2026-10-18. Trạng thái REVIEW; ghi nhận nhiệm vụ trong cuộc trò chuyện, không tự chứng nhận sản phẩm.
 
 ## 1. Dự án và nhiệm vụ
 
-Web quản lý nhân sự/chấm công tiếng Việt, quy mô đã ghi nhận dưới 15 người. Repo taiDinh 303/M-ChamCong, checkout D:/My Project/marixa_aspnet_react; backend marixa_aspnet, baseline backend đã merge main `2555a25`; đợt frontend tiếp theo trên codex/frontend-api-alignment. Stack bắt buộc ASP.NET 8/Identity JWT/EF, React/Vite, SQL Server local/PostgreSQL cloud, ảnh Supabase Storage public. Múi giờ nghiệp vụ VN UTC+7, instant lưu UTC.
+Web quản lý nhân sự/chấm công tiếng Việt, quy mô đã ghi nhận dưới 15 người. Repo taiDinh 303/M-ChamCong, checkout D:/My Project/marixa_aspnet_react; backend marixa_aspnet và frontend marixa_react đã merge main `bf11d5c`. Đợt nâng schema tiếp theo trên codex/supabase-schema-audit. Stack bắt buộc ASP.NET 8/Identity JWT/EF, React/Vite, SQL Server local/PostgreSQL cloud, ảnh Supabase Storage public. Múi giờ nghiệp vụ VN UTC+7, instant lưu UTC.
 
 Nhiệm vụ 2026-10-17: tham khảo docs_mau, bổ sung tài liệu phù hợp, hoàn thiện backend theo yêu cầu có đủ đặc tả, build/test, chấm nghiêm khắc, sửa lỗi và push. Không bao gồm sửa Figma, xây native app, mua dịch vụ, chuyển Auth hoặc ghi database production. Phần tiếp theo do chủ dự án giao: hoàn thiện React khớp API, giữ giao diện và phỏng vấn trước khi thêm luồng. Chủ dự án chọn tự chạy hai SQL live; agent chỉ đọc metadata để chẩn đoán.
+
+Bổ sung 18/10/2026: sau khi chẩn đoán thiếu schema, chủ dự án xác nhận **“Đồng ý, bạn sao lưu và cập nhật”** cho marixa001: ba bảng kỳ công, năm cột, kiểu ActualHours và ba unique index. Quyền này thay lựa chọn tự chạy SQL của bước trước, chỉ cho phép nâng schema cần thiết, bảo toàn dữ liệu và kiểm tra lại API. Đã sao lưu/restore thử, áp migration và đối chiếu dữ liệu; bằng chứng hiện hành ở worklog. Không tự suy quyền ghi/xóa dữ liệu nghiệp vụ để kiểm thử live.
 
 ## 2. Áp dụng bộ mẫu
 

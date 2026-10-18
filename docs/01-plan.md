@@ -1,6 +1,6 @@
 # 01 — Quyết định và kế hoạch Marixa
 
-> Chủ dự án Đinh Văn Tài. Cập nhật 2026-10-17; quyết định 12/10 được giữ, bổ sung kết quả phỏng vấn trực tiếp 17/10. Kiểm chứng ở worklog, production chưa nghiệm thu.
+> Chủ dự án Đinh Văn Tài. Cập nhật 2026-10-18; quyết định 12/10 và phỏng vấn 17/10 được giữ. Nâng schema live đã có bằng chứng riêng ở worklog; production chưa nghiệm thu toàn bộ.
 
 ## 1. Quyết định đang có hiệu lực
 
@@ -37,7 +37,7 @@ Không suy OT ngày lễ/hệ số lương, ca biên, phép qua năm hoặc rete
 
 | Ưu tiên | Việc / điều kiện đóng |
 | --- | --- |
-| P0 | Preflight/migration/backup-restore, grants/RLS bảng cũ, env/secret/CORS/volume live và smoke trên môi trường được phép. |
+| P0 | Hoàn tất env/secret/CORS/volume, backup/restore binary và bản ngoài máy, smoke nghiệp vụ có ghi trên môi trường được phép. Schema PostgreSQL đã nâng 18/10, dữ liệu public đã restore thử; phạm vi tại worklog và 22/23. |
 | P1 | Nghiệm thu các luồng frontend mới trên hosting và thiết bị thật sau nâng schema; kiểm camera/GPS, responsive và các role còn lại. Code UI/bằng chứng cô lập xem worklog. |
 | P1 | Phạm vi Manager toàn bộ module; chính sách biên/ca qua đêm, ngày nghỉ/lễ và phép qua năm; đối soát dữ liệu cũ. |
 | P1 | RPO/RTO/on-call/retention/cấp phép định kỳ và cảnh báo job; chỉ triển khai sau quyết định cần thiết. |

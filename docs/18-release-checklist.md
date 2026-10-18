@@ -1,6 +1,6 @@
 # 18 — Điều kiện phát hành
 
-> Cập nhật 2026-10-17. Checklist release; dấu đạt theo bằng chứng ở [worklog](worklog.md), không theo sự tồn tại file.
+> Cập nhật 2026-10-18. Checklist release; dấu đạt theo bằng chứng ở [worklog](worklog.md), không theo sự tồn tại file.
 
 ## 1. Gate trước khi push
 
@@ -13,12 +13,12 @@
 
 | Gate | Bằng chứng bắt buộc | Tình trạng lần này |
 | --- | --- | --- |
-| Schema upgrade | Backup + preflight + chạy script ở staging tương đương, kiểm index/columns/readiness | Local provider/CI theo worklog; DB live chưa áp |
+| Schema upgrade | Backup + preflight + chạy script ở staging tương đương, kiểm index/columns/readiness | Đã restore thử và nâng live 18/10: 46 bảng/730 cột, dữ liệu 43 bảng cũ giữ nguyên, readiness 200; chi tiết worklog |
 | Storage bền | Volume App_Data/ảnh local nếu dùng, quyền user app và restore thử | NOT VERIFIED live |
-| Config/identity | Secret riêng, CORS origin, init/seed tắt, login + lockout + vai trò | Có test cô lập; live chưa test |
-| Nghiệp vụ | Checkin, duyệt, hủy/hoàn phép, OT riêng, khóa/mở/version/export; smoke có dữ liệu được phép | Backend/Node test và browser smoke cô lập theo worklog; hosting/thiết bị thật chưa nghiệm thu |
+| Config/identity | Secret riêng, CORS origin, init/seed tắt, login + lockout + vai trò | Có test cô lập; live đã dùng phiên Employee/Admin kiểm quyền cá nhân/HR, chưa audit toàn bộ config/lockout |
+| Nghiệp vụ | Checkin, duyệt, hủy/hoàn phép, OT riêng, khóa/mở/version/export; smoke có dữ liệu được phép | Backend/Node test và browser cô lập; live đã đọc lịch sử/thống kê/kỳ công/nghỉ phép/bàn giao, chưa nghiệm thu các luồng ghi và thiết bị thật |
 | Job ngày hiệu lực | Pending-due count, AppliedAt, retry/last-admin, kiểm khởi động lại | Có test processor; job live chưa test |
-| Backup/rollback | Bản DB + files, người vận hành, restore kiểm quyền và hash | Quy trình 22; restore thật chưa làm |
+| Backup/rollback | Bản DB + files, người vận hành, restore kiểm quyền và hash | Đã thử restore snapshot public trên PostgreSQL 17.11; binary/files, bản ngoài máy và disaster recovery đầy đủ chưa nghiệm thu; xem 22 |
 
 Render blueprint autoDeploy=true. Nhánh thay đổi có migration được push riêng để review; merge vào nhánh deploy chỉ khi các gate production liên quan đã đạt. Quyền push không tự xác nhận dữ liệu/hạ tầng đã sẵn sàng.
 

@@ -1,7 +1,7 @@
 # 00 — Chỉ dẫn tài liệu và quy tắc làm việc Marixa
 
-> Chủ tài liệu: **Đinh Văn Tài**. Cập nhật: **17/10/2026**.
-> Phạm vi kiểm chứng: mã nguồn trong checkout hiện tại. Backend có build/test cô lập được ghi ở worklog; hạ tầng và Figma live chưa được xác minh.
+> Chủ tài liệu: **Đinh Văn Tài**. Cập nhật: **18/10/2026**.
+> Phạm vi kiểm chứng: mã nguồn, build/test cô lập và nâng schema Supabase/đọc các trang cá nhân, HR live theo bằng chứng ở worklog. Các luồng ghi production, thiết bị thật và Figma chưa nghiệm thu toàn bộ.
 
 ## 1. Bắt đầu ở đây
 

@@ -1,10 +1,10 @@
 # 06 — Kiểm thử và bằng chứng
 
-> Cập nhật 2026-10-17. Test thực tế có số ca/provider tại worklog; tiêu chí dưới đây gồm cả phần đã có và phần cần nghiệm thu tiếp.
+> Cập nhật 2026-10-18. Test thực tế có số ca/provider tại worklog; tiêu chí dưới đây gồm cả phần đã có và phần cần nghiệm thu tiếp.
 
 ## 1. Ranh giới môi trường
 
-M.Tests là xUnit, WebApplicationFactory/TestServer + SQLite per-host, fake HTTP/MemoryDocuments/TimeProvider riêng. Test fake-role không thay kiểm JWT thật: SessionTests chạy JWT để kiểm lockout/stamp/role/link. SQL Server LocalDB fixture nâng migration trên DB Marixa_Verify_GUID, kiểm default 12:00 khi upgrade, constraints và period transaction. PostgreSQL fixture chỉ nhận loopback, tạo/drop DB riêng, upgrade SQL hai lần rồi chạy workflow; CI cung cấp server. Linux skip LocalDB, local thiếu PostgreSQL skip có lý do. Không dùng DB/bucket thật.
+M.Tests là xUnit, WebApplicationFactory/TestServer + SQLite per-host, fake HTTP/MemoryDocuments/TimeProvider riêng. Test fake-role không thay kiểm JWT thật: SessionTests chạy JWT để kiểm lockout/stamp/role/link. SQL Server LocalDB fixture nâng migration trên DB Marixa_Verify_GUID, kiểm default 12:00 khi upgrade, constraints và period transaction. PostgreSQL fixture chỉ nhận loopback, tạo/drop DB riêng, upgrade cả ba SQL hai lần rồi chạy workflow; CI cung cấp server. PostgresAttendanceIntegrityTests còn kiểm preflight từ chối nhiều rule active/ngày công trùng mà giữ dữ liệu, chấp nhận lịch sử xóa mềm và enforce cả hai unique index sau upgrade. Linux skip LocalDB, local thiếu PostgreSQL skip có lý do; bằng chứng 18/10 bật cả hai provider là 95 PASS/0 FAIL/0 SKIP. Không chạy bộ test trên DB/bucket thật.
 
 ## 2. Traceability tối thiểu
 
