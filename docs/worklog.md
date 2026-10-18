@@ -107,6 +107,13 @@
 
 ## 4. Log sự kiện (mới trên cùng)
 
+### 18/10/2026 — Codex: giản lược điều hướng Home
+
+- Chủ dự án phản ánh Header Home chật, hỏi vị trí/ẩn/footer cho Vận hành/Thông tin… và yêu cầu bỏ mục lục. Chọn bỏ thanh phân mục và nút mở mục lục trên Home vì các thẻ module đã là điều hướng chính; footer giữ thông tin thương hiệu. Giữ lọc quyền của thẻ, các nút thông báo/ngôn ngữ/tài khoản/về phân khu và sidebar của module.
+- Xóa NAV_ITEMS placeholder, prop/render/state/ref/listener riêng cho menu Home và CSS không còn dùng; giữ Escape/click-outside của menu tài khoản. Chỉnh padding Header Home mobile, có mức gọn cho <=380px. REQ-UI-06/TC-UI-10, quyết định hiện hành ở 01/09.
+- Kiểm local: 21 frontend tests PASS, lint/build PASS, còn cảnh báo chunk lớn cũ. Browser desktop 1280 và điện thoại 375/320: Header một hàng, không nav/nút mục lục hoặc tràn ngang; các thẻ vẫn hiện, chọn Nhân sự vào đúng route, sidebar module mở/Escape được; menu tài khoản mở/Escape được. Rà soát React: không giữ state/ref/import chết, effect cleanup còn đủ, giữ Link/role guards hiện có. Không đổi backend/schema và không chạy lại backend tests local. CI/rollout chờ tại thời điểm commit.
+- Chốt lượt trước: PR #5 đã merge `3dfe507`, CI PR/main success, Vercel production đã kiểm cờ 40×40/tâm lệch 0px. Render redeploy lại mất PDF DEMO, đã phục hồi qua API với fingerprint predeploy/owner/trạng thái và audit; 7 tệp tải 200, snapshot/XLSX/readiness 200, khác owner 403/anonymous 401. Rủi ro private App_Data vẫn mở, không coi phục hồi DEMO là sửa storage.
+
 ### 18/10/2026 — Codex: căn giữa cờ ngôn ngữ trên Header
 
 - Theo ảnh chủ dự án gửi, cờ lệch do chế độ flagOnly vẫn giữ caret/gap/padding mặc định; mobile còn padding wrapper làm vùng nút chật. Thêm modifier flag-only để ẩn caret đúng biến thể, bỏ padding/gap của button Header và đồng bộ wrapper 42×42 desktop, 40×40 mobile. Không đổi luồng chọn ngôn ngữ hoặc picker có chữ ở login/kích hoạt.

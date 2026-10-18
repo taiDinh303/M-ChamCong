@@ -13,17 +13,6 @@ const MODULES = [
     { to: "/finance", icon: "💰", title: "Kế toán", detail: "Tài chính · Báo cáo", color: "lime" },
 ];
 
-// MỤC PHÂN MỤC — dùng link "giả" (placeholder) tương ứng theo tên,
-// chưa có trang đích riêng cho từng mục.
-const NAV_ITEMS = [
-    { label: "Vận hành", href: "/attendance" },
-    { label: "Thông tin", href: "/work" },
-    { label: "Con người", href: "/employees" },
-    { label: "Tài chính", href: "/finance" },
-    { label: "Khách hàng", href: "/admin" },
-    { label: "Sản phẩm", href: "/admin/reports" },
-];
-
 const HomePage = () => {
     const visible = useMemo(
         () => MODULES.filter((m) => canAccessModule(m.to)),
@@ -32,7 +21,7 @@ const HomePage = () => {
 
     return (
         <div className="home-shell">
-            <Header minimal navItems={NAV_ITEMS} />
+            <Header minimal />
 
             <main className="home-main">
                 {/* ===== HERO (greeting ở góc dưới phải) ===== */}

@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import { clearAuth, getAuth } from "../../services/auth/auth";
-import { canAccessModule } from "../../services/auth/permission";
 import {
     fileToAvatarDataUrl,
     getAvatar,
@@ -16,16 +14,12 @@ import ChangePasswordModal from "./ChangePasswordModal";
 import "./header.css";
 
 
-// Thanh nav toàn rộng: logo + slogan (trái), (tuỳ chọn) thanh menu phân mục
-// ngay sau logo, nút gập sidebar, nút vuông dropdown tài khoản + nút "về phân khu"
-// (4 chấm) theo phận sự (phải).
-const Header = ({ profile, onToggleSidebar, toggleRef, sidebarExpanded, sidebarControls, pageHeading, minimal = false, navItems = null }) => {
+// Home dùng header gọn; các module có nút mở sidebar và tiêu đề trang.
+const Header = ({ profile, onToggleSidebar, toggleRef, sidebarExpanded, sidebarControls, pageHeading, minimal = false }) => {
     const auth = getAuth();
     const key = auth?.userId;
 
     const [open, setOpen] = useState(false);
-    const [homeNavigationOpen, setHomeNavigationOpen] = useState(false);
-    const navigationRef = useRef(null);
     const [modal, setModal] = useState(null);
     const [avatar, setAvatarState] = useState(() => getAvatar(key));
     const [avatarBusy, setAvatarBusy] = useState(false);
@@ -55,11 +49,9 @@ const Header = ({ profile, onToggleSidebar, toggleRef, sidebarExpanded, sidebarC
         const onDown = (e) => {
             if (userRef.current && !userRef.current.contains(e.target))
                 setOpen(false);
-            if (navigationRef.current && !navigationRef.current.contains(e.target))
-                setHomeNavigationOpen(false);
         };
         const onKey = (event) => {
-            if (event.key === "Escape") { setOpen(false); setHomeNavigationOpen(false); }
+            if (event.key === "Escape") setOpen(false);
         };
         document.addEventListener("mousedown", onDown);
         document.addEventListener("keydown", onKey);
@@ -101,10 +93,7 @@ const Header = ({ profile, onToggleSidebar, toggleRef, sidebarExpanded, sidebarC
 
     return (
         <header className={`app-header${minimal ? " app-header--minimal" : ""}`}>
-            <div className="app-header-left" ref={navigationRef}>
-                {minimal && navItems && <button type="button" className="app-header-toggle home-navigation-toggle"
-                    aria-label="Menu phân mục" aria-expanded={homeNavigationOpen} aria-controls="home-navigation"
-                    onClick={() => setHomeNavigationOpen((value) => !value)}><span /><span /><span /></button>}
+            <div className="app-header-left">
                 {!minimal && (
                     <button
                         type="button"
@@ -124,21 +113,6 @@ const Header = ({ profile, onToggleSidebar, toggleRef, sidebarExpanded, sidebarC
                     <span className="app-header-logo">M</span>
                     <span className="app-header-logo-text">MARIXA</span>
                 </a>
-
-                {navItems && (
-                    <nav id="home-navigation" className={`app-header-nav${homeNavigationOpen ? " is-open" : ""}`} aria-label="Phân mục">
-                        {navItems.filter((item) => canAccessModule(item.href)).map((item) => (
-                            <Link
-                                key={item.label}
-                                to={item.href}
-                                className="app-header-nav-link"
-                                onClick={() => setHomeNavigationOpen(false)}
-                            >
-                                {item.label}
-                            </Link>
-                        ))}
-                    </nav>
-                )}
             </div>
 
             {pageHeading}

@@ -43,10 +43,9 @@
 .app-header-left {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 6px;
     min-width: 0;
 }
-.app-header .home-navigation-toggle { display: none; }
 
 /* Nút gập / mở sidebar */
 .app-header-toggle {
@@ -110,36 +109,6 @@
     display: flex;
     align-items: center;
     gap: 12px;
-}
-
-/* ===== THANH NAV PHÂN MỤC (ngay sau logo, chỉ hiện khi truyền navItems) =====
-   Flat, không viền (giống "BUSINESS OS"): các link đứng liền sau logo,
-   active gạch chân bằng màu accent. */
-.app-header-left { gap: 6px; }
-.app-header-nav {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    margin-left: 10px;
-}
-.app-header-nav-link {
-    padding: 8px 12px;
-    border: 0;
-    background: none;
-    color: var(--th-header-sub);
-    font: 600 13.5px var(--th-font, "Be Vietnam Pro", sans-serif);
-    letter-spacing: .01em;
-    text-decoration: none;
-    white-space: nowrap;
-    border-bottom: 2px solid transparent;
-    transition: color .15s, border-color .15s;
-}
-.app-header-nav-link:hover {
-    color: var(--th-header-text);
-}
-.app-header-nav-link.active {
-    color: var(--th-header-text);
-    border-bottom-color: var(--th-primary);
 }
 
 /* ===== NÚT HOME — về phân khu theo phận sự (cuối phải, chỉ home) ===== */
@@ -221,15 +190,10 @@
 @media (max-width: 520px) {
     .app-header { padding: 10px 12px; flex-wrap: wrap; row-gap: 10px; }
     .app-header-user { gap: 7px; }
-    .app-header-nav { margin: 0; }
 }
 
 @media (max-width: 768px) {
-    .app-header--minimal .home-navigation-toggle { display: flex; }
     .app-header--minimal .app-header-left { gap: 8px; }
-    .app-header--minimal .app-header-nav { display: none; position: absolute; top: 100%; left: 12px; right: 12px; margin: 0; padding: 8px; background: var(--th-surface); border: 1px solid var(--th-border); border-radius: 12px; box-shadow: var(--th-header-shadow); }
-    .app-header--minimal .app-header-nav.is-open { display: flex; flex-direction: column; align-items: stretch; }
-    .app-header--minimal .app-header-nav-link { min-height: 44px; display: flex; align-items: center; white-space: normal; }
 }
 
 .app-header-avatar-btn {
