@@ -26,7 +26,7 @@ const LanguagePicker = ({ className = "", flagOnly = false }) => {
     }, []);
 
     return (
-        <label className={`lang-picker ${className}`.trim()} ref={ref} title="Language">
+        <label className={`lang-picker${flagOnly ? " lang-picker--flag-only" : ""} ${className}`.trim()} ref={ref} title="Language">
             <button
                 type="button"
                 className="lang-toggle"

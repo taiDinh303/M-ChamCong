@@ -107,6 +107,12 @@
 
 ## 4. Log sự kiện (mới trên cùng)
 
+### 18/10/2026 — Codex: căn giữa cờ ngôn ngữ trên Header
+
+- Theo ảnh chủ dự án gửi, cờ lệch do chế độ flagOnly vẫn giữ caret/gap/padding mặc định; mobile còn padding wrapper làm vùng nút chật. Thêm modifier flag-only để ẩn caret đúng biến thể, bỏ padding/gap của button Header và đồng bộ wrapper 42×42 desktop, 40×40 mobile. Không đổi luồng chọn ngôn ngữ hoặc picker có chữ ở login/kích hoạt.
+- Kiểm chứng local: 21 frontend tests PASS, lint/build PASS (cảnh báo chunk lớn cũ); browser desktop và điện thoại xác nhận tâm cờ trùng tâm khung nút (sai lệch x/y = 0px), chọn vi/en/zh và đóng dropdown đúng. Không thêm test mô phỏng CSS; không đổi backend/schema hoặc chạy lại backend tests local cho thay đổi này. Chờ CI/rollout tại thời điểm commit.
+- Chốt rollout trước: PR #4 đã merge `ee949b0`, CI PR/main đều success; Vercel và menu live đã xác minh, Render snapshot/XLSX tháng 9 đều 200, nút XLSX trên web tải thành công; 4 PDF chính + 3 phụ lục DEMO tải 200, khác owner 403/anonymous 401. Sau rollout đã phục hồi đúng fixture bằng API có audit và fingerprint predeploy, không sửa snapshot bất biến; rủi ro App_Data vẫn mở.
+
 ### 18/10/2026 — Codex: menu điện thoại toàn màn hình và kiểm chứng sau PR #3
 
 - **Quyền triển khai:** chủ dự án xác nhận “Đồng ý merge và triển khai sau khi CI đạt”. PR #3 đã merge main `1dc83a8`; CI PR/main xanh, Vercel production READY đúng SHA, Render readiness 200 và nộp báo cáo DEMO mới 200/mã 30 ký tự xác nhận bản sửa đã hoạt động.
