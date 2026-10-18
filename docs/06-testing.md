@@ -10,10 +10,12 @@ M.Tests là xUnit, WebApplicationFactory/TestServer + SQLite per-host, fake HTTP
 
 Bổ sung 18/10: DemoScenarioTests và PostgresDemoScenarioTests kiểm bộ DEMO chạy lặp, giữ hồ sơ cũ, tài khoản chỉ Employee, trừ/hoàn phép và OT đúng trạng thái; reviewer bootstrap không có EmployeeId không được chọn làm người duyệt fixture. HumanResourcesTests kiểm mã report mới <=30 ký tự để tránh lỗi 500 trên provider có giới hạn cột thật. Kết quả cuối: **97 PASS / 0 FAIL / 0 SKIP** với cả SQL Server LocalDB và PostgreSQL loopback; không áp test fixture lên live. Live có bước seed được cấp quyền và kiểm API đọc/tải PDF riêng, xem worklog.
 
+Lượt tiếp theo 18/10: **101 PASS / 0 FAIL / 0 SKIP** trên fixture cô lập (SQLite, SQL Server LocalDB, PostgreSQL loopback). DemoScenarioTests đọc snapshot/XLSX từ dữ liệu vừa seed, kiểm hash mới dạng uppercase. PeriodTests thêm bốn trường hợp hash uppercase/lowercase hợp lệ, payload đã đổi và chuỗi không phải hex; kiểm endpoint snapshot/XLSX, lọc đúng chủ, giữ nguyên payload/hash trong DB. Chấp nhận khác biệt hoa/thường của cùng digest không cho phép đổi nội dung snapshot. Browser local 375×667: panel/dialog rộng 375 cao 667, cuộn nền bị khóa; chọn mục cuối đóng menu, Escape trả focus và phục hồi cuộn nền.
+
 | REQ / TC | Bằng chứng tự động | Tiêu chí |
 | --- | --- | --- |
 | REQ-DEMO-01 / TC-DEMO-01 | DemoScenarioTests, PostgresDemoScenarioTests; tool verify-only và browser live ghi riêng tại worklog | Chạy lặp không thêm trùng/sửa hồ sơ cũ; role Employee; OT Pending không công nhận, ledger và guard kỳ khóa đúng; PDF thật tải được. |
-| REQ-UI-06 / TC-UI-09 | Browser local desktop, khung iframe 375/390px; kiểm lint/build | Tiêu đề đúng vị trí, Home không ngày, mobile không sidebar ngang; mở/chọn link/Escape/focus của menu. Không thay thiết bị thật bằng iframe. |
+| REQ-UI-06 / TC-UI-09 | Browser local desktop, khung iframe 375/390px và viewport 375×667; kiểm lint/build | Tiêu đề đúng vị trí, Home không ngày, mobile không sidebar ngang; menu toàn màn hình, mở/chọn link/Escape/focus/khóa cuộn nền. Không thay thiết bị thật bằng browser. |
 | REQ-SEC-01 / TC-SEC-01 | Authorization/AccountManagement/Session/HumanResources/PrivateDocumentStorage |401/403 cross-user, staff không quản trị Admin, stamp/lock/link revoke, private path/rollback files |
 | REQ-PER-01 / TC-PER-01 | PeriodTests, ProviderDatabaseTests | HR review/Admin lock, invalid/pending gate, version/hash/audit và scope export |
 | REQ-PER-02 / TC-PER-02 | PeriodTests/AuditRetentionTests | Chặn 5 đường mutation tháng khóa, reopen/review lại, source đổi invalidates review, log/snapshot không xóa |

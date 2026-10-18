@@ -214,7 +214,7 @@ public static class DemoScenarioSeeder
         var json = JsonSerializer.Serialize(snapshot, new JsonSerializerOptions(JsonSerializerDefaults.Web));
         db.AttendancePeriods.Add(period);
         db.AttendancePeriodSnapshots.Add(Stamp(AttendancePeriodSnapshot.Capture(period.Id, version, json,
-            Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(json))).ToLowerInvariant(), Marker, At(Day(10, 1), 9, 5))));
+            Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(json))), Marker, At(Day(10, 1), 9, 5))));
         db.AttendancePeriodEvents.Add(Stamp(AttendancePeriodEvent.Record(period.Id, "Reviewed", reviewer.Id, "[DEMO] Người duyệt", "[DEMO] Kiểm tra kỳ lịch sử", At(Day(10, 1), 9, 0))));
         db.AttendancePeriodEvents.Add(Stamp(AttendancePeriodEvent.Record(period.Id, "Locked", reviewer.Id, "[DEMO] Người duyệt", "[DEMO] Khóa kỳ lịch sử", At(Day(10, 1), 9, 5))));
         await PrepareReportDraftsAsync(db);

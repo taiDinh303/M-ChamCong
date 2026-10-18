@@ -105,7 +105,8 @@ public sealed class AttendancePeriodService(IUnitOfWork unitOfWork, ICurrentUser
         var snapshot = await Repository<AttendancePeriodSnapshot>().Entities.AsNoTracking()
             .SingleOrDefaultAsync(s => s.PeriodId == period.Id && s.Version == selected)
             ?? throw new ErrorException(404, "SNAPSHOT_NOT_FOUND", "Snapshot version not found.");
-        if (!string.Equals(Hash(snapshot.PayloadJson), snapshot.Sha256, StringComparison.Ordinal))
+        // Hex casing does not change the digest. Keep immutable historical snapshots readable.
+        if (!string.Equals(Hash(snapshot.PayloadJson), snapshot.Sha256, StringComparison.OrdinalIgnoreCase))
             throw new ErrorException(409, "SNAPSHOT_INTEGRITY", "Snapshot integrity check failed.");
         var data = JsonSerializer.Deserialize<PeriodSnapshot>(snapshot.PayloadJson, Json)
             ?? throw new ErrorException(409, "SNAPSHOT_INTEGRITY", "Snapshot content is invalid.");

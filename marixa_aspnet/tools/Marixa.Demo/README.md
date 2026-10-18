@@ -27,7 +27,7 @@ Apply chỉ sau quyền chủ dự án, backup và kiểm thử tương đương
 
 `--verify-only` kiểm tra không seed: đăng nhập DEMO qua API, tải PDF private và kiểm API công/phép của chủ hồ sơ. Không kết hợp với `--apply`. Xác minh live 18/10: ba tài khoản đầu đều nhận 200 cho PDF/công/phép; 42/46 bảng có dữ liệu, chỉ bốn bảng kỹ thuật claims/external-logins/user-tokens còn trống đúng mục đích. Bộ nghiệp vụ không yêu cầu bịa dữ liệu bảo mật.
 
-Đặt `MARIXA_DEMO_ApiUrl=https://marixa001-asp.onrender.com/` khi nộp báo cáo live, hoặc URL loopback ở local. Tool đăng nhập tài khoản DEMO và gửi hai PDF mỗi báo cáo qua endpoint private; không chế đường dẫn file. Hồ sơ report draft có mã ngắn hợp lệ để có thể tiếp tục bước nộp khi API phiên bản cũ còn lỗi tạo mã báo cáo >30 ký tự. API source đã sửa mã mới <=30 ký tự; cần deploy bản sửa để người dùng tạo báo cáo mới bình thường.
+Đặt `MARIXA_DEMO_ApiUrl=https://marixa001-asp.onrender.com/` khi nộp báo cáo live, hoặc URL loopback ở local. Tool đăng nhập tài khoản DEMO và gửi hai PDF mỗi báo cáo qua endpoint private; không chế đường dẫn file. Hồ sơ report draft có mã ngắn hợp lệ để có thể tiếp tục bước nộp khi API phiên bản cũ còn lỗi tạo mã báo cáo >30 ký tự. Bản sửa mã mới <=30 ký tự đã merge PR #3 và được kiểm chứng nộp mới 200 trên API live ngày 18/10.
 
 Seeder dùng EF SaveChanges và transaction Serializable; không bulk/raw SQL để vượt guard. Bước chuẩn bị dữ liệu là một transaction, nộp file/API là bước tiếp theo có thể tiếp tục nếu gián đoạn. Marker/ID cố định chống thêm trùng; không sửa fixture đã được người dùng test để ép về trạng thái ban đầu. Tool đối chiếu hash các dòng PostgreSQL đã tồn tại trước bước seed; chỉ in số lượng, không in dữ liệu nhân viên.
 
@@ -40,4 +40,6 @@ Seeder dùng EF SaveChanges và transaction Serializable; không bulk/raw SQL đ
 5. Bàn giao/thăng chức: Pending để thử duyệt/từ chối, Approved tháng 11 để xem chờ hiệu lực. Khi đến ngày hiệu lực job sẽ áp với nhân viên DEMO; đây là dữ liệu test có tác động thật lên chính tài khoản DEMO.
 6. Báo cáo: mở/tải PDF riêng tư, duyệt/yêu cầu chỉnh sửa; tài khoản DEMO khác không được tải file không thuộc quyền. Công việc: tiến độ, bình luận, dự án và đánh giá.
 
-Không xóa cứng log, ledger Deduct/Refund, event/snapshot để dọn fixture. Đối với database test cần làm mới, tạo DB cô lập mới. Với live, thống nhất phương án kết thúc/ẩn DEMO và bảo toàn audit trước khi dọn. Storage private hiện dùng App_Data; khả năng giữ file qua redeploy phụ thuộc volume của hosting, chưa được giải quyết bằng bộ dữ liệu này.
+Không xóa cứng log, ledger Deduct/Refund, event/snapshot để dọn fixture. Đối với database test cần làm mới, tạo DB cô lập mới. Với live, thống nhất phương án kết thúc/ẩn DEMO và bảo toàn audit trước khi dọn. Snapshot DEMO cũ có SHA-256 dạng lowercase: API chấp nhận cùng digest khác hoa/thường, seed mới tạo uppercase; không cập nhật lại snapshot bất biến.
+
+**Rủi ro xác nhận 18/10:** file private trong App_Data đã trả 404 sau Render redeploy dù DB còn metadata. Đã khôi phục PDF DEMO qua luồng nộp API và ghi sự kiện kỹ thuật; chỉ áp cho fixture DEMO chưa được người dùng sửa. Đây không phải sửa độ bền storage. Trước dùng hồ sơ thật cần volume bền hoặc adapter object storage private và backup/restore tệp; không đưa tài liệu HR vào bucket ảnh public.
