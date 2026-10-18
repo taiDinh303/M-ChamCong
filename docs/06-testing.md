@@ -1,15 +1,19 @@
 # 06 — Kiểm thử và bằng chứng
 
-> Cập nhật 2026-10-17. Test thực tế có số ca/provider tại worklog; tiêu chí dưới đây gồm cả phần đã có và phần cần nghiệm thu tiếp.
+> Cập nhật 2026-10-18. Test thực tế có số ca/provider tại worklog; tiêu chí dưới đây gồm cả phần đã có và phần cần nghiệm thu tiếp.
 
 ## 1. Ranh giới môi trường
 
-M.Tests là xUnit, WebApplicationFactory/TestServer + SQLite per-host, fake HTTP/MemoryDocuments/TimeProvider riêng. Test fake-role không thay kiểm JWT thật: SessionTests chạy JWT để kiểm lockout/stamp/role/link. SQL Server LocalDB fixture nâng migration trên DB Marixa_Verify_GUID, kiểm default 12:00 khi upgrade, constraints và period transaction. PostgreSQL fixture chỉ nhận loopback, tạo/drop DB riêng, upgrade SQL hai lần rồi chạy workflow; CI cung cấp server. Linux skip LocalDB, local thiếu PostgreSQL skip có lý do. Không dùng DB/bucket thật.
+M.Tests là xUnit, WebApplicationFactory/TestServer + SQLite per-host, fake HTTP/MemoryDocuments/TimeProvider riêng. Test fake-role không thay kiểm JWT thật: SessionTests chạy JWT để kiểm lockout/stamp/role/link. SQL Server LocalDB fixture nâng migration trên DB Marixa_Verify_GUID, kiểm default 12:00 khi upgrade, constraints và period transaction. PostgreSQL fixture chỉ nhận loopback, tạo/drop DB riêng, upgrade cả ba SQL hai lần rồi chạy workflow; CI cung cấp server. PostgresAttendanceIntegrityTests còn kiểm preflight từ chối nhiều rule active/ngày công trùng mà giữ dữ liệu, chấp nhận lịch sử xóa mềm và enforce cả hai unique index sau upgrade. Linux skip LocalDB, local thiếu PostgreSQL skip có lý do; bằng chứng 18/10 bật cả hai provider là 95 PASS/0 FAIL/0 SKIP. Không chạy bộ test trên DB/bucket thật.
 
 ## 2. Traceability tối thiểu
 
+Bổ sung 18/10: DemoScenarioTests và PostgresDemoScenarioTests kiểm bộ DEMO chạy lặp, giữ hồ sơ cũ, tài khoản chỉ Employee, trừ/hoàn phép và OT đúng trạng thái; reviewer bootstrap không có EmployeeId không được chọn làm người duyệt fixture. HumanResourcesTests kiểm mã report mới <=30 ký tự để tránh lỗi 500 trên provider có giới hạn cột thật. Kết quả cuối: **97 PASS / 0 FAIL / 0 SKIP** với cả SQL Server LocalDB và PostgreSQL loopback; không áp test fixture lên live. Live có bước seed được cấp quyền và kiểm API đọc/tải PDF riêng, xem worklog.
+
 | REQ / TC | Bằng chứng tự động | Tiêu chí |
 | --- | --- | --- |
+| REQ-DEMO-01 / TC-DEMO-01 | DemoScenarioTests, PostgresDemoScenarioTests; tool verify-only và browser live ghi riêng tại worklog | Chạy lặp không thêm trùng/sửa hồ sơ cũ; role Employee; OT Pending không công nhận, ledger và guard kỳ khóa đúng; PDF thật tải được. |
+| REQ-UI-06 / TC-UI-09 | Browser local desktop, khung iframe 375/390px; kiểm lint/build | Tiêu đề đúng vị trí, Home không ngày, mobile không sidebar ngang; mở/chọn link/Escape/focus của menu. Không thay thiết bị thật bằng iframe. |
 | REQ-SEC-01 / TC-SEC-01 | Authorization/AccountManagement/Session/HumanResources/PrivateDocumentStorage |401/403 cross-user, staff không quản trị Admin, stamp/lock/link revoke, private path/rollback files |
 | REQ-PER-01 / TC-PER-01 | PeriodTests, ProviderDatabaseTests | HR review/Admin lock, invalid/pending gate, version/hash/audit và scope export |
 | REQ-PER-02 / TC-PER-02 | PeriodTests/AuditRetentionTests | Chặn 5 đường mutation tháng khóa, reopen/review lại, source đổi invalidates review, log/snapshot không xóa |

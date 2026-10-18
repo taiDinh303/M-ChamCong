@@ -1,6 +1,6 @@
 # 01 — Quyết định và kế hoạch Marixa
 
-> Chủ dự án Đinh Văn Tài. Cập nhật 2026-10-17; quyết định 12/10 được giữ, bổ sung kết quả phỏng vấn trực tiếp 17/10. Kiểm chứng ở worklog, production chưa nghiệm thu.
+> Chủ dự án Đinh Văn Tài. Cập nhật 2026-10-18; quyết định 12/10 và phỏng vấn 17/10 được giữ. Nâng schema live đã có bằng chứng riêng ở worklog; production chưa nghiệm thu toàn bộ.
 
 ## 1. Quyết định đang có hiệu lực
 
@@ -20,6 +20,7 @@
 | Kỳ công | HR/Admin review; Admin lock/reopen có lý do, snapshot version bất biến. Open→Reviewed→Locked; thay nguồn/rule ở kỳ Reviewed phải review lại. |
 | Múi giờ | Asia/Ho_Chi_Minh UTC+7; timestamp UTC, nhãn ngày VN. Không tự dịch/backfill toàn bộ ngày cũ. |
 | Bố trí UI 17/10 | Chủ dự án đồng ý: kỳ/XLSX trong Thống kê; tab OT và sửa công trong Lịch sử; Admin sửa rule bằng hộp thoại; HR/Admin cấp/điều chỉnh phép thủ công trong Nghỉ phép. Giữ layout chính, chưa cấp phép tự động. |
+| Điều hướng và dữ liệu test 18/10 | Bỏ ngày Home; tiêu đề ở header desktop/dưới hàng logo mobile, menu điện thoại mở từ nút cạnh logo, không dùng sidebar ngang. Thêm DEMO vào Supabase hiện tại theo xác nhận trực tiếp, giữ dữ liệu cũ; tài khoản DEMO chỉ Employee, không fake token/claim/migration history. |
 | Hạ tầng/Figma | Snapshot chỉ tại 00, một Supabase project; staging riêng chưa xác nhận. Figma Dev Mode copy, UI Kit trước, frames 375/1440. |
 
 Không suy OT ngày lễ/hệ số lương, ca biên, phép qua năm hoặc retention từ tên entity. Các chính sách đó cần tiếp tục chốt trước mở rộng; rủi ro 34 ghi phạm vi chưa hoàn tất.
@@ -37,7 +38,7 @@ Không suy OT ngày lễ/hệ số lương, ca biên, phép qua năm hoặc rete
 
 | Ưu tiên | Việc / điều kiện đóng |
 | --- | --- |
-| P0 | Preflight/migration/backup-restore, grants/RLS bảng cũ, env/secret/CORS/volume live và smoke trên môi trường được phép. |
+| P0 | Hoàn tất env/secret/CORS/volume, backup/restore binary và bản ngoài máy, smoke nghiệp vụ có ghi trên môi trường được phép. Schema PostgreSQL đã nâng 18/10, dữ liệu public đã restore thử; phạm vi tại worklog và 22/23. |
 | P1 | Nghiệm thu các luồng frontend mới trên hosting và thiết bị thật sau nâng schema; kiểm camera/GPS, responsive và các role còn lại. Code UI/bằng chứng cô lập xem worklog. |
 | P1 | Phạm vi Manager toàn bộ module; chính sách biên/ca qua đêm, ngày nghỉ/lễ và phép qua năm; đối soát dữ liệu cũ. |
 | P1 | RPO/RTO/on-call/retention/cấp phép định kỳ và cảnh báo job; chỉ triển khai sau quyết định cần thiết. |

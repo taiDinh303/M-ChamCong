@@ -85,6 +85,10 @@ public sealed class ProviderDatabaseTests
             var policyUpgrade = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Sql", "20261017-workforce-policies.sql"));
             await db.Database.ExecuteSqlRawAsync(policyUpgrade);
             await db.Database.ExecuteSqlRawAsync(policyUpgrade);
+            await db.Database.ExecuteSqlRawAsync("DROP INDEX \"UX_AttendanceRules_Active\", \"UX_Attendances_Employee_Date\"");
+            var integrityUpgrade = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Sql", "20261017171012_attendance_integrity.sql"));
+            await db.Database.ExecuteSqlRawAsync(integrityUpgrade);
+            await db.Database.ExecuteSqlRawAsync(integrityUpgrade);
             Assert.Equal(3, await db.Database.SqlQueryRaw<int>("SELECT count(*)::int AS \"Value\" FROM pg_class WHERE relname IN ('AttendancePeriods','AttendancePeriodSnapshots','AttendancePeriodEvents') AND relrowsecurity").SingleAsync());
         }
         var employee = new Employee { EmployeeCode = "VERIFY", GivenName = "Nhân viên", FamilyName = "Thử nghiệm" };

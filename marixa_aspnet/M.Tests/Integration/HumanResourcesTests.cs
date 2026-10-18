@@ -40,6 +40,7 @@ public sealed class HumanResourcesTests
         using var scope = app.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
         Assert.Single(await db.EmployeeReportVersions.ToListAsync());
+        Assert.InRange((await db.EmployeeReports.SingleAsync()).ReportCode.Length, 1, 30);
         Assert.Equal(EmployeeReportStatus.PendingManager, (await db.EmployeeReports.SingleAsync()).Status);
         Assert.Equal(app.Clock.GetUtcNow().UtcDateTime, (await db.EmployeeReports.SingleAsync()).SubmittedAt);
     }

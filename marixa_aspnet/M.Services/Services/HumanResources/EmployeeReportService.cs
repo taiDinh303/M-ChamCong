@@ -85,7 +85,7 @@ public sealed class EmployeeReportService(IPrivateDocumentStorage storage, IUnit
         var now = UtcNow.UtcDateTime;
         if (report == null)
         {
-            report = new EmployeeReport { ReportCode = $"BC-{period:yyyy}-{Guid.NewGuid():N}", EmployeeId = employeeId };
+            report = new EmployeeReport { ReportCode = $"BC-{period:yyyyMM}-{Guid.NewGuid():N}"[..30], EmployeeId = employeeId };
             Repository<EmployeeReport>().Insert(report);
         }
         else

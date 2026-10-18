@@ -1,20 +1,14 @@
 import "./hr-hero.css";
+import PageHeading from "../../components/layout/PageHeading";
 
-// Hero banner dùng chung cho các trang quản trị nhân sự (phong cách block-accounts):
-// - Nền tối gradient, icon + tiêu đề + mô tả bên trái.
-// - Dải KPI chip bên phải (đổi tone: blue/green/red/gray/warn/ok).
+// Promote the page heading into the shared header; keep KPIs in the content.
 const HrHero = ({ ico, title, sub, kpis }) => {
     return (
-        <div className="hr-hero">
-            <div className="hr-hero-left">
-                {ico && <span className="hr-hero-ico" aria-hidden="true">{ico}</span>}
-                <div>
-                    {title && <h2>{title}</h2>}
-                    {sub && <p>{sub}</p>}
-                </div>
-            </div>
+        <>
+            {title && <PageHeading icon={ico} title={title} description={sub} />}
             {kpis && kpis.length > 0 && (
-                <div className="hr-kpi-row" role="list">
+                <div className="hr-hero">
+                    <div className="hr-kpi-row" role="list">
                     {kpis.map((k, i) => (
                         <div
                             key={k.label + i}
@@ -29,9 +23,10 @@ const HrHero = ({ ico, title, sub, kpis }) => {
                             </div>
                         </div>
                     ))}
+                    </div>
                 </div>
             )}
-        </div>
+        </>
     );
 };
 

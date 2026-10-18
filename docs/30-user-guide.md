@@ -30,4 +30,10 @@ Promotion/handover Approved có thể chưa AppliedAt. Promotion áp từ ngày 
 
 Gửi thời điểm, màn hình/thao tác, mã lỗi và X-Correlation-ID; không gửi credential hoặc hồ sơ thật vào kênh công khai. 403 là quyền; 409 cần đọc trạng thái/lịch sử; 429 đợi Retry-After. API gốc `/` trả 404 là fallback bình thường; Swagger ở `/swagger`, giao diện React có hosting riêng. PDF là bản xuất dữ liệu, không phải chữ ký số.
 
-Lỗi 500 thiếu bảng/cột do schema phải xử lý theo [21](21-operations-runbook.md) và [23](23-data-migration.md). Trong đợt này chủ dự án tự chạy SQL live; kết quả trên LocalDB không chứng minh database thật đã được nâng.
+Lỗi 500 thiếu bảng/cột do schema phải xử lý theo [21](21-operations-runbook.md) và [23](23-data-migration.md). Schema live đã được nâng ngày 18/10 theo quyền mới của chủ dự án; bằng chứng ở worklog. Không suy trạng thái DB từ kết quả build/LocalDB.
+
+## 4. Điều hướng và dữ liệu DEMO
+
+Trên điện thoại, nút menu cạnh logo mở danh sách từ trái; chọn trang sẽ đóng menu. Có thể đóng bằng nút ×, chạm nền ngoài hoặc Escape. Tiêu đề/mô tả nằm dưới hàng logo, không cần kéo ngang menu để tìm trang. Trên máy tính tiêu đề ở header, sidebar ở bên trái; các ô thống kê giữ trong trang. Home không còn nhãn ngày.
+
+Bộ dữ liệu DEMO và các bước thử nghiệp vụ được mô tả tại [hướng dẫn dữ liệu test](../marixa_aspnet/tools/Marixa.Demo/README.md). Chỉ thao tác trên nhân viên/mã hồ sơ có nhãn DEMO khi thử duyệt, sửa, hủy hoặc bàn giao; không dùng tài khoản DEMO với dữ liệu thật.

@@ -30,21 +30,6 @@ const HomePage = () => {
         []
     );
 
-    const today = useMemo(() => {
-        const now = new Date();
-        const dateStr = new Intl.DateTimeFormat("vi-VN", {
-            weekday: "long",
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            timeZone: "Asia/Ho_Chi_Minh",
-        }).format(now);
-        return {
-            date: dateStr,
-            time: now.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" }),
-        };
-    }, []);
-
     return (
         <div className="home-shell">
             <Header minimal navItems={NAV_ITEMS} />
@@ -62,11 +47,6 @@ const HomePage = () => {
                             </Link>
                             {canAccessModule("/admin") && <Link className="home-cta--ghost" to="/admin">Xem dashboard</Link>}
                         </div>
-                    </div>
-
-                    {/* Date pill — bottom-right corner of hero */}
-                    <div className="home-hero__greet">
-                        <span>{today.date}</span>
                     </div>
 
                     <div className="home-hero__art" aria-hidden="true">

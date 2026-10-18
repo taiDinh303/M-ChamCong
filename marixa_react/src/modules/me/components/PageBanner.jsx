@@ -1,7 +1,7 @@
 import "./page-banner.css";
 
 // Banner trang kiểu "block-accounts": nền tối gradient + icon + dải KPI.
-// Không có tiêu đề (sidebar đã hiện tiêu đề trang).
+// Tiêu đề trang do header chung hiển thị; banner giữ icon/KPI/thao tác.
 // props:
 //   icon  : ký tự/emoji nhận diện trang
 //   kpis  : array { icon, label, value, tone: blue|green|red|gray|gold }

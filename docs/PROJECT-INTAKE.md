@@ -1,14 +1,18 @@
 # Hồ sơ tiếp nhận và phạm vi Marixa
 
-> Chủ dự án: Đinh Văn Tài. Cập nhật 2026-10-17. Trạng thái REVIEW; ghi nhận nhiệm vụ trong cuộc trò chuyện, không tự chứng nhận sản phẩm.
+> Chủ dự án: Đinh Văn Tài. Cập nhật 2026-10-18. Trạng thái REVIEW; ghi nhận nhiệm vụ trong cuộc trò chuyện, không tự chứng nhận sản phẩm.
 
 ## 1. Dự án và nhiệm vụ
 
-Web quản lý nhân sự/chấm công tiếng Việt, quy mô đã ghi nhận dưới 15 người. Repo taiDinh 303/M-ChamCong, checkout D:/My Project/marixa_aspnet_react; backend marixa_aspnet, baseline backend đã merge main `2555a25`; đợt frontend tiếp theo trên codex/frontend-api-alignment. Stack bắt buộc ASP.NET 8/Identity JWT/EF, React/Vite, SQL Server local/PostgreSQL cloud, ảnh Supabase Storage public. Múi giờ nghiệp vụ VN UTC+7, instant lưu UTC.
+Web quản lý nhân sự/chấm công tiếng Việt, quy mô đã ghi nhận dưới 15 người. Repo taiDinh 303/M-ChamCong, checkout D:/My Project/marixa_aspnet_react; backend marixa_aspnet và frontend marixa_react đã merge main `bf11d5c`. Đợt nâng schema tiếp theo trên codex/supabase-schema-audit. Stack bắt buộc ASP.NET 8/Identity JWT/EF, React/Vite, SQL Server local/PostgreSQL cloud, ảnh Supabase Storage public. Múi giờ nghiệp vụ VN UTC+7, instant lưu UTC.
 
 Nhiệm vụ 2026-10-17: tham khảo docs_mau, bổ sung tài liệu phù hợp, hoàn thiện backend theo yêu cầu có đủ đặc tả, build/test, chấm nghiêm khắc, sửa lỗi và push. Không bao gồm sửa Figma, xây native app, mua dịch vụ, chuyển Auth hoặc ghi database production. Phần tiếp theo do chủ dự án giao: hoàn thiện React khớp API, giữ giao diện và phỏng vấn trước khi thêm luồng. Chủ dự án chọn tự chạy hai SQL live; agent chỉ đọc metadata để chẩn đoán.
 
+Bổ sung 18/10/2026: sau khi chẩn đoán thiếu schema, chủ dự án xác nhận **“Đồng ý, bạn sao lưu và cập nhật”** cho marixa001: ba bảng kỳ công, năm cột, kiểu ActualHours và ba unique index. Quyền này thay lựa chọn tự chạy SQL của bước trước, chỉ cho phép nâng schema cần thiết, bảo toàn dữ liệu và kiểm tra lại API. Đã sao lưu/restore thử, áp migration và đối chiếu dữ liệu; bằng chứng hiện hành ở worklog. Không tự suy quyền ghi/xóa dữ liệu nghiệp vụ để kiểm thử live.
+
 ## 2. Áp dụng bộ mẫu
+
+Nhiệm vụ tiếp 18/10: chủ dự án yêu cầu dữ liệu giả thực tế để test, xác nhận **“Thêm vào Supabase hiện tại để test trên web”**. Phạm vi: thêm bộ DEMO có nhãn, giữ hồ sơ cũ; không tạo giả token/claim/đăng nhập ngoài/lịch sử migration chỉ để lấp bảng. Cho phép bổ sung tài khoản nhân viên DEMO; không mở thêm quyền HR/Admin. Đồng thời bỏ ngày Home, đưa tiêu đề lên header desktop/xuống dưới hàng logo mobile và thay sidebar ngang bằng nút mở menu. Không suy quyền đổi gói/volume hoặc tự merge/deploy từ quyền thêm dữ liệu.
 
 | File/nhóm mẫu | Áp dụng | Phạm vi/lý do |
 | --- | --- | --- |
@@ -43,6 +47,8 @@ YES là áp dụng tài liệu, không xác nhận chức năng đã hoàn thàn
 | REQ-UI-03 | Kỳ công/version/XLSX trong Thống kê; PDF và hủy/hoàn phép trong Nghỉ phép. | Chủ dự án đồng ý 17/10. |
 | REQ-UI-04 | Admin chỉnh rule; HR/Admin cấp/điều chỉnh phép có reason/history, chưa auto accrual. | Hộp thoại trong trang cũ, chủ dự án đồng ý. |
 | REQ-UI-05 | Session/route/own API/phân trang đúng; test/lint/build và kiểm browser cô lập. | API vẫn enforce quyền. |
+| REQ-UI-06 | Bỏ ngày Home; tiêu đề trong header desktop/dưới hàng logo mobile; nút menu cạnh logo, bỏ sidebar ngang. | Chủ dự án yêu cầu 18/10; shell dùng chung. |
+| REQ-DEMO-01 | Dữ liệu nghiệp vụ giả có nhãn trên Supabase hiện tại; giữ hồ sơ cũ, tài khoản chỉ Employee, không fake dữ liệu bảo mật. | Chủ dự án xác nhận 18/10; seed/kiểm chứng ở worklog. |
 | REQ-DOC-01 | Không placeholder mẫu còn sót; links/source/trạng thái/bằng chứng và rubric điểm rõ. | docs và backend guide. |
 
 ## 4. Điều còn thiếu thông tin
