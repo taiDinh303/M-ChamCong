@@ -950,6 +950,7 @@
     cursor: pointer;
 }
 
+.hr-refresh-status { margin: 0 0 12px; color: var(--th-text-2); font-size: 13px; line-height: 1.6; }
 .hr-import-summary { margin: 16px 0; color: #38506a; }
 .hr-import-report-table-wrap { min-height: 0; overflow: auto; border: 1px solid #e3eaf1; border-radius: 8px; }
 .hr-import-report-table { width: 100%; border-collapse: collapse; font-size: 13px; }

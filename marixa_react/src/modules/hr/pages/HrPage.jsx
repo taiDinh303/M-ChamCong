@@ -1,10 +1,11 @@
 import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import useMobile from "../../../components/common/useMobile";
-import { Fragment, useState, useMemo } from "react";
+import { Fragment, useState, useMemo, useEffect } from "react";
 
 import HrAppLayout from "../layout/HrAppLayout";
 import employeeApi from "../api/employeeApi";
 import { useHrData } from "../hooks/useHrData";
+import useHrVerification from "../hooks/useHrVerification";
 import { HR_QUICK_FILTERS, useHrFilters } from "../hooks/useHrFilters";
 import HrFilterBar from "../components/HrFilterBar";
 import HrHero from "../HrHero";
@@ -39,7 +40,9 @@ const formatMoney = (value) => value != null && value !== "" ? `${Number(value).
 
 const HrPage = () => {
     const mobile = useMobile();
-    const data = useHrData();
+    const directory = useHrData();
+    const verification = useHrVerification();
+    const data = { ...directory, activationCodes: verification.rows };
     const { filters, setters, filtered, hasActiveFilter, quickFilter } = useHrFilters([...data.employees, ...data.archivedEmployees], data);
     const [page, setPage] = useState(1);
     const [selected, setSelected] = useState(() => new Set());
@@ -50,6 +53,13 @@ const HrPage = () => {
     const { language } = useLanguage();
     const L = (text) => translate(text, language);
     activeLocale = localeForLanguage(language);
+
+    const loadVerification = verification.load;
+    useEffect(() => {
+        if (quickFilter === "verification") loadVerification();
+    }, [quickFilter, loadVerification, directory.version]);
+    const verificationPending = quickFilter === "verification" && !verification.ready && !verification.error;
+    const verificationError = quickFilter === "verification" && verification.error;
 
     const relatedFor = (employeeId) => {
         const newest = (items, dateKey) => items
@@ -397,10 +407,14 @@ const HrPage = () => {
 
     return (
         <HrAppLayout>
-            {data.error && <div className="att-error">{data.error}</div>}
-            {data.loading && <div className="att-loading">{L("Đang tải...")}</div>}
+            {data.error && <div className="att-error" role="alert">{data.error}
+                {data.ready && <p>Đang hiển thị lần tải trước; chưa cập nhật được danh sách.</p>}
+                <button type="button" className="hr-mini-btn" onClick={data.reload}>Thử lại</button>
+            </div>}
+            {data.loading && <div className="att-loading" role="status">{L("Đang tải...")}</div>}
+            {data.refreshing && <p className="hr-refresh-status" role="status">Đang cập nhật danh sách…</p>}
 
-                {!data.loading && !data.error && (
+                {data.ready && (
                     <div className="hr-body">
                         <HrHero
                             ico="👥"
@@ -431,6 +445,8 @@ const HrPage = () => {
                             onImportFile={onImportFile}
                             onExport={onExport}
                             onTemplate={onTemplate}
+                            onRefresh={data.reload}
+                            refreshing={data.refreshing}
                             showActions
                         />
 
@@ -452,7 +468,11 @@ const HrPage = () => {
                             ))}
                         </div>}
 
-                        <HrEmployeeTable
+                        {verificationPending && <p className="hr-refresh-status" role="status">Đang kiểm tra trạng thái xác minh…</p>}
+                        {verificationError && <div className="att-error" role="alert">{verificationError}
+                            <button type="button" className="hr-mini-btn" onClick={loadVerification}>Thử lại</button>
+                        </div>}
+                        {!verificationPending && !verificationError && <><HrEmployeeTable
                             employees={slice}
                             selected={selected}
                             onToggle={toggle}
@@ -479,7 +499,7 @@ const HrPage = () => {
                                 setPage((p) => Math.min(pageCount, p + 1))
                             }
                             onPage={setPage}
-                        />
+                        /></>}
 
                         {showForm && (
                             <HrAddForm

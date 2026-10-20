@@ -1,11 +1,17 @@
+import { HR_DIRECTORY } from "../../modules/hr/api/directoryData.js";
+
 export function workspacePlan(auth, today = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Ho_Chi_Minh" })) {
     if (!auth?.token) return [];
     const tasks = [];
-    const get = (url, paginated = false) => tasks.push({ url, paginated });
+    const seen = new Set();
+    const get = (url, paginated = false) => {
+        if (!seen.has(url)) { tasks.push({ url, paginated }); seen.add(url); }
+    };
     const roles = auth.roles || [];
     const admin = roles.includes("Admin");
     const staff = admin || roles.some((role) => ["HR", "Manager"].includes(role));
     const employee = encodeURIComponent(auth.employeeId || "");
+    if (staff) for (const [, url] of HR_DIRECTORY) get(url, true);
     if (auth.userId && auth.employeeId) get(`/Employee/get-by-user/${encodeURIComponent(auth.userId)}`);
     get("/AttendanceRulePublic/active");
     get("/LeaveType/get-all", true);

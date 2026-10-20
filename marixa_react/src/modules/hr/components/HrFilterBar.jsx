@@ -11,6 +11,8 @@ const HrFilterBar = ({
     onImportFile,
     onExport,
     onTemplate,
+    onRefresh,
+    refreshing = false,
     showActions = true,
 }) => {
     const fileRef = useRef(null);
@@ -101,6 +103,10 @@ const HrFilterBar = ({
                         </button>
                         {open && (
                             <div className="hr-dropdown-menu" role="menu">
+                                {onRefresh && <button type="button" role="menuitem" disabled={refreshing}
+                                    onClick={() => runAction(onRefresh)}>
+                                    <span aria-hidden="true">⟳</span> Làm mới dữ liệu
+                                </button>}
                                 <button
                                     type="button"
                                     role="menuitem"

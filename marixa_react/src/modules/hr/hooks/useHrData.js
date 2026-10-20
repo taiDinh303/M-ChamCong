@@ -1,71 +1,47 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import employeeApi from "../api/employeeApi";
-import { itemsOf, apiErrorMessage } from "../../../services/api/contracts";
+import { getAllPages, getCachedPages } from "../../../services/api/lists";
+import { apiErrorMessage } from "../../../services/api/contracts";
+import { getAuth } from "../../../services/auth/auth";
+import { responseCache, sessionScope } from "../../../services/api/responseCache.js";
+import { emptyDirectory, peekDirectory, loadDirectory, isDirectoryRequest } from "../api/directoryData.js";
 
-const items = (r) =>
-    r?.status === "fulfilled" ? itemsOf(r.value) : [];
-
-// Kéo dữ liệu HR (không còn logs chấm công - đã bỏ KPI chấm công).
 export const useHrData = () => {
-    const [data, setData] = useState({
-        employees: [],
-        archivedEmployees: [],
-        contracts: [],
-        departments: [],
-        positions: [],
-        salaries: [],
-        insurance: [],
-        bankAccounts: [],
-        activationCodes: [],
-        users: [],
+    const scope = sessionScope(getAuth());
+    const [state, setState] = useState(() => {
+        const cached = peekDirectory(getCachedPages);
+        return { scope, data: cached || emptyDirectory(), ready: Boolean(cached), pending: !cached, error: "", version: 0 };
     });
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
     const request = useRef(0);
-
-    const load = useCallback(async () => {
+    const load = useCallback(async ({ force = false } = {}) => {
         const current = ++request.current;
-        setLoading(true);
-        setError("");
-        try {
-            const r = await Promise.allSettled([
-                employeeApi.employees(),
-                employeeApi.archivedEmployees(),
-                employeeApi.contracts(),
-                employeeApi.departments(),
-                employeeApi.positions(),
-                employeeApi.salaries(),
-                employeeApi.insurance(),
-                employeeApi.bankAccounts(),
-                employeeApi.activationCodes(),
-                employeeApi.users(),
-            ]);
-            if (current !== request.current) return;
-            const failure = r.find((result) => result.status === "rejected");
-            if (failure) throw failure.reason;
-            setData({
-                employees: items(r[0]),
-                archivedEmployees: items(r[1]).map((employee) => ({ ...employee, status: 4, isArchived: true })),
-                contracts: items(r[2]),
-                departments: items(r[3]),
-                positions: items(r[4]),
-                salaries: items(r[5]),
-                insurance: items(r[6]),
-                bankAccounts: items(r[7]),
-                activationCodes: items(r[8]),
-                users: items(r[9]),
-            });
-        } catch (e) {
-            if (current === request.current) setError(apiErrorMessage(e));
-        } finally {
-            if (current === request.current) setLoading(false);
+        if (force) responseCache.invalidateWhere(isDirectoryRequest);
+        const cached = peekDirectory(getCachedPages);
+        if (cached) {
+            setState({ scope, data: cached, ready: true, pending: false, error: "", version: current });
+            return;
         }
-    }, []);
-
+        setState((previous) => ({ ...previous, scope, error: "", pending: true,
+            ready: previous.scope === scope && previous.ready,
+            data: previous.scope === scope ? previous.data : emptyDirectory() }));
+        try {
+            const data = await loadDirectory(getAllPages);
+            if (current === request.current && scope === sessionScope(getAuth()))
+                setState({ scope, data, ready: true, pending: false, error: "", version: current });
+        } catch (error) {
+            if (current !== request.current || scope !== sessionScope(getAuth())) return;
+            const denied = [401, 403].includes(error.response?.status);
+            setState((previous) => ({ ...previous, pending: false, error: apiErrorMessage(error),
+                ...(denied ? { ready: false, data: emptyDirectory() } : {}) }));
+        }
+    }, [scope]);
+    const reload = useCallback(() => load({ force: true }), [load]);
     useEffect(() => {
         load();
         return () => { request.current += 1; };
     }, [load]);
-
-    return { ...data, loading, error, reload: load };
+    const sameSession = state.scope === scope;
+    const ready = sameSession && state.ready;
+    return { ...(sameSession ? state.data : emptyDirectory()), ready, reload,
+        loading: !ready && (!sameSession || state.pending), refreshing: ready && state.pending,
+        error: sameSession ? state.error : "", version: sameSession ? state.version : 0 };
 };

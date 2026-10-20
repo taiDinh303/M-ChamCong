@@ -25,6 +25,27 @@ export async function collectPages(request, pageSize = 200) {
     throw new Error("Danh sách quá lớn. Cần thu hẹp bộ lọc trên máy chủ.");
 }
 
+// Return a complete fresh list synchronously, or a cache miss. Never show a
+// partial directory as complete when a later server page has not been cached.
+export function peekPages(readPage, pageSize = 200) {
+    const items = [];
+    for (let page = 1; page <= 1000; page++) {
+        const response = readPage(page, pageSize);
+        if (!response) return null;
+        const value = dataOf(response);
+        if (Array.isArray(value)) return response;
+        if (!Array.isArray(value?.items)) return null;
+        items.push(...value.items);
+        const totalPages = Number(value.totalPages);
+        if (value.hasNextPage === false || (Number.isFinite(totalPages) && totalPages >= 0 && page >= totalPages)
+            || (!Number.isFinite(totalPages) && value.items.length < pageSize)) {
+            return { ...response, data: { ...response.data, data: { ...value, items, totalItems: items.length } } };
+        }
+        if (value.items.length === 0) return null;
+    }
+    return null;
+}
+
 export function apiErrorMessage(error, fallback = "Không thể thực hiện yêu cầu. Vui lòng thử lại.") {
     const body = error?.response?.data;
     if (typeof body?.message === "string" && body.message) return body.message;
