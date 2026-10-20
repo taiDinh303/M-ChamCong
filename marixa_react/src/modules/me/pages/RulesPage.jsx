@@ -121,7 +121,7 @@ const AttendanceRulesPage = () => {
                 </div>
 
                 <footer className="rule-foot">
-                    {auth?.roles?.includes("Admin") && <button type="button" className="wf-btn" onClick={() => setEditing(r)}>Chỉnh quy định</button>}
+                    {auth?.roles?.includes("Admin") && <button type="button" className="me-action" onClick={() => setEditing(r)}>Chỉnh quy định</button>}
                     <span className="rule-code">{r.code}</span>
                     <small>Tạo ngày {new Date(r.createdTime).toLocaleDateString("vi-VN")}</small>
                 </footer>

@@ -104,6 +104,8 @@ Thống kê dùng sáu chỉ số một lần, lưới ba cột desktop/hai cộ
 
 Hợp đồng/lương/bảo hiểm/ngân hàng dùng [EntityDetailPage](../marixa_react/src/modules/me/components/EntityDetailPage.jsx) dạng hồ sơ có nhãn/giá trị, hai cột desktop/một cột mobile và thông tin liên hệ Nhân sự khi cần đối chiếu. Không ẩn trường của hồ sơ để vừa màn hình. Thăng chức cá nhân chỉ có một dải KPI. Báo cáo/nghỉ phép dùng [PersonalDialog](../marixa_react/src/modules/me/components/PersonalDialog.jsx) với native dialog, Escape, focus và chặn đóng khi đang gửi. Loading/lỗi/rỗng tiếp tục phân biệt; bản ghi DEMO phải được trả qua API, không chèn fallback mẫu vào UI.
 
+Quy định dùng thẻ rộng toàn vùng nội dung, không giữ ô trống bên cạnh khi chỉ có một quy định active. Tám thông tin chia bốn cột từ1200px, hai cột ở kích thước vừa và một cột từ480px trở xuống; giờ nghỉ không chiếm riêng một hàng trên desktop. Nhãn hiệu lực và nút Chỉnh quy định không bị ép xuống dòng; mã/ngày tạo ở cuối thẻ, nút Admin đủ rộng trên điện thoại. Giữ nguyên API, dữ liệu và quyền chỉnh sửa.
+
 **Dữ liệu và giới hạn:** `demo.binh`/`demo.chi` đã có bộ nghiệp vụ trên Supabase Marixa; mã/tên có DEMO, thông tin định danh bảo hiểm/thuế có thể để trống có chủ đích. Dùng tài khoản DEMO riêng để xem đủ trang, không thêm dữ liệu giả vào hồ sơ Admin thật. Kết quả browser cô lập và API đọc live được ghi riêng ở [worklog](worklog.md); không coi bản sửa source/push main là đã triển khai production hoặc kiểm thử thiết bị thật.
 
 ## 8. Đăng nhập, tải trước và mất kết nối — CURRENT20/10

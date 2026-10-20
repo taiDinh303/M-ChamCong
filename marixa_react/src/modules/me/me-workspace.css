@@ -86,6 +86,26 @@
 .app-shell--me .leave-pagination { margin: 16px 0 0; }
 .app-shell--me .rule-desc { display: none; } /* Description already appears in the rule header. */
 .app-shell--me .rule-head p { white-space: normal; line-height: 1.7; }
+.app-shell--me .rules-grid { grid-template-columns: minmax(0, 1fr); }
+.app-shell--me .rule-card { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.app-shell--me .rule-head { align-items: flex-start; gap: 16px; }
+.app-shell--me .rule-head-left { align-items: flex-start; flex: 1; }
+.app-shell--me .rule-head-left > div { min-width: 0; overflow-wrap: anywhere; }
+.app-shell--me .rule-head > .att-badge { flex-shrink: 0; white-space: nowrap; font-style: normal; }
+.app-shell--me .rule-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.app-shell--me .rule-tile { min-width: 0; padding: 14px 16px; gap: 8px; }
+.app-shell--me .rule-tile--break { grid-column: auto; }
+.app-shell--me .rule-foot { flex-direction: row; flex-wrap: wrap; gap: 12px; padding-top: 16px; }
+.app-shell--me .rule-foot .me-action { margin-right: auto; white-space: nowrap; }
+.app-shell--me .rule-code { max-width: 100%; overflow-wrap: anywhere; }
+.app-shell--me .rule-foot small { margin-left: auto; }
+@media (min-width: 1200px) {
+    .app-shell--me .rule-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+    .app-shell--me .rule-grid { grid-template-columns: minmax(0, 1fr); }
+    .app-shell--me .rule-foot .me-action { width: 100%; }
+}
 .app-shell--me .my-report-row { gap: 16px; padding: 18px 0; align-items: center; }
 .app-shell--me .my-report-info { min-width: 0; }
 .app-shell--me .my-report-info strong { font-size: 15px; line-height: 1.6; white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }

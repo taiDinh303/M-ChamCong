@@ -107,6 +107,12 @@
 
 ## 4. Log sự kiện (mới trên cùng)
 
+### 20/10/2026 — Codex: dàn ngang trang Quy định trên desktop
+
+- Theo yêu cầu tiếp của chủ dự án, sửa trình bày `/me/attendance-rules` thuộc REQ-UI-07/TC-UI-11. Thẻ chiếm trọn vùng nội dung thay vì một ô trong lưới auto-fill; tám thông tin chia4cột từ1200px,2cột ở kích thước vừa,1cột từ480px trở xuống. Bỏ span toàn hàng của giờ nghỉ trong bố cục mới; header/trạng thái/footer cân đối, nút Admin dùng me-action đủ rộng. Chỉ sửa CSS/nhãn class, giữ API/quyền/dữ liệu và hộp thoại hiện có.
+- Browser với API/SQLite riêng: desktop1440 thẻ1137px bằng content1137px,4cột~265px;1024 hai cột~334px.375 một cột302px, nút302×44px;320 một cột247px, không tràn ngang toàn trang. Đã mở/đóng hộp thoại Admin, không lưu thay đổi. Ảnh tại artifacts/rules-layout-20261020 (Gitignored); không gọi/ghi DB hoặc Storage thật, chưa kiểm thiết bị vật lý.
+- Lint max-warnings0 PASS; Vite build843modules PASS, cảnh báo chunk lớn cũ còn. Không viết test mô phỏng CSS hoặc chạy lại backend/provider suite cho thay đổi trình bày này; bằng chứng responsive lấy từ browser. Tài liệu UI09 cập nhật cùng source; push không tự chứng nhận hosting đã triển khai.
+
 ### 20/10/2026 — Codex: sửa probe gây kẹt kết nối vì401
 
 - **Lỗi do bản preload trước:** probe không token gọi `/api/AttendanceRulePublic/active`, nhưng controller có `[Authorize]`. Máy chủ chạy vẫn trả401 nên RequireSession dừng ở màn hình kết nối. Kiểm live chỉ đọc: endpoint quy định401 (~1,40giây), `/health/live`200 (~0,37giây); đây không phải phép đo Render cold start.
