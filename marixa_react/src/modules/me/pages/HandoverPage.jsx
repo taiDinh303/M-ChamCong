@@ -1,3 +1,4 @@
+import { refreshData } from "../../../services/api/responseCache.js";
 import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useCallback, useEffect, useState } from "react";
 import axiosClient from "../../../services/api/axiosClient";
@@ -594,9 +595,9 @@ export default function HandoverPage({ reviewMode = false, admin = false }) {
             <section className="hv-panel">
                 <div className="hv-list-head">
                     <h2>{isReview ? "Yêu cầu bàn giao cần xử lý" : "Lịch sử yêu cầu của tôi"}</h2>
-                    <button type="button" className="hv-btn hv-btn--ghost" onClick={load} disabled={loading}>↻ Làm mới</button>
+                    <button type="button" className="hv-btn hv-btn--ghost" onClick={refreshData(load)} disabled={loading}>↻ Làm mới</button>
                 </div>
-                {loading ? (
+                {loading && rows.length === 0 ? (
                     <div className="hv-empty">Đang tải...</div>
                 ) : rows.length === 0 ? (
                     <div className="hv-empty">

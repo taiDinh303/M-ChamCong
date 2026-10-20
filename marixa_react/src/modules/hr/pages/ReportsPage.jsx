@@ -1,3 +1,4 @@
+import { refreshData } from "../../../services/api/responseCache.js";
 import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import HrAppLayout from "../layout/HrAppLayout";
@@ -164,9 +165,10 @@ export default function ReportsPage({ admin = false } = {}) {
             }
             if (reloadAfterAction) {
                 const messages = { forward: "Đã duyệt và gửi báo cáo lên cấp trên.", revision: "Đã gửi yêu cầu chỉnh sửa cho nhân viên.", reject: "Đã từ chối báo cáo." };
-                sessionStorage.setItem(ACTION_SUCCESS_KEY, messages[dialog]);
+                setSuccess(messages[dialog]);
                 if (dialog === "forward") sessionStorage.setItem(SCROLL_TO_OUTBOUND_KEY, "1");
-                window.location.reload();
+                await load();
+                setSelected(null); setDialog("");
                 return;
             }
             await load();
@@ -202,7 +204,7 @@ export default function ReportsPage({ admin = false } = {}) {
                 <label>{L("Loại báo cáo")}<select className="hr-select" value={filters.reportType} onChange={(e) => filter("reportType", e.target.value)}><option value="">{L("Tất cả loại báo cáo")}</option>{[...new Set(reports.map((r) => r.reportType).filter(Boolean))].map((type) => <option key={type}>{type}</option>)}</select></label>
                 <label>{L("Trạng thái")}<select className="hr-select" value={filters.status} onChange={(e) => filter("status", e.target.value)}><option value="">{L("Tất cả trạng thái")}</option>{Object.entries(STATUS).map(([value, [label]]) => <option key={value} value={value}>{label}</option>)}</select></label>
                 <label>{L("Deadline")}<select className="hr-select" value={filters.overdue} onChange={(e) => filter("overdue", e.target.value)}><option value="">{L("Mọi hạn nộp")}</option><option value="true">{L("Quá hạn")}</option><option value="false">{L("Chưa quá hạn")}</option></select></label>
-                <button className="hr-file-filter-button" onClick={load}>⌕</button>
+                <button className="hr-file-filter-button" onClick={refreshData(load)}>⌕</button>
             </div>
             {loading ? <div className="att-loading">{L("Đang tải báo cáo file…")}</div> : <>
                 <ReportSection title={L("📥 1. Báo cáo cấp dưới gửi đến tôi")}>

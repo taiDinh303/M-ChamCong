@@ -1,6 +1,6 @@
 # 25 — Hiệu năng và dung lượng
 
-> Cập nhật 2026-10-17. Quy mô dưới 15 người theo hồ sơ; chưa có load test/SLO đã đo hoặc ngân sách được chốt.
+> Cập nhật 2026-10-20. Quy mô dưới 15 người theo hồ sơ; chưa có load test/SLO đã đo hoặc ngân sách được chốt. Đo request trong fixture không thay load test hoặc đo cold start hosting.
 
 Giữ monolith/layered .NET phù hợp phạm vi hiện tại. Không bổ sung Redis, broker, CQRS hoặc microservices để tăng số lớp. Pagination cap 200; đọc danh sách công gom rule và OT theo batch. Index công-ngày, active rule, period/version và leave ledger bảo vệ truy vấn/race. EF IQueryable vẫn cần xem SQL khi thêm report lớn.
 
@@ -15,3 +15,13 @@ Giữ monolith/layered .NET phù hợp phạm vi hiện tại. Không bổ sung 
 Bài đo đề xuất: dữ liệu giả 30 ngày,15 NV, checkin đồng thời giờ vào, approve/cancel/lock cùng lúc, tải export và upload 5 MiB; ghi máy/provider/version/seed/command, p50/p95/errors/peakRAM. Chưa tự chọn ngưỡng thành cam kết. Không load test production hoặc gọi Storage live để tạo chi phí khi chưa thuộc nhiệm vụ.
 
 Ưu tiên tối ưu theo bằng chứng: plan/query/index trước cache; streaming/background export chỉ khi đo thấy cần. Lịch sử theo rule trước khóa không có version; chỉ snapshot giữ bản rule đã chốt. Xem [20](20-observability.md), [34](34-risks-changes.md).
+
+## Bộ đệm và khởi tạo frontend — CURRENT20/10
+
+- [responseCache](../marixa_react/src/services/api/responseCache.js) chỉ giữ JSON trong RAM của tab, không ghi hồ sơ HR vào localStorage/sessionStorage/IndexedDB. Key gồm URI/params đã chuẩn hóa và scope user/employee/roles/token. Fresh5phút; khi request thất bại do kết nối/gateway có thể dùng bản đã tải tuổi tối đa30phút, kèm trạng thái kết nối gián đoạn. Không fallback khi401/403/429/lỗi nghiệp vụ500; không lưu response lỗi. Giới hạn160entry và8MB payloadJSON; response lớn hơn ngưỡng vẫn trả cho caller nhưng không giữ trong bộ đệm.
+- GET trùng đang chạy có thể dùng chung request; clone data khi trả để biểu mẫu không sửa nội dung dùng chung. Logout, hết phiên hoặc chuyển scope xóa bộ đệm. Generation guard ngăn GET bắt đầu trước mutation/logout ghi lại kết quả cũ. Write thành công hoặc lỗi kết nối có kết quả ghi chưa xác định làm mất hiệu lực dữ liệu; ghi sự kiện xem report chỉ invalidates nhóm report. Tín hiệu revision không chứa dữ liệu nghiệp vụ đồng bộ invalidation sang tab khác. Nút Làm mới/Thử lại gọi loader bỏ cache hiện có.
+- [workspacePlan](../marixa_react/src/services/api/prefetchPlan.js) chọn20nhóm Employee,42nhóm HR/Manager,46nhóm Admin khi tài khoản có EmployeeId. Số này là nhóm, không phải số HTTP request cố định vì danh sách có phân trang. Chạy tối đa4nhóm đồng thời, xử lý đủ pagination cap200, budget20giây sau khi máy chủ sẵn sàng. Nhóm chưa tải được sẽ tải khi mở trang; không chặn Home mãi. Tệp/private download/export/snapshot, mã kích hoạt, role assignment và chi tiết/lịch sử từng hồ sơ tải khi cần; không tải toàn bộ DB hoặc mọi tệp ngay lúc login.
+- [connection](../marixa_react/src/services/api/connection.js) dùng GET public AttendanceRulePublic/active để xác nhận API đã trả JSON hợp lệ, probe timeout10giây và khoảng chờ tăng dần tối đa6giây trong budget90giây. Probe đồng thời được gộp; không ping định kỳ giữ hosting thức. GET dữ liệu timeout15giây, chỉ retry1lần sau recovery; request ghi vẫn giữ timeout30giây và không tự retry. UI không có quyền đảm bảo Render luôn thức hoặc cam kết thời gian khởi động.
+- [Render Free](https://render.com/docs/free) mô tả ngủ sau15phút không có inbound traffic và thời gian khởi động khoảng1phút (đối chiếu20/10). Animation không rút ngắn thời gian đó. Kết nối được kiểm lại khi cần hoặc khi trình duyệt báo online; không tạo cron/heartbeat/đổi gói. Không lưu hàng đợi thao tác offline.
+
+**Bằng chứng:** Node tests kiểm cache/recovery/prefetch; browser+API/SQLite fixture đếm0request mới khi đi11trang Me và về Home sau preload. Statistics vẫn đọc snapshot riêng theo quyền, đúng chủ đích không cache. Kết quả ghi, chuyển user và giả lập503 ghi ở worklog. Không coi con số0request là benchmark độ trễ hoặc chứng minh mọi trang, mọi bộ lọc và mọi thiết bị luôn tức thời.

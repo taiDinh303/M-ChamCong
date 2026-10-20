@@ -1,0 +1,26 @@
+.mx-connection-screen { min-height: 100dvh; display: grid; place-items: center; padding: 24px; background: #f4f7fc; color: var(--th-text); }
+.login-connection-layer { position: fixed; inset: 0; margin: 0; width: 100%; max-width: none; height: 100dvh; max-height: none; border: 0; padding: 0; overflow-y: auto; }
+.mx-connection-card { width: min(100%, 460px); text-align: center; padding: 36px 28px; border: 1px solid var(--th-border); border-radius: 24px; background: var(--th-surface); box-shadow: 0 16px 60px #1733590b; }
+.mx-connection-card h2 { margin: 12px 0; font-size: 22px; line-height: 1.5; }
+.mx-connection-card p { font-size: 13px; line-height: 1.8; color: var(--th-text-2); }
+.mx-connection-card .mx-connection-brand { font-size: 12px; font-weight: 750; letter-spacing: .16em; color: var(--th-primary); margin-top: 24px; }
+.mx-connection-orbit { width: 88px; height: 88px; margin: 0 auto; position: relative; display: grid; place-items: center; }
+.mx-connection-orbit span { width: 54px; height: 54px; display: grid; place-items: center; background: var(--th-primary); color: #fff; font-weight: 800; font-size: 29px; border-radius: 16px; }
+.mx-connection-orbit i { position: absolute; inset: 0; border: 3px solid #dfebff; border-top-color: var(--th-primary); border-right-color: #4ac9d7; border-radius: 50%; animation: mx-orbit 1.4s linear infinite; }
+.mx-connection-card--error .mx-connection-orbit i { animation: none; border-color: #f1d49a; }
+.mx-connection-dots { display: flex; gap: 7px; justify-content: center; margin: 26px 0 10px; }
+.mx-connection-dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--th-primary); animation: mx-pulse 1.2s ease-in-out infinite; }
+.mx-connection-dots i:nth-child(2) { animation-delay: .15s; }.mx-connection-dots i:nth-child(3) { animation-delay: .3s; }
+.mx-connection-card progress { width: 100%; height: 8px; accent-color: var(--th-primary); margin-top: 16px; }
+.mx-connection-card button, .mx-connection-notice button { min-height: 44px; padding: 9px 14px; border: 1px solid #becdeb; background: #fff; color: var(--th-primary); border-radius: 9px; cursor: pointer; font: inherit; font-size: 13px; }
+.mx-connection-card button:focus-visible, .mx-connection-notice button:focus-visible { outline: 3px solid #8faeff; outline-offset: 3px; }
+.mx-connection-notice { position: fixed; z-index: 3000; left: 50%; bottom: 16px; transform: translateX(-50%); width: min(680px, calc(100% - 24px)); display: flex; align-items: center; gap: 14px; padding: 16px; box-sizing: border-box; background: #fff9ed; color: #73501e; border: 1px solid #f1d49a; border-radius: 14px; box-shadow: 0 8px 30px #19355a20; }
+.mx-connection-notice strong { font-size: 13px; }.mx-connection-notice p { margin: 5px 0 0; font-size: 12px; line-height: 1.6; }
+.mx-connection-notice > div { flex: 1; min-width: 0; }.mx-connection-notice button { flex-shrink: 0; }.mx-connection-notice button:disabled { cursor: wait; opacity: .6; }
+.mx-connection-pulse { animation: mx-pulse 1.2s ease-in-out infinite; }
+@keyframes mx-orbit { to { transform: rotate(360deg); } }@keyframes mx-pulse { 50% { opacity: .25; } }
+/* Avoid a loading-text flash when a prefetched response resolves in milliseconds. */
+:is(.att-loading, .hr-loading, .wf-loading, .lp-loading) { animation: mx-loading-visible .18s step-end; }
+@keyframes mx-loading-visible { from { visibility: hidden; } to { visibility: visible; } }
+@media (max-width: 480px) { .mx-connection-card { padding: 28px 20px; }.mx-connection-card h2 { font-size: 20px; }.mx-connection-notice { flex-wrap: wrap; }.mx-connection-notice button { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .mx-connection-orbit i, .mx-connection-dots i, .mx-connection-pulse { animation: none; } }

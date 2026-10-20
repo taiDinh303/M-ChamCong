@@ -27,6 +27,7 @@ import HomePage from "./modules/home/pages/HomePage";
 import UnauthorizedPage from "./modules/unauthorized/pages/UnauthorizedPage";
 import RequireModule from "./components/common/RequireModule";
 import RequireSession from "./components/common/RequireSession";
+import ConnectionStatus from "./components/common/ConnectionStatus.jsx";
 import LegacyModuleRedirect from "./components/common/LegacyModuleRedirect";
 import PromotionsPage from "./modules/hr/pages/PromotionsPage";
 
@@ -64,6 +65,7 @@ const REDIRECTS = [
 function App() {
     return (
         <BrowserRouter>
+            <ConnectionStatus />
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/kich-hoat" element={<ActivatePage />} />

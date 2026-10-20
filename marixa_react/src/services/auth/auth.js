@@ -1,5 +1,8 @@
 // Remembered sessions persist; other sessions stay in the current browser tab.
+import { responseCache } from "../api/responseCache.js";
 const AUTH_KEY = "marixa_auth";
+const listeners = new Set();
+export const subscribeAuthChanges = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
 
 export const saveAuth = (data, rememberMe = false) => {
     const payload = {
@@ -34,6 +37,8 @@ export const getAuth = () => {
 };
 
 export const clearAuth = () => {
+    responseCache.clear();
     localStorage.removeItem(AUTH_KEY);
     sessionStorage.removeItem(AUTH_KEY);
+    listeners.forEach((fn) => fn());
 };

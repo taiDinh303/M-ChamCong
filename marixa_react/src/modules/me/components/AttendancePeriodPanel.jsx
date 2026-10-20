@@ -1,3 +1,4 @@
+import { refreshData } from "../../../services/api/responseCache.js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getAuth } from "../../../services/auth/auth";
 import { apiErrorMessage, dataOf } from "../../../services/api/contracts";
@@ -71,7 +72,7 @@ export default function AttendancePeriodPanel({ year, month, staff = false, refr
         <div className="wf-heading"><h2>Kỳ công {String(month).padStart(2, "0")}/{year}</h2>
             {period?.state != null && <span className="att-badge info">{STATE[period.state]}</span>}</div>
         {loading ? <p>Đang tải kỳ công...</p> : <>
-            {error && <p className="att-error" role="alert">{error} <button type="button" className="wf-btn" onClick={load}>Thử lại</button></p>}
+            {error && <p className="att-error" role="alert">{error} <button type="button" className="wf-btn" onClick={refreshData(load)}>Thử lại</button></p>}
             {notice && <p role="status">{notice}</p>}
             {!error && <>
                 <p className="att-muted">{period?.currentVersion > 0

@@ -1,3 +1,4 @@
+import { refreshData } from "../../../../services/api/responseCache.js";
 import ResponsiveTable from "../../../../components/common/ResponsiveTable.jsx";
 import { useState, useEffect, useMemo } from "react";
 import AdminAppLayout from "../../layout/AdminAppLayout";
@@ -208,7 +209,7 @@ const AdminContractPage = ({ hrMode = false }) => {
                             <button
                                 type="button"
                                 className="admin-link-btn"
-                                onClick={load}
+                                onClick={refreshData(load)}
                             >
                                 {L("⟳ Tải lại")}
                             </button>

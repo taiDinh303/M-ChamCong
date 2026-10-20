@@ -1,3 +1,4 @@
+import { refreshData } from "../../../services/api/responseCache.js";
 import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useCallback, useEffect, useId, useState } from "react";
 import { getAuth } from "../../../services/auth/auth";
@@ -84,7 +85,7 @@ export default function CorrectionPanel({ staff = false, draft = null, onDraftCl
         <div className="wf-heading"><h2>{staff ? "Duyệt yêu cầu sửa công" : "Yêu cầu sửa công của tôi"}</h2>
             {employeeId && <button type="button" className="wf-btn wf-btn-primary" onClick={() => setRecord({})}>Tạo yêu cầu sửa công</button>}</div>
         {notice && <p role="status">{notice}</p>}
-        {error && <p className="att-error" role="alert">{error} <button type="button" className="wf-btn" onClick={load}>Thử lại</button></p>}
+        {error && <p className="att-error" role="alert">{error} <button type="button" className="wf-btn" onClick={refreshData(load)}>Thử lại</button></p>}
         {loading ? <p>Đang tải yêu cầu...</p> : <div className="att-table-wrap"><ResponsiveTable className="att-table"><thead><tr>
             {staff && <th>Nhân viên</th>}<th>Ngày công</th><th>Giờ / trạng thái đề nghị</th><th>Lý do / ý kiến</th><th>Kết quả</th><th>Thao tác</th>
         </tr></thead><tbody>{rows.map((row) => <tr key={row.id}>

@@ -1,3 +1,4 @@
+import { refreshData } from "../../../services/api/responseCache.js";
 import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getAuth } from "../../../services/auth/auth";
@@ -353,7 +354,7 @@ const LeavePage = () => {
                 />
                 {notice && <div className="leave-notice">{notice}</div>}
                 <button type="button" className="wf-btn" onClick={() => setLedgerOpen(true)}>Xem sổ phép</button>
-                {error && <div className="att-error" role="alert">{error} <button type="button" className="me-action" onClick={load}>Thử lại</button></div>}
+                {error && <div className="att-error" role="alert">{error} <button type="button" className="me-action" onClick={refreshData(load)}>Thử lại</button></div>}
                 {loading ? <div className="att-loading">Đang tải...</div> : (
                     <>
                         <section className="leave-requests">

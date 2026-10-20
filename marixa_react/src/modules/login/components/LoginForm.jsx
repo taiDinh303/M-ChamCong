@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import authApi from "../api/authApi";
 import { saveAuth } from "../../../services/auth/auth";
+import { connection } from "../../../services/api/connection.js";
+import ConnectionOverlay from "../../../components/common/ConnectionOverlay.jsx";
 
 const LoginForm = () => {
   const [form, setForm] = useState({
@@ -11,6 +14,9 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const attempt = useRef(0);
+  useEffect(() => () => { attempt.current++; }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -22,17 +28,23 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const active = ++attempt.current;
 
     try {
       setLoading(true);
       setError("");
+      await connection.ready();
+      if (active !== attempt.current) return;
 
       const response = await authApi.login(form);
       const data = response.data?.data ?? response.data;
+      if (active !== attempt.current) return;
+      if (!data?.token && !data?.accessToken) throw new Error("Máy chủ chưa trả về phiên đăng nhập hợp lệ.");
 
       saveAuth(data, form.rememberMe);
-      window.location.href = "/home";
+      navigate("/home", { replace: true });
     } catch (err) {
+      if (active !== attempt.current) return;
       const responseMessage = err.response?.data?.message;
       const responseData = err.response?.data?.data;
       setError(
@@ -41,16 +53,16 @@ const LoginForm = () => {
           : typeof responseData === "string"
             ? responseData
             : !err.response
-              ? "Không kết nối được máy chủ API. Hãy bật backend hoặc kiểm tra VITE_API_BASE_URL."
+              ? "Chưa kết nối được máy chủ. Vui lòng kiểm tra mạng và thử lại; máy chủ có thể đang khởi động."
               : "Đăng nhập thất bại. Vui lòng kiểm tra tài khoản và mật khẩu.",
       );
     } finally {
-      setLoading(false);
+      if (active === attempt.current) setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="login-form">
+    <><form onSubmit={handleSubmit} className="login-form">
       <div className="form-group">
         <label htmlFor="username">Tài khoản</label>
         <input
@@ -106,6 +118,8 @@ const LoginForm = () => {
         {loading ? "Đang đăng nhập..." : "Đăng nhập"}
       </button>
     </form>
+    {loading && <ConnectionOverlay onCancel={() => { attempt.current++; setLoading(false); }} />}
+    </>
   );
 };
 

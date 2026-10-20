@@ -1,3 +1,4 @@
+import { refreshData } from "../../services/api/responseCache.js";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { getAuth } from "../../services/auth/auth";
@@ -166,7 +167,7 @@ const NotificationBell = () => {
                         )}
                     </div>
                     <div className="app-header-bell-list">
-                        {loadFailed && <p className="app-header-bell-empty" role="status">Chưa tải được một số thông báo. <button type="button" onClick={load}>Thử lại</button></p>}
+                        {loadFailed && <p className="app-header-bell-empty" role="status">Chưa tải được một số thông báo. <button type="button" onClick={refreshData(load)}>Thử lại</button></p>}
                         {items.length === 0 ? (
                             !loadFailed && <p className="app-header-bell-empty">Không có thông báo nào.</p>
                         ) : (

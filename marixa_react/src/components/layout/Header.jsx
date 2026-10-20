@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { clearAuth, getAuth } from "../../services/auth/auth";
 import {
     fileToAvatarDataUrl,
@@ -17,6 +18,7 @@ import "./header.css";
 // Home uses a compact header; modules add a sidebar toggle.
 const Header = ({ profile, onToggleSidebar, toggleRef, sidebarExpanded, sidebarControls, minimal = false }) => {
     const auth = getAuth();
+    const navigate = useNavigate();
     const key = auth?.userId;
 
     const [open, setOpen] = useState(false);
@@ -88,7 +90,7 @@ const Header = ({ profile, onToggleSidebar, toggleRef, sidebarExpanded, sidebarC
 
     const logout = () => {
         clearAuth();
-        window.location.href = "/login";
+        navigate("/login", { replace: true });
     };
 
     return (
@@ -109,10 +111,10 @@ const Header = ({ profile, onToggleSidebar, toggleRef, sidebarExpanded, sidebarC
                         <span />
                     </button>
                 )}
-                <a href="/home" className="app-header-brand" aria-label="MARIXA — Trang chủ">
+                <Link to="/home" className="app-header-brand" aria-label="MARIXA — Trang chủ">
                     <span className="app-header-logo">M</span>
                     <span className="app-header-logo-text">MARIXA</span>
-                </a>
+                </Link>
             </div>
 
             <div className="app-header-user" ref={userRef}>
@@ -146,7 +148,7 @@ const Header = ({ profile, onToggleSidebar, toggleRef, sidebarExpanded, sidebarC
                         title="Vào phân khu của bạn"
                         aria-label="Vào phân khu theo phận sự"
                         onClick={() => {
-                            window.location.href = roleHome;
+                            navigate(roleHome);
                         }}
                     >
                         <span className="app-header-home-icon" aria-hidden="true">
@@ -198,7 +200,7 @@ const Header = ({ profile, onToggleSidebar, toggleRef, sidebarExpanded, sidebarC
                             role="menuitem"
                             onClick={() => {
                                 setOpen(false);
-                                window.location.href = "/profile";
+                                navigate("/profile");
                             }}
                         >
                             Hồ sơ

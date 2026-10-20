@@ -1,3 +1,4 @@
+import { refreshData } from "../../../services/api/responseCache.js";
 import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { getAuth } from "../../../services/auth/auth";
@@ -85,7 +86,7 @@ export default function LeaveLedgerDialog({ employeeId, manage = false, onClose,
             {allowed && <label>Nhân viên<select value={selected} onChange={(e) => setSelected(e.target.value)}><option value="">Chọn nhân viên</option>
                 {employees.map((employee) => <option value={employee.id} key={employee.id}>{employee.employeeCode} · {employee.fullName}</option>)}</select></label>}
             <label>Năm<input type="number" min={1} max={9999} value={year} onChange={(e) => setYear(Number(e.target.value))} /></label>
-            <button type="button" className="wf-btn" disabled={loading} onClick={load}>Tải lại sổ phép</button>
+            <button type="button" className="wf-btn" disabled={loading} onClick={refreshData(load)}>Tải lại sổ phép</button>
             {allowed && selected && !loading && !error && !optionsError && balance && <button type="button" className="wf-btn wf-btn-primary" onClick={() => setCreating(true)}>Cấp / điều chỉnh phép</button>}
         </div>
         {error && <p className="att-error" role="alert">{error}</p>}

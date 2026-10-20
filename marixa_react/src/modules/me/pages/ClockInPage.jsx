@@ -16,6 +16,7 @@ const AttendancePage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [rule, setRule] = useState(null);
+    const [reloadVersion, setReloadVersion] = useState(0);
 
     // Bản ghi chấm công của HÔM NAY
     const todayRecord =
@@ -35,6 +36,7 @@ const AttendancePage = () => {
 
     useEffect(() => {
         const load = async () => {
+            setLoading(true); setError("");
             if (!userId) {
                 setError("Chưa xác định được tài khoản đang đăng nhập.");
                 setLoading(false);
@@ -63,7 +65,7 @@ const AttendancePage = () => {
         };
 
         load();
-    }, [userId, employeeId, loadAttendance]);
+    }, [userId, employeeId, loadAttendance, reloadVersion]);
 
     // Sau khi chấm công: làm mới lại bản ghi hôm nay
     const handleChecked = () => {
@@ -83,7 +85,7 @@ const AttendancePage = () => {
                     history={history}
                     onChanged={handleChecked}
                 />
-            ) : <button type="button" className="me-action" onClick={() => window.location.reload()}>Tải lại dữ liệu</button>}
+            ) : <button type="button" className="me-action" onClick={() => setReloadVersion((value) => value + 1)}>Tải lại dữ liệu</button>}
         </AppLayout>
     );
 };

@@ -25,6 +25,8 @@ flowchart LR
 
 Frontend dùng [`apiConfig.js`](../marixa_react/src/services/api/apiConfig.js): `VITE_API_BASE_URL` nếu có, mặc định `/api`. Local có Vite proxy; triển khai web/API khác origin cần CORS đúng origin. [`axiosClient.js`](../marixa_react/src/services/api/axiosClient.js) đính Bearer token từ `marixa_auth`: sessionStorage nếu không Ghi nhớ, localStorage nếu có. JWT hết hạn hoặc 401 của đúng phiên xóa auth và về `/login`; 401 đến muộn của token cũ không xóa phiên mới.
 
+Đợt20/10 thêm [responseCache](../marixa_react/src/services/api/responseCache.js) trong RAM theo phiên và [workspaceWarmup](../marixa_react/src/services/api/workspaceWarmup.js) tại RequireSession: tải trước danh sách theo quyền, không thêm nguồn dữ liệu hoặc thay server authorization. Login/Header/chuyển trang nội bộ dùng React Router; GET có recovery sau probe public, không tự replay POST/PUT/DELETE. Giới hạn, invalidation và cold start ở [25](25-performance-capacity.md); đây là bộ đệm ứng dụng trong tab, không phải offline DB, Redis hay HTTP cache public.
+
 Ứng dụng dùng **ASP.NET Identity + JWT**, không dùng Supabase Auth cho phiên đăng nhập hiện tại. `marixa_aspnet/web` (Next.js cũ) đã bị xóa khỏi checkout; SQL/RPC của kiến trúc cũ không phải bằng chứng API .NET đang thực thi quy tắc đó.
 
 ## 2. Ranh giới mã nguồn

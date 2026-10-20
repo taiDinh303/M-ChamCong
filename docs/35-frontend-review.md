@@ -7,9 +7,10 @@
 - URL chính: `/home`, `/me/*`, `/hr/*`, `/admin/*`; `/work` và `/profile` là trang dùng chung. Tổng cộng 33 trang chính và hai trang dùng chung trong router; không tính alias/redirect thành chức năng riêng.
 - `/attendance/*` → `/me/*`, `/employees/*` → `/hr/*`, giữ query/hash và quyền; các URL ngắn cũ vẫn chuyển đến trang mới. Endpoint backend không đổi.
 - Xóa app-page-heading, portal và CSS tương ứng. Giữ KPI, bộ lọc, thao tác và tiêu đề hộp thoại; tên tab trình duyệt/nhãn main nhận diện trang. Menu mobile vẫn toàn màn hình, không có thanh kéo ngang.
-- Bổ sung ba liên kết Admin và dùng chung trang Nghỉ phép với HR. Thông báo có liên kết Mở theo role, đóng bằng Escape, vẫn giữ trạng thái đã đọc theo tài khoản trên thiết bị.
+- Bổ sung ba liên kết Admin và dùng chung trang Nghỉ phép với HR. Thông báo nhấn trực tiếp phần chữ theo role, bỏ “Mở →”, đóng bằng Escape, vẫn giữ trạng thái đã đọc theo tài khoản trên thiết bị.
 - Sửa bốn trang dữ liệu cá nhân dùng EntityDetailPage: lỗi API không bị coi là dữ liệu rỗng, số lượng chưa biết hiển thị dấu gạch và có Thử lại.
 - Trang nhân sự nghỉ việc đọc cả danh sách đang lưu và đã lưu trữ, gộp theo ID và lọc đúng status nghỉ/chấm dứt; không ép mọi hồ sơ đã lưu trữ thành nghỉ việc. Fetcher ổn định để tránh vòng lặp tải khi render.
+- Từ20/10, login tải trước danh sách theo quyền, cacheJSON trong RAM theo phiên và animation chờ API/reconnect; invalidation sau ghi/logout và chuyển trang SPA. Tệp/nhóm dữ liệu chưa tải vẫn theo nhu cầu; không xây offline queue hoặc ping giữ Render thức. Chính sách tại [25](25-performance-capacity.md), bằng chứng tại worklog.
 
 Nguồn chính: [router](../marixa_react/src/App.jsx), [registry quyền](../marixa_react/src/constants/modules.js), [shell](../marixa_react/src/components/layout/AuthenticatedShell.jsx), [thông báo](../marixa_react/src/components/layout/NotificationBell.jsx). Sidebar chỉ dẫn đường; API vẫn quyết định quyền dữ liệu.
 

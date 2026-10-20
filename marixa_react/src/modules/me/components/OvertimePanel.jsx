@@ -1,3 +1,4 @@
+import { refreshData } from "../../../services/api/responseCache.js";
 import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useCallback, useEffect, useId, useState } from "react";
 import { getAuth } from "../../../services/auth/auth";
@@ -85,7 +86,7 @@ export default function OvertimePanel({ reviewMode = false, onChanged }) {
         <p className="wf-note">Khung giờ đăng ký và giờ OT được công nhận là hai số liệu riêng. Xem giờ OT thực tế trong lịch sử/thống kê công.</p>
         {!employeeId && <p>Tài khoản chưa liên kết hồ sơ nhân viên.</p>}
         {notice && <p role="status">{notice}</p>}
-        {error && <p className="att-error" role="alert">{error} <button type="button" className="wf-btn" onClick={load}>Thử lại</button></p>}
+        {error && <p className="att-error" role="alert">{error} <button type="button" className="wf-btn" onClick={refreshData(load)}>Thử lại</button></p>}
         <label>Lọc trạng thái<select value={filter} onChange={(e) => setFilter(e.target.value)}><option value="">Tất cả</option>
             {Object.entries(STATUS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
         {loading ? <p>Đang tải đơn tăng ca...</p> : <div className="att-table-wrap"><ResponsiveTable className="att-table"><thead><tr>
