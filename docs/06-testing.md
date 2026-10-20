@@ -15,6 +15,7 @@ Lượt tiếp theo 18/10: **101 PASS / 0 FAIL / 0 SKIP** trên fixture cô lậ
 | REQ / TC | Bằng chứng tự động | Tiêu chí |
 | --- | --- | --- |
 | REQ-DEMO-01 / TC-DEMO-01 | DemoScenarioTests, PostgresDemoScenarioTests; tool verify-only và browser live ghi riêng tại worklog | Chạy lặp không thêm trùng/sửa hồ sơ cũ; role Employee; OT Pending không công nhận, ledger và guard kỳ khóa đúng; PDF thật tải được. |
+| REQ-UI-07 / TC-UI-11 | Browser với API/SQLite cô lập, seed DEMO qua SaveChanges; desktop 1440px và mobile 375px, bổ sung 320px | Đọc đủ 12 trang có dữ liệu; GPS button >=44px cao, thẻ thống kê có chiều rộng hữu ích, chuyển tháng không vỡ; hồ sơ có đủ nhãn/giá trị; dialog Escape/focus, lỗi API và Thử lại không giả dữ liệu. Kết quả cụ thể ở worklog. |
 | REQ-UI-06 / TC-UI-09 | Browser local desktop, khung iframe 375/390px và viewport 375×667; kiểm lint/build | Tiêu đề đúng vị trí, Home không ngày, mobile không sidebar ngang; menu toàn màn hình, mở/chọn link/Escape/focus/khóa cuộn nền. Không thay thiết bị thật bằng browser. |
 | REQ-UI-06 / TC-UI-10 | Browser local Home desktop 1280px, điện thoại 375/320px; frontend tests/lint/build | Home không còn nav phân mục/nút mục lục; logo/các nút cùng hàng, không tràn ngang; thẻ module vẫn vào đúng trang, sidebar trong module mở/Escape bình thường; menu tài khoản đóng bằng Escape. |
 | REQ-SEC-01 / TC-SEC-01 | Authorization/AccountManagement/Session/HumanResources/PrivateDocumentStorage |401/403 cross-user, staff không quản trị Admin, stamp/lock/link revoke, private path/rollback files |

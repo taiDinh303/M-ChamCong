@@ -573,7 +573,7 @@ export default function HandoverPage({ reviewMode = false, admin = false }) {
             {error && <div className="hv-alert hv-alert--error">{String(error)}</div>}
 
             {/* Form tạo yêu cầu (chỉ nhân viên, khi chưa có yêu cầu đang chờ) */}
-            {!isReview && !rows.some((row) => row.status === 0) && (
+            {!isReview && !loading && !error && !rows.some((row) => row.status === 0) && (
                 <section className="hv-panel">
                     <HandoverForm form={form} setForm={setForm} submitting={saving} onSubmit={submit} locale={locale} />
                 </section>

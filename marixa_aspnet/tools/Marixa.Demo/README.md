@@ -33,6 +33,8 @@ Seeder dùng EF SaveChanges và transaction Serializable; không bulk/raw SQL đ
 
 ## 3. Các bài thử
 
+Đối chiếu chỉ đọc **20/10/2026**: `demo.binh` và `demo.chi` đều có dữ liệu cho toàn bộ 12 trang Me. Dùng `demo.binh` để xem 12 ngày công tháng 10, 2 đơn OT, 1 đơn nghỉ, mỗi loại hồ sơ lương/hợp đồng/bảo hiểm/ngân hàng 1 dòng, 1 báo cáo, 1 đề xuất và 1 bàn giao. `demo.chi` có thêm yêu cầu sửa công thiếu chấm ra; `demo.an` có snapshot tháng 9 nhưng không có promotion/handover. Không phải tài khoản DEMO nào cũng có mọi tình huống. Không chạy lại seed để ép hồ sơ đang được test về trạng thái ban đầu. Mật khẩu ở artifact riêng ngoài Git đã bàn giao cho chủ dự án; không đặt trong README/frontend.
+
 1. HR → Danh sách: lọc DEMO, xem hồ sơ/hợp đồng/lương; xem thử việc và hợp đồng sắp hết hạn.
 2. Duyệt công → tháng 10 → Xem tất cả: công chờ duyệt, thiếu chấm ra của DEMO-003 ngày 16/10. Tab sửa công có yêu cầu; tab OT có nhiều trạng thái. Sau duyệt OT, kiểm phần OT riêng thay đổi.
 3. Nghỉ phép: xem cả bốn trạng thái, sổ phép; hủy đơn Approved bằng người khác và kiểm chỉ có một Refund.

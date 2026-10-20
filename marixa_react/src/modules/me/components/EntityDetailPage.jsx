@@ -1,10 +1,8 @@
-import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useState, useEffect } from "react";
 import { getAuth } from "../../../services/auth/auth";
 import AppLayout from "../../../components/layout/AppLayout";
 import relatedApi from "../api/relatedApi";
 import "../attendance.css";
-import PageBanner from "./PageBanner";
 
 const FETCHERS = {
     contract: (id) => relatedApi.contractsByEmployee(id),
@@ -20,13 +18,6 @@ const ICONS = {
     bank: "🏦",
 };
 
-const ACCENT = {
-    contract: "#1647C8",
-    salary: "#167347",
-    insurance: "#00BFD0",
-    bank: "#F3B928",
-};
-
 const KPI_LABEL = {
     contract: "hợp đồng",
     salary: "bản ghi lương",
@@ -34,7 +25,7 @@ const KPI_LABEL = {
     bank: "tài khoản",
 };
 
-const EntityDetailPage = ({ kind, columns, emptyMessage }) => {
+const EntityDetailPage = ({ kind, columns, emptyMessage, subtitle }) => {
     const auth = getAuth();
     const userId = auth?.userId;
     const employeeId = auth?.employeeId;
@@ -76,20 +67,13 @@ const EntityDetailPage = ({ kind, columns, emptyMessage }) => {
     return (
         <AppLayout profile={profile}>
             <div className="entd-page">
-                <PageBanner
-                    icon={ICONS[kind] || "📄"}
-                    accent={ACCENT[kind]}
-                    kpis={[
-                        {
-                            icon: null,
-                            label: KPI_LABEL[kind] || "ghi chép",
-                            value: loading ? "…" : error ? "—" : items.length,
-                            tone: "blue",
-                        },
-                    ]}
-                />
+                <div className="me-record-summary">
+                    <span className="me-record-icon" aria-hidden="true">{ICONS[kind]}</span>
+                    <div><strong>{loading ? "Đang tải…" : error ? "Chưa tải được dữ liệu" : `${items.length} ${KPI_LABEL[kind]}`}</strong>
+                        <p>{subtitle}</p></div>
+                </div>
 
-                {error && <div className="att-error" role="alert">{error} <button type="button" onClick={() => setReloadVersion((value) => value + 1)}>Thử lại</button></div>}
+                {error && <div className="att-error" role="alert">{error} <button type="button" className="me-action" onClick={() => setReloadVersion((value) => value + 1)}>Thử lại</button></div>}
 
                 {loading ? (
                     <div className="att-loading">Đang tải...</div>
@@ -99,31 +83,17 @@ const EntityDetailPage = ({ kind, columns, emptyMessage }) => {
                         <p>{emptyMessage || "Chưa có dữ liệu."}</p>
                     </div>
                 ) : (
-                    <div className="entd-card">
-                        <div className="att-table-wrap att-table-wrap--stack">
-                            <ResponsiveTable className="att-table entd-table att-table--stack">
-                                <thead>
-                                    <tr>
-                                        {columns.map((c) => (
-                                            <th key={c.key}>{c.label}</th>
-                                        ))}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {items.map((row) => (
-                                        <tr key={row.id}>
-                                            {columns.map((c) => (
-                                                <td key={c.key} data-label={c.label}>
-                                                    {c.render ? c.render(row) : row[c.key] ?? "—"}
-                                                </td>
-                                            ))}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </ResponsiveTable>
-                        </div>
+                    <div className="me-records">
+                        {items.map((row, index) => <article className="me-record" key={row.id} aria-label={`${KPI_LABEL[kind]} ${index + 1}`}>
+                            <header><span>Hồ sơ {String(index + 1).padStart(2, "0")}</span>
+                                <span className="att-badge info">Thông tin cá nhân</span></header>
+                            <dl>{columns.map((c) => <div key={c.key}>
+                                <dt>{c.label}</dt><dd>{c.render ? c.render(row) : row[c.key] || "—"}</dd>
+                            </div>)}</dl>
+                        </article>)}
                     </div>
                 )}
+                {!loading && !error && <p className="me-footnote">Thông tin do bộ phận Nhân sự quản lý. Nếu có sai lệch, vui lòng liên hệ Nhân sự để đối chiếu và cập nhật.</p>}
             </div>
         </AppLayout>
     );

@@ -5,6 +5,7 @@ import AppLayout from "../../../components/layout/AppLayout";
 import relatedApi from "../api/relatedApi";
 import { useLanguage, localeForLanguage } from "../../../services/i18n/LanguageProvider";
 import PageBanner from "../components/PageBanner";
+import PersonalDialog from "../components/PersonalDialog";
 import ReasonDialog from "../../../components/common/ReasonDialog";
 import { downloadResponse } from "../../../utils/download";
 import { apiErrorMessage } from "../../../services/api/contracts";
@@ -100,11 +101,11 @@ const LeaveFormModal = ({ types, remaining, language, onClose, onSubmit }) => {
     };
 
     return (
-        <div className="leave-modal-backdrop">
-            <section className="leave-modal" role="dialog" aria-modal="true" aria-labelledby="leave-form-title">
+        <PersonalDialog label="Tạo đơn nghỉ phép" busy={saving} onClose={onClose}>
+            <section className="leave-modal">
                 <header className="leave-modal-head">
                     <h2 id="leave-form-title">Tạo đơn nghỉ phép</h2>
-                    <button type="button" className="leave-icon-btn" onClick={onClose} aria-label="Đóng">×</button>
+                    <button type="button" className="leave-icon-btn" onClick={onClose} disabled={saving} aria-label="Đóng">×</button>
                 </header>
                 <form onSubmit={submit} className="leave-form">
                     <label>Loại nghỉ <span>*</span>
@@ -132,7 +133,7 @@ const LeaveFormModal = ({ types, remaining, language, onClose, onSubmit }) => {
                     </footer>
                 </form>
             </section>
-        </div>
+        </PersonalDialog>
     );
 };
 
@@ -141,8 +142,8 @@ const LeaveDetailsModal = ({ request, onClose, locale, language, onCancel, onDow
     const created = request.createdTime ? new Date(request.createdTime) : null;
     const approved = request.approvedAt ? new Date(request.approvedAt) : null;
     return (
-        <div className="leave-modal-backdrop">
-            <section className="leave-modal leave-detail-modal" role="dialog" aria-modal="true" aria-labelledby="leave-detail-title">
+        <PersonalDialog label="Chi tiết đơn nghỉ phép" onClose={onClose}>
+            <section className="leave-modal leave-detail-modal">
                 <header className="leave-modal-head">
                     <h2 id="leave-detail-title">Chi tiết đơn</h2>
                     <button type="button" className="leave-icon-btn" onClick={onClose} aria-label="Đóng">×</button>
@@ -165,7 +166,7 @@ const LeaveDetailsModal = ({ request, onClose, locale, language, onCancel, onDow
                     <button type="button" className="leave-btn secondary" onClick={onClose}>Đóng</button>
                 </footer>
             </section>
-        </div>
+        </PersonalDialog>
     );
 };
 
@@ -352,7 +353,7 @@ const LeavePage = () => {
                 />
                 {notice && <div className="leave-notice">{notice}</div>}
                 <button type="button" className="wf-btn" onClick={() => setLedgerOpen(true)}>Xem sổ phép</button>
-                {error && <div className="att-error">{error}</div>}
+                {error && <div className="att-error" role="alert">{error} <button type="button" className="me-action" onClick={load}>Thử lại</button></div>}
                 {loading ? <div className="att-loading">Đang tải...</div> : (
                     <>
                         <section className="leave-requests">
@@ -360,9 +361,9 @@ const LeavePage = () => {
                             {view === "list" ? (
                                 <>
                                     <div className="leave-filters">
-                                        <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}><option value="">Tất cả trạng thái</option><option value="1">Chờ duyệt</option><option value="2">Đã duyệt</option><option value="3">Từ chối</option><option value="4">Đã hủy</option></select>
-                                        <select value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(1); }}><option value="">Tất cả loại nghỉ</option>{types.map((type) => <option key={type.id} value={type.id}>{type.name}</option>)}</select>
-                                        <input type="search" placeholder="Tìm loại nghỉ hoặc lý do" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
+                                        <select aria-label="Lọc trạng thái đơn nghỉ" value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}><option value="">Tất cả trạng thái</option><option value="1">Chờ duyệt</option><option value="2">Đã duyệt</option><option value="3">Từ chối</option><option value="4">Đã hủy</option></select>
+                                        <select aria-label="Lọc loại nghỉ" value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(1); }}><option value="">Tất cả loại nghỉ</option>{types.map((type) => <option key={type.id} value={type.id}>{type.name}</option>)}</select>
+                                        <input aria-label="Tìm loại nghỉ hoặc lý do" type="search" placeholder="Tìm loại nghỉ hoặc lý do" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
                                         <label>Từ ngày<input type="date" value={fromFilter} onChange={(e) => { setFromFilter(e.target.value); setPage(1); }} /></label>
                                         <label>Đến ngày<input type="date" value={toFilter} onChange={(e) => { setToFilter(e.target.value); setPage(1); }} /></label>
                                     </div>

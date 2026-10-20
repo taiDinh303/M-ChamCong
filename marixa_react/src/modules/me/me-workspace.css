@@ -1,0 +1,136 @@
+/* Personal workspace only. Keep the HR/Admin workflows independent. */
+.app-shell--me .att-main { max-width: none; }
+.app-shell--me .att-main > :is(.att-content, .att-hero, .entd-page, .leave-page, .my-reports, .promotion-page, .hv-page) {
+    width: 100%; max-width: 1180px; margin: 0 auto; min-width: 0;
+}
+.app-shell--me :is(.leave-page, .my-reports, .promotion-page, .hv-page) { display: flex; flex-direction: column; gap: 20px; }
+.app-shell--me .page-banner { display: flex; flex-direction: column; align-items: stretch; gap: 16px; margin: 0; }
+.app-shell--me .page-banner-kpis { flex: none; }
+.app-shell--me .page-banner-action { align-self: flex-end; margin: 0; }
+.app-shell--me .page-banner-cta { background: var(--th-primary); color: #fff; border: 1px solid var(--th-primary); min-height: 44px; padding: 10px 18px; border-radius: 10px; }
+.app-shell--me :is(.att-card, .hv-panel, .my-report-list, .me-record) { border: 1px solid var(--th-border); background: var(--th-surface); border-radius: 14px; box-shadow: 0 2px 6px rgb(23 32 51 / 3%); }
+.app-shell--me :is(.att-card, .hv-panel, .my-report-list) { padding: 20px; }
+.app-shell--me :is(.att-hero, .entd-page, .att-stat-wrap) { gap: 20px; }
+.app-shell--me .att-hero { padding: 24px; }
+.app-shell--me .att-clock { padding: 24px; background: #142a40; box-shadow: none; }
+.app-shell--me .att-clock-time { font-size: clamp(32px, 5vw, 44px); letter-spacing: .02em; }
+.app-shell--me .att-hero-btn { background: var(--th-primary); border-radius: 10px; min-height: 52px; font: inherit; font-weight: 700; }
+.app-shell--me .att-hero-btn:disabled { opacity: .55; cursor: not-allowed; }
+.app-shell--me .att-location { justify-content: flex-start; text-align: left; padding: 16px; gap: 12px; }
+.app-shell--me .att-location-info { flex: 1; align-items: flex-start; gap: 5px; }
+.app-shell--me .att-location-info strong { white-space: normal; overflow: visible; overflow-wrap: anywhere; line-height: 1.6; font-weight: 550; }
+.app-shell--me .att-location-ico { font-size: 23px; width: 40px; height: 40px; }
+.app-shell--me .me-action {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: 0 0 auto;
+    min-height: 44px; width: auto; padding: 10px 16px; border: 1px solid #b7caec; border-radius: 9px;
+    background: var(--th-surface); color: var(--th-primary); font: inherit; font-size: 13px; font-weight: 650; line-height: 1.5;
+    white-space: normal; text-align: center; text-decoration: none; cursor: pointer;
+}
+.app-shell--me .me-action:hover { background: #edf3ff; border-color: var(--th-primary); }
+.app-shell--me .me-action:disabled { opacity: .6; cursor: wait; }
+.app-shell--me :is(.wf-btn, .leave-btn, .leave-view-btn, .hv-btn, .promotion-primary, .promotion-refresh, .my-report-row-actions button) { min-height: 44px; border-radius: 9px; }
+.app-shell--me :is(.wf-tabs, .att-kpi-bar) { margin: 0; padding: 8px; border: 1px solid var(--th-border); background: var(--th-surface); border-radius: 12px; }
+.app-shell--me .wf-tabs .wf-btn { flex: 1 1 auto; border-color: transparent; }
+.app-shell--me .att-kpi-bar { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 8px; }
+.app-shell--me .att-kpi-bar strong { font-size: 15px; text-transform: none; text-align: center; white-space: normal; }
+.app-shell--me .att-kpi-nav { min-width: 44px; width: 44px; height: 44px; flex-shrink: 0; font-size: 24px; }
+.me-stat-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.me-stat-metric { min-width: 0; display: flex; gap: 14px; align-items: flex-start; padding: 20px; background: var(--th-surface); border: 1px solid var(--th-border); border-radius: 14px; }
+.me-stat-metric > div { min-width: 0; }
+.me-stat-icon { display: grid; place-items: center; flex: 0 0 36px; height: 36px; background: #edf3ff; color: var(--th-primary); border-radius: 10px; font-size: 20px; }
+.me-stat-metric h2 { margin: 0 0 10px; font-size: 13px; font-weight: 550; color: var(--th-text-2); line-height: 1.5; }
+.me-stat-metric strong { font-size: 26px; line-height: 1.3; font-weight: 750; color: var(--th-text); font-variant-numeric: tabular-nums; }
+.me-stat-metric p { margin: 8px 0 0; font-size: 12px; line-height: 1.7; color: var(--th-text-2); overflow-wrap: anywhere; }
+.me-stat-warning { display: flex; gap: 14px; align-items: flex-start; padding: 18px; border: 1px solid #f1d49a; background: #fff9ed; border-radius: 12px; }
+.me-stat-warning > div { flex: 1; min-width: 0; }
+.me-stat-warning h2 { margin: 0 0 6px; font-size: 14px; }
+.me-stat-warning summary { color: #73501e; font-size: 13px; cursor: pointer; padding-block: 4px; }
+.me-stat-warning ul { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.8; color: #73501e; }
+.me-stat-visuals { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 20px; }
+.app-shell--me .me-stat-visuals > * { margin: 0; min-width: 0; }
+.app-shell--me .att-stat-card:hover { transform: none; }
+.app-shell--me .att-stat-title { font-size: 16px; margin-bottom: 16px; }
+.app-shell--me .att-cal-legend { line-height: 1.7; gap: 8px 12px; }
+.app-shell--me .att-cal-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: currentColor; margin-right: 4px; }
+.app-shell--me .att-cal-legend i.ok { color: #16825d; }
+.app-shell--me .att-cal-legend i.warn { color: #d89a13; }
+.app-shell--me .att-cal-legend i.bad { color: #d34444; }
+.app-shell--me .att-cal-legend i.info { color: #2563eb; }
+.app-shell--me .att-cal-legend i.nodata { color: #a6770f; }
+.app-shell--me .att-cal-legend i.future { color: #a6b3c5; }
+.app-shell--me .att-cal-legend i.rest { color: #6b7788; }
+.app-shell--me .wf-panel { margin: 0; }
+.app-shell--me .wf-heading h2 { font-size: 16px; }
+.app-shell--me .wf-panel .wf-actions:empty { display: none; }
+.me-record-summary { display: flex; align-items: center; gap: 14px; padding: 20px; border: 1px solid var(--th-border); border-radius: 14px; background: var(--th-surface); }
+.me-record-icon { display: grid; place-items: center; flex: 0 0 44px; height: 44px; background: #edf3ff; border-radius: 12px; font-size: 22px; }
+.me-record-summary strong { font-size: 17px; }
+.me-record-summary p { margin: 5px 0 0; color: var(--th-text-2); font-size: 13px; line-height: 1.7; }
+.me-records { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.me-records > :only-child { grid-column: 1 / -1; }
+.me-record { overflow: hidden; min-width: 0; }
+.me-record > header { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--th-surface-alt); padding: 16px 20px; border-bottom: 1px solid var(--th-border); font-size: 13px; font-weight: 650; }
+.me-record dl { margin: 0; padding: 4px 20px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 28px; }
+.me-record dl > div { min-width: 0; padding: 16px 0; border-bottom: 1px solid var(--th-divider); }
+.me-record dt { color: var(--th-text-2); font-size: 12px; margin-bottom: 8px; }
+.me-record dd { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.7; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.me-footnote { margin: 0; font-size: 12px; color: var(--th-text-2); line-height: 1.8; }
+.app-shell--me :is(.promotion-heading, .promotion-toolbar, .leave-section-head) { background: transparent; border: 0; box-shadow: none; padding: 0; }
+.app-shell--me .promotion-heading { justify-content: flex-end; }
+.app-shell--me .promotion-heading::after { display: none; }
+.app-shell--me :is(.promotion-card, .hv-card) { padding: 20px; }
+.app-shell--me .promotion-card { box-shadow: 0 2px 6px rgb(23 32 51 / 3%); }
+.app-shell--me .promotion-toolbar input, .app-shell--me .leave-filters :is(input, select) { min-height: 44px; }
+.app-shell--me .leave-filters { padding: 0; background: transparent; }
+.app-shell--me .leave-table-card { padding: 0; overflow: hidden; }
+.app-shell--me .leave-pagination { margin: 16px 0 0; }
+.app-shell--me .rule-desc { display: none; } /* Description already appears in the rule header. */
+.app-shell--me .rule-head p { white-space: normal; line-height: 1.7; }
+.app-shell--me .my-report-row { gap: 16px; padding: 18px 0; align-items: center; }
+.app-shell--me .my-report-info { min-width: 0; }
+.app-shell--me .my-report-info strong { font-size: 15px; line-height: 1.6; white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
+.app-shell--me .my-report-icon { align-self: flex-start; }
+.app-shell--me .my-report-row-actions { flex-wrap: wrap; }
+.app-shell--me :is(.hv-card-facts, .hv-dialog-facts) { background: var(--th-surface-alt); border-radius: 10px; padding: 14px; }
+.me-dialog { width: min(760px, calc(100% - 24px)); max-width: none; max-height: 90dvh; padding: 0; border: 0; border-radius: 14px; background: var(--th-surface); color: var(--th-text); }
+.me-dialog::backdrop { background: rgb(15 28 48 / 55%); }
+.me-dialog :is(.my-report-modal, .leave-modal) { width: 100%; max-width: none; max-height: none; box-sizing: border-box; box-shadow: none; }
+.me-dialog button { min-height: 44px; }
+.app-shell--me :is(.promotion-primary, .hv-btn--primary, .leave-btn.primary) { background: var(--th-primary); border-color: var(--th-primary); color: #fff; box-shadow: none; }
+@media (max-width: 1100px) {
+    .me-stat-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .me-stat-visuals { grid-template-columns: 1fr; }
+    .me-stat-warning { flex-wrap: wrap; }
+    .me-stat-warning .me-action { margin-left: 42px; }
+}
+@media (max-width: 768px) {
+    .app-shell--me :is(.leave-page, .my-reports, .promotion-page, .hv-page, .att-stat-wrap) { gap: 16px; }
+    .app-shell--me :is(.att-hero, .att-card, .hv-panel, .my-report-list, .promotion-card, .hv-card) { padding: 16px; }
+    .app-shell--me .att-location { flex-wrap: wrap; }
+    .app-shell--me .att-location-ico { display: none; }
+    .app-shell--me .att-location .me-action { flex-basis: 100%; }
+    .app-shell--me .att-hero > .me-action { width: 100%; }
+    .me-stat-metrics { gap: 10px; }
+    .me-stat-metric { display: block; padding: 14px 12px; }
+    .me-stat-icon { width: 30px; height: 30px; font-size: 18px; margin-bottom: 10px; }
+    .me-stat-metric h2 { font-size: 12px; margin-bottom: 6px; }
+    .me-stat-metric strong { font-size: 21px; }
+    .me-stat-metric p { font-size: 11px; }
+    .me-stat-warning { padding: 14px; gap: 10px; }
+    .me-stat-warning .me-action { margin-left: 0; width: 100%; }
+    .me-record-summary { padding: 16px; align-items: flex-start; }
+    .me-records { grid-template-columns: 1fr; gap: 16px; }
+    .me-record dl { grid-template-columns: 1fr; padding-inline: 16px; }
+    .me-record > header { padding: 14px 16px; }
+    .app-shell--me .page-banner-action { align-self: stretch; }
+    .app-shell--me .page-banner-cta { width: 100%; }
+    .app-shell--me .leave-table-card { padding: 0; border: 0; background: transparent; }
+    .app-shell--me .promotion-heading > button { width: 100%; }
+    .app-shell--me .my-report-row { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 10px; }
+    .app-shell--me .my-report-row > :is(.my-report-status, .my-report-row-actions) { grid-column: 2; justify-self: start; }
+    .app-shell--me .my-report-info :is(span, small) { white-space: normal; overflow-wrap: anywhere; line-height: 1.7; }
+    .app-shell--me .my-report-row-actions { display: flex; width: 100%; }
+    .app-shell--me .my-report-row-actions button { flex: 1; }
+    .app-shell--me :is(.promotion-reason, .hv-reason, .hv-review-note) { overflow-wrap: anywhere; line-height: 1.8; }
+    .app-shell--me .att-cal-cell { min-height: 42px; }
+}

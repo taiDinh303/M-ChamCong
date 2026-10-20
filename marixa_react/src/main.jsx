@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.jsx'
 import './mobile.css'
 import './components/common/workspace.css'
+import './modules/me/me-workspace.css'
 import { LanguageProvider } from "./services/i18n/LanguageProvider.jsx";
 
 createRoot(document.getElementById('root')).render(

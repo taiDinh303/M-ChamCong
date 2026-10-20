@@ -198,7 +198,7 @@ const AttendanceCard = ({ employeeId, record, history, rule, onChanged }) => {
             {/* ===== Chụp ảnh (chưa ra ca) ===== */}
             {!isCheckedOut && (
                 <>
-                {!rule?.photoRequired && <button type="button" className="att-kpi-nav" onClick={() => setShowCamera((v) => !v)} disabled={busy}>
+                {!rule?.photoRequired && <button type="button" className="me-action" onClick={() => setShowCamera((v) => !v)} disabled={busy} aria-expanded={showCamera}>
                     {showCamera ? "Ẩn camera" : "Thêm ảnh chấm công (tùy chọn)"}
                 </button>}
                 {(rule?.photoRequired || showCamera) && <CameraCapture
@@ -254,16 +254,17 @@ const AttendanceCard = ({ employeeId, record, history, rule, onChanged }) => {
                     location.status === "err" ? " att-location--err" : ""
                 }`}
             >
+                <span className="att-location-ico" aria-hidden="true">⌖</span>
                 <div className="att-location-info">
                     <span>Vị trí chấm công</span>
-                    <strong>
+                    <strong role="status">
                         {location.text} {rule?.gpsRequired ? "(bắt buộc)" : "(tùy chọn)"}
                     </strong>
-                    <button type="button" className="att-kpi-nav" disabled={busy || location.status === "pending"}
-                        onClick={() => setGpsEnabled((n) => Number(n) + 1)}>
-                        {location.status === "ok" ? "Cập nhật vị trí" : "Bật định vị"}
-                    </button>
                 </div>
+                    <button type="button" className="me-action" disabled={busy || location.status === "pending"}
+                        onClick={() => setGpsEnabled((n) => Number(n) + 1)}>
+                        {location.status === "pending" ? "Đang lấy vị trí…" : location.status === "ok" ? "Cập nhật vị trí" : "Bật định vị"}
+                    </button>
             </div>
 
             {/* ===== 2 mốc: Vào ca / Ra ca (bỏ Trạng thái) ===== */}

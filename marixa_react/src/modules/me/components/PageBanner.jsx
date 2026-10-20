@@ -5,13 +5,9 @@ import "./page-banner.css";
 // props:
 //   icon  : ký tự/emoji nhận diện trang
 //   kpis  : array { icon, label, value, tone: blue|green|red|gray|gold }
-//   accent: màu viền trái (optional)
-const PageBanner = ({ icon, kpis = [], accent, action }) => {
+const PageBanner = ({ icon, kpis = [], action }) => {
     return (
-        <div
-            className="page-banner"
-            style={accent ? { borderLeft: `3px solid ${accent}` } : undefined}
-        >
+        <div className="page-banner">
             <span className="page-banner-ico" aria-hidden="true">
                 {icon}
             </span>

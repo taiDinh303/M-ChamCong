@@ -7,8 +7,6 @@ import StatKpis from "../components/StatKpis";
 import StatCalendar from "../components/StatCalendar";
 import StatDetailTable from "../components/StatDetailTable";
 import StatWarnings from "../components/StatWarnings";
-import StatSummary from "../components/StatSummary";
-import PageBanner from "../components/PageBanner";
 import AttendancePeriodPanel from "../components/AttendancePeriodPanel";
 import { regularHours, businessDate, vnTodayKey } from "../../../utils/vnTime";
 import { ChartCard, ColumnChart } from "../../../components/charts/charts";
@@ -19,7 +17,6 @@ import {
     dayStatusOf,
     buildCalendar,
     buildWarnings,
-    hoursShort,
 } from "../components/statUtils";
 
 const StatisticsPage = () => {
@@ -168,35 +165,6 @@ const StatisticsPage = () => {
 
                 {!loading && !error && (
                     <div className="att-stat-wrap">
-                        <PageBanner
-                            icon="📊"
-                            kpis={[
-                                {
-                                    icon: "⏱",
-                                    label: "Giờ làm",
-                                    value: hoursShort(stats.hoursWorked),
-                                    tone: "blue",
-                                },
-                                {
-                                    icon: "📅",
-                                    label: "Ngày công",
-                                    value: `${stats.daysWorked}/${stats.expectedWorkdays}`,
-                                    tone: "green",
-                                },
-                                {
-                                    icon: "⚠",
-                                    label: "Đi trễ",
-                                    value: stats.late,
-                                    tone: "gold",
-                                },
-                                {
-                                    icon: "▲",
-                                    label: "Tăng ca",
-                                    value: hoursShort(stats.otWeekday + stats.otWeekend + stats.otHoliday),
-                                    tone: "red",
-                                },
-                            ]}
-                        />
                         <div className="att-kpi-bar">
                             <button
                                 type="button"
@@ -223,12 +191,9 @@ const StatisticsPage = () => {
                                 &rsaquo;
                             </button>
                         </div>
-                        <AttendancePeriodPanel key={`${ym.y}-${ym.m}`} year={ym.y} month={ym.m + 1} />
-                        <div className="att-stat-overview">
-                            <StatWarnings warnings={warnings} />
-                            <StatSummary stats={stats} />
-                            <StatKpis ym={ym} stats={stats} />
-                        </div>
+                        <StatKpis stats={stats} />
+                        <StatWarnings warnings={warnings} />
+                        <div className="me-stat-visuals">
                         <ChartCard
                             title="Giờ làm theo ngày"
                             hint="Giờ công từng ngày trong tháng"
@@ -237,6 +202,8 @@ const StatisticsPage = () => {
                             <ColumnChart data={dailyHours} yKey="value" yTickFormatter={(v) => v + "h"} />
                         </ChartCard>
                         <StatCalendar ym={ym} weeks={calendar} />
+                        </div>
+                        <AttendancePeriodPanel key={`${ym.y}-${ym.m}`} year={ym.y} month={ym.m + 1} />
                         <StatDetailTable monthRows={monthRows} holidayMap={holidayMap} />
                     </div>
                 )}

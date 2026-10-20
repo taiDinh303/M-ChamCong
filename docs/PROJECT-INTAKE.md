@@ -48,6 +48,7 @@ YES là áp dụng tài liệu, không xác nhận chức năng đã hoàn thàn
 | REQ-UI-04 | Admin chỉnh rule; HR/Admin cấp/điều chỉnh phép có reason/history, chưa auto accrual. | Hộp thoại trong trang cũ, chủ dự án đồng ý. |
 | REQ-UI-05 | Session/route/own API/phân trang đúng; test/lint/build và kiểm browser cô lập. | API vẫn enforce quyền. |
 | REQ-UI-06 | Bỏ ngày Home; nút menu cạnh logo mở toàn màn hình, bỏ sidebar ngang; yêu cầu 19/10 bỏ app-page-heading thay cách đặt tiêu đề 18/10. | Chủ dự án yêu cầu và bổ sung 18/10; shell dùng chung. |
+| REQ-UI-07 | Hoàn thiện 12 trang Me: nút định vị đủ rộng, Thống kê không lồng thẻ hẹp/lặp chỉ số, hồ sơ dễ đọc trên mobile, kiểm tra với dữ liệu DEMO thật qua API. | Chủ dự án yêu cầu 20/10; cho phép push main sau khi kiểm tra. |
 | REQ-DEMO-01 | Dữ liệu nghiệp vụ giả có nhãn trên Supabase hiện tại; giữ hồ sơ cũ, tài khoản chỉ Employee, không fake dữ liệu bảo mật. | Chủ dự án xác nhận 18/10; seed/kiểm chứng ở worklog. |
 | REQ-DOC-01 | Không placeholder mẫu còn sót; links/source/trạng thái/bằng chứng và rubric điểm rõ. | docs và backend guide. |
 

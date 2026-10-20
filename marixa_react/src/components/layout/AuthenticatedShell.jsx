@@ -48,7 +48,8 @@ export default function AuthenticatedShell({ storageKey, sidebar, children, prof
         if (event.target.closest("a[href], .att-nav-item, .work-back-btn")) setDrawerOpen(false);
     };
 
-    return <div className="app-shell app-shell--responsive">
+    const personal = pathname === "/me" || pathname.startsWith("/me/");
+    return <div className={`app-shell app-shell--responsive${personal ? " app-shell--me" : ""}`}>
             <Header profile={profile} onToggleSidebar={toggle} toggleRef={toggleRef}
                 sidebarExpanded={mobile ? drawerOpen : !collapsed} sidebarControls={mobile ? "mobile-navigation" : "desktop-navigation"} />
             <div className="app-body">

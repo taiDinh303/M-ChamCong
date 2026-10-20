@@ -20,10 +20,14 @@ const AttendanceHistoryPage = () => {
     const [error, setError] = useState("");
     const [tab, setTab] = useState("attendance");
     const [correctionDraft, setCorrectionDraft] = useState(null);
+    const [reloadVersion, setReloadVersion] = useState(0);
 
     useEffect(() => {
         const load = async () => {
+            setLoading(true);
+            setError("");
             try {
+                if (!userId || !employeeId) throw new Error("Tài khoản chưa liên kết hồ sơ nhân viên.");
                 if (userId) {
                     const p = await relatedApi.employeeByUser(userId);
                     setProfile(p.data.data || null);
@@ -46,7 +50,7 @@ const AttendanceHistoryPage = () => {
         };
 
         load();
-    }, [userId, employeeId]);
+    }, [userId, employeeId, reloadVersion]);
 
     // ===== KPI banner =====
     const total = history.length;
@@ -62,7 +66,7 @@ const AttendanceHistoryPage = () => {
                     <button type="button" className="wf-btn" role="tab" aria-selected={tab === "correction"} onClick={() => setTab("correction")}>Yêu cầu sửa công</button>
                 </div>
                 {tab === "overtime" ? <OvertimePanel /> : tab === "correction" ? <CorrectionPanel draft={correctionDraft} onDraftClosed={() => setCorrectionDraft(null)} /> : <>
-                {error && <div className="att-error">{error}</div>}
+                {error && <div className="att-error" role="alert">{error} <button type="button" className="me-action" onClick={() => setReloadVersion((value) => value + 1)}>Thử lại</button></div>}
                 {!loading && !error && (
                     <PageBanner
                         icon="🗂️"

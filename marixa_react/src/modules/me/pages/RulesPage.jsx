@@ -14,6 +14,7 @@ const AttendanceRulesPage = () => {
     const [error, setError] = useState("");
     const [profile, setProfile] = useState(null);
     const [editing, setEditing] = useState(null);
+    const [reloadVersion, setReloadVersion] = useState(0);
 
     useEffect(() => {
         if (!auth?.userId) {
@@ -21,6 +22,8 @@ const AttendanceRulesPage = () => {
             return;
         }
         (async () => {
+            setLoading(true);
+            setError("");
             try {
                 const [res, profRes] = await Promise.all([
                     relatedApi.attendanceRulesActive(),
@@ -34,7 +37,7 @@ const AttendanceRulesPage = () => {
                 setLoading(false);
             }
         })();
-    }, [auth?.userId]);
+    }, [auth?.userId, reloadVersion]);
 
     // Format phút -> "Xh Ym"
     const fmtMin = (m) => {
@@ -148,12 +151,12 @@ const AttendanceRulesPage = () => {
                 {error && (
                     <div className="att-error" role="alert">
                         {error}
-                        <button onClick={() => setError("")}>×</button>
+                        <button type="button" className="me-action" onClick={() => setReloadVersion((value) => value + 1)}>Thử lại</button>
                     </div>
                 )}
                 {loading ? (
                     <div className="att-loading">Đang tải...</div>
-                ) : rules.length === 0 ? (
+                ) : error ? null : rules.length === 0 ? (
                     <div className="att-card">
                         <p className="att-muted">
                             Chưa có quy định chấm công nào được công bố. Vui lòng liên hệ quản trị viên.

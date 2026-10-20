@@ -1,77 +1,24 @@
 import { hoursShort } from "./statUtils";
 
-// KPI "Ngày công / Giờ làm / Đi trễ / Nghỉ phép".
-const StatKpis = ({ stats }) => {
-    const missingDays = Math.max(0, stats.expectedWorkdays - stats.daysWorked);
-    const missingHours = Math.max(0, stats.standardMin - stats.hoursWorked);
-
-    return (
-        <>
-            <div className="att-stat-kpi-grid">
-                <div className="att-card att-stat-kpi">
-                    <div className="att-stat-tile-head"><span className="att-stat-tile-icon" aria-hidden="true">▦</span><span className="att-stat-tile-arrow" aria-hidden="true">⌄</span></div>
-                    <span className="att-kpi-label">Ngày công</span>
-                    <div className="att-stat-value">
-                        <strong>{stats.daysWorked}</strong>
-                        <span className="att-stat-fraction">
-                            / {stats.expectedWorkdays}
-                        </span>
-                    </div>
-                    <span className="att-stat-unit">ngày công</span>
-                    <span className="att-stat-sub">
-                        {missingDays > 0
-                            ? `Còn thiếu ${missingDays} ngày`
-                            : "✓ Đủ ngày công kỳ vọng"}
-                    </span>
-                </div>
-
-                <div className="att-card att-stat-kpi">
-                    <div className="att-stat-tile-head"><span className="att-stat-tile-icon" aria-hidden="true">◷</span><span className="att-stat-tile-arrow" aria-hidden="true">⌄</span></div>
-                    <span className="att-kpi-label">Giờ làm</span>
-                    <div className="att-stat-value">
-                        <strong>{hoursShort(stats.hoursWorked)}</strong>
-                        <span className="att-stat-fraction">
-                            / {hoursShort(stats.standardMin)}
-                        </span>
-                    </div>
-                    <span className="att-stat-unit">giờ công</span>
-                    <span className="att-stat-sub">
-                        {missingHours > 0
-                            ? `Còn thiếu ${hoursShort(missingHours)}`
-                            : "✓ Đủ giờ công kỳ vọng"}
-                    </span>
-                </div>
-
-                <div className="att-card att-stat-kpi">
-                    <div className="att-stat-tile-head"><span className="att-stat-tile-icon warn" aria-hidden="true">!</span><span className="att-stat-tile-arrow" aria-hidden="true">⌄</span></div>
-                    <span className="att-kpi-label">Đi trễ</span>
-                    <div className="att-stat-value">
-                        <strong>{stats.late}</strong>
-                    </div>
-                    <span className="att-stat-unit">lần</span>
-                    <span className="att-stat-sub">
-                        {stats.late > 0
-                            ? `${stats.late} lần đi trễ trong tháng`
-                            : "✓ Không có lần đi trễ"}
-                    </span>
-                </div>
-
-                <div className="att-card att-stat-kpi">
-                    <div className="att-stat-tile-head"><span className="att-stat-tile-icon" aria-hidden="true">☼</span><span className="att-stat-tile-arrow" aria-hidden="true">⌄</span></div>
-                    <span className="att-kpi-label">Nghỉ phép</span>
-                    <div className="att-stat-value">
-                        <strong>{stats.leaveDays}</strong>
-                    </div>
-                    <span className="att-stat-unit">ngày</span>
-                    <span className="att-stat-sub">
-                        {stats.hasQuota
-                            ? `Phép còn lại: ${stats.remainingLeave} ngày`
-                            : "Chưa tải được số dư sổ phép"}
-                    </span>
-                </div>
-            </div>
-        </>
-    );
-};
-
-export default StatKpis;
+export default function StatKpis({ stats }) {
+    const cards = [
+        { label: "Công thường", value: hoursShort(stats.hoursWorked), icon: "◷",
+            hint: `Mục tiêu tháng: ${hoursShort(stats.standardMin)} · Không gồm tăng ca` },
+        { label: "Ngày có công", value: `${stats.daysWorked} / ${stats.expectedWorkdays}`, icon: "▦",
+            hint: "Ngày ghi nhận / ngày làm việc dự kiến" },
+        { label: "Tăng ca được duyệt", value: hoursShort(stats.otWeekday + stats.otWeekend + stats.otHoliday), icon: "↗",
+            hint: `Thường ${hoursShort(stats.otWeekday)} · Cuối tuần ${hoursShort(stats.otWeekend)} · Lễ ${hoursShort(stats.otHoliday)}` },
+        { label: "Đi trễ", value: `${stats.late} lần`, icon: "!",
+            hint: stats.late ? "Xem ngày và giờ chi tiết trong lịch sử công" : "Không ghi nhận đi trễ trong tháng" },
+        { label: "Nghỉ phép trong tháng", value: `${stats.leaveDays} ngày`, icon: "☼",
+            hint: "Ngày chấm công ghi nhận trạng thái nghỉ phép" },
+        { label: "Số dư phép năm", value: stats.hasQuota ? `${stats.remainingLeave} ngày` : "—", icon: "◇",
+            hint: stats.hasQuota ? "Theo sổ phép được cấp và điều chỉnh" : "Chưa tải được số dư sổ phép" },
+    ];
+    return <div className="me-stat-metrics" aria-label="Tổng hợp công trong tháng">
+        {cards.map(({ label, value, icon, hint }) => <article className="me-stat-metric" key={label}>
+            <span className="me-stat-icon" aria-hidden="true">{icon}</span>
+            <div><h2>{label}</h2><strong>{value}</strong><p>{hint}</p></div>
+        </article>)}
+    </div>;
+}

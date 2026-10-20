@@ -83,7 +83,7 @@ const AttendancePage = () => {
                     history={history}
                     onChanged={handleChecked}
                 />
-            ) : <button type="button" className="att-kpi-nav" onClick={() => window.location.reload()}>Tải lại dữ liệu</button>}
+            ) : <button type="button" className="me-action" onClick={() => window.location.reload()}>Tải lại dữ liệu</button>}
         </AppLayout>
     );
 };
