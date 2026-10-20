@@ -467,11 +467,11 @@
 }
 .app-header-bell-item:hover { background: var(--th-surface-alt); }
 .app-header-bell-item:not(.is-read) { border-left-color: var(--th-primary-light); }
-.app-header-bell-item-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.app-header-bell-item-main { flex: 1; min-width: 0; min-height: 44px; display: flex; flex-direction: column; gap: 2px; text-decoration: none; cursor: pointer; }
 .app-header-bell-item-main strong { font-size: 13px; color: var(--th-text); }
 .app-header-bell-item:not(.is-read) .app-header-bell-item-main strong { font-weight: 700; }
 .app-header-bell-item-main span { font-size: 12px; color: var(--th-text-3); }
-.app-header-bell-item-open { align-self: flex-start; display: inline-flex; align-items: center; min-height: 32px; color: var(--th-primary); font-size: 12px; font-weight: 600; text-decoration: underline; }
+.app-header-bell-item-main:hover strong, .app-header-bell-item-main:focus-visible strong { color: var(--th-primary); text-decoration: underline; text-underline-offset: 3px; }
 .app-header-bell-item-read {
     width: 26px;
     height: 26px;

@@ -107,6 +107,11 @@
 
 ## 4. Log sự kiện (mới trên cùng)
 
+### 20/10/2026 — Codex: nhấn trực tiếp chữ trong thông báo
+
+- Theo yêu cầu tiếp của chủ dự án, bỏ “Mở →”; tiêu đề/mô tả trở thành Link có cursor pointer, hover/focus rõ và vùng nhấn tối thiểu cao44px. Giữ map đích theo role (REQ-UI-05), đánh dấu đọc/đóng panel khi nhấn chữ; nút ✓ là control riêng.
+- Browser/API/SQLite cô lập: không còn link Mở riêng, computed cursor=pointer; nhấn chữ bàn giao đến /hr/handover, Enter trên đơn nghỉ đến /admin/leaves và đóng panel. Nhấn ✓ giữ nguyên /hr, panel còn mở và dòng thành is-read. Ảnh tại artifacts/notification-text-20261020 (Gitignored); không ghi dữ liệu live. 43 PASS/0 FAIL/0 SKIP, lint max-warnings0 và Vite build PASS (cảnh báo chunk lớn cũ còn); Markdown48file/394link/13anchor/0lỗi và diff whitespace PASS. Không chạy lại backend/provider suite cho thay đổi JSX/CSS này; không coi push là bằng chứng hosting đã triển khai.
+
 ### 20/10/2026 — Codex: hoàn thiện 12 trang Me và kiểm dữ liệu DEMO
 
 - **Phạm vi chủ dự án yêu cầu:** sửa nút vị trí/Bật định vị, Thống kê và toàn bộ 12 trang cá nhân; có dữ liệu mẫu để xem và test. Chủ dự án tiếp tục yêu cầu làm xong push main. REQ-UI-07/TC-UI-11 và REQ-DEMO-01; không mở rộng role hoặc thay chính sách công/phép.

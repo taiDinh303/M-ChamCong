@@ -20,6 +20,8 @@ Quyết định UI 18/10: Home bỏ nhãn ngày. Theo quyết định mới 19/1
 
 Nút ngôn ngữ dạng chỉ cờ trên Header căn giữa cờ trong khung 42×42 desktop/40×40 mobile; không dành khoảng trống cho caret. Picker có nhãn ở login/kích hoạt vẫn hiển thị tên và caret. Kiểm bằng vị trí thực trên browser và thao tác chọn cả ba ngôn ngữ; không suy từ CSS rằng đã đạt trên thiết bị thật.
 
+Thông báo Header (20/10): phần tiêu đề/mô tả là một liên kết trực tiếp đến trang xử lý theo quyền, có con trỏ bàn tay và nhấn Enter được; bỏ liên kết “Mở →” riêng. Nhấn chữ đánh dấu đã đọc và đóng panel. Nút ✓ nằm riêng, chỉ đánh dấu đã đọc, không điều hướng.
+
 ## 2. Token hiện tại và chuẩn đo lường mục tiêu
 
 Các giá trị dưới đây đã đối chiếu [`theme.css`](../marixa_react/src/theme.css); đầy đủ hiện có **55 biến `--th-*`** (50 màu, 4 shadow, 1 font). [`figma/tokens/tokens.json`](../figma/tokens/tokens.json) là bản mirror, không thay thế CSS trong app.

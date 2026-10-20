@@ -174,12 +174,11 @@ const NotificationBell = () => {
                                 const isRead = readIds.includes(i.id);
                                 return (
                                     <div key={i.id} className={`app-header-bell-item${isRead ? " is-read" : ""}`}>
-                                        <div className="app-header-bell-item-main">
+                                        <Link className="app-header-bell-item-main" to={notificationTarget(i.kind, auth?.roles)}
+                                            onClick={() => { markRead(i.id); setOpen(false); }}>
                                             <strong>{i.title}</strong>
                                             <span>{i.detail}</span>
-                                            <Link className="app-header-bell-item-open" to={notificationTarget(i.kind, auth?.roles)}
-                                                aria-label={`Mở ${i.title}`} onClick={() => { markRead(i.id); setOpen(false); }}>Mở →</Link>
-                                        </div>
+                                        </Link>
                                         {!isRead ? (
                                             <button type="button" className="app-header-bell-item-read" title="Đánh dấu đã đọc" onClick={() => markRead(i.id)}>
                                                 ✓
