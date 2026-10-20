@@ -93,6 +93,18 @@ public sealed class AuthorizationTests
     }
 
     [Fact]
+    public async Task Connection_probe_is_anonymous_without_schema_but_business_rules_stay_protected()
+    {
+        using var app = new ApiFactory();
+        using var anonymous = app.CreateClient();
+        var response = await anonymous.GetAsync("/health/live");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        Assert.Equal("live", body.RootElement.GetProperty("data").GetProperty("status").GetString());
+        Assert.Equal(HttpStatusCode.Unauthorized, (await anonymous.GetAsync("/api/AttendanceRulePublic/active")).StatusCode);
+    }
+
+    [Fact]
     public async Task Readiness_fails_when_business_schema_is_missing()
     {
         using var app = new ApiFactory();

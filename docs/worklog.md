@@ -107,6 +107,14 @@
 
 ## 4. Log sự kiện (mới trên cùng)
 
+### 20/10/2026 — Codex: sửa probe gây kẹt kết nối vì401
+
+- **Lỗi do bản preload trước:** probe không token gọi `/api/AttendanceRulePublic/active`, nhưng controller có `[Authorize]`. Máy chủ chạy vẫn trả401 nên RequireSession dừng ở màn hình kết nối. Kiểm live chỉ đọc: endpoint quy định401 (~1,40giây), `/health/live`200 (~0,37giây); đây không phải phép đo Render cold start.
+- **CURRENT sửa REQ-UI-08/TC-UI-12:** dùng healthProbe gọi `/health/live` anonymous tại origin API, ngoài `/api`; kiểm HTTP200 và `data.status=live`, không chấp nhận HTML fallback. Probe dùng client riêng không gắn token, không đọc DB; API nghiệp vụ giữ nguyên quyền. Thêm proxy `/health` cho dev/preview. Không sửa backend runtime/schema/credential hoặc tự replay thao tác ghi.
+- **Sửa giới hạn bằng chứng cũ:** bridge fixture ngoài Git trước đây tự gán role Employee cho request quy định anonymous, đã che lỗi hợp đồng này. Đã bỏ ngoại lệ đó, chuyển health route qua ApiFactory anonymous thật; kết quả browser trước không chứng minh probe hoạt động trên hosting. Không sửa lại lịch sử để coi lỗi này đã được bắt từ trước.
+- **Kiểm chứng:** frontend **71 PASS / 0 FAIL / 0 SKIP**, lint max-warnings0 và Vite production build843modules PASS; cảnh báo chunk lớn cũ còn. Ba test frontend mới kiểm URL relative/absolute đúng origin, liveness503→200 trong khi quy định401, không gửi token, không nhận HTML/JSON sai và giữ timeout. Backend AuthorizationTests **14 PASS / 0 FAIL / 0 SKIP** trên SQLite riêng, gồm ca mới health200 không cần schema còn quy định anonymous401; không chạy lại toàn bộ provider suite vì backend runtime không đổi. Fixture build0warning/0error.
+- **Browser trên dist và API/SQLite riêng:** xác nhận proxy health200/quy định anonymous401; giả lập503 trong10giây, animation hiện rồi đăng nhập thành công vào Home,4healthGET và chỉ1loginPOST; request quy định chỉ phát sau đăng nhập. Tải lại Home bằng phiên đã lưu thành công; không có console error/warn ở lần kiểm. Ảnh/request JSON tại artifacts/health-probe-20261020 (Gitignored). Không ghi dữ liệu owner DB/bucket; không xác nhận hosting đã triển khai bản sửa từ kết quả local hoặc push.
+
 ### 20/10/2026 — Codex: tải trước theo phiên, cache và kết nối lại
 
 - **Yêu cầu:** chủ dự án muốn tải dữ liệu khi đăng nhập, chuyển trang mượt không reload document, có animation khi chờ Render Free khởi động/mất kết nối. REQ-UI-08/TC-UI-12; không thay chính sách nghiệp vụ, quyền API, gói hosting hoặc schema. Nguồn chính sách cache/budget tại docs25, UI tại docs09.

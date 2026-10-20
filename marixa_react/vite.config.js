@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => {
       proxy: {
         "/api": { target: runtime.proxyTarget, changeOrigin: true },
         "/uploads": { target: runtime.proxyTarget, changeOrigin: true },
+        "/health": { target: runtime.proxyTarget, changeOrigin: true },
       },
     },
   };

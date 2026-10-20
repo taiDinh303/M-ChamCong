@@ -4,6 +4,7 @@ import { API_BASE_URL } from "./apiConfig";
 import { apiErrorMessage } from "./contracts";
 import { responseCache, sessionScope, cacheKey, cacheableRead, invalidateData } from "./responseCache.js";
 import { connection, recoverableRead, isConnectionFailure } from "./connection.js";
+import { createHealthProbe } from "./healthProbe.js";
 
 const axiosClient = axios.create({
   baseURL: API_BASE_URL,
@@ -62,15 +63,8 @@ axiosClient.interceptors.response.use(
   }
 );
 
-const probeClient = axios.create({ baseURL: API_BASE_URL, timeout: 10_000 });
-connection.configure(async ({ timeout = 10_000 } = {}) => {
-    const response = await probeClient.get("/AttendanceRulePublic/active", { timeout });
-    if (!Array.isArray(response.data?.data)) {
-        const error = new Error("Máy chủ chưa sẵn sàng.");
-        error.response = { status: 503 };
-        throw error;
-    }
-});
+const probeClient = axios.create({ timeout: 10_000 });
+connection.configure(createHealthProbe(probeClient, API_BASE_URL));
 
 const networkGet = axiosClient.get.bind(axiosClient);
 axiosClient.get = (url, config = {}) => {
