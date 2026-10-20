@@ -96,6 +96,8 @@ Frame thiết kế chính theo quyết định chủ dự án: **mobile 375px**,
 
 Trước khi đánh dấu UI hoàn thành: đối chiếu API/quyền và trạng thái lỗi, chạy build/lint phù hợp, kiểm tra browser ở kích thước mục tiêu và lưu bằng chứng. Kiểm tra camera/GPS cần thiết bị/quyền thực tế. Đợt **17/10/2026** giữ layout chính, bổ sung luồng đã được chủ dự án đồng ý. Native dialog mới có focus/Escape/busy/error; không xác nhận pixel match, WCAG toàn app hoặc Figma đã đồng bộ. Kịch bản kiểm thử: [06-testing.md](06-testing.md).
 
+**CURRENT source20/10 — nút HR/Admin:** Nghỉ phép gom Duyệt/Từ chối/PDF/Hủy vào một nhóm flex trong cột đủ rộng, cùng hàng trên desktop; trên thẻ mobile chỉ wrap khi thiếu chỗ, nút cao tối thiểu44px. Báo cáo có bộ lọc và nút tìm kiếm cao44px; select trong label dọc đặt flex:none để không nhận flex-basis180px từ bộ lọc HR dùng ngang. Bảng báo cáo cho mã/tên/phòng ban xuống dòng, giữ ngày rõ ràng và nhóm thao tác hai cột; nút desktop tối thiểu36px, mobile44px. Scope nằm trong trang tương ứng, không đổi quyền/luồng duyệt. **NOT VERIFIED:** browser responsive cho thay đổi nút lần này bị chặn địa chỉ local; bằng chứng/giới hạn ở worklog, không lấy test logic/build làm bằng chứng pixel hoặc thao tác dialog đã đạt.
+
 ## 7. Không gian cá nhân Me — 20/10/2026
 
 **CURRENT trong source:** [me-workspace.css](../marixa_react/src/modules/me/me-workspace.css) được import sau workspace.css, giới hạn bằng `.app-shell--me` theo route để tách kiểu trình bày khỏi HR/Admin. Giữ 12 trang/menu và các API hiện có, không khôi phục app-page-heading. Nút chữ như Bật định vị/Thêm ảnh dùng `.me-action`, không dùng nút vuông chuyển tháng. Vị trí gồm nhãn/trạng thái và hành động riêng, xếp dọc trên điện thoại; không tự xin quyền GPS/camera khi tải trang.

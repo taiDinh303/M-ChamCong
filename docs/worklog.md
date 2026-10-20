@@ -107,6 +107,13 @@
 
 ## 4. Log sự kiện (mới trên cùng)
 
+### 20/10/2026 — Codex: nút nghỉ phép và bộ lọc/thao tác báo cáo HR/Admin
+
+- Chủ dự án báo nút Thao tác ở `/hr/leaves` xuống hàng lộn xộn và bộ lọc/nút `/hr/reports` quá lớn. Sửa phạm vi trình bày REQ-UI-05; component Nghỉ phép dùng chung Admin và Báo cáo có scope trang, không thay API/role/quy tắc duyệt hoặc ghi dữ liệu thật.
+- **CURRENT source:** Nghỉ phép gom Duyệt/Từ chối/PDF/Hủy trong cùng lp-actions, bỏ nhóm riêng chỉ có hai nút đầu; cột thao tác theo kích thước nội dung và các nút không co chữ. Desktop cùng hàng, mobile wrap có kiểm soát với min-height44px. Báo cáo bỏ flex-basis180px của hr-select khi nằm trong label cột, width100% và height44px; nút Tìm kiếm44px có tên rõ. Bộ lọc năm cột trên desktop/hai hoặc ba cột khi hẹp; các nút bảng hai cột, min-height36px/44px mobile. Cho mã/tên dài wrap, giữ ngày nowrap, bỏ giới hạn cột action/primary của desktop khi chuyển thành thẻ mobile.
+- **Kiểm chứng:** frontend **78 PASS / 0 FAIL / 0 SKIP**, lint max-warnings0 và Vite build845modules PASS; cảnh báo chunk lớn cũ còn. Không viết test mô phỏng CSS hoặc chạy lại backend/provider suite, backend runtime không đổi. Không sửa schema/seed hoặc gọi DB/bucket thật.
+- **NOT VERIFIED:** browser/pixel desktop và mobile, mở dialog và các nút cuối sau sửa. Đã dựng dist và API/SQLite riêng, health qua proxy200; trình duyệt từ chối điều hướng `127.0.0.1:5176/login` với `net::ERR_BLOCKED_BY_CLIENT`. Không đổi cơ chế điều khiển/địa chỉ để lách chặn, không ghi là browser smoke đã đạt. Tab kiểm thử local5187 có sẵn được giữ nguyên. Push không tự chứng minh Vercel đã triển khai hoặc giao diện đã nghiệm thu.
+
 ### 20/10/2026 — Codex: HR dùng ngay dữ liệu tải trước, tách bộ lọc xác minh
 
 - **Nguyên nhân xác nhận từ source:** useHrData luôn khởi tạo loading=true và chờ mười API, gồm ActivationCode chủ đích không cache; mọi lần vào HR bị chặn bởi request này. Preload chưa có Employee/get-archived cho HR/Manager. Chủ dự án yêu cầu cải thiện nếu có thể, chấp nhận tải thật khi cần; REQ-UI-08/TC-UI-13.

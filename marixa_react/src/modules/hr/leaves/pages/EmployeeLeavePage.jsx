@@ -209,8 +209,9 @@ const EmployeeLeavePage = ({ layout = "hr" }) => {
                                                     {r.approverName && <small className="lp-approver">{r.approverName}</small>}
                                                 </td>
                                                 <td className="lp-th-act">
+                                                    <div className="lp-actions">
                                                     {r.status === 1 && r.employeeId !== auth?.employeeId ? (
-                                                        <div className="lp-actions">
+                                                        <>
                                                             <button
                                                                 type="button"
                                                                 className="lp-btn lp-btn--ok"
@@ -227,12 +228,13 @@ const EmployeeLeavePage = ({ layout = "hr" }) => {
                                                             >
                                                                 {busy === "reject-" + r.id ? "Đang từ chối…" : "Từ chối"}
                                                             </button>
-                                                        </div>
+                                                        </>
                                                     ) : null}
                                                     <button type="button" className="lp-btn" onClick={() => pdf(r)}>PDF</button>
-                                                    {r.status === 1 && r.employeeId === auth?.employeeId && <small className="lp-self-note">Cần người khác duyệt</small>}
                                                     {r.status === 2 && canCancelApproved && r.employeeId !== auth?.employeeId && <button type="button" className="lp-btn lp-btn--bad"
                                                         onClick={() => { setCancelError(""); setCancellation(r); }}>Hủy đơn đã duyệt</button>}
+                                                    </div>
+                                                    {r.status === 1 && r.employeeId === auth?.employeeId && <small className="lp-self-note">Cần người khác duyệt</small>}
                                                 </td>
                                             </tr>
                                         ))
