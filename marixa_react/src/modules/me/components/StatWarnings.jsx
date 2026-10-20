@@ -11,7 +11,7 @@ const StatWarnings = ({ warnings }) => {
         <div className="att-card att-stat-card att-stat-warn">
             <div className="att-stat-tile-head">
                 <span className="att-stat-tile-icon warn" aria-hidden="true">!</span>
-                <Link className="att-stat-tile-arrow" to="/attendance/attendance-history" aria-label="Xem chi tiết cảnh báo">↗</Link>
+                <Link className="att-stat-tile-arrow" to="/me/attendance-history" aria-label="Xem chi tiết cảnh báo">↗</Link>
             </div>
             <h2 className="att-stat-title">Bạn cần kiểm tra</h2>
             <strong className="att-stat-tile-value">{count} mục</strong>

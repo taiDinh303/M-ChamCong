@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { formatVnTime, formatVnDate, calcOvertime, formatOvertime } from "../../../utils/vnTime";
 import PhotoCell from "./PhotoCell";
 import { statusLabel, statusClass, approvalLabel, approvalClass } from "../../hr/attendance/labels";
@@ -17,7 +18,7 @@ const HistoryTable = ({ history, onRequestCorrection }) => {
         <div className="att-content attendance-history-compact">
             <section className="att-card">
                 <div className="att-table-wrap att-table-wrap--stack">
-                    <table className="att-table att-table--stack">
+                    <ResponsiveTable className="att-table att-table--stack">
                         <thead>
                             <tr>
                                 <th>Ngày</th>
@@ -59,7 +60,7 @@ const HistoryTable = ({ history, onRequestCorrection }) => {
                                 </tr>
                             ))}
                         </tbody>
-                    </table>
+                    </ResponsiveTable>
                 </div>
             </section>
         </div>

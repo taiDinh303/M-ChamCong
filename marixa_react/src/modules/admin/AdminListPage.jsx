@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../components/common/ResponsiveTable.jsx";
 import { useState, useMemo } from "react";
 import AdminAppLayout from "./layout/AdminAppLayout";
 import HrAppLayout from "../hr/layout/HrAppLayout";
@@ -134,7 +135,7 @@ const AdminListPage = ({
                         </div>
 
                         <div className="att-table-wrap">
-                            <table className="att-table">
+                            <ResponsiveTable className="att-table">
                                 <thead>
                                     <tr>
                                         {columns.map((c) => (
@@ -191,7 +192,7 @@ const AdminListPage = ({
                                         ))
                                     )}
                                 </tbody>
-                            </table>
+                            </ResponsiveTable>
                         </div>
                     </div>
                 )}

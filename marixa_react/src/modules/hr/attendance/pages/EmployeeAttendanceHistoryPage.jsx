@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../../components/common/ResponsiveTable.jsx";
 import { useState, useEffect, useMemo } from "react";
 
 import { getAuth } from "../../../../services/auth/auth";
@@ -649,7 +650,7 @@ const EmployeeAttendanceHistoryPage = () => {
 
                             <div className="att-table-wrap">
 
-                                <table className="att-table">
+                                <ResponsiveTable className="att-table">
 
                                     <thead>
 
@@ -795,7 +796,7 @@ const EmployeeAttendanceHistoryPage = () => {
 
                                     </tbody>
 
-                                </table>
+                                </ResponsiveTable>
 
                             </div>
 

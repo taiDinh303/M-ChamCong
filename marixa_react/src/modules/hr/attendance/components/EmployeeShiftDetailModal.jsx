@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../../components/common/ResponsiveTable.jsx";
 import { useMemo, useState } from "react";
 import { formatVnDate } from "../../../../utils/vnTime";
 import employeeAttendanceApi from "../api/employeeAttendanceApi";
@@ -157,7 +158,7 @@ const EmployeeShiftDetailModal = ({ employee, assignments, shifts, onClose, canE
                     <p className="att-muted">Nhân viên này chưa được gán ca làm việc nào.</p>
                 ) : (
                     <div className="att-table-wrap">
-                        <table className="att-table att-table--compact att-table--shift-detail">
+                        <ResponsiveTable className="att-table att-table--compact att-table--shift-detail">
                             <thead>
                                 <tr>
                                     <th>Ngày bắt đầu</th>
@@ -294,7 +295,7 @@ const EmployeeShiftDetailModal = ({ employee, assignments, shifts, onClose, canE
                                     );
                                 })}
                             </tbody>
-                        </table>
+                        </ResponsiveTable>
                     </div>
                 )}
 

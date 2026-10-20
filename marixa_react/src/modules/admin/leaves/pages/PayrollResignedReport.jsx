@@ -1,5 +1,13 @@
 import AdminListPage from "../../AdminListPage";
 import adminApi from "../../api/adminApi";
+import { itemsOf } from "../../../../services/api/contracts";
+
+// Stable reference prevents useAdminList from reloading on every render.
+const fetchResignedEmployees = async () => {
+    const [active, archived] = await Promise.all([adminApi.employees(), adminApi.archivedEmployees()]);
+    const all = [...new Map([...itemsOf(active), ...itemsOf(archived)].map((employee) => [employee.id, employee])).values()];
+    return { data: { data: { items: all.filter((employee) => [4, 5].includes(employee.status)) } } };
+};
 
 // ===== Trang Bảng lương (quản trị) =====
 const PayrollAdminPage = () => {
@@ -59,19 +67,7 @@ const ResignedPage = ({ hrMode = false }) => {
         <AdminListPage
             title="Người đã nghỉ việc"
             subtitle="Lưu trữ hồ sơ & lịch sử của nhân viên đã rời đi"
-            fetcher={async () => {
-                const r = await adminApi.employees();
-                const all = r.data.data?.items || [];
-                return {
-                    data: {
-                        data: {
-                            items: all.filter((e) =>
-                                [4, 5].includes(e.status)
-                            ),
-                        },
-                    },
-                };
-            }}
+            fetcher={fetchResignedEmployees}
             columns={[
                 { key: "employeeCode", label: "Mã NV" },
                 { key: "fullName", label: "Họ tên" },

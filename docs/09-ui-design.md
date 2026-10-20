@@ -1,6 +1,6 @@
 # 09 — Design system và giao diện Marixa
 
-> Chủ tài liệu: **Đinh Văn Tài**. Đối chiếu mã nguồn: **18/10/2026**.
+> Chủ tài liệu: **Đinh Văn Tài**. Đối chiếu mã nguồn: **20/10/2026**.
 > **CURRENT** theo source và browser smoke cô lập tại worklog; **TARGET** là tiêu chí thiết kế; thiết bị thật/Figma/hosting live vẫn **NOT VERIFIED**.
 > **EN — Codex / Agnes:** Implement only authorized UI work. Keep current behavior and target UX separate. `theme.css` owns code token values; do not infer permissions or completed features from a design frame.
 
@@ -16,7 +16,7 @@
 
 Thiết kế hướng tới nhận diện Marixa: xanh lam/cyan, điểm nhấn vàng; nền sáng, nội dung rõ, ưu tiên thao tác chấm công trên mobile và đối soát/bảng dữ liệu trên desktop. Logo tham chiếu: [`marixa-logo.png`](../marixa_react/public/marixa-logo.png). Màu asset và tương phản thực tế **NOT VERIFIED** trong lượt này.
 
-Quyết định UI 18/10: Home bỏ nhãn ngày. Các layout đã đăng nhập dùng [AuthenticatedShell](../marixa_react/src/components/layout/AuthenticatedShell.jsx): tiêu đề/mô tả trang nằm trong header trên desktop, thành hàng toàn chiều rộng dưới logo/nút tài khoản trên mobile. [HrHero](../marixa_react/src/modules/hr/HrHero.jsx) chuyển tiêu đề qua portal, giữ các ô KPI ở nội dung; tiêu đề dự phòng theo route bảo đảm có tên trang cả khi đang tải. Theo yêu cầu tiếp theo cùng ngày, điện thoại <=768px dùng nút cạnh logo mở dialog điều hướng **toàn màn hình**, trượt từ trái; nút đóng nằm cố định phía trên khi cuộn, chừa safe area và đóng khi chọn trang hoặc Escape. Native dialog quản lý focus, shell khóa cuộn nền và trả focus về nút menu khi đóng. Sidebar desktop vẫn thu gọn được. Bỏ thanh sidebar kéo ngang và hook tự cuộn pill cũ; bảng dữ liệu rộng vẫn được cuộn riêng. Riêng Home đã bỏ thanh phân mục Vận hành/Thông tin/Con người/Tài chính/Khách hàng/Sản phẩm và nút mục lục: điều hướng chính bằng các thẻ module có lọc quyền. Header Home giữ logo, thông báo, cờ, tài khoản và nút về phân khu; footer giữ thông tin thương hiệu. Chưa coi browser viewport là kiểm thử thiết bị thật.
+Quyết định UI 18/10: Home bỏ nhãn ngày. Theo quyết định mới 19/10, bỏ khối app-page-heading trên mọi trang, bỏ portal tiêu đề/mô tả và hàng tiêu đề phụ trên mobile. [AuthenticatedShell](../marixa_react/src/components/layout/AuthenticatedShell.jsx) giữ tên trang ở document.title và nhãn main cho trợ năng; [HrHero](../marixa_react/src/modules/hr/HrHero.jsx) chỉ giữ KPI. Nút thao tác/bộ lọc và tiêu đề của biểu mẫu/hộp thoại vẫn giữ. Header module có padding đều; màn hình <=380px giữ logo M và ẩn chữ MARIXA để đủ chỗ nút menu và các nút tài khoản. Theo yêu cầu tiếp theo cùng ngày, điện thoại <=768px dùng nút cạnh logo mở dialog điều hướng **toàn màn hình**, trượt từ trái; nút đóng nằm cố định phía trên khi cuộn, chừa safe area và đóng khi chọn trang hoặc Escape. Native dialog quản lý focus, shell khóa cuộn nền và trả focus về nút menu khi đóng. Sidebar desktop vẫn thu gọn được. Bỏ thanh sidebar kéo ngang và hook tự cuộn pill cũ; bảng dữ liệu rộng vẫn được cuộn riêng. Riêng Home đã bỏ thanh phân mục Vận hành/Thông tin/Con người/Tài chính/Khách hàng/Sản phẩm và nút mục lục: điều hướng chính bằng các thẻ module có lọc quyền. Header Home giữ logo, thông báo, cờ, tài khoản và nút về phân khu; footer giữ thông tin thương hiệu. Chưa coi browser viewport là kiểm thử thiết bị thật.
 
 Nút ngôn ngữ dạng chỉ cờ trên Header căn giữa cờ trong khung 42×42 desktop/40×40 mobile; không dành khoảng trống cho caret. Picker có nhãn ở login/kích hoạt vẫn hiển thị tên và caret. Kiểm bằng vị trí thực trên browser và thao tác chọn cả ba ngôn ngữ; không suy từ CSS rằng đã đạt trên thiết bị thật.
 
@@ -40,10 +40,10 @@ Các giá trị dưới đây đã đối chiếu [`theme.css`](../marixa_react/
 
 ## 3. Điều hướng hiện tại
 
-- Cá nhân: nhóm `/attendance/*` cho công, thống kê, phép, hợp đồng, lương, bảo hiểm, tài khoản ngân hàng và hành chính; `hideInUserSidebar` ẩn mục khỏi sidebar cá nhân.
-- Nhân sự: `/employees/*`, registry hiện cho `HR`, `Manager`, `Admin`; Admin có nhóm `/admin/*`.
+- Cá nhân: nhóm `/me/*` cho công, thống kê, phép, hợp đồng, lương, bảo hiểm, tài khoản ngân hàng và hành chính; `hideInUserSidebar` ẩn mục khỏi sidebar cá nhân.
+- Nhân sự: `/hr/*`, registry hiện cho `HR`, `Manager`, `Admin`; Admin có nhóm `/admin/*`.
 - Trang dùng chung: `/home`, `/work`, `/profile`; `/login`, `/kich-hoat`, `/unauthorized` cho truy cập/phiên/quyền.
-- `/finance` chỉ chuyển tới `/attendance/salary`; `/employees/payroll` chuyển tới `/employees`. Không thiết kế chúng như màn hình mới đang hoạt động.
+- `/finance` chỉ chuyển tới `/me/salary`; `/hr/payroll` chuyển tới `/hr`. Không thiết kế chúng như màn hình mới đang hoạt động.
 
 Inventory route đầy đủ và các redirect: [03](03-architecture.md), [`figma/files-map.md`](../figma/files-map.md). Route nội bộ có RequireSession, menu/guard áp quyền prefix dài nhất; thiết kế “ẩn nút” không thay thế quyền API.
 
@@ -53,12 +53,12 @@ Inventory route đầy đủ và các redirect: [03](03-architecture.md), [`figm
 | --- | --- | --- |
 | `/login`, `/kich-hoat` | Form đăng nhập / kích hoạt và gọi API tương ứng. | Có loading, lỗi cạnh trường, lỗi mạng, trạng thái kích hoạt; không tuyên bố đã kiểm thử đủ khóa tài khoản/keyboard. |
 | `/home` | Trang tổng quan/module cards. | Chỉ hiện hành động phù hợp phiên và quyền; không bỏ route này khỏi mapping thiết kế. |
-| `/attendance` | Đồng hồ Việt Nam, camera, vào/ra, vị trí GPS dạng tọa độ, lịch tuần. Ảnh/GPS bắt buộc theo rule, camera tùy chọn khi rule không yêu cầu; UI gửi tọa độ đã lấy. | Ảnh/GPS theo quyết định [02](02-business-analysis.md); UI gửi latitude/longitude khi người dùng bật vị trí. Chưa có geofence. Không hiển thị “Trong/Ngoài văn phòng” như kết quả thật khi chưa tính. |
-| `/attendance/attendance-history`, `/attendance/statistics` | Lịch sử/thống kê, xem dữ liệu công; một số luồng có CSV dữ liệu hiện thời. | Loading, rỗng, thiếu mốc, lỗi API rõ ràng. Thẻ kỳ/version/XLSX nằm trong Thống kê; tab OT và sửa công nằm trong Lịch sử; PDF đơn nghỉ ở Nghỉ phép. Live cần nghiệm thu riêng. |
-| `/attendance/leave` | Tạo/xem đơn; API dùng Pending/Approved/Rejected/Cancelled theo transition thực tế. | Chủ hủy Pending; HR/Admin khác chủ có nút hủy Approved bằng lý do và hoàn số đã trừ; nháp UI không phải trạng thái DB nếu chưa hỗ trợ. |
-| Hợp đồng/lương/bảo hiểm/ngân hàng/quy định cá nhân | Các route/component hiện có dưới `/attendance/*`. | Phân biệt dữ liệu rỗng, thiếu liên kết nhân viên và thiếu quyền; chưa nghiệm thu đầy đủ màn hình. |
+| `/me` | Đồng hồ Việt Nam, camera, vào/ra, vị trí GPS dạng tọa độ, lịch tuần. Ảnh/GPS bắt buộc theo rule, camera tùy chọn khi rule không yêu cầu; UI gửi tọa độ đã lấy. | Ảnh/GPS theo quyết định [02](02-business-analysis.md); UI gửi latitude/longitude khi người dùng bật vị trí. Chưa có geofence. Không hiển thị “Trong/Ngoài văn phòng” như kết quả thật khi chưa tính. |
+| `/me/attendance-history`, `/me/statistics` | Lịch sử/thống kê, xem dữ liệu công; một số luồng có CSV dữ liệu hiện thời. | Loading, rỗng, thiếu mốc, lỗi API rõ ràng. Thẻ kỳ/version/XLSX nằm trong Thống kê; tab OT và sửa công nằm trong Lịch sử; PDF đơn nghỉ ở Nghỉ phép. Live cần nghiệm thu riêng. |
+| `/me/leave` | Tạo/xem đơn; API dùng Pending/Approved/Rejected/Cancelled theo transition thực tế. | Chủ hủy Pending; HR/Admin khác chủ có nút hủy Approved bằng lý do và hoàn số đã trừ; nháp UI không phải trạng thái DB nếu chưa hỗ trợ. |
+| Hợp đồng/lương/bảo hiểm/ngân hàng/quy định cá nhân | Các route/component hiện có dưới `/me/*`. | Phân biệt dữ liệu rỗng, thiếu liên kết nhân viên và thiếu quyền; chưa nghiệm thu đầy đủ màn hình. |
 | Báo cáo/thăng chức/bàn giao | Có route và quy trình API theo module. | Thể hiện người xử lý/trạng thái đúng API; báo cáo file không đồng nghĩa export bảng công. |
-| `/employees/*` | Bảng nhân sự, đối soát, lịch làm, đơn, tài khoản/báo cáo; HR có Excel import/export hồ sơ. | Lọc, sort, phân trang, trạng thái duyệt và quyền theo thao tác; UI hiện có không chứng minh scope phòng ban được enforce tại API. |
+| `/hr/*` | Bảng nhân sự, đối soát, lịch làm, đơn, tài khoản/báo cáo; HR có Excel import/export hồ sơ. | Lọc, sort, phân trang, trạng thái duyệt và quyền theo thao tác; UI hiện có không chứng minh scope phòng ban được enforce tại API. |
 | `/admin/*` | Dashboard, tài khoản, role, hợp đồng, phép, lương, nghỉ việc, công việc và báo cáo. | Subroute Admin kế thừa quyền prefix /admin, menu/header lọc quyền; cảnh báo cấu hình/storage chỉ là mục tiêu khi chưa có UI cụ thể. |
 | `/work`, `/profile`, `/unauthorized` | Component/route tương ứng đã đăng ký. | Quyền, lỗi rỗng/loading, hành vi responsive phải kiểm tra riêng. |
 
@@ -81,6 +81,14 @@ Admin có nút Chỉnh quy định (giờ ca/nghỉ/ảnh/GPS) tại Quy định
 **TARGET về dữ liệu ảnh/GPS:** danh sách nghiệp vụ không cần phơi tọa độ thô; khi geofence được triển khai có thể dùng nhãn kèm chi tiết theo quyền. Tải ảnh theo nhu cầu thay vì toàn bộ danh sách. Đây là hướng UI cần thực hiện, không chứng nhận hành vi hiện tại. Quyết định bucket public đang được giữ; không tự đổi thành private trong task giao diện.
 
 ## 6. Responsive, tiếp cận và nghiệm thu
+
+**CURRENT — đợt 19/10/2026:** dùng [ResponsiveTable](../marixa_react/src/components/common/ResponsiveTable.jsx) tại 28 vị trí bảng trong source (bao gồm hộp thoại và component cũ, không đồng nghĩa 28 trang live). Desktop giữ table; <=768px dùng một bộ DOM/control chuyển thành thẻ, hiện thông tin chính, ngày/giờ/tổng/trạng thái/thao tác, mở trường còn lại bằng “Xem chi tiết”. Ô nhập liệu luôn hiện; checkbox chọn từng dòng và chọn tất cả giữ sự kiện gốc. Fragment/column có điều kiện giữ đúng thứ tự và key riêng. Không dựng hai bản form desktop/mobile hoặc cắt bỏ dữ liệu để vừa màn hình.
+
+Ma trận Người dùng × Vai trò dùng `mode="scroll"`: region cuộn riêng có thể focus bằng bàn phím, giữ cột đầu và gợi ý vuốt; không ép xoay điện thoại. Bảng tương lai có header nhiều tầng/rowspan cần dùng chế độ đối chiếu hoặc thiết kế riêng, không tự chuyển thành thẻ. Bộ lọc nhanh nhân viên chuyển thành select trên điện thoại; lịch làm ưu tiên ngày trước/sau và ô chọn ngày, mở lịch tháng khi cần. [workspace.css](../marixa_react/src/components/common/workspace.css) được import sau CSS module/mobile để thống nhất nền sáng, KPI trắng, viền, khoảng cách, nút, focus và giảm chuyển động; token màu/font gốc giữ tại theme.css. Không coi toàn bộ CSS cũ đã được loại bỏ.
+
+Biểu đồ chung trên điện thoại mặc định thu gọn, người dùng mở khi cần. Donut có chú giải số; biểu đồ cột/đường có “Xem số liệu biểu đồ” dạng chữ. Không tạo số liệu mẫu trong component. Biểu đồ Admin phân biệt loading/error/empty, có Thử lại và không vẽ dãy 0 khi request thất bại. [PageGuidance](../marixa_react/src/components/layout/PageGuidance.jsx) lấy nội dung theo route từ [routeGuidance](../marixa_react/src/components/layout/routeGuidance.js), đặt ở cuối 20 trang HR/Admin; không hiện hướng dẫn nghiệp vụ staff trên Me/Home. Không phục hồi app-page-heading. Nghỉ phép HR/Admin hiển thị lý do từ API và dùng ReasonDialog khi duyệt/từ chối, ý kiến tùy chọn tối đa 500 ký tự; lỗi giữ trong dialog để sửa/thử lại, cấm tự duyệt vẫn theo API.
+
+Nguồn tham khảo trình bày: MISA AMIS [quản lý đơn](https://helpamis.misa.vn/amis-cham-cong/kb/quan-ly-cac-loai-don/) và [báo cáo phép](https://helpamis.misa.vn/amis-cham-cong/kb/huong-dan-xem-so-ngay-nghi-phep-trong-nam-tren-amis-cham-cong-va-app-misa-amis/): danh sách theo trạng thái, thông tin tổng hợp, lọc và chi tiết. Chỉ áp dụng cách tổ chức phù hợp với API Marixa, không sao chép giao diện/asset/chính sách hay giới thiệu chức năng chưa có. Vùng cuộn riêng cho bảng đối chiếu tham khảo [WCAG reflow](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html), không tự chứng nhận đạt WCAG toàn app.
 
 Frame thiết kế chính theo quyết định chủ dự án: **mobile 375px**, **desktop 1440px**; kiểm tra bổ sung 768/1024px khi triển khai. **TARGET:** không cuộn ngang toàn trang mobile; bảng rộng có vùng cuộn riêng; form có label/lỗi; focus nhìn rõ, dialog hỗ trợ keyboard/Esc và trả focus; toast/lỗi được công nghệ hỗ trợ nhận biết. Dùng icon nhất quán, trạng thái không chỉ dựa vào màu. Emoji còn có trong code; không ghi như đã được thay hết.
 

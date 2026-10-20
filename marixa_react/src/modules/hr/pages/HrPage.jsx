@@ -1,3 +1,5 @@
+import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
+import useMobile from "../../../components/common/useMobile";
 import { Fragment, useState, useMemo } from "react";
 
 import HrAppLayout from "../layout/HrAppLayout";
@@ -36,6 +38,7 @@ const formatDate = (value) => value ? new Date(value).toLocaleDateString(activeL
 const formatMoney = (value) => value != null && value !== "" ? `${Number(value).toLocaleString(activeLocale)} ₫` : "—";
 
 const HrPage = () => {
+    const mobile = useMobile();
     const data = useHrData();
     const { filters, setters, filtered, hasActiveFilter, quickFilter } = useHrFilters([...data.employees, ...data.archivedEmployees], data);
     const [page, setPage] = useState(1);
@@ -431,7 +434,11 @@ const HrPage = () => {
                             showActions
                         />
 
-                        <div className="hr-quick-filters" aria-label="Lọc nhanh nhân viên">
+                        {mobile ? <label className="mx-mobile-filter">Lọc nhanh
+                            <select value={quickFilter} onChange={(event) => setters.setQuickFilter(event.target.value)}>
+                                {HR_QUICK_FILTERS.map(([key, label]) => <option key={key} value={key}>{label}</option>)}
+                            </select>
+                        </label> : <div className="hr-quick-filters" aria-label="Lọc nhanh nhân viên">
                             {HR_QUICK_FILTERS.map(([key, label]) => (
                                 <button
                                     key={key}
@@ -443,7 +450,7 @@ const HrPage = () => {
                                     {label}
                                 </button>
                             ))}
-                        </div>
+                        </div>}
 
                         <HrEmployeeTable
                             employees={slice}
@@ -539,7 +546,7 @@ const HrPage = () => {
                                     </p>
                                     {importReport.rows.length ? (
                                         <div className="hr-import-report-table-wrap">
-                                            <table className="hr-import-report-table">
+                                            <ResponsiveTable className="hr-import-report-table">
                                                 <thead><tr><th>Dòng</th><th>Mã nhân viên</th><th>Kết quả</th><th>Chi tiết cần xử lý</th></tr></thead>
                                                 <tbody>{importReport.rows.map((item, index) => (
                                                     <tr key={`${item.row}-${item.code}-${index}`} className={item.status.startsWith("Đã thêm") ? "hr-import-row--created" : ""}>
@@ -547,7 +554,7 @@ const HrPage = () => {
                                                         <td>{item.details.map((detail, detailIndex) => <div key={detailIndex}>{detail}</div>)}</td>
                                                     </tr>
                                                 ))}</tbody>
-                                            </table>
+                                            </ResponsiveTable>
                                         </div>
                                     ) : <p className="hr-import-empty">{L("Tất cả dòng hợp lệ đã được nhập.")}</p>}
                                     <div className="hr-import-report-actions">

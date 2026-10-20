@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../components/common/ResponsiveTable.jsx";
 import { useState, useMemo } from "react";
 
 import HrAppLayout from "./layout/HrAppLayout";
@@ -152,7 +153,7 @@ const EmployeeListPage = ({
                         </div>
 
                         <div className="att-table-wrap att-table-wrap--stack">
-                            <table className="att-table att-table--stack">
+                            <ResponsiveTable className="att-table att-table--stack">
                                 <thead>
                                     <tr>
                                         {columns.map((c) => (
@@ -208,7 +209,7 @@ const EmployeeListPage = ({
                                         ))
                                     )}
                                 </tbody>
-                            </table>
+                            </ResponsiveTable>
                         </div>
                     </div>
                     </>

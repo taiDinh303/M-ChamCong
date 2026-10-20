@@ -7,6 +7,9 @@ const adminApi = {
     employees() {
         return getAllPages("/Employee/get-all");
     },
+    archivedEmployees() {
+        return getAllPages("/Employee/get-archived");
+    },
     attendanceLogs() {
         return getAllPages("/AttendanceLog/get-all");
     },

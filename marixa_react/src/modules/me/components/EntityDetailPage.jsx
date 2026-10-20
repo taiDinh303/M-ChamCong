@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useState, useEffect } from "react";
 import { getAuth } from "../../../services/auth/auth";
 import AppLayout from "../../../components/layout/AppLayout";
@@ -42,9 +43,12 @@ const EntityDetailPage = ({ kind, columns, emptyMessage }) => {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [reloadVersion, setReloadVersion] = useState(0);
 
     useEffect(() => {
         const load = async () => {
+            setLoading(true);
+            setError("");
             try {
                 if (!employeeId) {
                     setError("Chưa xác định được nhân viên đang đăng nhập.");
@@ -58,7 +62,8 @@ const EntityDetailPage = ({ kind, columns, emptyMessage }) => {
                 if (profileRes.status === "fulfilled" && profileRes.value) {
                     setProfile(profileRes.value.data.data || null);
                 }
-                if (res.status === "fulfilled") setItems(res.value.data.data || []);
+                if (res.status === "rejected") throw res.reason;
+                setItems(res.value.data.data || []);
             } catch (err) {
                 setError(err.response?.data?.message || err.message || "Không thể tải dữ liệu.");
             } finally {
@@ -66,7 +71,7 @@ const EntityDetailPage = ({ kind, columns, emptyMessage }) => {
             }
         };
         load();
-    }, [kind, userId, employeeId]);
+    }, [kind, userId, employeeId, reloadVersion]);
 
     return (
         <AppLayout profile={profile}>
@@ -78,17 +83,17 @@ const EntityDetailPage = ({ kind, columns, emptyMessage }) => {
                         {
                             icon: null,
                             label: KPI_LABEL[kind] || "ghi chép",
-                            value: loading ? "…" : items.length,
+                            value: loading ? "…" : error ? "—" : items.length,
                             tone: "blue",
                         },
                     ]}
                 />
 
-                {error && <div className="att-error">{error}</div>}
+                {error && <div className="att-error" role="alert">{error} <button type="button" onClick={() => setReloadVersion((value) => value + 1)}>Thử lại</button></div>}
 
                 {loading ? (
                     <div className="att-loading">Đang tải...</div>
-                ) : items.length === 0 ? (
+                ) : error ? null : items.length === 0 ? (
                     <div className="entd-empty">
                         <span className="entd-empty-icon">{ICONS[kind] || "📄"}</span>
                         <p>{emptyMessage || "Chưa có dữ liệu."}</p>
@@ -96,7 +101,7 @@ const EntityDetailPage = ({ kind, columns, emptyMessage }) => {
                 ) : (
                     <div className="entd-card">
                         <div className="att-table-wrap att-table-wrap--stack">
-                            <table className="att-table entd-table att-table--stack">
+                            <ResponsiveTable className="att-table entd-table att-table--stack">
                                 <thead>
                                     <tr>
                                         {columns.map((c) => (
@@ -115,7 +120,7 @@ const EntityDetailPage = ({ kind, columns, emptyMessage }) => {
                                         </tr>
                                     ))}
                                 </tbody>
-                            </table>
+                            </ResponsiveTable>
                         </div>
                     </div>
                 )}

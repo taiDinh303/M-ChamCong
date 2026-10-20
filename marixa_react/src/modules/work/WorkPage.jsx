@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../components/common/ResponsiveTable.jsx";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage, translate } from "../../services/i18n/LanguageProvider";
@@ -436,7 +437,7 @@ const WorkPage = () => {
                                 </div>
                                 <div className="work-pr-table-wrap">
                                     {repTasks.length === 0 ? <p className="att-muted">{L("Không có nhiệm vụ nào phù hợp.")}</p> : (
-                                        <table className="work-pr-table">
+                                        <ResponsiveTable className="work-pr-table">
                                             <thead><tr>
                                                 <th>{L("Tiêu đề")}</th><th>{L("Người thực hiện")}</th><th>{L("Ưu tiên")}</th><th>{L("Trạng thái")}</th>
                                                 <th className="w-progress">{L("Tiến độ")}</th><th>{L("Hạn")}</th>
@@ -456,7 +457,7 @@ const WorkPage = () => {
                                                     </tr>
                                                 ))}
                                             </tbody>
-                                        </table>
+                                        </ResponsiveTable>
                                     )}
                                 </div>
                             </div>

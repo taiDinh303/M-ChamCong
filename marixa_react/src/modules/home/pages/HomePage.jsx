@@ -1,19 +1,20 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import Header from "../../../components/layout/Header";
 import { canAccessModule } from "../../../services/auth/permission";
 import "../home.css";
 
 const MODULES = [
-    { to: "/attendance", icon: "🕗", title: "Chấm công", detail: "Vào ca · Ra ca", color: "blue" },
+    { to: "/me", icon: "🕗", title: "Chấm công", detail: "Vào ca · Ra ca", color: "blue" },
     { to: "/kich-hoat", icon: "🔑", title: "Kích hoạt", detail: "Đặt mật khẩu", color: "purple" },
-    { to: "/employees", icon: "👥", title: "Nhân sự", detail: "Hồ sơ nhân viên", color: "pink" },
+    { to: "/hr", icon: "👥", title: "Nhân sự", detail: "Hồ sơ nhân viên", color: "pink" },
     { to: "/work", icon: "📋", title: "Công việc", detail: "Việc cần xử lý", color: "amber" },
     { to: "/admin", icon: "📊", title: "Dashboard", detail: "Điều hành hệ thống", color: "teal" },
     { to: "/finance", icon: "💰", title: "Kế toán", detail: "Tài chính · Báo cáo", color: "lime" },
 ];
 
 const HomePage = () => {
+    useEffect(() => { document.title = "Trang chủ · MARIXA"; }, []);
     const visible = useMemo(
         () => MODULES.filter((m) => canAccessModule(m.to)),
         []
@@ -31,7 +32,7 @@ const HomePage = () => {
                         <h1>Mọi công việc<br />trong một không gian.</h1>
                         <p>Chọn module để chấm công, quản lý hồ sơ và theo dõi các nghiệp vụ nhân sự hằng ngày.</p>
                         <div className="home-hero__actions">
-                            <Link className="home-cta" to="/attendance">
+                            <Link className="home-cta" to="/me">
                                 Bắt đầu chấm công <span aria-hidden="true">↗</span>
                             </Link>
                             {canAccessModule("/admin") && <Link className="home-cta--ghost" to="/admin">Xem dashboard</Link>}

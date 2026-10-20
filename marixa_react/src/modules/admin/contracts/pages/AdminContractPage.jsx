@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../../components/common/ResponsiveTable.jsx";
 import { useState, useEffect, useMemo } from "react";
 import AdminAppLayout from "../../layout/AdminAppLayout";
 import HrAppLayout from "../../../hr/layout/HrAppLayout";
@@ -222,7 +223,7 @@ const AdminContractPage = ({ hrMode = false }) => {
 
                         <div className="att-card">
                             <div className="att-table-wrap att-table-wrap--stack">
-                                <table className="att-table att-table--stack">
+                                <ResponsiveTable className="att-table att-table--stack">
                                     <thead>
                                         <tr>
                                             <th data-label="Nhân viên">{L("Nhân viên")}</th>
@@ -313,7 +314,7 @@ const AdminContractPage = ({ hrMode = false }) => {
                                             })
                                         )}
                                     </tbody>
-                                </table>
+                                </ResponsiveTable>
                             </div>
                         </div>
 

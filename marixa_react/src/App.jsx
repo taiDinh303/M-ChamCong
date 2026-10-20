@@ -27,6 +27,7 @@ import HomePage from "./modules/home/pages/HomePage";
 import UnauthorizedPage from "./modules/unauthorized/pages/UnauthorizedPage";
 import RequireModule from "./components/common/RequireModule";
 import RequireSession from "./components/common/RequireSession";
+import LegacyModuleRedirect from "./components/common/LegacyModuleRedirect";
 import PromotionsPage from "./modules/hr/pages/PromotionsPage";
 
 // ===== Module "me": các trang nhân viên xem thông tin của mình =====
@@ -45,19 +46,19 @@ import MeBankPage from "./modules/me/pages/BankPage";
 
 const guarded = (to, el) => <RequireModule to={to}>{el}</RequireModule>;
 
-// URL cũ -> URL mới (nested /attendance/*)
+// Short legacy URLs resolve directly to the canonical personal module.
 const REDIRECTS = [
-    ["/attendance-history", "/attendance/attendance-history"],
-    ["/attendance-rules", "/attendance/attendance-rules"],
-    ["/statistics", "/attendance/statistics"],
-    ["/leave", "/attendance/leave"],
-    ["/reports", "/attendance/reports"],
-    ["/promotions", "/attendance/promotions"],
-    ["/handover", "/attendance/handover"],
-    ["/contracts", "/attendance/contracts"],
-    ["/salary", "/attendance/salary"],
-    ["/insurance", "/attendance/insurance"],
-    ["/bank-accounts", "/attendance/bank-accounts"],
+    ["/attendance-history", "/me/attendance-history"],
+    ["/attendance-rules", "/me/attendance-rules"],
+    ["/statistics", "/me/statistics"],
+    ["/leave", "/me/leave"],
+    ["/reports", "/me/reports"],
+    ["/promotions", "/me/promotions"],
+    ["/handover", "/me/handover"],
+    ["/contracts", "/me/contracts"],
+    ["/salary", "/me/salary"],
+    ["/insurance", "/me/insurance"],
+    ["/bank-accounts", "/me/bank-accounts"],
 ];
 
 function App() {
@@ -70,54 +71,54 @@ function App() {
                 <Route element={<RequireSession />}>
                 <Route path="/" element={<Navigate to="/home" replace />} />
                 <Route path="/home" element={<HomePage />} />
-                <Route path="/finance" element={<Navigate to="/attendance/salary" replace />} />
+                <Route path="/finance" element={<Navigate to="/me/salary" replace />} />
 
                 {/* Khu quản trị */}
                 <Route
-                    path="/employees"
-                    element={guarded("/employees", <HrPage />)}
+                    path="/hr"
+                    element={guarded("/hr", <HrPage />)}
                 />
                 <Route
-                    path="/employees/attendance-history"
+                    path="/hr/attendance-history"
                     element={guarded(
-                        "/employees/attendance-history",
+                        "/hr/attendance-history",
                         <EmployeeAttendanceHistoryPage hrMode />
                     )}
                 />
                 <Route
-                    path="/employees/work-schedule"
-                    element={guarded("/employees/work-schedule", <EmployeeWorkSchedulePage />)}
+                    path="/hr/work-schedule"
+                    element={guarded("/hr/work-schedule", <EmployeeWorkSchedulePage />)}
                 />
                 <Route
-                    path="/employees/statistics"
+                    path="/hr/statistics"
                     element={guarded(
-                        "/employees/statistics",
+                        "/hr/statistics",
                         <EmployeeStatisticsPage hrMode />
                     )}
                 />
-                <Route path="/employees/contracts" element={guarded("/employees/contracts", <EmployeeContractPage />)} />
-                <Route path="/employees/payroll" element={<Navigate to="/employees" replace />} />
+                <Route path="/hr/contracts" element={guarded("/hr/contracts", <EmployeeContractPage />)} />
+                <Route path="/hr/payroll" element={<Navigate to="/hr" replace />} />
                 <Route
-                    path="/employees/leaves"
+                    path="/hr/leaves"
                     element={guarded(
-                        "/employees/leaves",
+                        "/hr/leaves",
                         <EmployeeLeavePage hrMode />
                     )}
                 />
                 <Route
-                    path="/employees/reports"
-                    element={guarded("/employees/reports", <ReportsPage />)}
+                    path="/hr/reports"
+                    element={guarded("/hr/reports", <ReportsPage />)}
                 />
                 {/* Cấp tài khoản — HR vào (layout HR, dùng employeeApi) */}
                 <Route
-                    path="/employees/accounts"
+                    path="/hr/accounts"
                     element={guarded(
-                        "/employees/accounts",
+                        "/hr/accounts",
                         <AdminAccountIssuancePage layout="hr" api={employeeApi} />
                     )}
                 />
-                <Route path="/employees/promotions" element={guarded("/employees/promotions", <PromotionsPage />)} />
-                <Route path="/employees/handover" element={guarded("/employees/handover", <MeHandoverPage reviewMode />)} />
+                <Route path="/hr/promotions" element={guarded("/hr/promotions", <PromotionsPage />)} />
+                <Route path="/hr/handover" element={guarded("/hr/handover", <MeHandoverPage reviewMode />)} />
                 <Route
                     path="/admin/contracts"
                     element={guarded(
@@ -161,38 +162,42 @@ function App() {
                         <AdminAccountIssuancePage layout="admin" api={adminApi} />
                     )}
                 />
-                <Route path="/admin/employees" element={<Navigate to="/employees" replace />} />
+                <Route path="/admin/employees" element={<Navigate to="/hr" replace />} />
                 <Route path="/admin/employees/leaves" element={guarded("/admin/employees/leaves", <AdminLeaveAdminPage hrMode />)} />
                 <Route path="/admin/employees/handover" element={guarded("/admin/employees/handover", <MeHandoverPage admin />)} />
                 <Route path="/admin/employees/reports" element={guarded("/admin/employees/reports", <ReportsPage admin />)} />
                 {/* URL cũ /admin/employees/accounts → redirect về /admin/accounts */}
                 <Route path="/admin/employees/accounts" element={<Navigate to="/admin/accounts" replace />} />
-                <Route path="/admin/employees/promotions" element={<Navigate to="/employees/promotions" replace />} />
+                <Route path="/admin/employees/promotions" element={<Navigate to="/hr/promotions" replace />} />
                 <Route path="/admin/employees/contracts" element={guarded("/admin/employees/contracts", <AdminContractPage hrMode />)} />
                 <Route path="/admin/work" element={guarded("/admin/work", <AdminWorkPage />)} />
                 <Route path="/admin/roles" element={guarded("/admin/roles", <AdminRolesPage />)} />
                 <Route path="/admin/block-accounts" element={guarded("/admin/block-accounts", <AdminBlockAccountPage />)} />
                 <Route path="/admin" element={guarded("/admin", <AdminHomepage />)} />
 
-                {/* Khu nhân viên (module me) - nested dưới /attendance */}
-                <Route path="/attendance" element={<MeClockInPage />} />
-                <Route path="/attendance/attendance-history" element={<MeHistoryPage />} />
-                <Route path="/attendance/attendance-rules" element={<MeRulesPage />} />
-                <Route path="/attendance/statistics" element={<MeStatisticsPage />} />
-                <Route path="/attendance/leave" element={<MeLeavePage />} />
-                <Route path="/attendance/reports" element={guarded("/attendance/reports", <MeReportsPage />)} />
-                <Route path="/attendance/promotions" element={guarded("/attendance/promotions", <MePromotionsPage selfMode />)} />
-                <Route path="/attendance/handover" element={guarded("/attendance/handover", <MeHandoverPage />)} />
-                <Route path="/attendance/contracts" element={<MeContractPage />} />
-                <Route path="/attendance/salary" element={<MeSalaryPage />} />
-                <Route path="/attendance/insurance" element={<MeInsurancePage />} />
-                <Route path="/attendance/bank-accounts" element={<MeBankPage />} />
+                {/* Khu nhân viên (module me) */}
+                <Route path="/me" element={<MeClockInPage />} />
+                <Route path="/me/attendance-history" element={<MeHistoryPage />} />
+                <Route path="/me/attendance-rules" element={<MeRulesPage />} />
+                <Route path="/me/statistics" element={<MeStatisticsPage />} />
+                <Route path="/me/leave" element={<MeLeavePage />} />
+                <Route path="/me/reports" element={guarded("/me/reports", <MeReportsPage />)} />
+                <Route path="/me/promotions" element={guarded("/me/promotions", <MePromotionsPage selfMode />)} />
+                <Route path="/me/handover" element={guarded("/me/handover", <MeHandoverPage />)} />
+                <Route path="/me/contracts" element={<MeContractPage />} />
+                <Route path="/me/salary" element={<MeSalaryPage />} />
+                <Route path="/me/insurance" element={<MeInsurancePage />} />
+                <Route path="/me/bank-accounts" element={<MeBankPage />} />
 
                 {/* Công việc & hồ sơ (không nằm trong nhóm gộp) */}
                 <Route path="/work" element={guarded("/work", <WorkPage />)} />
                 <Route path="/profile" element={<ProfilePage />} />
 
-                {/* Redirect các URL cũ -> /attendance/* */}
+                {/* Preserve bookmarked module URLs, including their query and fragment. */}
+                <Route path="/attendance/*" element={<LegacyModuleRedirect />} />
+                <Route path="/employees/*" element={<LegacyModuleRedirect />} />
+
+                {/* Redirect các URL ngắn cũ -> /me/* */}
                 {REDIRECTS.map(([from, to]) => (
                     <Route key={from} path={from} element={<Navigate to={to} replace />} />
                 ))}

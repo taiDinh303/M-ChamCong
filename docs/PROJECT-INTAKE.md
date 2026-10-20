@@ -1,6 +1,6 @@
 # Hồ sơ tiếp nhận và phạm vi Marixa
 
-> Chủ dự án: Đinh Văn Tài. Cập nhật 2026-10-18. Trạng thái REVIEW; ghi nhận nhiệm vụ trong cuộc trò chuyện, không tự chứng nhận sản phẩm.
+> Chủ dự án: Đinh Văn Tài. Cập nhật 2026-10-20. Trạng thái REVIEW; ghi nhận nhiệm vụ trong cuộc trò chuyện, không tự chứng nhận sản phẩm.
 
 ## 1. Dự án và nhiệm vụ
 
@@ -47,11 +47,15 @@ YES là áp dụng tài liệu, không xác nhận chức năng đã hoàn thàn
 | REQ-UI-03 | Kỳ công/version/XLSX trong Thống kê; PDF và hủy/hoàn phép trong Nghỉ phép. | Chủ dự án đồng ý 17/10. |
 | REQ-UI-04 | Admin chỉnh rule; HR/Admin cấp/điều chỉnh phép có reason/history, chưa auto accrual. | Hộp thoại trong trang cũ, chủ dự án đồng ý. |
 | REQ-UI-05 | Session/route/own API/phân trang đúng; test/lint/build và kiểm browser cô lập. | API vẫn enforce quyền. |
-| REQ-UI-06 | Bỏ ngày Home; tiêu đề trong header desktop/dưới hàng logo mobile; nút menu cạnh logo mở toàn màn hình, bỏ sidebar ngang. | Chủ dự án yêu cầu và bổ sung 18/10; shell dùng chung. |
+| REQ-UI-06 | Bỏ ngày Home; nút menu cạnh logo mở toàn màn hình, bỏ sidebar ngang; yêu cầu 19/10 bỏ app-page-heading thay cách đặt tiêu đề 18/10. | Chủ dự án yêu cầu và bổ sung 18/10; shell dùng chung. |
 | REQ-DEMO-01 | Dữ liệu nghiệp vụ giả có nhãn trên Supabase hiện tại; giữ hồ sơ cũ, tài khoản chỉ Employee, không fake dữ liệu bảo mật. | Chủ dự án xác nhận 18/10; seed/kiểm chứng ở worklog. |
 | REQ-DOC-01 | Không placeholder mẫu còn sót; links/source/trạng thái/bằng chứng và rubric điểm rõ. | docs và backend guide. |
 
 ## 4. Điều còn thiếu thông tin
+
+Nhiệm vụ 19/10/2026: đổi prefix URL cá nhân/HR thành `/me` và `/hr`, bỏ khối app-page-heading trên mọi trang, rà soát Home/HR/Me/Admin. Chủ dự án đồng ý thêm ba mục Admin đang thiếu trong sidebar và liên kết mở trang xử lý trong thông báo; trang Nghỉ phép Admin dùng cùng component HR với layout tương ứng. Đây là thay đổi frontend/tài liệu, không cấp quyền migrate/seed hoặc ghi dữ liệu thật để kiểm thử. Báo cáo hiện trạng và đề xuất cơ bản tại [35](35-frontend-review.md).
+
+Nhiệm vụ tiếp 19–20/10: chủ dự án đồng ý áp dụng bảng/thẻ phù hợp mobile, tự quyết định trang trí và thống nhất giao diện, hướng dẫn cuối HR/Admin; tham khảo cách tổ chức MISA AMIS có chọn lọc. Phạm vi giữ API, nghiệp vụ và dữ liệu thật; kiểm thử bằng fixture riêng, không tự thêm quyền ghi production hoặc rollout. Quy tắc hiện hành tại [09 §6](09-ui-design.md#6-responsive-tiếp-cận-và-nghiệm-thu).
 
 | ID | Câu hỏi/giới hạn | Người quyết định | Cách xử lý hiện tại |
 | --- | --- | --- | --- |

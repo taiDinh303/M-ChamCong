@@ -1,5 +1,7 @@
+import ResponsiveTable from "../../../../components/common/ResponsiveTable.jsx";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import HrAppLayout from "../../layout/HrAppLayout";
+import AdminAppLayout from "../../../admin/layout/AdminAppLayout";
 import HrHero from "../../HrHero";
 import employeeApi from "../../api/employeeApi";
 import { getAuth } from "../../../../services/auth/auth";
@@ -30,11 +32,14 @@ const avaColor = (seed = "") => {
 const fmtDay = (v, locale) => (v ? new Date(v).toLocaleDateString(locale) : "—");
 
 // ===== Trang Nghỉ phép (nhân sự) — giao diện riêng, mobile-friendly =====
-const EmployeeLeavePage = () => {
+const EmployeeLeavePage = ({ layout = "hr" }) => {
+    const Layout = layout === "admin" ? AdminAppLayout : HrAppLayout;
     const auth = getAuth();
     const canCancelApproved = auth?.roles?.some((role) => ["Admin", "HR"].includes(role));
     const [cancellation, setCancellation] = useState(null);
     const [cancelError, setCancelError] = useState("");
+    const [reviewAction, setReviewAction] = useState(null);
+    const [reviewError, setReviewError] = useState("");
     const [ledgerOpen, setLedgerOpen] = useState(false);
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -60,29 +65,19 @@ const EmployeeLeavePage = () => {
 
     const flash = (m) => { setNotice(m); setTimeout(() => setNotice(""), 3000); };
 
-    const approve = async (row) => {
-        if (!window.confirm(`Duyệt đơn nghỉ phép của ${row.employeeName}?`)) return;
-        setBusy("approve-" + row.id);
+    const reviewLeave = async (note) => {
+        if (!reviewAction || busy) return;
+        const { row, kind } = reviewAction;
+        setBusy(kind + "-" + row.id);
+        setReviewError("");
         try {
-            await employeeApi.approveLeave(row.id, "");
-            flash(`Đã duyệt đơn của ${row.employeeName}.`);
+            if (kind === "approve") await employeeApi.approveLeave(row.id, note);
+            else await employeeApi.rejectLeave(row.id, note);
+            setReviewAction(null);
+            flash(`${kind === "approve" ? "Đã duyệt" : "Đã từ chối"} đơn của ${row.employeeName}.`);
             await load();
         } catch (e) {
-            setError(e.response?.data?.message || e.message);
-        } finally {
-            setBusy("");
-        }
-    };
-    const reject = async (row) => {
-        const note = window.prompt(`Lý do từ chối đơn của ${row.employeeName} (không bắt buộc):`);
-        if (note === null) return;
-        setBusy("reject-" + row.id);
-        try {
-            await employeeApi.rejectLeave(row.id, note);
-            flash(`Đã từ chối đơn của ${row.employeeName}.`);
-            await load();
-        } catch (e) {
-            setError(e.response?.data?.message || e.message);
+            setReviewError(apiErrorMessage(e));
         } finally {
             setBusy("");
         }
@@ -124,7 +119,7 @@ const EmployeeLeavePage = () => {
     ];
 
     return (
-        <HrAppLayout title="Nghỉ phép" subtitle="Xem & duyệt đơn nghỉ phép của nhân viên">
+        <Layout title="Nghỉ phép" subtitle="Xem & duyệt đơn nghỉ phép của nhân viên">
             <div className="att-content lp-page">
                 <HrHero
                     ico="🏖️"
@@ -170,20 +165,21 @@ const EmployeeLeavePage = () => {
 
                         {/* Table */}
                         <div className="lp-table-wrap">
-                            <table className="lp-table">
+                            <ResponsiveTable className="lp-table">
                                 <thead>
                                     <tr>
                                         <th>Nhân viên</th>
                                         <th>Loại phép</th>
                                         <th>Thời gian</th>
                                         <th>Số ngày</th>
+                                        <th>Lý do</th>
                                         <th>Trạng thái</th>
                                         <th className="lp-th-act">Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filtered.length === 0 ? (
-                                        <tr><td colSpan={6} className="lp-empty">Không có đơn nghỉ phép phù hợp.</td></tr>
+                                        <tr><td colSpan={7} className="lp-empty">Không có đơn nghỉ phép phù hợp.</td></tr>
                                     ) : (
                                         filtered.map((r) => (
                                             <tr key={r.id} className={r.status === 3 ? "lp-row--bad" : r.status === 2 ? "lp-row--ok" : ""}>
@@ -207,6 +203,7 @@ const EmployeeLeavePage = () => {
                                                     </div>
                                                 </td>
                                                 <td>{r.totalDays != null ? `${r.totalDays} ngày` : "—"}</td>
+                                                <td className="lp-reason">{r.reason || "—"}</td>
                                                 <td>
                                                     <span className={`lp-badge lp-badge--${TONES[r.status] || "muted"}`}>{LABELS[r.status] || "—"}</span>
                                                     {r.approverName && <small className="lp-approver">{r.approverName}</small>}
@@ -217,7 +214,7 @@ const EmployeeLeavePage = () => {
                                                             <button
                                                                 type="button"
                                                                 className="lp-btn lp-btn--ok"
-                                                                onClick={() => approve(r)}
+                                                                onClick={() => { setReviewError(""); setReviewAction({ row: r, kind: "approve" }); }}
                                                                 disabled={busy === "approve-" + r.id}
                                                             >
                                                                 {busy === "approve-" + r.id ? "Đang duyệt…" : "✓ Duyệt"}
@@ -225,17 +222,15 @@ const EmployeeLeavePage = () => {
                                                             <button
                                                                 type="button"
                                                                 className="lp-btn lp-btn--bad"
-                                                                onClick={() => reject(r)}
+                                                                onClick={() => { setReviewError(""); setReviewAction({ row: r, kind: "reject" }); }}
                                                                 disabled={busy === "reject-" + r.id}
                                                             >
                                                                 {busy === "reject-" + r.id ? "Đang từ chối…" : "Từ chối"}
                                                             </button>
                                                         </div>
-                                                    ) : (
-                                                        <span className="lp-muted">—</span>
-                                                    )}
+                                                    ) : null}
                                                     <button type="button" className="lp-btn" onClick={() => pdf(r)}>PDF</button>
-                                                    {r.status === 1 && r.employeeId === auth?.employeeId && <small>Cần người khác duyệt</small>}
+                                                    {r.status === 1 && r.employeeId === auth?.employeeId && <small className="lp-self-note">Cần người khác duyệt</small>}
                                                     {r.status === 2 && canCancelApproved && r.employeeId !== auth?.employeeId && <button type="button" className="lp-btn lp-btn--bad"
                                                         onClick={() => { setCancelError(""); setCancellation(r); }}>Hủy đơn đã duyệt</button>}
                                                 </td>
@@ -243,15 +238,19 @@ const EmployeeLeavePage = () => {
                                         ))
                                     )}
                                 </tbody>
-                            </table>
+                            </ResponsiveTable>
                         </div>
                     </div>
                 )}
             </div>
             {cancellation && <ReasonDialog title="Hủy đơn nghỉ đã duyệt" hint="Lý do được lưu cùng lịch sử hủy; phần phép đã trừ sẽ được hoàn một lần."
                 maxLength={500} busy={busy === "cancel"} error={cancelError} onClose={() => setCancellation(null)} onSubmit={cancel} />}
+            {reviewAction && <ReasonDialog title={reviewAction.kind === "approve" ? "Duyệt đơn nghỉ phép" : "Từ chối đơn nghỉ phép"}
+                hint={`${reviewAction.row.employeeName} · ${fmtDay(reviewAction.row.fromDate, "vi-VN")} → ${fmtDay(reviewAction.row.toDate, "vi-VN")} · ${reviewAction.row.totalDays} ngày. Lý do: ${reviewAction.row.reason || "Chưa cung cấp"}`}
+                minLength={0} maxLength={500} busy={Boolean(busy)} error={reviewError}
+                onClose={() => setReviewAction(null)} onSubmit={reviewLeave} />}
             {ledgerOpen && <LeaveLedgerDialog employeeId={auth?.employeeId} manage onClose={() => setLedgerOpen(false)} onChanged={load} />}
-        </HrAppLayout>
+        </Layout>
     );
 };
 

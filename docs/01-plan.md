@@ -1,6 +1,6 @@
 # 01 — Quyết định và kế hoạch Marixa
 
-> Chủ dự án Đinh Văn Tài. Cập nhật 2026-10-18; quyết định 12/10 và phỏng vấn 17/10 được giữ. Nâng schema live đã có bằng chứng riêng ở worklog; production chưa nghiệm thu toàn bộ.
+> Chủ dự án Đinh Văn Tài. Cập nhật 2026-10-20; quyết định 12/10 và phỏng vấn 17/10 được giữ. Nâng schema live đã có bằng chứng riêng ở worklog; production chưa nghiệm thu toàn bộ.
 
 ## 1. Quyết định đang có hiệu lực
 
@@ -20,12 +20,16 @@
 | Kỳ công | HR/Admin review; Admin lock/reopen có lý do, snapshot version bất biến. Open→Reviewed→Locked; thay nguồn/rule ở kỳ Reviewed phải review lại. |
 | Múi giờ | Asia/Ho_Chi_Minh UTC+7; timestamp UTC, nhãn ngày VN. Không tự dịch/backfill toàn bộ ngày cũ. |
 | Bố trí UI 17/10 | Chủ dự án đồng ý: kỳ/XLSX trong Thống kê; tab OT và sửa công trong Lịch sử; Admin sửa rule bằng hộp thoại; HR/Admin cấp/điều chỉnh phép thủ công trong Nghỉ phép. Giữ layout chính, chưa cấp phép tự động. |
-| Điều hướng và dữ liệu test 18/10 | Bỏ ngày Home; tiêu đề ở header desktop/dưới hàng logo mobile, menu module trên điện thoại mở toàn màn hình từ nút cạnh logo, không dùng sidebar ngang. Home bỏ thanh phân mục và nút mục lục theo yêu cầu tiếp, dùng các thẻ module làm điều hướng chính. Thêm DEMO vào Supabase hiện tại theo xác nhận trực tiếp, giữ dữ liệu cũ; tài khoản DEMO chỉ Employee, không fake token/claim/migration history. |
+| Điều hướng và dữ liệu test 18/10 | Bỏ ngày Home; tiêu đề ở header desktop/dưới hàng logo mobile, menu module trên điện thoại mở toàn màn hình từ nút cạnh logo, không dùng sidebar ngang. Quyết định 19/10 bên dưới thay phần đưa tiêu đề lên header: bỏ app-page-heading. Home bỏ thanh phân mục và nút mục lục theo yêu cầu tiếp, dùng các thẻ module làm điều hướng chính. Thêm DEMO vào Supabase hiện tại theo xác nhận trực tiếp, giữ dữ liệu cũ; tài khoản DEMO chỉ Employee, không fake token/claim/migration history. |
 | Hạ tầng/Figma | Snapshot chỉ tại 00, một Supabase project; staging riêng chưa xác nhận. Figma Dev Mode copy, UI Kit trước, frames 375/1440. |
 
 Không suy OT ngày lễ/hệ số lương, ca biên, phép qua năm hoặc retention từ tên entity. Các chính sách đó cần tiếp tục chốt trước mở rộng; rủi ro 34 ghi phạm vi chưa hoàn tất.
 
 ## 2. Việc tiếp theo
+
+Quyết định UI 19/10/2026: chuyển prefix `/attendance` → `/me`, `/employees` → `/hr` cùng các trang con, giữ alias cho liên kết cũ; bỏ app-page-heading toàn ứng dụng, giữ KPI/thao tác. Chủ dự án đồng ý bổ sung menu Admin Nghỉ phép/Bảng lương/Nhân sự nghỉ việc (trang dùng chung với HR giữ cùng phong cách) và liên kết mở trang xử lý trong thông báo. Rà soát chức năng cơ bản tại [35](35-frontend-review.md); đề xuất chưa được chọn không tự triển khai, bỏ qua mở rộng quá phức tạp.
+
+UI 19/10 được chủ dự án giao tiếp: áp dụng thẻ mở rộng trên điện thoại, giữ bảng desktop/ma trận đối chiếu cuộn riêng; thống nhất phong cách Home/HR/Me/Admin, thêm hướng dẫn cuối HR/Admin và tham khảo cách trình bày MISA AMIS phù hợp. Agent quyết định các lựa chọn UX thường lệ, giữ nghiệp vụ/quyền/API và không ép người dùng xoay màn hình. Hiện trạng và giới hạn ở [09 §6](09-ui-design.md#6-responsive-tiếp-cận-và-nghiệm-thu), bằng chứng tại worklog; quyền sửa UI không tự cấp quyền rollout.
 
 ### 2.1 Đã có backend và kiểm thử trong nhiệm vụ 17/10
 

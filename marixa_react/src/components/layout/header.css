@@ -471,6 +471,7 @@
 .app-header-bell-item-main strong { font-size: 13px; color: var(--th-text); }
 .app-header-bell-item:not(.is-read) .app-header-bell-item-main strong { font-weight: 700; }
 .app-header-bell-item-main span { font-size: 12px; color: var(--th-text-3); }
+.app-header-bell-item-open { align-self: flex-start; display: inline-flex; align-items: center; min-height: 32px; color: var(--th-primary); font-size: 12px; font-weight: 600; text-decoration: underline; }
 .app-header-bell-item-read {
     width: 26px;
     height: 26px;

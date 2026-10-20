@@ -2,7 +2,7 @@
 
 > Chuẩn cấu hình hiện hành: [CONFIGURATION-STANDARD](CONFIGURATION-STANDARD.md) — JSON Production sạch, sáu biến triển khai cơ bản, kiểm cấu hình không chạm DB và script chung cho NTC/Marixa.
 
-> Chủ tài liệu: **Đinh Văn Tài**. Cập nhật: **18/10/2026**.
+> Chủ tài liệu: **Đinh Văn Tài**. Cập nhật: **19/10/2026**.
 > Phạm vi kiểm chứng: mã nguồn, build/test cô lập và nâng schema Supabase/đọc các trang cá nhân, HR live theo bằng chứng ở worklog. Các luồng ghi production, thiết bị thật và Figma chưa nghiệm thu toàn bộ.
 
 ## 1. Bắt đầu ở đây
@@ -38,6 +38,7 @@ Tài liệu mở rộng chọn lọc từ docs_mau ngày 17/10:
 | Quan sát/vận hành/restore | [20](20-observability.md), [21](21-operations-runbook.md), [22](22-backup-recovery.md) |
 | Migration/tích hợp/dung lượng | [23](23-data-migration.md), [24](24-integrations.md), [25](25-performance-capacity.md) |
 | Job/hướng dẫn/bàn giao/rủi ro | [27](27-offline-realtime-jobs.md), [30](30-user-guide.md), [31](31-handover.md), [34](34-risks-changes.md) |
+| Rà soát các trang frontend và chức năng cơ bản | [35](35-frontend-review.md) |
 
 Các mẫu 26/28/29/32/33 không áp dụng, lý do trong PROJECT-INTAKE. Tài liệu CURRENT/TARGET không tự chứng nhận sản phẩm đã hoàn thành.
 

@@ -1,13 +1,6 @@
 .app-shell--responsive .app-header { flex-wrap: wrap; }
 .app-shell--responsive .app-header-left { flex-shrink: 0; gap: 12px; }
 .app-shell--responsive .app-header-user { flex-shrink: 0; }
-.app-page-heading { flex: 1; min-width: 0; margin: 0 16px; }
-.app-page-heading h1 { margin: 0; font-size: 18px; font-weight: 800; color: var(--th-header-text); line-height: 1.4; }
-.app-page-heading:has(.page-heading-content) > .page-heading-fallback { display: none; }
-.page-heading-content { display: flex; align-items: center; gap: 12px; min-width: 0; }
-.page-heading-content > div { min-width: 0; }
-.page-heading-content p { margin: 3px 0 0; font-size: 12px; color: var(--th-header-sub); line-height: 1.5; }
-.page-heading-icon { display: grid; place-items: center; width: 40px; height: 40px; flex: 0 0 auto; border-radius: 12px; background: var(--th-header-surface); font-size: 21px; }
 .desktop-navigation { display: flex; flex-shrink: 0; }
 .app-shell--responsive .att-main { min-width: 0; flex: 1; }
 .navigation-drawer { position: fixed; inset: 0; margin: 0; padding: 0; border: 0; width: 100%; max-width: none; height: 100dvh; max-height: none; background: transparent; color: var(--th-text); }
@@ -20,14 +13,14 @@
 .app-shell--responsive .navigation-drawer .att-nav-item { width: 100%; min-height: 44px; text-align: left; white-space: normal; }
 @keyframes navigation-enter { from { transform: translateX(-100%); } to { transform: translateX(0); } }
 @media (max-width: 768px) {
-    .app-shell--responsive .app-header { column-gap: 10px; row-gap: 0; padding: 10px 12px 0; }
+    .app-shell--responsive .app-header { flex-wrap: nowrap; column-gap: 10px; row-gap: 0; padding: 10px 12px; }
     .app-shell--responsive .app-header-left { gap: 8px; }
     .app-shell--responsive .app-header-user { margin-left: auto; gap: 7px; }
     .app-shell--responsive .app-header-logo-text { font-size: 14px; }
     .app-shell--responsive .app-header-toggle { display: flex; flex-shrink: 0; }
-    .app-shell--responsive .app-page-heading { order: 3; flex: 0 0 100%; margin: 10px 0 0; padding: 12px 0; border-top: 1px solid var(--th-header-border); }
-    .app-page-heading h1 { font-size: 17px; }
-    .page-heading-content p { font-size: 12px; }
     .app-shell--responsive .app-header-menu { right: 0; }
+}
+@media (max-width: 380px) {
+    .app-shell--responsive .app-header-logo-text { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .navigation-drawer-panel { animation: none; } }

@@ -2,11 +2,11 @@
 
 > **Tác giả & chủ tài liệu: Đinh Văn Tài.** (File này được Tài tổ chức lại 12/10/2026 thành "bản đồ chức năng" theo trang & module để AI/Agnes và dev đọc nhanh.)
 
-Điểm vào tài liệu là [00-README.md](00-README.md). File này quản lý ma trận chức năng, bằng chứng thực hiện và lịch sử. Cập nhật hiện trạng: **18/10/2026** theo source, kiểm thử cô lập, nâng schema và đọc các trang cá nhân/HR live; production chưa nghiệm thu toàn bộ.
+Điểm vào tài liệu là [00-README.md](00-README.md). File này quản lý ma trận chức năng, bằng chứng thực hiện và lịch sử. Cập nhật hiện trạng: **20/10/2026** theo source và kiểm thử cô lập; nâng schema/đọc các trang cá nhân/HR live có mốc bằng chứng riêng bên dưới, production chưa nghiệm thu toàn bộ.
 
 **Quy tắc cập nhật:** theo [00-README.md §4](00-README.md#4-quy-tắc-cập-nhật-cho-codex-agnes-và-developer). Quyền chuẩn hóa tài liệu đã được chủ dự án cấp ngày 16/10/2026. Quy tắc “chỉ sửa worklog / đặc tả đông băng” trong lịch sử không còn là hướng dẫn hiện hành. **EN:** Code presence is not runtime proof; record evidence separately and preserve approved requirements.
 
-## 1. Trạng thái hiện tại (cập nhật 18/10/2026, múi giờ Asia/Ho_Chi_Minh)
+## 1. Trạng thái hiện tại (cập nhật 20/10/2026, múi giờ Asia/Ho_Chi_Minh)
 
 - **Stack trong mã nguồn (chưa xác minh live):** backend `marixa_aspnet/M.API` (ASP.NET Core 8, EF Core, JWT/Identity, Swagger) · frontend `marixa_react` (React 19 + Vite SPA, React Router 7) · DB linh hoạt **SQL Server (dev) / PostgreSQL Supabase (prod)** · ảnh **Supabase Storage bucket public `marixa-photos`** (dev fallback `wwwroot/uploads`) · deploy **Render (API, Docker) + Vercel (web) + Supabase**.
 - **Role:** 4 core đã map quyền `Admin`, `Manager`, `HR`, `Employee` (frontend `marixa_react/src/constants/modules.js`) + 3 role nghiệp vụ **đã seed** `Accountant`, `Sale`, `Marketing` (`M.API/Seed/RoleSeeder.cs`, **chưa** có quyền module chuyên biệt; các chức năng access user vẫn theo logic hiện tại).
@@ -29,24 +29,24 @@
 | Đổi mật khẩu | ✅ | AuthService/SessionTests | Auth/owner/password cũ, stamp thu hồi phiên; live chưa nghiệm thu. |
 | Link Google (connect/disconnect) | 🟡 | `UserLoginController` | Có API; UI gắn vào chưa rõ. |
 
-### B. Module Nhân viên (`/attendance/*`, module `me`)
+### B. Module Nhân viên (`/me/*`, module `me`)
 
 | Trang / chức năng | Trạng thái | Code chính | Ghi chú |
 | --- | --- | --- | --- |
-| `/attendance` chấm vào/ra + camera | ✅ | AttendanceService/ClockInPage | UI/API theo rule; chấm không ảnh/GPS khi tùy chọn có browser smoke, thiết bị thật chưa nghiệm thu. |
+| `/me` chấm vào/ra + camera | ✅ | AttendanceService/ClockInPage | UI/API theo rule; chấm không ảnh/GPS khi tùy chọn có browser smoke, thiết bị thật chưa nghiệm thu. |
 | Ảnh chấm công (upload) | ✅ | `POST /api/Upload/photo` + `SupabaseStorageService` | Storage khi đọc được cấu hình hợp lệ; thiếu cấu hình dùng đĩa /uploads. Env đúng SUPABASE__SERVICEKEY; xem08. Không có fallback đĩa khi Storage đã config nhưng upload lỗi. |
 | GPS chấm công | ✅ | AttendanceCard/AttendanceService | UI gửi lat/lon khi bật; API bounds/rule. Chưa geofence và chưa thử quyền GPS trên thiết bị thật. |
-| `/attendance/attendance-history` lịch sử + sửa công/OT | ✅ | HistoryPage, CorrectionPanel, OvertimePanel | Có tab gửi/theo dõi, staff có tab duyệt đúng quyền; HR/Admin tự duyệt theo quyết định. |
-| `/attendance/statistics` thống kê công | ✅ | `modules/me/pages/StatisticsPage`, StatKpis/StatWarnings | |
-| `/attendance/leave` đơn nghỉ | ✅ | LeavePage, LeaveLedgerDialog, LeaveRequestService | Mine đúng quyền; PDF, hủy Pending, sổ phép. Staff hủy Approved khác chủ và cấp/điều chỉnh phép trong trang hiện có. |
-| `/attendance/salary` bảng lương (của tôi) | ✅ | `modules/me/pages/SalaryPage`, `EmployeeSalaryController`, `PayrollController` | |
-| `/attendance/contracts` hợp đồng | ✅ | `modules/me/pages/ContractPage`, `EmployeeContractController` | |
-| `/attendance/insurance` BHXH & thuế | ✅ | `modules/me/pages/InsurancePage`, `EmployeeInsuranceController` | |
-| `/attendance/bank-accounts` tài khoản ngân hàng | ✅ | `modules/me/pages/BankPage`, `EmployeeBankAccountController`, `BankController` | |
-| `/attendance/attendance-rules` quy định (ca làm) | ✅ | `modules/me/pages/RulesPage`, `AttendanceRuleController/PublicController` | |
-| `/attendance/reports` báo cáo của tôi | ✅ | `modules/me/pages/ReportsPage`, `EmployeeReportController` | |
-| `/attendance/promotions` đề xuất thăng chức | ✅ | `modules/me/pages/PromotionsPage`, `EmployeePromotionController` | |
-| `/attendance/handover` bàn giao nghỉ việc | ✅ | `modules/me/pages/HandoverPage`, `EmployeeHandoverController` | Có upload file (pdf/docx/xlsx…). |
+| `/me/attendance-history` lịch sử + sửa công/OT | ✅ | HistoryPage, CorrectionPanel, OvertimePanel | Có tab gửi/theo dõi, staff có tab duyệt đúng quyền; HR/Admin tự duyệt theo quyết định. |
+| `/me/statistics` thống kê công | ✅ | `modules/me/pages/StatisticsPage`, StatKpis/StatWarnings | |
+| `/me/leave` đơn nghỉ | ✅ | LeavePage, LeaveLedgerDialog, LeaveRequestService | Mine đúng quyền; PDF, hủy Pending, sổ phép. Staff hủy Approved khác chủ và cấp/điều chỉnh phép trong trang hiện có. |
+| `/me/salary` bảng lương (của tôi) | ✅ | `modules/me/pages/SalaryPage`, `EmployeeSalaryController`, `PayrollController` | |
+| `/me/contracts` hợp đồng | ✅ | `modules/me/pages/ContractPage`, `EmployeeContractController` | |
+| `/me/insurance` BHXH & thuế | ✅ | `modules/me/pages/InsurancePage`, `EmployeeInsuranceController` | |
+| `/me/bank-accounts` tài khoản ngân hàng | ✅ | `modules/me/pages/BankPage`, `EmployeeBankAccountController`, `BankController` | |
+| `/me/attendance-rules` quy định (ca làm) | ✅ | `modules/me/pages/RulesPage`, `AttendanceRuleController/PublicController` | |
+| `/me/reports` báo cáo của tôi | ✅ | `modules/me/pages/ReportsPage`, `EmployeeReportController` | |
+| `/me/promotions` đề xuất thăng chức | ✅ | `modules/me/pages/PromotionsPage`, `EmployeePromotionController` | |
+| `/me/handover` bàn giao nghỉ việc | ✅ | `modules/me/pages/HandoverPage`, `EmployeeHandoverController` | Có upload file (pdf/docx/xlsx…). |
 
 ### C. Module Công việc & Hồ sơ
 
@@ -55,21 +55,21 @@
 | `/work` công việc (dự án/task/hiệu suất) | ✅ | `modules/work/WorkPage`, `WorkProject/WorkTask/WorkPerformance Controller` | |
 | `/profile` hồ sơ cá nhân | ✅ | `modules/profile/ProfilePage` | |
 
-### D. Module HR / Manager / Admin (`/employees/*`)
+### D. Module HR / Manager / Admin (`/hr/*`)
 
 | Trang / chức năng | Trạng thái | Code chính | Ghi chú |
 | --- | --- | --- | --- |
-| `/employees` danh sách nhân sự (CRUD, import/export) | ✅ | `modules/hr/pages/HrPage.jsx`, `EmployeeController`, `DepartmentController`, `PositionController` | |
-| `/employees/attendance-history` đối soát & duyệt công | ✅ | `EmployeeAttendanceHistoryPage` (hrMode), `AttendanceController.approve` | |
-| `/employees/work-schedule` lịch làm/ca | 🟡 | `EmployeeWorkSchedulePage`, `ShiftController`, `EmployeeShiftController` | Gán ca theo NV/ngày. |
-| `/employees/statistics` thống kê (HR) | ✅ | `EmployeeStatisticsPage` (hrMode) | |
-| `/employees/contracts` hợp đồng | ✅ | `EmployeeContractPage`, `AdminContractPage` | |
-| `/employees/payroll` | 🟡 | `App.jsx` | Redirect về /employees; không phải màn hình bảng lương riêng. |
-| `/employees/leaves` duyệt nghỉ phép | ✅ | `EmployeeLeavePage` (hrMode), `LeaveAdminPage` | |
-| `/employees/reports` báo cáo | ✅ | `ReportsPage`, `EmployeeReportController` | |
-| `/employees/accounts` cấp tài khoản | ✅ | `AccountIssuancePage`, `UserController`, `ActivationCodeController` | |
-| `/employees/promotions` thăng chức | ✅ | `PromotionsPage`, `EmployeePromotionController` | |
-| `/employees/handover` duyệt bàn giao | ✅ | `MeHandoverPage` (reviewMode/admin) | |
+| `/hr` danh sách nhân sự (CRUD, import/export) | ✅ | `modules/hr/pages/HrPage.jsx`, `EmployeeController`, `DepartmentController`, `PositionController` | |
+| `/hr/attendance-history` đối soát & duyệt công | ✅ | `EmployeeAttendanceHistoryPage` (hrMode), `AttendanceController.approve` | |
+| `/hr/work-schedule` lịch làm/ca | 🟡 | `EmployeeWorkSchedulePage`, `ShiftController`, `EmployeeShiftController` | Gán ca theo NV/ngày. |
+| `/hr/statistics` thống kê (HR) | ✅ | `EmployeeStatisticsPage` (hrMode) | |
+| `/hr/contracts` hợp đồng | ✅ | `EmployeeContractPage`, `AdminContractPage` | |
+| `/hr/payroll` | 🟡 | `App.jsx` | Redirect về /hr; không phải màn hình bảng lương riêng. |
+| `/hr/leaves` duyệt nghỉ phép | ✅ | `EmployeeLeavePage` (hrMode), `LeaveAdminPage` | |
+| `/hr/reports` báo cáo | ✅ | `ReportsPage`, `EmployeeReportController` | |
+| `/hr/accounts` cấp tài khoản | ✅ | `AccountIssuancePage`, `UserController`, `ActivationCodeController` | |
+| `/hr/promotions` thăng chức | ✅ | `PromotionsPage`, `EmployeePromotionController` | |
+| `/hr/handover` duyệt bàn giao | ✅ | `MeHandoverPage` (reviewMode/admin) | |
 
 ### E. Module Admin (`/admin/*`)
 
@@ -106,6 +106,36 @@
 | Supabase Auth / Data API và RLS | 🟡 | Ứng dụng dùng .NET Identity/JWT. Đã kiểm metadata RLS/grants và advisor trong phạm vi public schema; còn hai WARN cũ liên quan quyền EXECUTE hàm event trigger, chưa audit toàn bộ hạ tầng. |
 
 ## 4. Log sự kiện (mới trên cùng)
+
+### 20/10/2026 — Codex: phát hành thay đổi frontend lên main theo yêu cầu
+
+- Chủ dự án yêu cầu trực tiếp “push lên main luôn đi”. Phạm vi gồm bộ đổi URL Me/HR, menu/thông báo, sửa trạng thái tải và giao diện responsive đã hoàn tất; giữ toàn bộ thay đổi đã kiểm thử trong hai đợt trước. Không bao gồm sửa backend/schema, dữ liệu thật, credential hoặc thao tác triển khai thủ công trên hosting.
+- Trước commit, fetch origin xác nhận HEAD và origin/main cùng `f936086`, không có commit remote mới cần hòa giải. Kiểm source không thay đổi sau kết quả **43 PASS / 0 FAIL / 0 SKIP**, lint max-warnings0 và production build PASS của đợt UI; giữ nguyên giới hạn browser/thiết bị thật đã ghi bên dưới. Kiểm Markdown và whitespace chạy lại trước commit; kiểm tệp staged để loại artifacts, cấu hình riêng và mẫu credential.
+- Đưa commit đã kiểm vào main bằng fast-forward và push thông thường; không force-push hoặc xóa nhánh khác. Trạng thái CI/hosting kiểm riêng sau push, không coi cập nhật Git là bằng chứng production đã chạy bản mới. Gate lưu trữ HR private và nghiệm thu thiết bị thật còn mở theo docs/18-release-checklist.md.
+
+### 20/10/2026 — Codex: hoàn tất đợt giao diện responsive bắt đầu 19/10
+
+- Theo yêu cầu chủ dự án: áp dụng cách đọc bảng trên điện thoại, tự quyết định lựa chọn trang trí thông thường, thống nhất phong cách Home/HR/Me/Admin và hướng dẫn cuối HR/Admin. Tham khảo tài liệu chính thức MISA AMIS về danh sách đơn/báo cáo phép; chỉ áp dụng cách tổ chức trạng thái, tổng hợp, lọc và chi tiết phù hợp API Marixa. Quy tắc hiện hành tại docs/09-ui-design.md §6; không thêm chính sách nghiệp vụ/quyền hoặc dữ liệu mẫu vào UI.
+- `ResponsiveTable` được dùng ở **28 vị trí bảng trong source**, gồm danh sách, hộp thoại và component cũ (không phải 28 trang live). Desktop giữ table; mobile <=768px là thẻ có trường chính, thời gian/tổng/trạng thái, thao tác và nút mở chi tiết. Checkbox/control chỉ có một bộ, giữ handler gốc; trường nhập liệu và thông báo colSpan luôn hiện. Đã sửa key trùng khi trải Fragment/column có điều kiện, bổ sung regression để giữ key riêng và ổn định.
+- Ma trận phân quyền giữ region cuộn riêng và cột người dùng sticky, không ép xoay máy. Nút mở hồ sơ là button thật, Enter hoạt động; nút gán/gỡ có nhãn chứa người dùng/role và aria-pressed. Thẻ KPI/bề mặt/nút/focus/spacing dùng workspace.css và token hiện hữu; giữ nhận diện Marixa. CSS module cũ còn tồn tại, không gọi đây là đã xóa hết CSS trùng hoặc chứng nhận WCAG toàn ứng dụng.
+- Bộ lọc nhanh nhân viên là select trên mobile, chú thích hồ sơ mở khi cần. Lịch làm ưu tiên ngày trước/sau và ô ngày, có nút mở lịch tháng. Biểu đồ mobile mặc định thu gọn; donut có chú giải số, cột/đường có số liệu dạng chữ. Dashboard Admin có loading/lỗi/Thử lại, không tạo dãy 0 khi request lỗi. Hướng dẫn theo route đặt cuối **20 trang HR/Admin**, không thêm heading cũ hoặc hướng dẫn staff vào trang cá nhân.
+- Nghỉ phép HR/Admin thêm cột Lý do từ API hiện có (mobile mở trong chi tiết). Duyệt/từ chối dùng ReasonDialog có tên, khoảng nghỉ, số ngày và lý do; ý kiến tùy chọn tối đa **500** ký tự khớp DTO. Lỗi giữ tại dialog, busy khóa gửi; không thay transition hoặc mở tự duyệt nghỉ. Đã kiểm dialog duyệt rồi đóng, gửi từ chối thành công trên hồ sơ fixture; chưa dùng hồ sơ thật để thử ghi.
+- Kiểm cuối ngày 20/10: Node **43 PASS / 0 FAIL / 0 SKIP**, ESLint max-warnings0 PASS, Vite Production build PASS. Bao gồm 11 regression mới cho bảng/thẻ/Fragment, trường nhập liệu, trạng thái/thao tác, sự kiện, bảng rỗng có checkbox và đích hướng dẫn, ngoài 32 test của đợt trước. Bundle lớn hiện hữu vẫn cảnh báo (~1.24MB app, ~940KB ExcelJS), không coi performance đã được tối ưu hoàn tất. Markdown **48 file / 390 link / 13 anchor / 0 lỗi**, diff whitespace PASS.
+- Browser ngày 19/10 đã quét **35 trang ở 320px và 1440px**, các lượt cuối không có lỗi hiển thị, app-page-heading hoặc cuộn ngang toàn trang; 375px kiểm thêm thẻ/menu. Các lỗi tìm được và sửa: tràn toolbar Cấp tài khoản, grid Thống kê/Profile trên 320px, checkbox quá lớn, ngày nghỉ bị xuống dòng sai; giữ việc cuộn riêng của ma trận. Chọn tất cả 3 nhân viên, mở chi tiết, lọc nghỉ việc, ngày trước/sau và mở tháng đã hoạt động. Fault injection Admin chart 500 hiển thị lỗi/Thử lại; khôi phục 200 đọc lại đúng giá trị và số liệu chữ, không giả thành rỗng.
+- Ngày 20/10 thử quét rộng lại nhưng công cụ hết thời gian nên **không tính lượt đó hoàn tất**. Sau thay đổi cuối đã kiểm tập trung **6 trang ở viewport 320px**: Roles, HR Accounts, HR Statistics, Profile, Me History, HR Leaves; không tràn ngang hoặc lỗi hiển thị. Roles giữ scroll riêng 742px/247px và sticky; Enter mở thông tin đúng người. Nghỉ phép 375px có lý do mở rộng, cấm tự duyệt, dialog maxlength500, từ chối fixture thành công; desktop 1440px giữ table **7 cột**, có hướng dẫn cuối trang, không tràn; console không có error ở lượt cuối.
+- Rà soát cuối phát hiện thông báo rỗng colSpan trong bảng có checkbox bị kế thừa kiểu ô chọn; đã tách ô phủ nhiều cột khỏi selection/action/primary, thêm regression và kiểm browser bằng tìm kiếm không khớp: thông báo hiện bình thường, không tràn ngang. Xóa lọc rồi Chọn tất cả chọn đúng 3 hồ sơ và mở chi tiết đúng 1 thẻ.
+- Bằng chứng hình ảnh cục bộ: `artifacts/responsive-ui-20261019/` và `artifacts/responsive-ui-20261020/`; file verification.json của ngày 20 ghi rõ phạm vi và lượt quét bị timeout. API fixture dùng SQLite in-memory, principal/login giả, dữ liệu TEST và config riêng; không dùng DB/bucket/token thật. Backend source không đổi nên không chạy lại full backend/provider suite. Hosting, thiết bị thật, camera/GPS, screen reader đầy đủ, Figma và mọi tổ hợp form/quyền vẫn **NOT VERIFIED**. Không commit/push/merge/deploy trong đợt UI này.
+
+### 19/10/2026 — Codex: URL Me/HR, bỏ heading và rà soát frontend
+
+- Chủ dự án yêu cầu `/attendance/*` → `/me/*`, `/employees/*` → `/hr/*`, bỏ app-page-heading ở tất cả trang và rà soát Home/HR/Me/Admin, bỏ qua mở rộng quá phức tạp. Đã cập nhật router, registry/menu, Home, shortcut, cảnh báo và guard; alias prefix cũ chuyển hướng replace, giữ query/hash. Không đổi endpoint backend. Tài liệu current/route map đã cập nhật, lịch sử worklog giữ nguyên.
+- Xóa portal/context/component/CSS heading; giữ KPI và nút thao tác, document.title/nhãn main. Mobile header cao 61px ở viewport 320/375, không tràn; logo M giữ trên màn hình hẹp. Menu vẫn toàn màn hình, khóa cuộn nền, đóng sau chọn trang/Escape và trả focus. Sửa width bộ lọc Nghỉ phép để không làm cả trang cuộn ngang, bảng rộng tự cuộn trong khung.
+- Theo hai trả lời phỏng vấn của chủ dự án: thêm Nghỉ phép/Bảng lương/Nhân sự nghỉ việc vào sidebar Admin; Nghỉ phép Admin dùng chung component HR với layout Admin, vẫn cấm tự duyệt nghỉ. Chuông có liên kết Mở theo role cho phép/báo cáo/bàn giao, đánh dấu đọc khi mở, Escape và trạng thái lỗi rõ; không thêm quyền API.
+- Sửa EntityDetailPage (hợp đồng/lương/bảo hiểm/ngân hàng): Promise.allSettled không nuốt lỗi dữ liệu chính, không hiện 0/rỗng giả khi lỗi, có Thử lại. Nhân sự nghỉ việc gộp active/archived theo ID, lọc status 4/5 và hoist fetcher để tránh tải lặp; giữ trạng thái thật, không tự quy hồ sơ đã lưu trữ thành nghỉ việc.
+- [Rà soát 35](35-frontend-review.md) ghi từng trang: 33 trang chính và `/work`, `/profile`; còn thiếu cơ bản là UI danh mục, thao tác bảng lương thủ công/sửa hợp đồng, feedback biểu đồ và tên thẻ Home. Các mục chưa được chọn là PROPOSED; không tự xây engine lương/AI/offline/đa công ty. Gate storage private bền vẫn còn mở.
+- Node regression **32 PASS / 0 FAIL / 0 SKIP**; lint max-warnings0 và production build PASS. Markdown **48 file / 383 link / 10 anchor / 0 lỗi**, diff whitespace PASS. Bundle lớn hiện hữu vẫn cảnh báo (~1.23MB app, ~940KB ExcelJS), không thay dependencies hoặc gọi đó là tối ưu hoàn tất. Backend source không đổi nên không chạy lại full backend/provider suite.
+- Browser smoke **35/35 trang** trên API test fixture SQLite: không còn app-page-heading, không có lỗi hiển thị trong lượt chạy cuối. Login/principal là fixture giả, không phải nghiệm thu Identity production. Fixture tuần tự hóa request vì dùng chung một connection SQLite in-memory; lỗi concurrency ở lượt thiết lập không sửa vào backend thật. Bốn URL cũ giữ query/hash, ba trường hợp Employee vào HR/Admin bị chuyển unauthorized; HR vào trang phép và thông báo đúng `/hr`, Admin đúng `/admin`, Employee đúng `/me`. Kiểm thêm hồ sơ nghỉ việc đã archived xuất hiện, tự duyệt nghỉ bị ẩn, menu 320/375 toàn màn hình, Escape/focus và liên kết thông báo đóng panel.
+- Fault injection riêng API lương trả 500: UI có lỗi, số lượng chưa biết và Thử lại, không hiện trạng thái rỗng; trả API về 200 rồi Thử lại phục hồi. Bằng chứng/screenshot ở `artifacts/route-review-20261019/`, Gitignored. Không dùng DB/bucket/phiên đăng nhập thật, không migrate/seed production, push/merge hoặc deploy trong lượt này. Chưa nghiệm thu camera/GPS, mọi luồng ghi hay thiết bị thật.
 
 ### 18/10/2026 — Codex: kiểm tra trước push bộ chuẩn hóa cấu hình
 

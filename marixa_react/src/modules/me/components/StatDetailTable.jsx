@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { formatVnTime, businessDate, calcOvertime, formatOvertime } from "../../../utils/vnTime";
 import { pad2 } from "./statUtils";
 
@@ -18,7 +19,7 @@ const StatDetailTable = ({ monthRows }) => {
         <div className="att-card att-stat-card">
             <h2 className="att-stat-title">Chi tiết chấm công</h2>
             <div className="att-table-wrap">
-                <table className="att-table att-stat-table">
+                <ResponsiveTable className="att-table att-stat-table">
                     <thead>
                         <tr>
                             <th>Ngày</th>
@@ -68,7 +69,7 @@ const StatDetailTable = ({ monthRows }) => {
                             );
                         })}
                     </tbody>
-                </table>
+                </ResponsiveTable>
             </div>
         </div>
     );

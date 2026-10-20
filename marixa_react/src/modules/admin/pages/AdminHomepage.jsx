@@ -20,7 +20,7 @@ const pad = (n) => String(n).padStart(2, "0");
 // Các chức năng chính trên trang chủ admin (icon + nhãn phụ).
 // Nhóm A: vận hành (module nghiệp vụ). Nhóm B: quản trị (tài khoản / phân quyền).
 const ICONS = [
-    { to: "/admin/employees", icon: "👥", label: "Nhân sự", sub: "Hồ sơ & tuyển mới" },
+    { to: "/hr", icon: "👥", label: "Nhân sự", sub: "Hồ sơ & tuyển mới" },
     { to: "/admin/contracts", icon: "📄", label: "Hợp đồng", sub: "Ký & theo dõi hạn" },
     { to: "/admin/leaves", icon: "🌴", label: "Nghỉ phép", sub: "Duyệt đơn xin nghỉ" },
     { to: "/admin/payroll", icon: "💰", label: "Lương", sub: "Bảng lương tháng" },
@@ -92,26 +92,35 @@ const AdminHomepage = () => {
     const L = (text) => translate(text, language);
 
     const [trendData, setTrendData] = useState([]);
+    const [trendLoading, setTrendLoading] = useState(true);
+    const [trendError, setTrendError] = useState("");
+    const [trendVersion, setTrendVersion] = useState(0);
     useEffect(() => {
+        let active = true;
         const load = async () => {
+            setTrendLoading(true);
+            setTrendError("");
             try {
                 const r = await adminApi.attendances();
                 const all = r.data.data?.items || [];
                 const days = [];
                 for (let i = 6; i >= 0; i--) {
-                    const d = new Date();
+                    const d = vnNow();
                     d.setDate(d.getDate() - i);
                     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
                     const set = new Set(all.filter((a) => a.attendanceDate && a.attendanceDate.startsWith(key) && a.checkInTime).map((a) => a.employeeId));
                     days.push({ name: d.toLocaleDateString("vi-VN", { weekday: "short" }), full: key, value: set.size });
                 }
-                setTrendData(days);
+                if (active) setTrendData(days);
             } catch {
-                /* chart stays empty */
+                if (active) setTrendError("Không thể tải số liệu chấm công. Vui lòng thử lại.");
+            } finally {
+                if (active) setTrendLoading(false);
             }
         };
         load();
-    }, []);
+        return () => { active = false; };
+    }, [trendVersion]);
 
     return (
         <AdminAppLayout
@@ -128,6 +137,9 @@ const AdminHomepage = () => {
                         title={L("Check-in 7 ngày")}
                         hint={L("Số người có giờ vào ca trong 7 ngày gần nhất")}
                         empty={trendData.length === 0}
+                        loading={trendLoading}
+                        error={trendError}
+                        onRetry={() => setTrendVersion((version) => version + 1)}
                     >
                         <TrendLine data={trendData} yKey="value" />
                     </ChartCard>

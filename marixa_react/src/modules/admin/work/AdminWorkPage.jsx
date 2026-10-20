@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import AdminAppLayout from "../layout/AdminAppLayout";
 import adminApi from "../api/adminApi";
@@ -144,7 +145,7 @@ const AdminWorkPage = () => {
                     </div>
 
                     <div className="att-table-wrap">
-                        <table className="att-table">
+                        <ResponsiveTable className="att-table">
                             <thead>
                                 <tr>
                                     <th>{L("Mã NV")}</th>
@@ -185,7 +186,7 @@ const AdminWorkPage = () => {
                                     </tr>
                                 ))}
                             </tbody>
-                        </table>
+                        </ResponsiveTable>
                     </div>
                 </section>
 

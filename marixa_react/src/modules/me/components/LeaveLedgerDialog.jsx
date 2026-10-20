@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { getAuth } from "../../../services/auth/auth";
 import { apiErrorMessage, dataOf, itemsOf } from "../../../services/api/contracts";
@@ -92,10 +93,10 @@ export default function LeaveLedgerDialog({ employeeId, manage = false, onClose,
         {!selected && <p>Chọn nhân viên để xem và điều chỉnh sổ phép.</p>}
         {loading ? <p>Đang tải sổ phép...</p> : !error && selected && balance && <>
             {balance && <p>Đã cấp: <strong>{balance.totalGranted}</strong> · Đã dùng: <strong>{balance.totalUsed}</strong> · Còn lại: <strong>{balance.remaining}</strong> ngày</p>}
-            <div className="att-table-wrap"><table className="att-table"><thead><tr><th>Ngày ghi</th><th>Loại</th><th>Số ngày</th><th>Lý do</th><th>Người ghi</th></tr></thead>
+            <div className="att-table-wrap"><ResponsiveTable className="att-table"><thead><tr><th>Ngày ghi</th><th>Loại</th><th>Số ngày</th><th>Lý do</th><th>Người ghi</th></tr></thead>
                 <tbody>{entries.map((entry) => <tr key={entry.id}><td>{formatVnDate(entry.createdTime)}</td><td>{ENTRY[entry.entryType] || "Không rõ"}</td>
                     <td>{entry.days}</td><td>{entry.reason || entry.leaveRequestReason || "—"}</td><td>{entry.createdBy || "—"}</td></tr>)}
-                    {entries.length === 0 && <tr><td colSpan={5}>Chưa có giao dịch sổ phép trong năm được chọn.</td></tr>}</tbody></table></div>
+                    {entries.length === 0 && <tr><td colSpan={5}>Chưa có giao dịch sổ phép trong năm được chọn.</td></tr>}</tbody></ResponsiveTable></div>
         </>}
         {creating && <LedgerEntryForm employeeId={selected} year={year} types={types} onClose={() => setCreating(false)} onSaved={() => { setCreating(false); load(); onChanged?.(); }} />}
     </dialog>;

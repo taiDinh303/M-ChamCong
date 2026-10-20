@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import AdminAppLayout from "../layout/AdminAppLayout";
 import adminApi from "../api/adminApi";
 import { useState, useEffect, useCallback, useMemo } from "react";
@@ -156,7 +157,7 @@ const AdminBlockAccountPage = () => {
                         </div>
 
                         <div className="att-table-wrap">
-                            <table className="att-table blk-table">
+                            <ResponsiveTable className="att-table blk-table">
                                 <thead>
                                     <tr>
                                         <th>Mã NV</th>
@@ -192,7 +193,7 @@ const AdminBlockAccountPage = () => {
                                         ))
                                     )}
                                 </tbody>
-                            </table>
+                            </ResponsiveTable>
                         </div>
                     </div>
                 )}

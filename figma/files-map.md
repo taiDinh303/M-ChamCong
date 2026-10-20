@@ -1,6 +1,6 @@
 # FILES-MAP — Route React và Page Figma mục tiêu
 
-> Chủ tài liệu: **Đinh Văn Tài**. Đối chiếu route/plugin local: **16/10/2026**.
+> Chủ tài liệu: **Đinh Văn Tài**. Route React cập nhật **19/10/2026** (`/me`, `/hr`); scaffold plugin vẫn là mốc **16/10/2026**, chưa đồng bộ node Figma live.
 > **EN — Codex / Agnes:** `App.jsx` owns actual routes; `modules.js` owns the UI registry. The plugin has 11 scaffold entries, including route groups. The tables below describe coverage and target pages, not live Figma nodes. All live design state is **NOT VERIFIED**.
 
 ## 1. File đích và quy ước đã chọn
@@ -12,7 +12,7 @@
 | Team / owner | `Marixa_001` / `taiDz`; Free plan là ghi nhận trước, chưa xác minh hiện tại. |
 | Workflow | Dev Mode copy (Q4=C); UI Kit trước (Q6=B). |
 | Target mapping | Một Page cho mỗi route hiển thị; hai frame `PageName-mobile` (rộng 375px) và `PageName-desktop` (rộng 1440px). |
-| Source scaffold | [`setup-design-tokens.ts`](plugins/setup-design-tokens.ts) định nghĩa 11 mục Page, 2 frame/mục (375×812, 1440×900); `/employees/*` và `/admin/*` là nhóm. |
+| Source scaffold | [`setup-design-tokens.ts`](plugins/setup-design-tokens.ts) định nghĩa 11 mục Page, 2 frame/mục (375×812, 1440×900); `/hr/*` và `/admin/*` là nhóm. |
 | Live evidence | Chưa có node ids/ảnh review/bằng chứng chạy plugin được kiểm tra trong lượt này. |
 
 ## 2. Inventory 42 route hiển thị
@@ -25,30 +25,30 @@ Nguồn: [`App.jsx`](../marixa_react/src/App.jsx). Tên Page ở cột 2 là **T
 | `/kich-hoat` | Activate | Tên/route khớp | Kích hoạt. |
 | `/unauthorized` | Unauthorized | Tên/route khớp | Thiếu quyền. |
 | `/home` | Home | **not-mapped** | Tổng quan/module cards. |
-| `/attendance` | ClockIn | Tên/route khớp | GPS chỉ hiển thị; ảnh hiện bắt buộc tại UI. |
-| `/attendance/attendance-history` | AttendanceHistory | Tên/route khớp | Chỉ route cá nhân; HR có route riêng. |
-| `/attendance/attendance-rules` | AttendanceRules | **not-mapped** | Quy định. |
-| `/attendance/statistics` | Statistics | Tên/route khớp | Thống kê cá nhân. |
-| `/attendance/leave` | Leave | Tên/route khớp | Transition theo API, không giả định draft/Approved cancellation. |
-| `/attendance/reports` | MyReports | **not-mapped** | Báo cáo cá nhân. |
-| `/attendance/promotions` | MyPromotions | **not-mapped** | Đề xuất thăng chức. |
-| `/attendance/handover` | MyHandover | **not-mapped** | Bàn giao. |
-| `/attendance/contracts` | MyContracts | **not-mapped** | Hợp đồng. |
-| `/attendance/salary` | MySalary | **not-mapped** | Lương cá nhân. |
-| `/attendance/insurance` | MyInsurance | **not-mapped** | Bảo hiểm/thuế. |
-| `/attendance/bank-accounts` | MyBankAccounts | **not-mapped** | Ngân hàng. |
+| `/me` | ClockIn | Tên/route khớp | GPS chỉ hiển thị; ảnh hiện bắt buộc tại UI. |
+| `/me/attendance-history` | AttendanceHistory | Tên/route khớp | Chỉ route cá nhân; HR có route riêng. |
+| `/me/attendance-rules` | AttendanceRules | **not-mapped** | Quy định. |
+| `/me/statistics` | Statistics | Tên/route khớp | Thống kê cá nhân. |
+| `/me/leave` | Leave | Tên/route khớp | Transition theo API, không giả định draft/Approved cancellation. |
+| `/me/reports` | MyReports | **not-mapped** | Báo cáo cá nhân. |
+| `/me/promotions` | MyPromotions | **not-mapped** | Đề xuất thăng chức. |
+| `/me/handover` | MyHandover | **not-mapped** | Bàn giao. |
+| `/me/contracts` | MyContracts | **not-mapped** | Hợp đồng. |
+| `/me/salary` | MySalary | **not-mapped** | Lương cá nhân. |
+| `/me/insurance` | MyInsurance | **not-mapped** | Bảo hiểm/thuế. |
+| `/me/bank-accounts` | MyBankAccounts | **not-mapped** | Ngân hàng. |
 | `/work` | Work | Tên/route khớp | Công việc. |
 | `/profile` | Profile | Tên/route khớp | Hồ sơ. |
-| `/employees` | Employees | **group only**: Employees | Nhóm `/employees/*` không phải mapping từng màn hình. |
-| `/employees/attendance-history` | EmployeeAttendanceHistory | **group only**: Employees | Đối soát/duyệt công. |
-| `/employees/work-schedule` | EmployeeWorkSchedule | **group only**: Employees | Lịch làm. |
-| `/employees/statistics` | EmployeeStatistics | **group only**: Employees | Thống kê HR. |
-| `/employees/contracts` | EmployeeContracts | **group only**: Employees | Hợp đồng HR. |
-| `/employees/leaves` | EmployeeLeaves | **group only**: Employees | Nghỉ phép HR. |
-| `/employees/reports` | EmployeeReports | **group only**: Employees | Báo cáo HR. |
-| `/employees/accounts` | EmployeeAccounts | **group only**: Employees | Cấp tài khoản. |
-| `/employees/promotions` | EmployeePromotions | **group only**: Employees | Thăng chức. |
-| `/employees/handover` | EmployeeHandover | **group only**: Employees | Bàn giao HR. |
+| `/hr` | Employees | **group only**: Employees | Nhóm `/hr/*` không phải mapping từng màn hình. |
+| `/hr/attendance-history` | EmployeeAttendanceHistory | **group only**: Employees | Đối soát/duyệt công. |
+| `/hr/work-schedule` | EmployeeWorkSchedule | **group only**: Employees | Lịch làm. |
+| `/hr/statistics` | EmployeeStatistics | **group only**: Employees | Thống kê HR. |
+| `/hr/contracts` | EmployeeContracts | **group only**: Employees | Hợp đồng HR. |
+| `/hr/leaves` | EmployeeLeaves | **group only**: Employees | Nghỉ phép HR. |
+| `/hr/reports` | EmployeeReports | **group only**: Employees | Báo cáo HR. |
+| `/hr/accounts` | EmployeeAccounts | **group only**: Employees | Cấp tài khoản. |
+| `/hr/promotions` | EmployeePromotions | **group only**: Employees | Thăng chức. |
+| `/hr/handover` | EmployeeHandover | **group only**: Employees | Bàn giao HR. |
 | `/admin` | Admin | **group only**: Admin | Dashboard. |
 | `/admin/contracts` | AdminContracts | **group only**: Admin | Hợp đồng. |
 | `/admin/leaves` | AdminLeaves | **group only**: Admin | Nghỉ phép. |
@@ -71,14 +71,14 @@ Nguồn: [`App.jsx`](../marixa_react/src/App.jsx). Tên Page ở cột 2 là **T
 | Route / pattern | Target |
 | --- | --- |
 | `/`, `*` | `/home` |
-| `/finance` | `/attendance/salary` |
-| `/employees/payroll` | `/employees` |
-| `/admin/employees` | `/employees` |
+| `/finance` | `/me/salary` |
+| `/hr/payroll` | `/hr` |
+| `/admin/employees` | `/hr` |
 | `/admin/employees/accounts` | `/admin/accounts` |
-| `/admin/employees/promotions` | `/employees/promotions` |
-| `/attendance-history`, `/attendance-rules`, `/statistics`, `/leave`, `/reports`, `/promotions`, `/handover`, `/contracts`, `/salary`, `/insurance`, `/bank-accounts` | Thêm prefix `/attendance` vào đường dẫn cũ, ví dụ `/leave` → `/attendance/leave`. |
+| `/admin/employees/promotions` | `/hr/promotions` |
+| `/attendance-history`, `/attendance-rules`, `/statistics`, `/leave`, `/reports`, `/promotions`, `/handover`, `/contracts`, `/salary`, `/insurance`, `/bank-accounts` | Thêm prefix `/me` vào đường dẫn cũ, ví dụ `/leave` → `/me/leave`. |
 
-Registry có `/finance` và `/employees/payroll` nhưng chúng chỉ redirect. Không dùng `MODULES.length` hoặc 11 mục `ROUTES` trong plugin làm số màn hình sản phẩm.
+Registry có `/finance` và `/hr/payroll` nhưng chúng chỉ redirect. Không dùng `MODULES.length` hoặc 11 mục `ROUTES` trong plugin làm số màn hình sản phẩm.
 
 ## 4. Token / UI Kit trước khi thiết kế màn hình
 

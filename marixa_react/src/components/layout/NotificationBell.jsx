@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { getAuth } from "../../services/auth/auth";
 import employeeApi from "../../modules/hr/api/employeeApi";
 import axiosClient from "../../services/api/axiosClient";
 import relatedApi from "../../modules/me/api/relatedApi";
 import { itemsOf } from "../../services/api/contracts";
+import { notificationTarget } from "./notificationRoutes.js";
 
 // Chuông thông báo toàn cục:
 // - Admin: nghỉ phép chờ duyệt, bàn giao chờ duyệt, báo cáo cần xử lý.
@@ -22,7 +24,8 @@ const NotificationBell = () => {
     const [readIds, setReadIds] = useState(() => {
         try {
             const raw = localStorage.getItem(READ_KEY(auth?.userId));
-            return raw ? JSON.parse(raw) : [];
+            const value = raw ? JSON.parse(raw) : [];
+            return Array.isArray(value) ? value : [];
         } catch { return []; }
     });
     const [open, setOpen] = useState(false);
@@ -32,8 +35,13 @@ const NotificationBell = () => {
         const onDown = (e) => {
             if (ref.current && !ref.current.contains(e.target)) setOpen(false);
         };
-        document.addEventListener("mousedown", onDown);
-        return () => document.removeEventListener("mousedown", onDown);
+        const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+        document.addEventListener("pointerdown", onDown);
+        document.addEventListener("keydown", onKey);
+        return () => {
+            document.removeEventListener("pointerdown", onDown);
+            document.removeEventListener("keydown", onKey);
+        };
     }, []);
 
     const load = useCallback(async () => {
@@ -52,6 +60,7 @@ const NotificationBell = () => {
                             if (isAdmin || me)
                                 list.push({
                                     id: `leave-${x.id}`,
+                                    kind: "leave",
                                     title: me
                                         ? "Đơn nghỉ phép của bạn đang chờ duyệt"
                                         : `Nghỉ phép của ${x.employeeName || "NV"}`,
@@ -72,6 +81,7 @@ const NotificationBell = () => {
                         if (pending && (isAdmin || x.employeeId === auth?.employeeId))
                             list.push({
                                 id: `report-${x.id}`,
+                                kind: "report",
                                 title: isAdmin
                                     ? `Báo cáo "${x.title || x.reportCode}" của ${x.employeeName || "NV"} cần xử lý`
                                     : `Báo cáo "${x.title || x.reportCode}" cần chỉnh sửa`,
@@ -91,6 +101,7 @@ const NotificationBell = () => {
                             if (x.status === 0)
                                 list.push({
                                     id: `handover-${x.id}`,
+                                    kind: "handover",
                                     title: `Bàn giao của ${x.employeeName || "NV"} chờ duyệt`,
                                     detail: "Yêu cầu bàn giao cần xử lý",
                                     time: x.createdTime,
@@ -106,6 +117,7 @@ const NotificationBell = () => {
             setItems(list);
         } catch {
             setItems([]);
+            setLoadFailed(true);
         }
     }, [isAdmin, auth?.employeeId, auth?.token]);
 
@@ -133,6 +145,8 @@ const NotificationBell = () => {
                 type="button"
                 className="app-header-bell-btn"
                 aria-label="Thông báo"
+                aria-expanded={open}
+                aria-controls="notification-panel"
                 onClick={() => setOpen((v) => !v)}
             >
                 <span aria-hidden="true">🔔</span>
@@ -142,7 +156,7 @@ const NotificationBell = () => {
             </button>
 
             {open && (
-                <div className="app-header-bell-menu" role="menu">
+                <section id="notification-panel" className="app-header-bell-menu" aria-label="Thông báo">
                     <div className="app-header-bell-head">
                         <strong>Thông báo</strong>
                         {unread.length > 0 && (
@@ -154,7 +168,7 @@ const NotificationBell = () => {
                     <div className="app-header-bell-list">
                         {loadFailed && <p className="app-header-bell-empty" role="status">Chưa tải được một số thông báo. <button type="button" onClick={load}>Thử lại</button></p>}
                         {items.length === 0 ? (
-                            <p className="app-header-bell-empty">Không có thông báo nào.</p>
+                            !loadFailed && <p className="app-header-bell-empty">Không có thông báo nào.</p>
                         ) : (
                             items.slice(0, 30).map((i) => {
                                 const isRead = readIds.includes(i.id);
@@ -163,6 +177,8 @@ const NotificationBell = () => {
                                         <div className="app-header-bell-item-main">
                                             <strong>{i.title}</strong>
                                             <span>{i.detail}</span>
+                                            <Link className="app-header-bell-item-open" to={notificationTarget(i.kind, auth?.roles)}
+                                                aria-label={`Mở ${i.title}`} onClick={() => { markRead(i.id); setOpen(false); }}>Mở →</Link>
                                         </div>
                                         {!isRead ? (
                                             <button type="button" className="app-header-bell-item-read" title="Đánh dấu đã đọc" onClick={() => markRead(i.id)}>
@@ -176,7 +192,7 @@ const NotificationBell = () => {
                             })
                         )}
                     </div>
-                </div>
+                </section>
             )}
         </div>
     );

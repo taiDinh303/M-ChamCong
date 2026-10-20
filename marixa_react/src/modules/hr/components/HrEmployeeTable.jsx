@@ -1,3 +1,5 @@
+import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
+import useMobile from "../../../components/common/useMobile";
 import { STATUS_LABELS, STATUS_TONES } from "../hooks/useHrFilters";
 import { docCompleteness } from "../hrUtils";
 
@@ -26,19 +28,24 @@ const HrEmployeeTable = ({
     onRestore,
     quickFilter,
 }) => {
+    const mobile = useMobile();
+    const Legend = mobile ? "details" : "div";
     const allSelected =
         employees.length > 0 && employees.every((e) => selected.has(e.id));
 
     return (
         <div className="hr-employee-list">
+            <Legend className="mx-record-legend">
+            {mobile && <summary>Chú thích các nhóm hồ sơ</summary>}
             <div className="hr-missing-legend" aria-label="Chú thích các nhóm hồ sơ">
                 <strong>Còn thiếu:</strong>
                 {MISSING_SECTIONS.map((section, index) => (
                     <span key={section}><b>{index + 1}</b> {section === "bảo hiểm&thue" ? "bảo hiểm & thuế" : section === "lương&chế độ" ? "lương & chế độ" : section}</span>
                 ))}
             </div>
+            </Legend>
             <div className="hr-table-wrap">
-                <table className="hr-table">
+                <ResponsiveTable className="hr-table">
                 <thead>
                     <tr>
                         <th className="hr-col-check">
@@ -137,7 +144,7 @@ const HrEmployeeTable = ({
                         })
                     )}
                 </tbody>
-                </table>
+                </ResponsiveTable>
             </div>
         </div>
     );

@@ -29,6 +29,8 @@ Frontend dùng [`apiConfig.js`](../marixa_react/src/services/api/apiConfig.js): 
 
 ## 2. Ranh giới mã nguồn
 
+Quyết định URL 19/10/2026: nhóm cá nhân dùng `/me/*`, nhân sự dùng `/hr/*`; Home `/home` và Admin `/admin/*` giữ nguyên. Các URL cũ `/attendance/*` và `/employees/*` chuyển hướng bằng replace sang prefix mới, giữ query/hash. Guard chuẩn hóa alias trước khi so quyền; đổi URL không mở quyền HR cho Employee. Đây là đổi route SPA, không đổi endpoint `/api/Attendance` hoặc `/api/Employee`.
+
 | Project / thư mục | Trách nhiệm |
 | --- | --- |
 | `marixa_aspnet/M.API` | HTTP/DI/auth/bootstrap/adapters; controller nghiệp vụ gọi service, multipart forms giữ tại API. |
@@ -49,10 +51,10 @@ Nguồn route: [`App.jsx`](../marixa_react/src/App.jsx). Nguồn hiển thị mo
 | Nhóm | Route hiển thị hiện có | Quyền / guard trong mã nguồn |
 | --- | --- | --- |
 | Public / tổng quan | `/login`, `/kich-hoat`, `/unauthorized`; `/home` cần phiên | `RequireSession` bọc các route nội bộ, public nằm ngoài wrapper. |
-| Cá nhân `me` | `/attendance`, `/attendance/attendance-history`, `/attendance/attendance-rules`, `/attendance/statistics`, `/attendance/leave`, `/attendance/contracts`, `/attendance/salary`, `/attendance/insurance`, `/attendance/bank-accounts` | Registry khai báo `access: user`; các route này không bọc `RequireModule` tại `App.jsx`. |
-| Cá nhân có wrapper | `/attendance/reports`, `/attendance/promotions`, `/attendance/handover`, `/work` | Bọc `RequireModule`, registry là `access: user`. |
+| Cá nhân `me` | `/me`, `/me/attendance-history`, `/me/attendance-rules`, `/me/statistics`, `/me/leave`, `/me/contracts`, `/me/salary`, `/me/insurance`, `/me/bank-accounts` | Registry khai báo `access: user`; các route này không bọc `RequireModule` tại `App.jsx`. |
+| Cá nhân có wrapper | `/me/reports`, `/me/promotions`, `/me/handover`, `/work` | Bọc `RequireModule`, registry là `access: user`. |
 | Hồ sơ | `/profile` | Registry `access: user`, không bọc `RequireModule` tại `App.jsx`. |
-| Nhân sự | `/employees`, `/employees/attendance-history`, `/employees/work-schedule`, `/employees/statistics`, `/employees/contracts`, `/employees/leaves`, `/employees/reports`, `/employees/accounts`, `/employees/promotions`, `/employees/handover` | Bọc `RequireModule`; registry cho `HR`, `Manager`, `Admin`. Đây không tự động cấp quyền cho mọi API đằng sau màn hình. |
+| Nhân sự | `/hr`, `/hr/attendance-history`, `/hr/work-schedule`, `/hr/statistics`, `/hr/contracts`, `/hr/leaves`, `/hr/reports`, `/hr/accounts`, `/hr/promotions`, `/hr/handover` | Bọc `RequireModule`; registry cho `HR`, `Manager`, `Admin`. Đây không tự động cấp quyền cho mọi API đằng sau màn hình. |
 | Admin có registry | `/admin`, `/admin/contracts`, `/admin/leaves`, `/admin/payroll`, `/admin/resigned`, `/admin/reports`, `/admin/accounts` | Bọc `RequireModule`; registry là `access: admin`, `ADMIN_ROLES = ["Admin"]`. |
 | Admin kế thừa quyền | `/admin/work`, `/admin/roles`, `/admin/block-accounts`, `/admin/employees/leaves`, `/admin/employees/handover`, `/admin/employees/reports`, `/admin/employees/contracts` | Các subroute kế thừa quyền Admin từ prefix `/admin` qua lookup đường dẫn dài nhất; không mở quyền vì thiếu mục registry riêng. |
 
@@ -61,9 +63,9 @@ Nguồn route: [`App.jsx`](../marixa_react/src/App.jsx). Nguồn hiển thị mo
 Redirect hiện tại, không phải màn hình riêng:
 
 - `/` → `/home`; đường dẫn không khớp (`*`) → `/home`.
-- `/finance` → `/attendance/salary`; `/employees/payroll` → `/employees`.
-- `/admin/employees` → `/employees`; `/admin/employees/accounts` → `/admin/accounts`; `/admin/employees/promotions` → `/employees/promotions`.
-- Các URL cũ `/attendance-history`, `/attendance-rules`, `/statistics`, `/leave`, `/reports`, `/promotions`, `/handover`, `/contracts`, `/salary`, `/insurance`, `/bank-accounts` chuyển sang URL cùng hậu tố dưới `/attendance`.
+- `/finance` → `/me/salary`; `/hr/payroll` → `/hr`.
+- `/admin/employees` → `/hr`; `/admin/employees/accounts` → `/admin/accounts`; `/admin/employees/promotions` → `/hr/promotions`.
+- Các URL cũ `/attendance-history`, `/attendance-rules`, `/statistics`, `/leave`, `/reports`, `/promotions`, `/handover`, `/contracts`, `/salary`, `/insurance`, `/bank-accounts` chuyển sang URL cùng hậu tố dưới `/me`.
 
 [`RoleSeeder.cs`](../marixa_aspnet/M.API/Seed/RoleSeeder.cs) khai báo 7 role: `Admin`, `Employee`, `Manager`, `HR`, `Accountant`, `Sale`, `Marketing`. Ba role mới chưa có quyền module chuyên biệt. Không tự diễn giải nhãn “Kế toán” của `/finance` thành phân hệ Accountant đã triển khai.
 

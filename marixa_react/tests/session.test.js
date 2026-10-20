@@ -38,13 +38,26 @@ test("unregistered admin subroutes inherit the admin boundary", () => {
     saveAuth(fixture());
     assert.equal(canAccessModule("/admin/block-accounts"), false);
     assert.equal(canAccessModule("/admin/roles"), false);
-    assert.equal(canAccessModule("/employees/statistics"), false);
-    assert.equal(canAccessModule("/attendance/statistics"), true);
+    assert.equal(canAccessModule("/hr/statistics"), false);
+    assert.equal(canAccessModule("/me/statistics"), true);
 });
 test("HR can reach HR routes without gaining admin role management", () => {
     saveAuth(fixture(["HR"]));
-    assert.equal(canAccessModule("/employees/statistics"), true);
+    assert.equal(canAccessModule("/hr/statistics"), true);
     assert.equal(canAccessModule("/admin/roles"), false);
     saveAuth(fixture(["Admin"]));
     assert.equal(canAccessModule("/admin/roles"), true);
+});
+
+test("legacy and canonical HR URLs keep the same role boundary", () => {
+    for (const roles of [["Employee"], ["HR"], ["Manager"], ["Admin"]]) {
+        saveAuth(fixture(roles));
+        const allowed = roles[0] !== "Employee";
+        for (const path of ["/hr", "/hr/statistics", "/hr/unregistered-detail", "/employees", "/employees/statistics"]) {
+            assert.equal(canAccessModule(path), allowed, `${roles[0]}: ${path}`);
+        }
+        assert.equal(canAccessModule("/me/statistics"), true);
+        assert.equal(canAccessModule("/attendance/statistics"), true);
+        assert.equal(canAccessModule("/admin/payroll"), roles[0] === "Admin");
+    }
 });

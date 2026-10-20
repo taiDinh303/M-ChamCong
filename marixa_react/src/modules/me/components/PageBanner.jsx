@@ -1,7 +1,7 @@
 import "./page-banner.css";
 
-// Banner trang kiểu "block-accounts": nền tối gradient + icon + dải KPI.
-// Tiêu đề trang do header chung hiển thị; banner giữ icon/KPI/thao tác.
+// Summary metrics/actions; workspace.css applies the shared light surface.
+// Page identity is available through document.title and the main landmark.
 // props:
 //   icon  : ký tự/emoji nhận diện trang
 //   kpis  : array { icon, label, value, tone: blue|green|red|gray|gold }

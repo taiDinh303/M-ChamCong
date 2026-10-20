@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../../components/common/ResponsiveTable.jsx";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import HrAppLayout from "../../layout/HrAppLayout";
 import employeeAttendanceApi from "../api/employeeAttendanceApi";
@@ -24,6 +25,7 @@ const EmployeeWorkSchedulePage = () => {
     const [error, setError] = useState("");
     const [selectedDate, setSelectedDate] = useState(vnToday);
     const [calendarMonth, setCalendarMonth] = useState(() => vnToday().slice(0, 7));
+    const [showMobileMonth, setShowMobileMonth] = useState(false);
     const [search, setSearch] = useState("");
     const [notice, setNotice] = useState("");
     const [showAssignmentModal, setShowAssignmentModal] = useState(false);
@@ -223,7 +225,12 @@ const EmployeeWorkSchedulePage = () => {
                 {notice && <div className="work-schedule-notice" role="status">{notice}<button type="button" onClick={() => setNotice("")} aria-label="Đóng thông báo">×</button></div>}
                 {loading ? <div className="att-loading">Đang tải lịch làm...</div> : (
                     <>
-                        <section className="work-schedule-calendar att-card">
+                        <section className={`work-schedule-calendar att-card${showMobileMonth ? " is-month-open" : ""}`}>
+                            <div className="mx-schedule-mobile-nav">
+                                <button type="button" className="admin-link-btn" onClick={() => { const date = new Date(`${selectedDate}T00:00:00`); date.setDate(date.getDate() - 1); chooseDate(dayKey(date)); }}>‹ Ngày trước</button>
+                                <button type="button" className="admin-link-btn" onClick={() => { const date = new Date(`${selectedDate}T00:00:00`); date.setDate(date.getDate() + 1); chooseDate(dayKey(date)); }}>Ngày sau ›</button>
+                                <button type="button" className="admin-link-btn" aria-expanded={showMobileMonth} aria-controls="schedule-month" onClick={() => setShowMobileMonth((value) => !value)}>{showMobileMonth ? "Ẩn lịch tháng" : "Xem lịch tháng"}</button>
+                            </div>
                             <div className="work-schedule-calendar-head">
                                 <button type="button" className="att-cal-nav" onClick={() => moveMonth(-1)} aria-label="Tháng trước">‹</button>
                                 <h2>{monthLabel}</h2>
@@ -231,6 +238,7 @@ const EmployeeWorkSchedulePage = () => {
                                 <label className="work-schedule-date-picker">Chọn ngày <input type="date" value={selectedDate} onChange={(event) => chooseDate(event.target.value)} /></label>
                                 <button type="button" className="admin-link-btn" onClick={() => chooseDate(vnToday())}>Xem hôm nay</button>
                             </div>
+                            <div id="schedule-month" className="mx-schedule-month">
                             <div className="work-schedule-weekdays"><span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span></div>
                             <div className="work-schedule-days">
                                 {monthDates.map((date, index) => {
@@ -243,6 +251,7 @@ const EmployeeWorkSchedulePage = () => {
                                 })}
                             </div>
                             <div className="work-schedule-calendar-foot"><span><i className="work-schedule-count-dot" />Số người có lịch làm</span><span>Chọn ngày để xem danh sách ca</span></div>
+                            </div>
                         </section>
 
                         <div className="work-schedule-day-summary">
@@ -256,7 +265,7 @@ const EmployeeWorkSchedulePage = () => {
                                 {canSchedule && <button type="button" className="work-schedule-add-btn" onClick={openAssignmentModal}>+ Thêm lịch làm</button>}
                             </div>
                             <div className="att-table-wrap">
-                                <table className="att-table work-schedule-table">
+                                <ResponsiveTable className="att-table work-schedule-table">
                                     <thead><tr><th>Nhân viên</th><th>Ca làm</th><th>Giờ làm</th><th>Chấm công</th><th>Duyệt chấm công</th><th>Thao tác</th></tr></thead>
                                     <tbody>
                                         {visibleScheduled.length === 0 ? <tr><td colSpan={6}><span className="att-muted">{scheduled.length ? "Không tìm thấy nhân viên phù hợp." : "Ngày này chưa có nhân viên được xếp lịch làm."}</span></td></tr> : visibleScheduled.map(({ employee, shifts: employeeShifts }) => {
@@ -279,7 +288,7 @@ const EmployeeWorkSchedulePage = () => {
                                             </tr>;
                                         })}
                                     </tbody>
-                                </table>
+                                </ResponsiveTable>
                             </div>
                         </section>
                     </>

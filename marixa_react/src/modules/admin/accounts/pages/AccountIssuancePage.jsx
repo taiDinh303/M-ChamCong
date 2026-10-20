@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../../components/common/ResponsiveTable.jsx";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import AdminAppLayout from "../../layout/AdminAppLayout";
 import HrAppLayout from "../../../hr/layout/HrAppLayout";
@@ -309,7 +310,7 @@ const AccountIssuancePage = ({ layout = "admin", api = adminApi }) => {
                     )}
 
                     <div className="ai-table-wrap">
-                        <table className="ai-table">
+                        <ResponsiveTable className="ai-table">
                             <thead>
                                 <tr>
                                     <th className="ai-th-check">
@@ -427,7 +428,7 @@ const AccountIssuancePage = ({ layout = "admin", api = adminApi }) => {
                                     );
                                 })}
                             </tbody>
-                        </table>
+                        </ResponsiveTable>
                     </div>
                 </div>
             </>}

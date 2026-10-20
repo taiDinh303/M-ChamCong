@@ -1,11 +1,9 @@
 import "./hr-hero.css";
-import PageHeading from "../../components/layout/PageHeading";
 
-// Promote the page heading into the shared header; keep KPIs in the content.
-const HrHero = ({ ico, title, sub, kpis }) => {
+// Keep only the page's useful metrics, without a duplicate title banner.
+const HrHero = ({ kpis }) => {
     return (
         <>
-            {title && <PageHeading icon={ico} title={title} description={sub} />}
             {kpis && kpis.length > 0 && (
                 <div className="hr-hero">
                     <div className="hr-kpi-row" role="list">

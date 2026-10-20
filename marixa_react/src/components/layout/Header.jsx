@@ -14,8 +14,8 @@ import ChangePasswordModal from "./ChangePasswordModal";
 import "./header.css";
 
 
-// Home dùng header gọn; các module có nút mở sidebar và tiêu đề trang.
-const Header = ({ profile, onToggleSidebar, toggleRef, sidebarExpanded, sidebarControls, pageHeading, minimal = false }) => {
+// Home uses a compact header; modules add a sidebar toggle.
+const Header = ({ profile, onToggleSidebar, toggleRef, sidebarExpanded, sidebarControls, minimal = false }) => {
     const auth = getAuth();
     const key = auth?.userId;
 
@@ -30,8 +30,8 @@ const Header = ({ profile, onToggleSidebar, toggleRef, sidebarExpanded, sidebarC
     const roleHome = roles.includes("Admin")
         ? "/admin"
         : roles.some((r) => ["HR", "Manager"].includes(r))
-            ? "/employees"
-            : "/attendance";
+            ? "/hr"
+            : "/me";
 
     // Đồng bộ avatar khi bị đổi ở nơi khác (vd trang Hồ sơ).
     useEffect(
@@ -109,13 +109,12 @@ const Header = ({ profile, onToggleSidebar, toggleRef, sidebarExpanded, sidebarC
                         <span />
                     </button>
                 )}
-                <a href="/home" className="app-header-brand">
+                <a href="/home" className="app-header-brand" aria-label="MARIXA — Trang chủ">
                     <span className="app-header-logo">M</span>
                     <span className="app-header-logo-text">MARIXA</span>
                 </a>
             </div>
 
-            {pageHeading}
             <div className="app-header-user" ref={userRef}>
                 <NotificationBell />
                 {minimal && <LanguagePicker flagOnly />}

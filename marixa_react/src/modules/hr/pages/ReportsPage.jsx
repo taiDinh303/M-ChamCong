@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import HrAppLayout from "../layout/HrAppLayout";
 import AdminAppLayout from "../../admin/layout/AdminAppLayout";
@@ -232,7 +233,7 @@ function ReportTable({ reports, columns, open, onAction, complete, isUpperRecipi
     const L = useCallback((text) => translate(text, language), [language]);
     activeLocale = localeForLanguage(language);
     const empty = reports.length === 0;
-    return <div className="att-card hr-file-table-wrap"><table className="hr-file-table"><thead><tr><th>{L("Mã BC")}</th><th>{L("Tên báo cáo")}</th><th>{columns === "outbound" ? L("Bộ phận") : L("Phòng ban")}</th>{columns !== "outbound" && columns !== "requests" && <th>{L("Người gửi")}</th>}{columns === "outbound" && <><th>{L("Người nhận")}</th><th>{L("Ngày gửi")}</th></>}{columns === "requests" && <><th>{L("Nội dung yêu cầu")}</th><th>{L("Người gửi")}</th><th>{L("Hạn xử lý")}</th></>}{columns === "all" && <th>{L("Cấp hiện tại")}</th>}{columns !== "requests" && columns !== "outbound" && <th>{L("Deadline")}</th>}<th>{L("Trạng thái")}</th><th>{L("Thao tác")}</th></tr></thead><tbody>
+    return <div className="att-card hr-file-table-wrap"><ResponsiveTable className="hr-file-table"><thead><tr><th>{L("Mã BC")}</th><th>{L("Tên báo cáo")}</th><th>{columns === "outbound" ? L("Bộ phận") : L("Phòng ban")}</th>{columns !== "outbound" && columns !== "requests" && <th>{L("Người gửi")}</th>}{columns === "outbound" && <><th>{L("Người nhận")}</th><th>{L("Ngày gửi")}</th></>}{columns === "requests" && <><th>{L("Nội dung yêu cầu")}</th><th>{L("Người gửi")}</th><th>{L("Hạn xử lý")}</th></>}{columns === "all" && <th>{L("Cấp hiện tại")}</th>}{columns !== "requests" && columns !== "outbound" && <th>{L("Deadline")}</th>}<th>{L("Trạng thái")}</th><th>{L("Thao tác")}</th></tr></thead><tbody>
         {reports.map((r) => <tr key={r.id}>
             <td>{r.reportCode}</td><td><strong>{r.title}</strong><small>{r.reportType}</small></td><td>{r.departmentName || "—"}</td>
             {columns !== "outbound" && columns !== "requests" && <td>{r.employeeName}<small>{r.employeeCode}</small></td>}
@@ -249,7 +250,7 @@ function ReportTable({ reports, columns, open, onAction, complete, isUpperRecipi
             </div></td>
         </tr>)}
         {empty && <tr><td colSpan="9" className="hr-file-empty">{L("Không có báo cáo phù hợp.")}</td></tr>}
-    </tbody></table></div>;
+    </tbody></ResponsiveTable></div>;
 }
 
 function ReportModal({ report, close, openDialog, complete, download, isUpperRecipient }) {

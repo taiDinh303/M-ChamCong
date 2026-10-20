@@ -100,7 +100,7 @@ export default function PromotionsPage({ selfMode = false }) {
             />
         )}
         <header className="promotion-heading"><button className="promotion-primary" onClick={() => setFormOpen(true)}>＋ {selfMode ? "Tạo đề xuất" : "Đề cử thăng chức"}</button></header>
-        {!selfMode && <nav className="promotion-tabs"><Link to="/employees">Nhân sự</Link><span>›</span><strong>Thăng chức</strong></nav>}
+        {!selfMode && <nav className="promotion-tabs"><Link to="/hr">Nhân sự</Link><span>›</span><strong>Thăng chức</strong></nav>}
         <div className="promotion-stats">{[["Tổng đề xuất", counts[0]], ["Chờ xử lý", counts[1]], ["Đã duyệt", counts[2]], ["Từ chối", counts[3]]].map(([label, value], i) => <article className={`promotion-stat stat-${i}`} key={label}><span className="promotion-stat-icon" aria-hidden="true">{["▤", "◷", "✓", "×"][i]}</span><span>{label}</span><b>{value}</b></article>)}</div>
         {error && <div className="promotion-alert error">{String(error)}</div>}{notice && <div className="promotion-alert success">{notice}</div>}
         <div className="promotion-toolbar"><label className="promotion-search"><span>⌕</span><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Tìm nhân viên, mã hoặc chức vụ..." /></label><select value={filter} onChange={(e) => setFilter(e.target.value)}><option value="all">Tất cả trạng thái</option><option value="0">Chờ duyệt</option><option value="1">Đã duyệt</option><option value="2">Từ chối</option></select><button onClick={load} className="promotion-refresh">↻ Làm mới</button></div>

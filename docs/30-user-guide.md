@@ -1,6 +1,6 @@
 # 30 — Hướng dẫn sử dụng theo vai trò
 
-> Cập nhật 2026-10-17. CURRENT theo source; kiểm thử cô lập ghi tại [worklog](worklog.md). Chưa nghiệm thu production, camera/GPS trên thiết bị thật hoặc Figma.
+> Cập nhật 2026-10-20. CURRENT theo source; kiểm thử cô lập ghi tại [worklog](worklog.md). Chưa nghiệm thu production, camera/GPS trên thiết bị thật hoặc Figma.
 
 ## 1. Nhân viên
 
@@ -34,6 +34,16 @@ Lỗi 500 thiếu bảng/cột do schema phải xử lý theo [21](21-operations
 
 ## 4. Điều hướng và dữ liệu DEMO
 
-Trên điện thoại, nút menu cạnh logo mở danh sách từ trái; chọn trang sẽ đóng menu. Có thể đóng bằng nút ×, chạm nền ngoài hoặc Escape. Tiêu đề/mô tả nằm dưới hàng logo, không cần kéo ngang menu để tìm trang. Trên máy tính tiêu đề ở header, sidebar ở bên trái; các ô thống kê giữ trong trang. Home không còn nhãn ngày.
+Nhóm cá nhân dùng `/me`, Nhân sự dùng `/hr`; các trang con giữ tên phía sau prefix. Liên kết `/attendance/*` và `/employees/*` cũ tự chuyển sang nhóm mới, giữ bộ lọc trên URL. Home `/home` và Admin `/admin` giữ nguyên.
+
+Trên điện thoại, nút menu cạnh logo mở danh sách toàn màn hình từ trái; chọn trang sẽ đóng menu. Có thể đóng bằng nút × hoặc Escape. Trên máy tính sidebar ở bên trái; không còn khối tiêu đề/mô tả app-page-heading trong header hay hàng phụ mobile. Các ô thống kê và nút thao tác giữ trong trang; tên trang vẫn hiển thị trên tab trình duyệt. Home không còn nhãn ngày.
+
+Sidebar Admin có thêm Nghỉ phép, Bảng lương và Nhân sự nghỉ việc. Trang Nghỉ phép Admin dùng cùng giao diện HR; đơn của chính mình vẫn cần người khác duyệt. Trong chuông thông báo, chọn Mở để tới trang xử lý đúng phân khu và đánh dấu đã đọc. Các trang hợp đồng/lương/bảo hiểm/ngân hàng cá nhân có nút Thử lại khi lỗi tải dữ liệu.
 
 Bộ dữ liệu DEMO và các bước thử nghiệp vụ được mô tả tại [hướng dẫn dữ liệu test](../marixa_aspnet/tools/Marixa.Demo/README.md). Chỉ thao tác trên nhân viên/mã hồ sơ có nhãn DEMO khi thử duyệt, sửa, hủy hoặc bàn giao; không dùng tài khoản DEMO với dữ liệu thật.
+
+## 5. Đọc bảng và biểu đồ trên điện thoại
+
+Trên điện thoại, danh sách hiển thị theo thẻ; chọn **Xem chi tiết** để mở thêm các trường và **Thu gọn** để đóng. Ngày/giờ, tổng và trạng thái cần đối soát vẫn hiện trước thao tác. Không cần xoay ngang điện thoại. Riêng ma trận phân quyền có vùng cuộn ngang trong bảng và giữ cột người dùng để đối chiếu.
+
+Biểu đồ trên điện thoại có nút mở/thu gọn; chọn **Xem số liệu biểu đồ** để đọc giá trị bằng chữ nếu biểu đồ hỗ trợ mục này. Trang Lịch làm mở theo ngày: dùng Ngày trước/Ngày sau, chọn ngày hoặc **Xem lịch tháng**. Cuối mỗi trang HR/Admin có hướng dẫn ngắn đúng với tác vụ đang xem. Khi duyệt/từ chối nghỉ phép, kiểm tra tên, khoảng nghỉ và lý do trong hộp thoại rồi xác nhận; ý kiến xử lý là tùy chọn, tối đa 500 ký tự.

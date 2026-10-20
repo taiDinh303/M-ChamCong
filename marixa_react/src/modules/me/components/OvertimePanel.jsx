@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useCallback, useEffect, useId, useState } from "react";
 import { getAuth } from "../../../services/auth/auth";
 import { apiErrorMessage, itemsOf } from "../../../services/api/contracts";
@@ -87,7 +88,7 @@ export default function OvertimePanel({ reviewMode = false, onChanged }) {
         {error && <p className="att-error" role="alert">{error} <button type="button" className="wf-btn" onClick={load}>Thử lại</button></p>}
         <label>Lọc trạng thái<select value={filter} onChange={(e) => setFilter(e.target.value)}><option value="">Tất cả</option>
             {Object.entries(STATUS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-        {loading ? <p>Đang tải đơn tăng ca...</p> : <div className="att-table-wrap"><table className="att-table"><thead><tr>
+        {loading ? <p>Đang tải đơn tăng ca...</p> : <div className="att-table-wrap"><ResponsiveTable className="att-table"><thead><tr>
             {reviewMode && <th>Nhân viên</th>}<th>Ngày làm</th><th>Khung giờ đăng ký (VN)</th><th>Trạng thái</th><th>Lý do / ý kiến</th><th>Thao tác</th>
         </tr></thead><tbody>{rows.filter((row) => !filter || String(row.status) === filter).map((row) => <tr key={row.id}>
             {reviewMode && <td>{row.employeeName || row.employeeCode}</td>}<td>{formatVnDate(row.workDate)}</td>
@@ -100,7 +101,7 @@ export default function OvertimePanel({ reviewMode = false, onChanged }) {
                     <button type="button" className="wf-btn" onClick={() => { setDecisionError(""); setDecision({ row, status: 3 }); }}>Từ chối</button>
                 </>}
             </div></td>
-        </tr>)}{!rows.some((row) => !filter || String(row.status) === filter) && <tr><td colSpan={reviewMode ? 6 : 5}>Không có đơn tăng ca phù hợp.</td></tr>}</tbody></table></div>}
+        </tr>)}{!rows.some((row) => !filter || String(row.status) === filter) && <tr><td colSpan={reviewMode ? 6 : 5}>Không có đơn tăng ca phù hợp.</td></tr>}</tbody></ResponsiveTable></div>}
         {form && <OvertimeForm row={form.id ? form : null} employeeId={employeeId} onClose={() => setForm(null)} onSaved={() => { setForm(null); setNotice("Đã gửi đơn tăng ca."); load(); }} />}
         {decision && <ReasonDialog title={decision.status === 2 ? "Duyệt tăng ca" : "Từ chối tăng ca"} minLength={0} maxLength={500}
             busy={busy} error={decisionError} onClose={() => setDecision(null)} onSubmit={review} />}

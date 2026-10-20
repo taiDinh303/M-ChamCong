@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../../components/common/ResponsiveTable.jsx";
 import { useMemo } from "react";
 import { translate, useLanguage } from "../../../../services/i18n/LanguageProvider";
 import { statusLabel, statusClass } from "../labels";
@@ -68,7 +69,7 @@ const AttendanceDetailModal = ({ monthRows, employeeLabel, onClose }) => {
                     <p className="att-muted">{L("Không có bản ghi trong tháng này.")}</p>
                 ) : (
                     <div className="att-table-wrap">
-                        <table className="att-table att-table--compact">
+                        <ResponsiveTable className="att-table att-table--compact">
                             <thead>
                                 <tr>
                                     <th>{L("Ngày")}</th>
@@ -93,7 +94,7 @@ const AttendanceDetailModal = ({ monthRows, employeeLabel, onClose }) => {
                                     </tr>
                                 ))}
                             </tbody>
-                        </table>
+                        </ResponsiveTable>
                     </div>
                 )}
 

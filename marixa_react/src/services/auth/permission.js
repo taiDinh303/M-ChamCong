@@ -1,5 +1,6 @@
 import { getAuth } from "./auth.js";
 import { MODULES } from "../../constants/modules.js";
+import { canonicalModulePath } from "../../constants/routes.js";
 
 // Role "điều hành / quản trị" (nhiều module hơn nhân viên thường).
 export const ADMIN_ROLES = ["Admin"];
@@ -22,7 +23,8 @@ const hasAnyRole = (roles) =>
 // - "access: admin": chỉ role quản trị (Admin).
 // - "access: user" / không khai báo: mọi tài khoản đã đăng nhập.
 export const canAccessModule = (to) => {
-    const m = MODULES.filter((x) => x.to === to || to.startsWith(`${x.to}/`))
+    const path = canonicalModulePath(to);
+    const m = MODULES.filter((x) => x.to === path || path.startsWith(`${x.to}/`))
         .sort((a, b) => b.to.length - a.to.length)[0];
     if (!m) return true; // đường dẫn tự do (login, hồ sơ...)
     if (m.roles) return hasAnyRole(m.roles);

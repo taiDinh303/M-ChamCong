@@ -1,28 +1,25 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "./Header";
-import { PageHeadingContext } from "./PageHeadingContext";
 import { pageTitle } from "./pageTitles";
 import "./shell.css";
-
-const mobileQuery = "(max-width: 768px)";
-const subscribeMobile = (notify) => {
-    const media = window.matchMedia(mobileQuery);
-    media.addEventListener("change", notify);
-    return () => media.removeEventListener("change", notify);
-};
-const isMobile = () => window.matchMedia(mobileQuery).matches;
+import PageGuidance from "./PageGuidance";
+import useMobile from "../common/useMobile";
 
 export default function AuthenticatedShell({ storageKey, sidebar, children, profile }) {
-    const mobile = useSyncExternalStore(subscribeMobile, isMobile, () => false);
+    const mobile = useMobile();
     const { pathname } = useLocation();
-    const [headingTarget, setHeadingTarget] = useState(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [collapsed, setCollapsed] = useState(() => {
         try { return localStorage.getItem(storageKey) === "1"; } catch { return false; }
     });
     const dialogRef = useRef(null);
     const toggleRef = useRef(null);
+    const title = pageTitle(pathname);
+
+    useEffect(() => {
+        document.title = `${title} · MARIXA`;
+    }, [title]);
 
     const toggle = () => {
         if (mobile) setDrawerOpen((value) => !value);
@@ -51,16 +48,12 @@ export default function AuthenticatedShell({ storageKey, sidebar, children, prof
         if (event.target.closest("a[href], .att-nav-item, .work-back-btn")) setDrawerOpen(false);
     };
 
-    return <PageHeadingContext.Provider value={headingTarget}>
-        <div className="app-shell app-shell--responsive">
+    return <div className="app-shell app-shell--responsive">
             <Header profile={profile} onToggleSidebar={toggle} toggleRef={toggleRef}
-                sidebarExpanded={mobile ? drawerOpen : !collapsed} sidebarControls={mobile ? "mobile-navigation" : "desktop-navigation"}
-                pageHeading={<div className="app-page-heading" ref={setHeadingTarget}>
-                    <h1 className="page-heading-fallback">{pageTitle(pathname)}</h1>
-                </div>} />
+                sidebarExpanded={mobile ? drawerOpen : !collapsed} sidebarControls={mobile ? "mobile-navigation" : "desktop-navigation"} />
             <div className="app-body">
                 {!mobile && <div id="desktop-navigation" className="desktop-navigation">{sidebar(collapsed)}</div>}
-                <main className="att-main">{children}</main>
+                <main className="att-main" aria-label={title}>{children}<PageGuidance pathname={pathname} /></main>
             </div>
             {mobile && <dialog ref={dialogRef} id="mobile-navigation" className="navigation-drawer" aria-labelledby="navigation-title"
                 onCancel={() => setDrawerOpen(false)} onClick={(event) => {
@@ -73,6 +66,5 @@ export default function AuthenticatedShell({ storageKey, sidebar, children, prof
                     <div onClick={closeAfterNavigation}>{sidebar(false)}</div>
                 </div>
             </dialog>}
-        </div>
-    </PageHeadingContext.Provider>;
+        </div>;
 }

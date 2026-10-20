@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useCallback, useEffect, useState } from "react";
 import axiosClient from "../../../services/api/axiosClient";
 import { localeForLanguage, translate, useLanguage } from "../../../services/i18n/LanguageProvider";
@@ -55,7 +56,7 @@ const FileList = ({ files = [], onDownload }) => files.length
 
 const AssetTable = ({ assets }) => (
     <div className="hv-table-wrap">
-        <table className="hv-table">
+        <ResponsiveTable className="hv-table">
             <thead>
                 <tr><th>STT</th><th>Loại tài sản</th><th>Mã tài sản</th><th>Tình trạng</th><th>Ghi chú</th></tr>
             </thead>
@@ -72,13 +73,13 @@ const AssetTable = ({ assets }) => (
                     <tr><td colSpan="5" className="hv-empty-cell">Không có tài sản được khai báo.</td></tr>
                 )}
             </tbody>
-        </table>
+        </ResponsiveTable>
     </div>
 );
 
 const ProjectTable = ({ projects, onDownload }) => (
     <div className="hv-table-wrap">
-        <table className="hv-table">
+        <ResponsiveTable className="hv-table">
             <thead>
                 <tr><th>STT</th><th>Mã dự án</th><th>Tên dự án</th><th>Đối tác</th><th>Tiến độ</th><th>Tài liệu dự án</th><th>File bàn giao</th></tr>
             </thead>
@@ -102,7 +103,7 @@ const ProjectTable = ({ projects, onDownload }) => (
                     <tr><td colSpan="7" className="hv-empty-cell">Chưa có dự án bàn giao.</td></tr>
                 )}
             </tbody>
-        </table>
+        </ResponsiveTable>
     </div>
 );
 
@@ -198,7 +199,7 @@ const HandoverForm = ({ form, setForm, submitting, onSubmit, locale }) => {
                         </button>
                     </div>
                     <div className="hv-table-wrap">
-                        <table className="hv-table hv-table--edit">
+                        <ResponsiveTable className="hv-table hv-table--edit">
                             <thead>
                                 <tr><th>STT</th><th>Loại tài sản</th><th>Mã tài sản</th><th>Tình trạng</th><th>Ghi chú</th><th /></tr>
                             </thead>
@@ -231,7 +232,7 @@ const HandoverForm = ({ form, setForm, submitting, onSubmit, locale }) => {
                                     </tr>
                                 ))}
                             </tbody>
-                        </table>
+                        </ResponsiveTable>
                     </div>
                 </div>
             )}

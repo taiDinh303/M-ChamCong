@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import AdminAppLayout from "../layout/AdminAppLayout";
 import adminApi from "../api/adminApi";
@@ -296,7 +297,7 @@ const AdminRolesPage = () => {
                                 <div className="roles-empty">{L("Chưa có vai trò nào. Hãy tạo vai trò đầu tiên.")}</div>
                             ) : (
                                 <div className="att-table-wrap">
-                                    <table className="att-table roles-roles-table">
+                                    <ResponsiveTable className="att-table roles-roles-table">
                                         <thead>
                                             <tr>
                                                 <th>{L("Vai trò")}</th>
@@ -345,7 +346,7 @@ const AdminRolesPage = () => {
                                                 );
                                             })}
                                         </tbody>
-                                    </table>
+                                    </ResponsiveTable>
                                 </div>
                             )}
                         </section>
@@ -370,7 +371,7 @@ const AdminRolesPage = () => {
                                     {L("Bấm + để gán, bấm ✓ để gỡ vai trò. Dòng đậm = đang có vai trò.")}
                                 </p>
                                 <div className="att-table-wrap roles-matrix-wrap">
-                                    <table className="att-table roles-matrix">
+                                    <ResponsiveTable className="att-table roles-matrix" mode="scroll">
                                         <thead>
                                             <tr>
                                                 <th className="roles-mx-user">{L("Người dùng")}</th>
@@ -390,7 +391,8 @@ const AdminRolesPage = () => {
                                                     const hasAny = (userRolesMap[u.id] || []).length > 0;
                                                     return (
                                                         <tr key={u.id} className={hasAny ? "roles-mx-hasrole" : ""}>
-                                                            <td className="roles-mx-user" onClick={() => setViewUser(u)} role="button" tabIndex={0} title={L("Xem thông tin")}>
+                                                            <td className="roles-mx-user">
+                                                                <button type="button" className="roles-member-open" onClick={() => setViewUser(u)} aria-label={`${L("Xem thông tin")} ${u.fullName}`}>
                                                                 <span className="roles-member-ava roles-member-ava--sm" style={{ background: avaColor(u.fullName || u.userName) }}>
                                                                     {(u.fullName || u.userName || "?").slice(0, 1).toUpperCase()}
                                                                 </span>
@@ -398,6 +400,7 @@ const AdminRolesPage = () => {
                                                                     <strong>{u.fullName}</strong>
                                                                     <small>{u.employeeCode || "—"}{u.departmentName ? ` · ${u.departmentName}` : ""}</small>
                                                                 </span>
+                                                                </button>
                                                             </td>
                                                             {roles.map((r) => {
                                                                 const on = isAssigned(u.id, r.name);
@@ -408,6 +411,8 @@ const AdminRolesPage = () => {
                                                                             className={`roles-mx-toggle${on ? " on" : ""}`}
                                                                             onClick={(e) => { e.stopPropagation(); toggleRole(u, r); }}
                                                                             title={on ? L("Gỡ khỏi vai trò") : L("Gán vào vai trò")}
+                                                                            aria-label={`${on ? L("Gỡ khỏi vai trò") : L("Gán vào vai trò")} ${r.name}: ${u.fullName}`}
+                                                                            aria-pressed={on}
                                                                         >
                                                                             {on ? "✓" : "+"}
                                                                         </button>
@@ -419,7 +424,7 @@ const AdminRolesPage = () => {
                                                 })
                                             )}
                                         </tbody>
-                                    </table>
+                                    </ResponsiveTable>
                                 </div>
                             </section>
                         )}

@@ -1,12 +1,13 @@
 /* ============================================================
    GLOBAL MOBILE OVERRIDES (MARIXA)
-   Loaded LAST so it wins the cascade at small viewports.
+   Legacy module overrides; shared workspace.css is loaded afterward.
    Target: phones / small tablets (<=768px) + small phones (<=480px).
    Strategy:
    - Use the shared navigation drawer on phones.
    - Compact the header + main content.
    - Collapse multi-column KPI / stat / grid layouts.
-   - Make wide tables scroll horizontally.
+   - ResponsiveTable/workspace.css turn lists into expandable records;
+     comparison matrices retain their own horizontal scroll region.
    - Full-width, tall modals; single-column forms.
    - Larger touch targets + safe-area insets.
    ============================================================ */

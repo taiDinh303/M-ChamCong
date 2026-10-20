@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../../components/common/ResponsiveTable.jsx";
 import { useState, useEffect, useMemo } from "react";
 
 import HrAppLayout from "../../layout/HrAppLayout";
@@ -216,7 +217,7 @@ const EmployeeStatisticsPage = () => {
                             </div>
 
                             <div className="att-table-wrap">
-                                <table className="att-table">
+                                <ResponsiveTable className="att-table">
                                     <thead>
                                         <tr>
                                             <th>{L("Nhân viên")}</th>
@@ -289,7 +290,7 @@ const EmployeeStatisticsPage = () => {
                                             })
                                         )}
                                     </tbody>
-                                </table>
+                                </ResponsiveTable>
                             </div>
                         </section>
                     </>

@@ -43,12 +43,14 @@ const HrFilterBar = ({
                     <input
                         type="search"
                         placeholder="Tìm tên, mã NV, email..."
+                        aria-label="Tìm tên, mã nhân viên hoặc email"
                         value={filters.search}
                         onChange={(e) => setters.setSearch(e.target.value)}
                     />
                 </label>
                 <select
                     className="hr-select"
+                    aria-label="Lọc theo phòng ban"
                     value={filters.department}
                     onChange={(e) => setters.setDepartment(e.target.value)}
                 >
@@ -61,6 +63,7 @@ const HrFilterBar = ({
                 </select>
                 <select
                     className="hr-select"
+                    aria-label="Lọc theo chức vụ"
                     value={filters.position}
                     onChange={(e) => setters.setPosition(e.target.value)}
                 >

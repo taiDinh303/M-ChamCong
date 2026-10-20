@@ -1,0 +1,207 @@
+/* Shared workspace presentation. Loaded after legacy module/mobile styles. */
+.app-shell { color: var(--th-text); background: var(--th-bg); }
+.app-shell :where(button, a, input, select, textarea, summary):focus-visible {
+    outline: 3px solid var(--th-primary-light); outline-offset: 3px;
+}
+.app-shell :where(button, input, select, textarea) { font-family: var(--th-font); }
+.app-shell :where(.att-content, .hr-page, .hv-page, .admhome) { min-width: 0; }
+.app-shell :is(.hr-body, .att-content) > :is(.hr-hero, .page-banner) { margin-bottom: 0; }
+.app-shell :is(.hr-body, .att-content) > .mx-chart-card { margin: 0; }
+.app-shell .hr-body > .mx-mobile-filter { margin: 0; }
+.app-shell :where(.att-card, .hr-card, .mx-chart-card, .lp-card, .hv-card, .entd-card) {
+    border-color: var(--th-border); border-radius: 14px; box-shadow: 0 2px 6px rgb(23 32 51 / 3%);
+}
+.app-shell :where(.att-muted, .mx-chart-empty) { color: var(--th-text-2); }
+.app-shell .hr-hero, .app-shell .page-banner {
+    padding: 0; background: transparent; border: 0; box-shadow: none; overflow: visible;
+}
+.app-shell .page-banner::after, .app-shell .page-banner > .page-banner-ico { display: none; }
+.app-shell .hr-kpi-row, .app-shell .page-banner-kpis {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; width: 100%;
+}
+.app-shell .hr-kpi, .app-shell .page-banner-kpi {
+    min-width: 0; padding: 16px; border: 1px solid var(--th-border); border-radius: 12px;
+    background: var(--th-surface); box-shadow: 0 2px 6px rgb(23 32 51 / 3%); gap: 12px;
+}
+.app-shell .hr-kpi-label, .app-shell .page-banner-kpi-label {
+    color: var(--th-text-2); font-size: 12px; font-weight: 500; line-height: 1.5;
+    text-transform: none; letter-spacing: 0; white-space: normal; overflow: visible;
+}
+.app-shell .hr-kpi strong, .app-shell .page-banner-kpi strong {
+    display: block; margin-top: 5px; color: var(--th-text); font-family: var(--th-font);
+    font-size: 24px; font-weight: 750; line-height: 1.3; font-variant-numeric: tabular-nums; overflow-wrap: anywhere;
+}
+.app-shell .hr-kpi-sub { color: var(--th-text-2); }
+.app-shell .hr-kpi-ico, .app-shell .page-banner-kpi-ico { background: var(--th-info-bg); width: 38px; height: 38px; }
+.app-shell .page-banner-action { order: 2; }
+.app-shell :is(.blk-hero, .ai-hero) { padding: 0; background: transparent; border: 0; box-shadow: none; }
+.app-shell .ai-hero::after { display: none; }
+.app-shell :is(.blk-hero-left, .ai-hero-head) { display: none; }
+.app-shell .roles-hero { padding: 0; border: 0; background: transparent; box-shadow: none; }
+.app-shell .roles-hero-left { display: none; }
+.app-shell .roles-hero .roles-kpi-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; gap: 12px; }
+.app-shell .roles-hero .roles-kpi { padding: 16px; background: var(--th-surface); border: 1px solid var(--th-border); border-radius: 12px; }
+.app-shell .roles-hero .roles-kpi .admin-kpi-label { color: var(--th-text-2); text-transform: none; letter-spacing: 0; font-size: 12px; }
+.app-shell .roles-hero .roles-kpi strong { color: var(--th-text); }
+.app-shell .roles-hero .roles-kpi-ico { background: var(--th-info-bg); }
+.app-shell :is(.blk-kpi-row, .ai-hero-kpis) { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); width: 100%; gap: 12px; }
+.app-shell :is(.blk-kpi, .ai-kpi) { padding: 16px; background: var(--th-surface); border: 1px solid var(--th-border); border-radius: 12px; }
+.app-shell :is(.blk-kpi-label, .ai-kpi-label) { color: var(--th-text-2); text-transform: none; font-size: 12px; letter-spacing: 0; }
+.app-shell :is(.blk-kpi, .ai-kpi) strong { color: var(--th-text); font-family: var(--th-font); line-height: 1.4; margin-top: 4px; }
+.app-shell :is(.blk-kpi-ico, .ai-kpi-ico) { background: var(--th-info-bg); }
+.home-shell { --home-accent: var(--th-primary); --home-accent-ink: var(--th-primary-strong); --home-accent-soft: var(--th-side-active-bg); --home-radius: 16px; --home-display: var(--th-font); }
+.home-shell::before { display: none; }
+.home-shell :where(button, a, input, select):focus-visible { outline: 3px solid var(--th-primary-light); outline-offset: 3px; }
+.home-shell .home-hero { min-height: 240px; padding-block: 28px; }
+.mx-schedule-mobile-nav { display: none; }
+.mx-mobile-filter { display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 600; color: var(--th-text-2); margin: 10px 0 16px; }
+.mx-mobile-filter select { flex: 1; min-width: 0; min-height: 44px; border: 1px solid var(--th-border); border-radius: 9px; padding: 8px 10px; background: var(--th-surface); color: var(--th-text); }
+.app-shell .hr-filter.active, .app-shell .hr-act--primary { background: var(--th-primary); border-color: var(--th-primary); }
+.app-shell .ai-filter.active, .app-shell .blk-filter.active { background: var(--th-primary); border-color: var(--th-primary); }
+.app-shell .hr-filter.active { color: #fff; }
+.app-shell .hr-filter:hover:not(.active) { background: var(--th-side-hover); }
+.app-shell :where(.hr-row-actions, .admin-row-actions, .roles-role-actions) { flex-wrap: wrap; gap: 6px; }
+.app-shell :where(.hr-mini-btn, .admin-view-link, .admin-link-btn, .hr-act, .hr-filter) { min-height: 36px; }
+.app-shell :is(.hr-btn--primary, .ai-btn--primary, .wf-btn-primary):not(:disabled) { background: var(--th-primary); border-color: var(--th-primary); color: #fff; }
+.app-shell :is(.hr-btn--primary, .ai-btn--primary, .wf-btn-primary):not(:disabled):hover { background: var(--th-primary-strong); }
+.app-shell .hr-missing-legend { font-size: 12px; color: var(--th-text-2); line-height: 1.7; }
+.app-shell .mx-chart-card-head { align-items: flex-start; gap: 6px; margin-bottom: 18px; }
+.app-shell .mx-chart-card-head h3 { width: 100%; font-size: 16px; }
+.mx-chart-disclosure { display: none; }
+.mx-chart-values { margin-top: 12px; border-top: 1px solid var(--th-divider); padding-top: 10px; }
+.mx-chart-values summary { color: var(--th-primary); cursor: pointer; font-size: 13px; padding: 8px 0; }
+.mx-chart-values dl { display: grid; grid-template-columns: minmax(0, 1fr) auto; margin: 8px 0; gap: 8px 16px; font-size: 13px; }
+.mx-chart-values dt { color: var(--th-text-2); overflow-wrap: anywhere; }
+.mx-chart-values dd { margin: 0; font-weight: 650; font-variant-numeric: tabular-nums; }
+.mx-chart-error { padding: 16px; border-radius: 10px; background: var(--th-err-bg); color: var(--th-err); }
+.mx-chart-error button { margin-left: 10px; padding: 8px 12px; background: #fff; border: 1px solid var(--th-err-border); border-radius: 8px; color: inherit; cursor: pointer; }
+.mx-table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 13px; }
+.app-shell .mx-table thead th {
+    background: var(--th-surface-alt); color: var(--th-text-2); font-size: 12px; font-weight: 650;
+    text-transform: none; letter-spacing: 0; line-height: 1.5; padding: 13px 14px; text-align: left;
+    border-bottom: 1px solid var(--th-border);
+}
+.app-shell .mx-table tbody td { padding: 13px 14px; border-bottom: 1px solid var(--th-divider); line-height: 1.6; vertical-align: middle; }
+.app-shell .mx-table tbody tr:hover { background: #f5f8ff; }
+.app-shell .mx-table input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--th-primary); }
+.mx-table-selection { display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.mx-table-toggle { display: none; }
+.mx-record-legend summary { min-height: 44px; padding: 12px; font-size: 12px; color: var(--th-text-2); cursor: pointer; }
+.app-shell .lp-reason { max-width: 220px; white-space: normal; overflow-wrap: anywhere; }
+.mx-table-scroll { overflow-x: auto; max-width: 100%; overscroll-behavior-x: contain; border: 1px solid var(--th-border); border-radius: 10px; }
+.mx-table-scroll-hint { display: none; }
+.mx-table--scroll :is(th, td):first-child { position: sticky; left: 0; z-index: 1; background: var(--th-surface); box-shadow: 1px 0 0 var(--th-border); }
+.mx-table--scroll thead th:first-child { z-index: 2; background: var(--th-surface-alt); }
+.app-shell .roles-matrix :is(th, td).roles-mx-user { display: table-cell; vertical-align: middle; }
+.roles-member-open { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.mx-page-guide {
+    display: flex; gap: 12px; max-width: 1400px; margin: 28px auto 4px; padding: 18px 20px;
+    border: 1px solid var(--th-border); border-radius: 12px; background: #eef4ff; color: #334965;
+}
+.mx-page-guide-icon { display: grid; place-items: center; flex: 0 0 24px; height: 24px; border-radius: 50%; background: #dce7ff; color: var(--th-primary); font-size: 14px; font-weight: 700; }
+.mx-page-guide h2 { font-size: 13px; line-height: 1.8; margin: 0 0 6px; color: #233b5b; }
+.mx-page-guide ul { margin: 0; padding-left: 18px; font-size: 12px; line-height: 1.9; }
+
+@media (max-width: 768px) {
+    .app-shell .att-main { padding: 16px 12px calc(24px + env(safe-area-inset-bottom)); }
+    .app-shell .hr-kpi-row, .app-shell .page-banner-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; }
+    .app-shell :is(.blk-kpi-row, .ai-hero-kpis) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .app-shell .roles-hero .roles-kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .app-shell :is(.blk-kpi, .ai-kpi) { padding: 12px; gap: 8px; }
+    .app-shell :is(.blk-kpi-ico, .ai-kpi-ico) { width: 28px; height: 28px; font-size: 15px; }
+    .app-shell :is(.blk-kpi-label, .ai-kpi-label) { font-size: 11px; white-space: normal; }
+    .app-shell :is(.blk-kpi, .ai-kpi) strong { font-size: 19px; }
+    .app-shell .hr-kpi, .app-shell .page-banner-kpi { padding: 12px; gap: 8px; align-items: flex-start; }
+    .app-shell .hr-kpi strong, .app-shell .page-banner-kpi strong { font-size: 19px; }
+    .app-shell .hr-kpi-label, .app-shell .page-banner-kpi-label { font-size: 11px; }
+    .app-shell .hr-kpi-ico, .app-shell .page-banner-kpi-ico { width: 28px; height: 28px; font-size: 15px; border-radius: 8px; }
+    .app-shell .hr-filters, .app-shell .lp-filters { flex-wrap: wrap; overflow: visible; width: 100%; min-width: 0; }
+    .app-shell .lp-filters { display: flex; }
+    .app-shell .lp-filter { flex: 1 1 auto; }
+    .app-shell .ai-toolbar { width: 100%; min-width: 0; align-items: stretch; }
+    .app-shell :is(.ai-filters, .ai-actions) { width: 100%; min-width: 0; max-width: 100%; flex-wrap: wrap; overflow: visible; }
+    .app-shell .ai-filter { min-height: 44px; flex: 1 1 auto; }
+    .app-shell .ai-search { box-sizing: border-box; width: 100%; max-width: 100%; min-width: 0; }
+    .app-shell .ai-search input { min-width: 0; }
+    .app-shell .ai-actions .ai-btn { min-height: 44px; }
+    .app-shell .admin-search { min-width: 0; max-width: 100%; box-sizing: border-box; }
+    .app-shell .admin-toolbar input[type="month"] { min-width: 0; max-width: 100%; box-sizing: border-box; }
+    .app-shell .admin-toolbar input[type="checkbox"] { width: 18px; height: 18px; flex: 0 0 18px; padding: 0; }
+    .app-shell .admin-check { min-width: 0; min-height: 44px; }
+    .app-shell .profile-kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+    .app-shell .profile-kpi { min-width: 0; padding: 12px; gap: 8px; }
+    .app-shell .profile-kpi i { flex: 0 0 28px; width: 28px; height: 28px; }
+    .app-shell .profile-kpi span { white-space: normal; overflow-wrap: anywhere; text-transform: none; letter-spacing: 0; color: var(--th-text-2); }
+    .app-shell :where(.hr-mini-btn, .admin-view-link, .admin-link-btn, .hr-act, .hr-filter, .lp-filter) { min-height: 44px; }
+    .app-shell :where(.att-table-wrap, .hr-table-wrap, .hv-table-wrap, .lp-table-wrap, .roles-matrix-wrap) {
+        width: 100%; min-width: 0; max-width: 100%; overflow-x: auto;
+    }
+    .app-shell .mx-table.mx-table--cards { display: block; width: 100%; min-width: 0; max-width: 100%; background: transparent; border: 0; table-layout: auto; }
+    .app-shell .mx-table--cards > thead { display: block; position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; clip-path: inset(50%); overflow: hidden; }
+    .app-shell .mx-table--cards > thead[data-has-selection] { position: static; width: auto; height: auto; margin: 0 0 8px; clip-path: none; overflow: visible; }
+    .app-shell .mx-table--cards > thead[data-has-selection] tr { display: block; }
+    .app-shell .mx-table--cards > thead[data-has-selection] th { display: none; }
+    .app-shell .mx-table--cards > thead[data-has-selection] th[data-card-selection] { display: flex; align-items: center; gap: 8px; width: auto; background: transparent; border: 0; padding: 8px; }
+    .app-shell .mx-table--cards > thead[data-has-selection] th[data-card-selection]::after { content: "Chọn tất cả"; }
+    .app-shell .mx-table--cards > tbody { display: grid; gap: 12px; width: 100%; }
+    .app-shell .mx-table--cards > tbody > tr {
+        display: block; position: relative; width: 100%; min-width: 0; margin: 0; padding: 8px 14px;
+        border: 1px solid var(--th-border); border-radius: 12px; background: var(--th-surface); box-sizing: border-box;
+        box-shadow: 0 2px 6px rgb(23 32 51 / 3%);
+    }
+    .app-shell .mx-table--cards > tbody > tr > td {
+        display: none; width: auto; min-width: 0; max-width: 100%; padding: 9px 0; text-align: right;
+        border: 0; border-bottom: 1px solid var(--th-divider); white-space: normal !important;
+        overflow-wrap: anywhere; font-size: 13px;
+    }
+    .app-shell .mx-table--cards > tbody > tr > td[data-card-visible],
+    .app-shell .mx-table--cards > tbody > tr[data-expanded="true"] > td {
+        display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .app-shell .mx-table--cards > tbody > tr > td::before { content: attr(data-label); display: block; flex: 0 0 35%; position: static; padding: 0; color: var(--th-text-2); text-align: left; font-weight: 500; font-size: 12px; white-space: normal; }
+    .app-shell .mx-table--cards > tbody > tr > td > * { min-width: 0; max-width: 100%; }
+    .app-shell .mx-table--cards > tbody > tr > td[data-card-primary] { display: block; text-align: left; padding: 12px 0; font-weight: 650; }
+    .app-shell .mx-table--cards > tbody > tr > td[data-card-primary]::before { display: none; }
+    .app-shell .mx-table--cards > tbody > tr > td[data-card-primary]:has(input:not([type="checkbox"]))::before { display: block; }
+    .app-shell .mx-table--cards > tbody > tr > td[data-card-selection] { position: absolute; top: 8px; right: 8px; border: 0; padding: 0; z-index: 1; }
+    .app-shell .mx-table--cards > tbody > tr > td[data-card-selection]::before { display: none; }
+    .app-shell .mx-table--cards .mx-table-selection { width: 44px; min-height: 44px; }
+    .app-shell .mx-table--cards > tbody > tr > td[data-card-selection] input { margin: 0; width: 20px; height: 20px; }
+    .app-shell .mx-table--cards > tbody > tr:has(td[data-card-selection]) > td[data-card-primary] { padding-right: 42px; }
+    .app-shell .mx-table--cards > tbody > tr > td[data-card-action],
+    .app-shell .mx-table--cards > tbody > tr > td[data-card-wide] { display: block; text-align: left; border: 0; }
+    .app-shell .mx-table--cards > tbody > tr > td[data-card-action]::before,
+    .app-shell .mx-table--cards > tbody > tr > td[data-card-wide]::before { display: none; }
+    .app-shell .mx-table--cards > tbody > tr > td.mx-table-toggle { display: block; text-align: left; border: 0; padding: 0; }
+    .app-shell .mx-table--cards > tbody > tr > td.mx-table-toggle::before { display: none; }
+    .mx-table-toggle button { display: block; min-height: 44px; width: 100%; text-align: left; padding: 8px 0; background: transparent; color: var(--th-primary); font-size: 12px; font-weight: 650; border: 0; cursor: pointer; }
+    .app-shell .mx-table--cards :where(.att-emp-cell, .hr-user) { align-items: flex-start; text-align: left; }
+    .app-shell .mx-table--cards :where(.att-emp-name, .hr-user strong) { white-space: normal; overflow: visible; }
+    .app-shell .mx-table--cards td[data-card-primary] > .roles-role-ava { margin-right: 8px; vertical-align: middle; }
+    .app-shell .mx-table--cards :where(.hr-row-actions, .admin-row-actions, .roles-role-actions) { justify-content: flex-start; }
+    .app-shell .mx-table--cards .lp-date { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+    .app-shell .mx-table--cards .lp-date strong { white-space: nowrap; }
+    .app-shell .mx-table--cards .lp-date > span { display: none; }
+    .app-shell .mx-table--cards .lp-date strong:last-child::before { content: "→ "; color: var(--th-text-2); }
+    .app-shell .mx-table--cards .lp-self-note { display: block; margin-top: 8px; color: var(--th-text-2); }
+    .mx-table-scroll-hint { display: block; margin: 0 0 10px; font-size: 12px; color: var(--th-text-2); line-height: 1.7; }
+    .app-shell .mx-table--scroll { min-width: 660px; }
+    .mx-page-guide { padding: 16px 14px; margin-top: 24px; gap: 10px; }
+    .app-shell .mx-chart-card { padding: 16px 12px; }
+    .app-shell .mx-chart-card[data-chart-expanded="false"] .mx-chart-card-head { margin-bottom: 0; }
+    .mx-chart-disclosure { display: block; min-height: 44px; border: 0; padding: 8px 0; background: transparent; color: var(--th-primary); font-size: 12px; font-weight: 650; cursor: pointer; }
+    .mx-chart-body[hidden] { display: none; }
+    .app-shell .work-schedule-days { gap: 3px; }
+    .app-shell .work-schedule-day { min-height: 44px; padding: 5px 2px; }
+    .mx-schedule-mobile-nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .mx-schedule-mobile-nav button { flex: 1 1 auto; }
+    .mx-schedule-month { display: none; }
+    .is-month-open .mx-schedule-month { display: block; }
+    .work-schedule-calendar:not(.is-month-open) .work-schedule-calendar-head :is(.att-cal-nav, h2) { display: none; }
+}
+@media (max-width: 480px) {
+    .app-shell .admin-toolbar.stats-toolbar { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .app-shell *, .app-shell *::before, .app-shell *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}

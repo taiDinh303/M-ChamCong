@@ -1,3 +1,4 @@
+import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useCallback, useEffect, useId, useState } from "react";
 import { getAuth } from "../../../services/auth/auth";
 import { apiErrorMessage, itemsOf } from "../../../services/api/contracts";
@@ -84,7 +85,7 @@ export default function CorrectionPanel({ staff = false, draft = null, onDraftCl
             {employeeId && <button type="button" className="wf-btn wf-btn-primary" onClick={() => setRecord({})}>Tạo yêu cầu sửa công</button>}</div>
         {notice && <p role="status">{notice}</p>}
         {error && <p className="att-error" role="alert">{error} <button type="button" className="wf-btn" onClick={load}>Thử lại</button></p>}
-        {loading ? <p>Đang tải yêu cầu...</p> : <div className="att-table-wrap"><table className="att-table"><thead><tr>
+        {loading ? <p>Đang tải yêu cầu...</p> : <div className="att-table-wrap"><ResponsiveTable className="att-table"><thead><tr>
             {staff && <th>Nhân viên</th>}<th>Ngày công</th><th>Giờ / trạng thái đề nghị</th><th>Lý do / ý kiến</th><th>Kết quả</th><th>Thao tác</th>
         </tr></thead><tbody>{rows.map((row) => <tr key={row.id}>
             {staff && <td>{row.employeeName || row.employeeCode}</td>}<td>{formatVnDate(row.workDate)}</td>
@@ -96,7 +97,7 @@ export default function CorrectionPanel({ staff = false, draft = null, onDraftCl
                 <button type="button" className="wf-btn" onClick={() => { setDecisionError(""); setDecision({ row, status: 2 }); }}>Duyệt</button>
                 <button type="button" className="wf-btn" onClick={() => { setDecisionError(""); setDecision({ row, status: 3 }); }}>Từ chối</button>
             </div>}</td>
-        </tr>)}{rows.length === 0 && <tr><td colSpan={staff ? 6 : 5}>Chưa có yêu cầu sửa công.</td></tr>}</tbody></table></div>}
+        </tr>)}{rows.length === 0 && <tr><td colSpan={staff ? 6 : 5}>Chưa có yêu cầu sửa công.</td></tr>}</tbody></ResponsiveTable></div>}
         {record && <CorrectionForm record={record} employeeId={employeeId} onClose={close} onSaved={() => { close(); setNotice("Đã gửi yêu cầu sửa công."); load(); }} />}
         {decision && <ReasonDialog title={decision.status === 2 ? "Duyệt sửa công" : "Từ chối sửa công"} minLength={0} maxLength={500}
             busy={busy} error={decisionError} onClose={() => setDecision(null)} onSubmit={review} />}
