@@ -66,7 +66,7 @@ const EntityDetailPage = ({ kind, columns, emptyMessage, subtitle }) => {
 
     return (
         <AppLayout profile={profile}>
-            <div className="entd-page">
+            <div className="entd-page" data-tone={{ contract: "purple", salary: "green", insurance: "pink", bank: "teal" }[kind]}>
                 <div className="me-record-summary">
                     <span className="me-record-icon" aria-hidden="true">{ICONS[kind]}</span>
                     <div><strong>{loading ? "Đang tải…" : error ? "Chưa tải được dữ liệu" : `${items.length} ${KPI_LABEL[kind]}`}</strong>

@@ -20,16 +20,16 @@ const pad = (n) => String(n).padStart(2, "0");
 // Các chức năng chính trên trang chủ admin (icon + nhãn phụ).
 // Nhóm A: vận hành (module nghiệp vụ). Nhóm B: quản trị (tài khoản / phân quyền).
 const ICONS = [
-    { to: "/hr", icon: "👥", label: "Nhân sự", sub: "Hồ sơ & tuyển mới" },
-    { to: "/admin/contracts", icon: "📄", label: "Hợp đồng", sub: "Ký & theo dõi hạn" },
-    { to: "/admin/leaves", icon: "🌴", label: "Nghỉ phép", sub: "Duyệt đơn xin nghỉ" },
-    { to: "/admin/payroll", icon: "💰", label: "Lương", sub: "Bảng lương tháng" },
-    { to: "/admin/resigned", icon: "📦", label: "Nghỉ việc", sub: "Lưu trữ nhân viên" },
-    { to: "/admin/reports", icon: "📑", label: "Báo cáo", sub: "Tổng hợp công việc" },
-    { to: "/admin/work", icon: "🧾", label: "Công tác", sub: "Quá trình công tác" },
-    { to: "/admin/roles", icon: "🛡️", label: "Phân quyền", sub: "Vai trò & người dùng" },
-    { to: "/admin/block-accounts", icon: "🔒", label: "Chặn tài khoản", sub: "Chặn / mở chặn" },
-    { to: "/admin/accounts", icon: "🔑", label: "Cấp tài khoản", sub: "Mã kích hoạt" },
+    { to: "/hr", tone: "blue", icon: "👥", label: "Nhân sự", sub: "Hồ sơ & tuyển mới" },
+    { to: "/admin/contracts", tone: "purple", icon: "📄", label: "Hợp đồng", sub: "Ký & theo dõi hạn" },
+    { to: "/admin/leaves", tone: "green", icon: "🌴", label: "Nghỉ phép", sub: "Duyệt đơn xin nghỉ" },
+    { to: "/admin/payroll", tone: "teal", icon: "💰", label: "Lương", sub: "Bảng lương tháng" },
+    { to: "/admin/resigned", tone: "gold", icon: "📦", label: "Nghỉ việc", sub: "Lưu trữ nhân viên" },
+    { to: "/admin/reports", tone: "pink", icon: "📑", label: "Báo cáo", sub: "Tổng hợp công việc" },
+    { to: "/admin/work", tone: "blue", icon: "🧾", label: "Công tác", sub: "Quá trình công tác" },
+    { to: "/admin/roles", tone: "purple", icon: "🛡️", label: "Phân quyền", sub: "Vai trò & người dùng" },
+    { to: "/admin/block-accounts", tone: "red", icon: "🔒", label: "Chặn tài khoản", sub: "Chặn / mở chặn" },
+    { to: "/admin/accounts", tone: "gold", icon: "🔑", label: "Cấp tài khoản", sub: "Mã kích hoạt" },
 ];
 
 const VnClock = () => {
@@ -149,6 +149,7 @@ const AdminHomepage = () => {
                                 key={x.to}
                                 type="button"
                                 className="admhome-tile"
+                                data-tone={x.tone}
                                 onClick={() => navigate(x.to)}
                             >
                                 <span className="admhome-tile-ico">{x.icon}</span>

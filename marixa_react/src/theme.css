@@ -77,4 +77,38 @@
 
     /* ===== 9. FONT ===== */
     --th-font: "Be Vietnam Pro", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+    /* Workspace accents: ink, quiet surface, border and icon background. */
+    --th-blue-ink: #1D4ED8;
+    --th-blue-soft: #EFF6FF;
+    --th-blue-line: #BFDBFE;
+    --th-blue-icon: #DBEAFE;
+    --th-green-ink: #15803D;
+    --th-green-soft: #F0FDF4;
+    --th-green-line: #BBF7D0;
+    --th-green-icon: #DCFCE7;
+    --th-red-ink: #B91C1C;
+    --th-red-soft: #FFF5F5;
+    --th-red-line: #FECACA;
+    --th-red-icon: #FEE2E2;
+    --th-gold-ink: #92400E;
+    --th-gold-soft: #FFFBEB;
+    --th-gold-line: #FDE68A;
+    --th-gold-icon: #FEF3C7;
+    --th-purple-ink: #6D28D9;
+    --th-purple-soft: #F5F3FF;
+    --th-purple-line: #DDD6FE;
+    --th-purple-icon: #EDE9FE;
+    --th-pink-ink: #BE185D;
+    --th-pink-soft: #FDF2F8;
+    --th-pink-line: #FBCFE8;
+    --th-pink-icon: #FCE7F3;
+    --th-teal-ink: #0F766E;
+    --th-teal-soft: #F0FDFA;
+    --th-teal-line: #99F6E4;
+    --th-teal-icon: #CCFBF1;
+    --th-gray-ink: #475569;
+    --th-gray-soft: #F8FAFC;
+    --th-gray-line: #CBD5E1;
+    --th-gray-icon: #E2E8F0;
 }

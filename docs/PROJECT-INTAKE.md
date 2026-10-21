@@ -50,6 +50,7 @@ YES là áp dụng tài liệu, không xác nhận chức năng đã hoàn thàn
 | REQ-UI-06 | Bỏ ngày Home; nút menu cạnh logo mở toàn màn hình, bỏ sidebar ngang; yêu cầu 19/10 bỏ app-page-heading thay cách đặt tiêu đề 18/10. | Chủ dự án yêu cầu và bổ sung 18/10; shell dùng chung. |
 | REQ-UI-07 | Hoàn thiện 12 trang Me: nút định vị đủ rộng, Thống kê không lồng thẻ hẹp/lặp chỉ số, hồ sơ dễ đọc trên mobile, kiểm tra với dữ liệu DEMO thật qua API. | Chủ dự án yêu cầu 20/10; cho phép push main sau khi kiểm tra. |
 | REQ-UI-08 | Tải trước dữ liệu theo quyền sau đăng nhập, chuyển trang không reload, bộ đệm tách phiên và làm mới sau ghi; animation khi kết nối/chờ máy chủ khởi động. | Chủ dự án giao thực hiện 20/10. Không tự gửi lại thao tác ghi hoặc giữ dữ liệu HR ngoài phiên. |
+| REQ-UI-09 | Phối màu chuyên nghiệp trên mọi trang Me/HR/Admin; KPI và icon/chữ sát, cân đối; palette dùng chung, trạng thái có nhãn và responsive. | Chủ dự án yêu cầu 21/10; thay đổi trình bày, không đổi nghiệp vụ/quyền. |
 | REQ-DEMO-01 | Dữ liệu nghiệp vụ giả có nhãn trên Supabase hiện tại; giữ hồ sơ cũ, tài khoản chỉ Employee, không fake dữ liệu bảo mật. | Chủ dự án xác nhận 18/10; seed/kiểm chứng ở worklog. |
 | REQ-DOC-01 | Không placeholder mẫu còn sót; links/source/trạng thái/bằng chứng và rubric điểm rõ. | docs và backend guide. |
 

@@ -52,5 +52,6 @@ Từ marixa_react: `npm test`, `npm run lint`, `npm run build`. Node tests kiể
 | REQ-UI-03 / TC-UI-06 | Employee tạo nghỉ nửa ngày; Admin khác chủ duyệt/PDF/hủy | Deduct/Refund 0.5 một lần, số dư hoàn lại; mine không gọi endpoint staff |
 | REQ-UI-05 / TC-UI-07 | Employee vào /admin/roles; phiên chưa login vào nội bộ | Thiếu role→unauthorized, thiếu phiên→login; menu không mời vào route bị chặn |
 | REQ-UI-05 / TC-UI-08 | Layout 375 và desktop; dialog/loading/error/rỗng | Không tràn toàn trang, bảng cuộn riêng; native dialog giới hạn trong viewport |
+| REQ-UI-09 / TC-UI-14 | Palette KPI, lối tắt Admin, hồ sơ Me; desktop 1440/mobile 375/320 | Màu tone phân biệt, icon/chữ sát và không tràn, trạng thái có nhãn; test contrast >=4.5:1. Phạm vi browser thực tế ghi tại worklog. |
 
 Mỗi kịch bản có phạm vi riêng; chỉ đánh PASS sau quan sát kết quả thực tế. Chưa chạy thì ghi NOT VERIFIED. Browser trỏ `/api` đến loopback API có DB Marixa_Verify_Frontend_GUID; không dùng VITE config cloud cũ. File tải và ảnh bằng chứng chỉ chứa dữ liệu giả, không commit token/file nhân viên thật.

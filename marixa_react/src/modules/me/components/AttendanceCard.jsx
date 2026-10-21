@@ -269,14 +269,14 @@ const AttendanceCard = ({ employeeId, record, history, rule, onChanged }) => {
 
             {/* ===== 2 mốc: Vào ca / Ra ca (bỏ Trạng thái) ===== */}
             <div className="att-hero-times att-hero-times--two">
-                <div className="att-hero-slot">
+                <div className="att-hero-slot" data-tone="blue">
                     <span className="att-hero-slot-ico att-hero-slot-ico--blue" aria-hidden="true">
                         ⏱
                     </span>
                     <span className="att-hero-label">Vào ca</span>
                     <strong>{checkInTime || "—"}</strong>
                 </div>
-                <div className="att-hero-slot">
+                <div className="att-hero-slot" data-tone="green">
                     <span className="att-hero-slot-ico att-hero-slot-ico--green" aria-hidden="true">
                         ⏰
                     </span>

@@ -49,7 +49,8 @@ export default function AuthenticatedShell({ storageKey, sidebar, children, prof
     };
 
     const personal = pathname === "/me" || pathname.startsWith("/me/");
-    return <div className={`app-shell app-shell--responsive${personal ? " app-shell--me" : ""}`}>
+    const workspace = personal ? "me" : /^\/hr(?:\/|$)/.test(pathname) ? "hr" : /^\/admin(?:\/|$)/.test(pathname) ? "admin" : undefined;
+    return <div className={`app-shell app-shell--responsive${personal ? " app-shell--me" : ""}`} data-workspace={workspace}>
             <Header profile={profile} onToggleSidebar={toggle} toggleRef={toggleRef}
                 sidebarExpanded={mobile ? drawerOpen : !collapsed} sidebarControls={mobile ? "mobile-navigation" : "desktop-navigation"} />
             <div className="app-body">

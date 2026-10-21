@@ -1,10 +1,11 @@
 import "./page-banner.css";
+import MetricCard from "../../../components/common/MetricCard";
 
-// Summary metrics/actions; workspace.css applies the shared light surface.
+// Summary metrics/actions; workspace-colors.css applies the shared palette.
 // Page identity is available through document.title and the main landmark.
 // props:
 //   icon  : ký tự/emoji nhận diện trang
-//   kpis  : array { icon, label, value, tone: blue|green|red|gray|gold }
+//   kpis  : array { icon, label, value, tone: blue|green|red|gray|gold|purple|pink|teal }
 const PageBanner = ({ icon, kpis = [], action }) => {
     return (
         <div className="page-banner">
@@ -15,20 +16,11 @@ const PageBanner = ({ icon, kpis = [], action }) => {
             {kpis.length > 0 && (
                 <div className="page-banner-kpis">
                     {kpis.map((k, i) => (
-                        <div
+                        <MetricCard
                             key={i}
                             className={`page-banner-kpi${k.tone ? ` page-banner-kpi--${k.tone}` : ""}`}
-                        >
-                            {k.icon != null && (
-                                <span className="page-banner-kpi-ico" aria-hidden="true">
-                                    {k.icon}
-                                </span>
-                            )}
-                            <div>
-                                <span className="page-banner-kpi-label">{k.label}</span>
-                                <strong>{k.value}</strong>
-                            </div>
-                        </div>
+                            icon={k.icon} label={k.label} value={k.value} tone={k.tone}
+                        />
                     ))}
                 </div>
             )}

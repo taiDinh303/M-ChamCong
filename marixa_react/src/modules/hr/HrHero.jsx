@@ -1,4 +1,5 @@
 import "./hr-hero.css";
+import MetricCard from "../../components/common/MetricCard";
 
 // Keep only the page's useful metrics, without a duplicate title banner.
 const HrHero = ({ kpis }) => {
@@ -8,18 +9,12 @@ const HrHero = ({ kpis }) => {
                 <div className="hr-hero">
                     <div className="hr-kpi-row" role="list">
                     {kpis.map((k, i) => (
-                        <div
+                        <MetricCard
                             key={k.label + i}
                             role="listitem"
                             className={`hr-kpi${k.tone ? ` hr-kpi--${k.tone}` : ""}`}
-                        >
-                            {k.ico && <span className="hr-kpi-ico" aria-hidden="true">{k.ico}</span>}
-                            <div>
-                                <span className="hr-kpi-label">{k.label}</span>
-                                <strong>{k.value}</strong>
-                                {k.sub && <small className="hr-kpi-sub">{k.sub}</small>}
-                            </div>
-                        </div>
+                            icon={k.ico} label={k.label} value={k.value} hint={k.sub} tone={k.tone}
+                        />
                     ))}
                     </div>
                 </div>

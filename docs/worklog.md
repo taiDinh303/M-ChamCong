@@ -2,11 +2,11 @@
 
 > **Tác giả & chủ tài liệu: Đinh Văn Tài.** (File này được Tài tổ chức lại 12/10/2026 thành "bản đồ chức năng" theo trang & module để AI/Agnes và dev đọc nhanh.)
 
-Điểm vào tài liệu là [00-README.md](00-README.md). File này quản lý ma trận chức năng, bằng chứng thực hiện và lịch sử. Cập nhật hiện trạng: **20/10/2026** theo source và kiểm thử cô lập; nâng schema/đọc các trang cá nhân/HR live có mốc bằng chứng riêng bên dưới, production chưa nghiệm thu toàn bộ.
+Điểm vào tài liệu là [00-README.md](00-README.md). File này quản lý ma trận chức năng, bằng chứng thực hiện và lịch sử. Cập nhật hiện trạng: **21/10/2026** theo source và kiểm thử cô lập; nâng schema/đọc các trang cá nhân/HR live có mốc bằng chứng riêng bên dưới, production chưa nghiệm thu toàn bộ.
 
 **Quy tắc cập nhật:** theo [00-README.md §4](00-README.md#4-quy-tắc-cập-nhật-cho-codex-agnes-và-developer). Quyền chuẩn hóa tài liệu đã được chủ dự án cấp ngày 16/10/2026. Quy tắc “chỉ sửa worklog / đặc tả đông băng” trong lịch sử không còn là hướng dẫn hiện hành. **EN:** Code presence is not runtime proof; record evidence separately and preserve approved requirements.
 
-## 1. Trạng thái hiện tại (cập nhật 20/10/2026, múi giờ Asia/Ho_Chi_Minh)
+## 1. Trạng thái hiện tại (cập nhật 21/10/2026, múi giờ Asia/Ho_Chi_Minh)
 
 - **Stack trong mã nguồn (chưa xác minh live):** backend `marixa_aspnet/M.API` (ASP.NET Core 8, EF Core, JWT/Identity, Swagger) · frontend `marixa_react` (React 19 + Vite SPA, React Router 7) · DB linh hoạt **SQL Server (dev) / PostgreSQL Supabase (prod)** · ảnh **Supabase Storage bucket public `marixa-photos`** (dev fallback `wwwroot/uploads`) · deploy **Render (API, Docker) + Vercel (web) + Supabase**.
 - **Role:** 4 core đã map quyền `Admin`, `Manager`, `HR`, `Employee` (frontend `marixa_react/src/constants/modules.js`) + 3 role nghiệp vụ **đã seed** `Accountant`, `Sale`, `Marketing` (`M.API/Seed/RoleSeeder.cs`, **chưa** có quyền module chuyên biệt; các chức năng access user vẫn theo logic hiện tại).
@@ -106,6 +106,15 @@
 | Supabase Auth / Data API và RLS | 🟡 | Ứng dụng dùng .NET Identity/JWT. Đã kiểm metadata RLS/grants và advisor trong phạm vi public schema; còn hai WARN cũ liên quan quyền EXECUTE hàm event trigger, chưa audit toàn bộ hạ tầng. |
 
 ## 4. Log sự kiện (mới trên cùng)
+
+### 21/10/2026 — Codex: bảng màu và thẻ thống kê dùng chung Me/HR/Admin
+
+- **Yêu cầu / CURRENT:** REQ-UI-09 / TC-UI-14; chủ dự án yêu cầu thêm màu và căn icon/chữ gọn trên mọi trang ba module. Thêm MetricCard thuần trình bày cho HrHero, PageBanner, Thống kê Me và KPI tài khoản/phân quyền; giữ giá trị, nhãn và luồng dữ liệu. Tám tone xanh dương/lá/đỏ/vàng/tím/hồng/ngọc/xám có nền nhạt, viền trái và icon tương ứng; chữ số tối, trạng thái có nhãn. Shell phân biệt Me xanh, HR tím, Admin xanh ngọc; áp điểm nhấn vào điều hướng, đầu bảng, biểu đồ và hướng dẫn cuối trang. Hồ sơ Me theo loại, mốc vào/ra ca và lối tắt Admin căn ngang icon/nội dung. Mobile icon34px, gap9px; desktop40px/10px. Thống kê Me một cột <=480px; bỏ các rule !important trùng của lưới Admin mobile để lối tắt có chiều rộng đọc được. Không thêm dependency hoặc sửa API/quyền/nghiệp vụ/cache.
+- **Token / tài liệu:** theme.css thêm32 biến; mirror local đối chiếu đủ **87/87 key/value, 0 sai khác**. Đồng bộ UI09, intake, testing06 và Figma13/changelog; không chạy plugin hoặc sửa Figma live.
+- **Kiểm thử:** frontend **79 PASS / 0 FAIL / 0 SKIP**, gồm ca contrast mới kiểm ink/chữ chính/chữ phụ trên nền soft/icon của tám tone >=4.5:1, chữ trắng trên nút module >=4.5:1. Lint max-warnings0 PASS; Vite production build **847 modules PASS**, cảnh báo chunk lớn có sẵn còn (main ~1.26MB, ExcelJS ~940KB trước gzip). Review React: component trình bày không thêm effect/request/state, icon trang trí aria-hidden, giữ nhãn và số0. Markdown48file/408link/13anchor PASS; git diff --check PASS.
+- **Browser:** bản dist trỏ loopback đến ApiFactory với SQLite in-memory và DEMO riêng; login Identity/JWT thật trên tài khoản giả. Bridge tuần tự hóa request do test factory dùng một SQLite connection; không dùng kết quả này làm benchmark tốc độ/tải. Đọc 32 trang chính: 12 Me, 10 HR, 10 Admin ở1440px; kiểm KPI/tone/nội dung và không tràn toàn trang, không thấy lỗi dữ liệu tại các trang đã rà. Mobile320/375 kiểm Thống kê Me, chấm công/hồ sơ, KPI HR và Báo cáo, Dashboard Admin và KPI Phân quyền; đo card không tràn, gap icon/chữ9px. Ảnh tại artifacts/palette-20261021 (Gitignored). Không thao tác ghi nghiệp vụ hoặc gọi owner DB/bucket.
+- **NOT VERIFIED:** mọi hộp thoại/trạng thái tương tác và từng route trên mọi breakpoint, thiết bị vật lý, Figma live, toàn bộ contrast CSS cũ và production sau rollout. Không chạy lại backend/provider suite vì backend runtime không đổi. Push không chứng minh hosting đã triển khai; theo dõi trạng thái commit riêng.
+
 
 ### 20/10/2026 — Codex: nút nghỉ phép và bộ lọc/thao tác báo cáo HR/Admin
 

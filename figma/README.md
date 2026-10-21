@@ -8,7 +8,7 @@
 
 | Artifact | Vai trò / trạng thái |
 | --- | --- |
-| [`tokens/tokens.json`](tokens/tokens.json) | Mirror 55 CSS token của [`theme.css`](../marixa_react/src/theme.css), kèm UI metrics mục tiêu. Không phải tất cả metrics đã có thành CSS variables. |
+| [`tokens/tokens.json`](tokens/tokens.json) | Mirror 87 CSS token (cập nhật 21/10) của [`theme.css`](../marixa_react/src/theme.css), kèm UI metrics mục tiêu. Không phải tất cả metrics đã có thành CSS variables. |
 | [`tokens/changelog.md`](tokens/changelog.md) | Nhật ký mới trên cùng; tách kết quả repo khỏi kết quả Figma live. Đọc trước khi tiếp tục task đồng bộ. |
 | [`files-map.md`](files-map.md) | Inventory route thực tế + Page mục tiêu + coverage scaffold; gồm cả thiếu mapping và redirect. |
 | [`plugins/setup-design-tokens.ts`](plugins/setup-design-tokens.ts) | Source scaffold: 60 định nghĩa Variables (50 màu + 9 số + 1 font), 10 component placeholders, 11 mục Page gồm cả nhóm route. Chưa xác minh build/package/thực thi. |

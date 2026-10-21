@@ -1,6 +1,6 @@
 # 09 — Design system và giao diện Marixa
 
-> Chủ tài liệu: **Đinh Văn Tài**. Đối chiếu mã nguồn: **20/10/2026**.
+> Chủ tài liệu: **Đinh Văn Tài**. Đối chiếu mã nguồn: **21/10/2026**.
 > **CURRENT** theo source và browser smoke cô lập tại worklog; **TARGET** là tiêu chí thiết kế; thiết bị thật/Figma/hosting live vẫn **NOT VERIFIED**.
 > **EN — Codex / Agnes:** Implement only authorized UI work. Keep current behavior and target UX separate. `theme.css` owns code token values; do not infer permissions or completed features from a design frame.
 
@@ -24,7 +24,7 @@ Thông báo Header (20/10): phần tiêu đề/mô tả là một liên kết tr
 
 ## 2. Token hiện tại và chuẩn đo lường mục tiêu
 
-Các giá trị dưới đây đã đối chiếu [`theme.css`](../marixa_react/src/theme.css); đầy đủ hiện có **55 biến `--th-*`** (50 màu, 4 shadow, 1 font). [`figma/tokens/tokens.json`](../figma/tokens/tokens.json) là bản mirror, không thay thế CSS trong app.
+Các giá trị dưới đây đã đối chiếu [`theme.css`](../marixa_react/src/theme.css); đầy đủ hiện có **87 biến `--th-*`** (82 màu, 4 shadow, 1 font). [`figma/tokens/tokens.json`](../figma/tokens/tokens.json) là bản mirror, không thay thế CSS trong app.
 
 | Token | CURRENT — giá trị | Mục đích |
 | --- | --- | --- |
@@ -37,6 +37,8 @@ Các giá trị dưới đây đã đối chiếu [`theme.css`](../marixa_react/
 | `--th-font` | `"Be Vietnam Pro", "Inter", ui-sans-serif, system-ui, sans-serif` | Font stack trong CSS; việc tải/render đúng font cần kiểm tra browser. |
 
 **TARGET — chuẩn UI, chưa phải toàn bộ CSS token đã triển khai:** nội dung 16px, nhãn phụ 14px, tiêu đề 24px, section 18–20px; số giờ dùng `tabular-nums`. Spacing 4/8/12/16/24/32px; radius input/nút 8px, card 12px; vùng chạm tối thiểu 44×44px. Tương phản chữ thường tối thiểu 4.5:1. Đây là UI metrics trong `tokens.json`; không suy ra các biến spacing/radius tương ứng đã tồn tại trong `theme.css`.
+
+**CURRENT — bảng màu workspace 21/10:** tám nhóm `blue`, `green`, `red`, `gold`, `purple`, `pink`, `teal`, `gray`, mỗi nhóm có `ink/soft/line/icon` (32 biến mới). [MetricCard](../marixa_react/src/components/common/MetricCard.jsx) dùng chung KPI của Me, HR và Admin; [workspace-colors.css](../marixa_react/src/components/common/workspace-colors.css) tải cuối để giữ tone thay vì ghi đè icon thành xanh. Icon 40px cạnh nhãn/giá trị với khoảng cách10px; mobile34px/9px, nội dung được wrap; Thống kê Me chuyển một cột ở <=480px để hướng dẫn/chỉ số không bị ép hẹp. Nền nhạt, viền trái theo tone, chữ số màu tối; trạng thái luôn có nhãn, không chỉ dựa vào màu. Me lấy điểm nhấn xanh dương, HR tím, Admin xanh ngọc cho điều hướng/bảng/hướng dẫn; KPI vẫn theo ý nghĩa tốt/chờ/lỗi. Hồ sơ cá nhân có màu theo loại, thẻ vào/ra ca và lối tắt Admin căn ngang icon/chữ. Kiểm thử contrast kiểm chữ chính/phụ và tone ink trên nền soft/icon >=4.5:1; không thay thế audit toàn bộ CSS/thiết bị thật.
 
 Đổi token theo [13](13-figma-sync.md): sửa CSS và mirror cùng thay đổi, ghi hướng đồng bộ/bằng chứng. Không tự chuyển theme Dark; plugin scaffold hiện chỉ khai báo mode `Light`.
 
@@ -86,7 +88,7 @@ Admin có nút Chỉnh quy định (giờ ca/nghỉ/ảnh/GPS) tại Quy định
 
 **CURRENT — đợt 19/10/2026:** dùng [ResponsiveTable](../marixa_react/src/components/common/ResponsiveTable.jsx) tại 28 vị trí bảng trong source (bao gồm hộp thoại và component cũ, không đồng nghĩa 28 trang live). Desktop giữ table; <=768px dùng một bộ DOM/control chuyển thành thẻ, hiện thông tin chính, ngày/giờ/tổng/trạng thái/thao tác, mở trường còn lại bằng “Xem chi tiết”. Ô nhập liệu luôn hiện; checkbox chọn từng dòng và chọn tất cả giữ sự kiện gốc. Fragment/column có điều kiện giữ đúng thứ tự và key riêng. Không dựng hai bản form desktop/mobile hoặc cắt bỏ dữ liệu để vừa màn hình.
 
-Ma trận Người dùng × Vai trò dùng `mode="scroll"`: region cuộn riêng có thể focus bằng bàn phím, giữ cột đầu và gợi ý vuốt; không ép xoay điện thoại. Bảng tương lai có header nhiều tầng/rowspan cần dùng chế độ đối chiếu hoặc thiết kế riêng, không tự chuyển thành thẻ. Bộ lọc nhanh nhân viên chuyển thành select trên điện thoại; lịch làm ưu tiên ngày trước/sau và ô chọn ngày, mở lịch tháng khi cần. [workspace.css](../marixa_react/src/components/common/workspace.css) được import sau CSS module/mobile để thống nhất nền sáng, KPI trắng, viền, khoảng cách, nút, focus và giảm chuyển động; token màu/font gốc giữ tại theme.css. Không coi toàn bộ CSS cũ đã được loại bỏ.
+Ma trận Người dùng × Vai trò dùng `mode="scroll"`: region cuộn riêng có thể focus bằng bàn phím, giữ cột đầu và gợi ý vuốt; không ép xoay điện thoại. Bảng tương lai có header nhiều tầng/rowspan cần dùng chế độ đối chiếu hoặc thiết kế riêng, không tự chuyển thành thẻ. Bộ lọc nhanh nhân viên chuyển thành select trên điện thoại; lịch làm ưu tiên ngày trước/sau và ô chọn ngày, mở lịch tháng khi cần. [workspace.css](../marixa_react/src/components/common/workspace.css) được import sau CSS module/mobile để thống nhất nền sáng, KPI màu nhạt theo tone, viền, khoảng cách, nút, focus và giảm chuyển động; token màu/font gốc giữ tại theme.css. Không coi toàn bộ CSS cũ đã được loại bỏ.
 
 Biểu đồ chung trên điện thoại mặc định thu gọn, người dùng mở khi cần. Donut có chú giải số; biểu đồ cột/đường có “Xem số liệu biểu đồ” dạng chữ. Không tạo số liệu mẫu trong component. Biểu đồ Admin phân biệt loading/error/empty, có Thử lại và không vẽ dãy 0 khi request thất bại. [PageGuidance](../marixa_react/src/components/layout/PageGuidance.jsx) lấy nội dung theo route từ [routeGuidance](../marixa_react/src/components/layout/routeGuidance.js), đặt ở cuối 20 trang HR/Admin; không hiện hướng dẫn nghiệp vụ staff trên Me/Home. Không phục hồi app-page-heading. Nghỉ phép HR/Admin hiển thị lý do từ API và dùng ReasonDialog khi duyệt/từ chối, ý kiến tùy chọn tối đa 500 ký tự; lỗi giữ trong dialog để sửa/thử lại, cấm tự duyệt vẫn theo API.
 

@@ -31,13 +31,13 @@ Thay đổi tài liệu cho đúng source/khối việc được giao được t
 
 | Artifact | CURRENT — kiểm tra tĩnh ngày 16/10/2026 | Việc còn lại |
 | --- | --- | --- |
-| CSS/mirror | `theme.css` có **55 biến**: 50 màu + 4 shadow + 1 font; snapshot chứa thêm spacing/radius/typography/touch/contrast/breakpoints mục tiêu. | Khi đổi, so sánh từng key/value; không gọi tất cả UI metrics là CSS variables hiện có. |
-| Plugin [`setup-design-tokens.ts`](../figma/plugins/setup-design-tokens.ts) | Mảng dữ liệu thực tế có **60 định nghĩa variable**: 50 COLOR + 9 FLOAT + 1 STRING; comment cũ ghi 56/46 không chính xác. Mode khai báo là `Light`. | Kiểm tra tương thích API, build/package và chạy thử trong task Figma được giao trước khi dùng. |
+| CSS/mirror | `theme.css` có **87 biến**: 82 màu + 4 shadow + 1 font (cập nhật 21/10, gồm 32 workspace accents); snapshot chứa thêm spacing/radius/typography/touch/contrast/breakpoints mục tiêu. | Khi đổi, so sánh từng key/value; không gọi tất cả UI metrics là CSS variables hiện có. |
+| Plugin [`setup-design-tokens.ts`](../figma/plugins/setup-design-tokens.ts) | Mảng dữ liệu thực tế có **60 định nghĩa variable**: 50 COLOR + 9 FLOAT + 1 STRING; comment cũ ghi 56/46 không chính xác. Mode khai báo là `Light`; chưa có 32 workspace accents mới 21/10. | Kiểm tra tương thích API, build/package và chạy thử trong task Figma được giao trước khi dùng. |
 | UI Kit scaffold | 10 component placeholders: 4 button, Input, Card, 2 badge, Dialog, Toast. Fills/font dùng giá trị trực tiếp; chưa có binding variable/variant set đầy đủ. | Xây variants/states/auto-layout/bindings; bổ sung table và các component cần cho sản phẩm. |
 | Page scaffold | 11 mục trong `ROUTES`, gồm `/employees/*` và `/admin/*` là **nhóm**; mỗi mục dự kiến 375×812 và 1440×900. | Không bao phủ 1:1 toàn bộ route. Tách từng route theo inventory và quyết định một Page/màn hình. |
 | Runtime Figma | Không có node id/bằng chứng chạy plugin trong lượt này. | Xác minh collection, Variables, Kit và từng Page/frame khi có task Figma live. |
 
-[`setup-design-tokens.manifest.json`](../figma/plugins/setup-design-tokens.manifest.json) hiện không khai báo `main`, source là TypeScript; repo chưa có bước build/package đã được xác nhận. Vì vậy **không coi “paste rồi Run” hoặc chạy lặp an toàn là hướng dẫn đã kiểm chứng**. Không chạy lại trên file đích trước khi hiểu tác động tới collection/Page đã tồn tại. Lượt chuẩn hóa này không sửa plugin/manifest/tokens/CSS.
+[`setup-design-tokens.manifest.json`](../figma/plugins/setup-design-tokens.manifest.json) hiện không khai báo `main`, source là TypeScript; repo chưa có bước build/package đã được xác nhận. Vì vậy **không coi “paste rồi Run” hoặc chạy lặp an toàn là hướng dẫn đã kiểm chứng**. Không chạy lại trên file đích trước khi hiểu tác động tới collection/Page đã tồn tại. Lượt chuẩn hóa 16/10 không sửa plugin/manifest/tokens/CSS; lượt UI 21/10 cập nhật CSS và mirror local, chưa sửa/chạy plugin hoặc Figma live.
 
 ## 4. Mapping variable chính xác
 

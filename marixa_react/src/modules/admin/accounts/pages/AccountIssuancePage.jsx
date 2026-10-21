@@ -1,3 +1,4 @@
+import MetricCard from "../../../../components/common/MetricCard";
 import ResponsiveTable from "../../../../components/common/ResponsiveTable.jsx";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import AdminAppLayout from "../../layout/AdminAppLayout";
@@ -238,13 +239,7 @@ const AccountIssuancePage = ({ layout = "admin", api = adminApi }) => {
                     </div>
                     <div className="ai-hero-kpis">
                         {heroKpis.map((k) => (
-                            <div key={k.label} className={`ai-kpi ai-kpi--${k.tone}`}>
-                                <span className="ai-kpi-ico">{k.ico}</span>
-                                <div>
-                                    <span className="ai-kpi-label">{k.label}</span>
-                                    <strong>{k.value}</strong>
-                                </div>
-                            </div>
+                            <MetricCard key={k.label} className={`ai-kpi ai-kpi--${k.tone}`} icon={k.ico} label={k.label} value={k.value} tone={k.tone} />
                         ))}
                     </div>
                 </div>

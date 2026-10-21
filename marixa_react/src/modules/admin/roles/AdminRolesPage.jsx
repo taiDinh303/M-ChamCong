@@ -1,3 +1,4 @@
+import MetricCard from "../../../components/common/MetricCard";
 import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import AdminAppLayout from "../layout/AdminAppLayout";
@@ -269,9 +270,9 @@ const AdminRolesPage = () => {
                                 </div>
                             </div>
                             <div className="roles-kpi-row">
-                                <div className="admin-kpi roles-kpi roles-kpi--blue"><span className="roles-kpi-ico">🛡️</span><div><span className="admin-kpi-label">{L("Vai trò")}</span><strong>{kpi.totalRoles}</strong></div></div>
-                                <div className="admin-kpi roles-kpi roles-kpi--teal"><span className="roles-kpi-ico">👤</span><div><span className="admin-kpi-label">{L("Người dùng")}</span><strong>{kpi.totalUsers}</strong></div></div>
-                                <div className="admin-kpi roles-kpi roles-kpi--green"><span className="roles-kpi-ico">✅</span><div><span className="admin-kpi-label">{L("Đã có vai trò")}</span><strong>{kpi.assigned}</strong></div></div>
+                                <MetricCard className="roles-kpi" tone="blue" icon="🛡️" label={L("Vai trò")} value={kpi.totalRoles} />
+                                <MetricCard className="roles-kpi" tone="teal" icon="👤" label={L("Người dùng")} value={kpi.totalUsers} />
+                                <MetricCard className="roles-kpi" tone="green" icon="✅" label={L("Đã có vai trò")} value={kpi.assigned} />
                             </div>
                         </div>
 

@@ -1,3 +1,4 @@
+import MetricCard from "../../../components/common/MetricCard";
 import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import AdminAppLayout from "../layout/AdminAppLayout";
 import adminApi from "../api/adminApi";
@@ -130,10 +131,10 @@ const AdminBlockAccountPage = () => {
                         </div>
                     </div>
                     <div className="blk-kpi-row">
-                        <div className="blk-kpi blk-kpi--blue"><span className="blk-kpi-ico">👥</span><div><span className="blk-kpi-label">Tổng nhân viên</span><strong>{kpi.total}</strong></div></div>
-                        <div className="blk-kpi blk-kpi--green"><span className="blk-kpi-ico">✅</span><div><span className="blk-kpi-label">Đang hoạt động</span><strong>{kpi.active}</strong></div></div>
-                        <div className="blk-kpi blk-kpi--red"><span className="blk-kpi-ico">🚫</span><div><span className="blk-kpi-label">Đã chặn</span><strong>{kpi.blocked}</strong></div></div>
-                        <div className="blk-kpi blk-kpi--gray"><span className="blk-kpi-ico">⬜</span><div><span className="blk-kpi-label">Chưa có TK</span><strong>{kpi.noAccount}</strong></div></div>
+                        <MetricCard className="blk-kpi" tone="blue" icon="👥" label="Tổng nhân viên" value={kpi.total} />
+                        <MetricCard className="blk-kpi" tone="green" icon="✅" label="Đang hoạt động" value={kpi.active} />
+                        <MetricCard className="blk-kpi" tone="red" icon="🚫" label="Đã chặn" value={kpi.blocked} />
+                        <MetricCard className="blk-kpi" tone="gray" icon="⬜" label="Chưa có TK" value={kpi.noAccount} />
                     </div>
                 </div>
 

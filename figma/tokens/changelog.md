@@ -9,6 +9,12 @@
 ## Entry format (EN)
 
 ```
+### 2026-10-21 — Codex — Palette Me/HR/Admin theo yêu cầu chủ dự án
+- Type: token-change/layout-change; Direction: code → local mirror.
+- Repo: theme.css thêm32 workspace accents (8 tone × ink/soft/line/icon); tokens.json mirror đủ87 biến CSS (82 màu/4 shadow/1 font), giữ UI metrics cũ. MetricCard và workspace-colors.css áp palette cho module.
+- Evidence: Node contrast test kiểm ink/text trên soft/icon >=4.5:1; kết quả build/lint/browser ở [worklog](../../docs/worklog.md).
+- Figma live: **NOT VERIFIED**, không đọc/sửa file thiết kế hoặc chạy plugin. Plugin60 variables hiện chưa có32 accents mới; cần đồng bộ trong task Figma riêng.
+
 ### YYYY-MM-DD — Author — Title
 - Type: token-change
 - Direction: Figma→code | code→Figma | metadata-only

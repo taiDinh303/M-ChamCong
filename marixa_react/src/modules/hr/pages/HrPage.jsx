@@ -422,7 +422,7 @@ const HrPage = () => {
                             kpis={[
                                 { ico: "👥", label: "Tổng nhân viên", value: data.employees.length + data.archivedEmployees.length, tone: "blue" },
                                 { ico: "✅", label: "Đang làm", value: data.employees.filter((e) => e.status === 2).length, tone: "green" },
-                                { ico: "📋", label: "Thử việc", value: data.employees.filter((e) => e.status === 1).length, tone: "gray" },
+                                { ico: "📋", label: "Thử việc", value: data.employees.filter((e) => e.status === 1).length, tone: "purple" },
                                 { ico: "⚠", label: "Sắp hết HĐ", value: (() => {
                                     const cutoff = new Date(); cutoff.setDate(cutoff.getDate() + 30);
                                     return data.contracts.filter((c) => c.endDate && new Date(c.endDate) >= new Date() && new Date(c.endDate) <= cutoff).length;

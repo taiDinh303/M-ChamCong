@@ -144,7 +144,6 @@
     .promotion-stats,
     .hr-kpi-row,
     .admin-kpi-row,
-    .admhome-grid,
     .profile-kpi-row,
     .hv-card-facts,
     .hv-dialog-facts,
@@ -161,7 +160,6 @@
 @media (max-width: 420px) {
     .promotion-stats,
     .admin-kpi-row,
-    .admhome-grid,
     .my-report-stats,
     .leave-stats,
     .profile-kpi-row {
@@ -524,9 +522,6 @@
    ADMIN DASHBOARD (clock + KPI tiles)
    ============================================================ */
 @media (max-width: 768px) {
-    .admhome-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-    }
     .admhome-clock {
         flex-direction: column;
         text-align: center;

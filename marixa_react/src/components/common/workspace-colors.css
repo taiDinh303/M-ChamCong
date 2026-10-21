@@ -1,0 +1,114 @@
+/* Loaded last: one palette and compact card rhythm for Me, HR and Admin. */
+.app-shell[data-workspace] {
+    --workspace-ink: var(--th-blue-ink);
+    --workspace-soft: var(--th-blue-soft);
+    --workspace-line: var(--th-blue-line);
+    --tone-ink: var(--th-blue-ink);
+    --tone-soft: var(--th-blue-soft);
+    --tone-line: var(--th-blue-line);
+    --tone-icon: var(--th-blue-icon);
+}
+.app-shell[data-workspace="hr"] { --workspace-ink: var(--th-purple-ink); --workspace-soft: var(--th-purple-soft); --workspace-line: var(--th-purple-line); }
+.app-shell[data-workspace="admin"] { --workspace-ink: var(--th-teal-ink); --workspace-soft: var(--th-teal-soft); --workspace-line: var(--th-teal-line); }
+.app-shell [data-tone="blue"], .app-shell [data-tone="info"] {
+    --tone-ink: var(--th-blue-ink); --tone-soft: var(--th-blue-soft); --tone-line: var(--th-blue-line); --tone-icon: var(--th-blue-icon);
+}
+.app-shell [data-tone="green"], .app-shell [data-tone="ok"] {
+    --tone-ink: var(--th-green-ink); --tone-soft: var(--th-green-soft); --tone-line: var(--th-green-line); --tone-icon: var(--th-green-icon);
+}
+.app-shell [data-tone="red"], .app-shell [data-tone="bad"] {
+    --tone-ink: var(--th-red-ink); --tone-soft: var(--th-red-soft); --tone-line: var(--th-red-line); --tone-icon: var(--th-red-icon);
+}
+.app-shell [data-tone="gold"], .app-shell [data-tone="amber"], .app-shell [data-tone="warn"] {
+    --tone-ink: var(--th-gold-ink); --tone-soft: var(--th-gold-soft); --tone-line: var(--th-gold-line); --tone-icon: var(--th-gold-icon);
+}
+.app-shell [data-tone="purple"] {
+    --tone-ink: var(--th-purple-ink); --tone-soft: var(--th-purple-soft); --tone-line: var(--th-purple-line); --tone-icon: var(--th-purple-icon);
+}
+.app-shell [data-tone="pink"] {
+    --tone-ink: var(--th-pink-ink); --tone-soft: var(--th-pink-soft); --tone-line: var(--th-pink-line); --tone-icon: var(--th-pink-icon);
+}
+.app-shell [data-tone="teal"] {
+    --tone-ink: var(--th-teal-ink); --tone-soft: var(--th-teal-soft); --tone-line: var(--th-teal-line); --tone-icon: var(--th-teal-icon);
+}
+.app-shell [data-tone="gray"] {
+    --tone-ink: var(--th-gray-ink); --tone-soft: var(--th-gray-soft); --tone-line: var(--th-gray-line); --tone-icon: var(--th-gray-icon);
+}
+
+/* Fixed icon column keeps the label and value close, including six-card rows. */
+.app-shell[data-workspace] .mx-metric {
+    display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; justify-content: start;
+    gap: 10px; min-width: 0; min-height: 94px; padding: 16px; margin: 0;
+    border: 1px solid var(--tone-line); border-inline-start: 3px solid var(--tone-ink); border-radius: 14px;
+    background: linear-gradient(115deg, var(--tone-soft), var(--th-surface) 80%);
+    box-shadow: 0 2px 6px rgb(23 32 51 / 3%); box-sizing: border-box;
+}
+.app-shell .mx-metric .mx-metric-icon {
+    display: grid; place-items: center; width: 40px; height: 40px; margin: 0; padding: 0;
+    border-radius: 12px; background: var(--tone-icon); color: var(--tone-ink); font-size: 20px; line-height: 1;
+}
+.app-shell .mx-metric .mx-metric-body { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; }
+.app-shell .mx-metric .mx-metric-label { color: var(--th-text-2); font-size: 12px; font-weight: 550; line-height: 1.5; white-space: normal; overflow-wrap: anywhere; text-transform: none; letter-spacing: 0; }
+.app-shell .mx-metric .mx-metric-value { display: block; margin: 0; color: var(--th-text); font: 750 25px/1.3 var(--th-font); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.app-shell .mx-metric .mx-metric-hint { margin: 2px 0 0; color: var(--th-text-2); font-size: 11px; font-weight: 400; line-height: 1.6; overflow-wrap: anywhere; }
+.app-shell .me-stat-metric { align-items: start; }
+.app-shell .me-stat-metric .mx-metric-icon { margin-top: 2px; }
+
+/* A quiet module accent connects forms, tables, charts and navigation. */
+.app-shell[data-workspace] .att-nav-item.active { color: var(--workspace-ink); background: var(--workspace-soft); }
+.app-shell[data-workspace] .att-nav-item.active::before { background: var(--workspace-ink); }
+.app-shell[data-workspace] .mx-table thead th { background: var(--workspace-soft); }
+.app-shell[data-workspace] :is(.att-card, .lp-card, .ai-card, .blk-card, .roles-card, .hv-panel, .wf-panel, .mx-chart-card, .my-report-list) {
+    border-top-color: var(--workspace-line);
+}
+.app-shell[data-workspace] .mx-chart-card-head h3 { border-inline-start: 3px solid var(--workspace-ink); padding-inline-start: 10px; }
+.app-shell[data-workspace] .mx-page-guide { background: var(--workspace-soft); border-color: var(--workspace-line); }
+.app-shell[data-workspace] .mx-page-guide-icon { color: var(--workspace-ink); background: var(--workspace-line); }
+.app-shell[data-workspace] :is(.hr-btn--primary, .ai-btn--primary, .wf-btn-primary):not(:disabled) { background: var(--workspace-ink); border-color: var(--workspace-ink); color: #fff; }
+.app-shell[data-workspace] :is(.hr-btn--primary, .ai-btn--primary, .wf-btn-primary):not(:disabled):hover { filter: brightness(.94); }
+.app-shell[data-workspace] :is(.hr-filter, .ai-filter, .blk-filter, .lp-filter).active { color: #fff; background: var(--workspace-ink); border-color: var(--workspace-ink); }
+
+/* Personal records and check-in/out use the same icon/text alignment. */
+.app-shell--me .me-record-summary { gap: 12px; padding: 18px; border-color: var(--tone-line); background: var(--tone-soft); }
+.app-shell--me .me-record-icon { color: var(--tone-ink); background: var(--tone-icon); }
+.app-shell--me .me-record > header { background: var(--tone-soft); border-color: var(--tone-line); color: var(--tone-ink); }
+.app-shell--me .att-hero-slot {
+    display: grid; grid-template-columns: 40px minmax(0, 1fr); align-content: center; align-items: center;
+    gap: 4px 12px; padding: 18px; text-align: left; border-color: var(--tone-line); background: var(--tone-soft);
+}
+.app-shell--me .att-hero-slot .att-hero-slot-ico { grid-row: 1 / 3; margin: 0; width: 40px; height: 40px; background: var(--tone-icon); color: var(--tone-ink); }
+.app-shell--me .att-hero-slot .att-hero-label { margin: 0; }
+.app-shell--me .att-hero-slot strong { margin: 0; font-size: 25px; }
+.app-shell--me .rule-tile { border-color: var(--th-blue-line); background: var(--th-blue-soft); }
+.app-shell--me .rule-tile:nth-child(2n) { border-color: var(--th-teal-line); background: var(--th-teal-soft); }
+.app-shell--me .rule-tile:nth-child(3n) { border-color: var(--th-purple-line); background: var(--th-purple-soft); }
+.app-shell--me .rule-tile.rule-tile--break { border-color: var(--th-gold-line); background: var(--th-gold-soft); }
+
+/* Admin shortcuts: horizontal icon + two lines of text, with full-card hit area. */
+.app-shell .admhome-tile {
+    display: grid; grid-template-columns: 44px minmax(0, 1fr); grid-template-rows: auto auto;
+    align-content: center; align-items: center; justify-items: start; gap: 4px 12px;
+    padding: 18px; text-align: left; border-color: var(--tone-line); background: var(--tone-soft);
+}
+.app-shell .admhome-tile-ico { display: grid; place-items: center; grid-row: 1 / 3; width: 44px; height: 44px; font-size: 25px; background: var(--tone-icon); border-radius: 12px; }
+.app-shell .admhome-tile-label { margin: 0; font-size: 15px; line-height: 1.5; }
+.app-shell .admhome-tile-sub { font-size: 12px; line-height: 1.6; }
+.app-shell .admhome-tile:hover { transform: none; border-color: var(--tone-ink); box-shadow: 0 3px 12px rgb(23 32 51 / 7%); }
+.app-shell .admhome-clock { background: var(--th-gold-soft); border: 1px solid var(--th-gold-line); gap: 18px; }
+
+@media (max-width: 768px) {
+    .app-shell[data-workspace] .mx-metric { grid-template-columns: 34px minmax(0, 1fr); gap: 9px; min-height: 88px; padding: 13px; }
+    .app-shell .mx-metric .mx-metric-icon { width: 34px; height: 34px; border-radius: 10px; font-size: 18px; }
+    .app-shell .mx-metric .mx-metric-value { font-size: 23px; }
+    .app-shell .admhome-tile { grid-template-columns: 38px minmax(0, 1fr); gap: 4px 9px; padding: 14px; }
+    .app-shell .admhome-tile-ico { width: 38px; height: 38px; font-size: 22px; }
+    .app-shell .admhome-tile-label { font-size: 14px; }
+    .app-shell .admhome-grid { grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); }
+}
+@media (max-width: 480px) {
+    /* Detailed hints need a readable line length on narrow phones. */
+    .app-shell--me .me-stat-metrics { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .app-shell .admhome-tile { transition: none; }
+}
