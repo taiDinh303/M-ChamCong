@@ -47,7 +47,7 @@ Các giá trị dưới đây đã đối chiếu [`theme.css`](../marixa_react/
 - Cá nhân: nhóm `/me/*` cho công, thống kê, phép, hợp đồng, lương, bảo hiểm, tài khoản ngân hàng và hành chính; `hideInUserSidebar` ẩn mục khỏi sidebar cá nhân.
 - Nhân sự: `/hr/*`, registry hiện cho `HR`, `Manager`, `Admin`; Admin có nhóm `/admin/*`.
 - Trang dùng chung: `/home`, `/work`, `/profile`; `/login`, `/kich-hoat`, `/unauthorized` cho truy cập/phiên/quyền.
-- `/finance` chỉ chuyển tới `/me/salary`; `/hr/payroll` chuyển tới `/hr`. Không thiết kế chúng như màn hình mới đang hoạt động.
+- Kế toán 21/10: `/accounting`, `/accounting/payroll` dùng shell/token hiện có, chỉ Admin/Accountant; `/finance` và các URL bảng lương quản lý cũ chuyển về module này có kiểm quyền. `/me/salary` giữ phạm vi cá nhân. [36](36-workflow-improvements.md) ghi phạm vi đầy đủ.
 
 Inventory route đầy đủ và các redirect: [03](03-architecture.md), [`figma/files-map.md`](../figma/files-map.md). Route nội bộ có RequireSession, menu/guard áp quyền prefix dài nhất; thiết kế “ẩn nút” không thay thế quyền API.
 

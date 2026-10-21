@@ -94,6 +94,10 @@ const EmployeeShiftDetailModal = ({ employee, assignments, shifts, onClose, canE
             setSaveError("Giờ làm (bắt đầu / kết thúc) không được để trống.");
             return;
         }
+        if (draft.startTime === draft.endTime) {
+            setSaveError("Giờ vào và giờ ra ca không được trùng nhau.");
+            return;
+        }
         setSaving(true);
         setSaveError("");
         try {

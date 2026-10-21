@@ -9,7 +9,7 @@
 ## 1. Trạng thái hiện tại (cập nhật 21/10/2026, múi giờ Asia/Ho_Chi_Minh)
 
 - **Stack trong mã nguồn (chưa xác minh live):** backend `marixa_aspnet/M.API` (ASP.NET Core 8, EF Core, JWT/Identity, Swagger) · frontend `marixa_react` (React 19 + Vite SPA, React Router 7) · DB linh hoạt **SQL Server (dev) / PostgreSQL Supabase (prod)** · ảnh **Supabase Storage bucket public `marixa-photos`** (dev fallback `wwwroot/uploads`) · deploy **Render (API, Docker) + Vercel (web) + Supabase**.
-- **Role:** 4 core đã map quyền `Admin`, `Manager`, `HR`, `Employee` (frontend `marixa_react/src/constants/modules.js`) + 3 role nghiệp vụ **đã seed** `Accountant`, `Sale`, `Marketing` (`M.API/Seed/RoleSeeder.cs`, **chưa** có quyền module chuyên biệt; các chức năng access user vẫn theo logic hiện tại).
+- **Role:** Admin/Manager/HR/Employee giữ phạm vi hiện hành; Accountant được đọc bảng lương toàn công ty trong Kế toán theo quyết định 21/10; Sale/Marketing chỉ có role seed, chưa có module riêng.
 - **Next.js `marixa_aspnet/web`: ĐÃ XÓA** (12/10/2026, không liên quan — không còn bị tham chiếu bởi Dockerfile/solution).
 - **Repository:** `origin = github.com/taiDinh303/M-ChamCong`.
 - **Hosting snapshot (chủ dự án cung cấp 12/10, chưa xác minh live 16/10):** bảng đầy đủ ở [00-README.md §5](00-README.md#5-thông-tin-nhanh-và-hosting). Blueprint source mới không khai báo plan và tắt auto deploy; lịch sử template cũ plan standard không đại diện gói đang chạy.
@@ -61,10 +61,10 @@
 | --- | --- | --- | --- |
 | `/hr` danh sách nhân sự (CRUD, import/export) | ✅ | `modules/hr/pages/HrPage.jsx`, `EmployeeController`, `DepartmentController`, `PositionController` | |
 | `/hr/attendance-history` đối soát & duyệt công | ✅ | `EmployeeAttendanceHistoryPage` (hrMode), `AttendanceController.approve` | |
-| `/hr/work-schedule` lịch làm/ca | 🟡 | `EmployeeWorkSchedulePage`, `ShiftController`, `EmployeeShiftController` | Gán ca theo NV/ngày. |
+| `/hr/work-schedule` lịch làm/ca | ✅ | `EmployeeWorkSchedulePage`, `ShiftCatalog`, `ShiftController`, `EmployeeShiftController` | Admin/HR tạo/ngừng ca; 1+ người/31 ngày/bỏ Chủ nhật, giữ lịch sử. Bằng chứng 21/10 tại §4. |
 | `/hr/statistics` thống kê (HR) | ✅ | `EmployeeStatisticsPage` (hrMode) | |
 | `/hr/contracts` hợp đồng | ✅ | `EmployeeContractPage`, `AdminContractPage` | |
-| `/hr/payroll` | 🟡 | `App.jsx` | Redirect về /hr; không phải màn hình bảng lương riêng. |
+| `/hr/payroll` | ✅ | `App.jsx` | Alias sang Kế toán; HR không có Admin/Accountant bị chặn. |
 | `/hr/leaves` duyệt nghỉ phép | ✅ | `EmployeeLeavePage` (hrMode), `LeaveAdminPage` | |
 | `/hr/reports` báo cáo | ✅ | `ReportsPage`, `EmployeeReportController` | |
 | `/hr/accounts` cấp tài khoản | ✅ | `AccountIssuancePage`, `UserController`, `ActivationCodeController` | |
@@ -82,7 +82,7 @@
 | `/admin/work` | ✅ | `AdminWorkPage` | |
 | `/admin/contracts` | ✅ | `AdminContractPage` | |
 | `/admin/leaves` | ✅ | `LeaveAdminPage` | |
-| `/admin/payroll` | ✅ | `PayrollAdminPage` | |
+| `/accounting`, `/accounting/payroll` | ✅ | `PayrollPage`, `PayrollController` | Admin/Accountant đọc, lọc/chi tiết/CSV; alias /admin/payroll; chưa tự tính/duyệt/chi. |
 | `/admin/resigned` nghỉ việc | ✅ | `AdminResignedPage` (PayrollResignedReport) | |
 | `/admin/reports` | ✅ | `ReportsPage` (admin) | |
 
@@ -98,7 +98,7 @@
 | **Khóa/mở kỳ công + snapshot** | 🟡 | Backend period/guard/version/hash và UI Thống kê đã có, browser cô lập có lock/reopen/relock/export; live chưa nghiệm thu. |
 | **XLSX snapshot & PDF nghỉ** | 🟡 | Backend có export theo quyền, Unicode/multipage; UI tải XLSX version/PDF đã kiểm cô lập, live chưa nghiệm thu. |
 | **Cộng phép năm tự động hằng tháng (idempotent)** | ❌ | Chưa có; cần job/cron + giao dịch ledger. |
-| **Role nghiệp vụ (Kế toán, Sale, Marketing)** | 🟡 | Đã **seed** trong `RoleSeeder` (`Accountant`, `Sale`, `Marketing` — "Accountant" khớp `SampleDataSeeder`). **Chưa gán quyền module** (chưa map `MODULES`/endpoint). Khi cần cấp quyền thật → thêm vào `[Authorize(Roles=...)]`. (12/10/2026, code trước theo yêu cầu.) |
+| **Role nghiệp vụ (Kế toán, Sale, Marketing)** | 🟡 | Accountant có module Kế toán chỉ đọc Payroll từ 21/10, có HTTP/route test; Sale/Marketing chưa map module riêng. |
 | **Ca làm chung** | ✅ | Một active, không version ca; break cấu hình, seeder giữ rule, DB unique. |
 | **Giới hạn dung lượng / dọn ảnh (retention, cron)** | ❌ | Chưa có job dọn ảnh. |
 | **Backup/restore chạy thật** | 🟡 | 18/10 đã restore và đối chiếu bản sao public schema trên PostgreSQL cô lập; chưa thử phục hồi toàn hạ tầng, Storage/file và bản sao ngoài máy. |
@@ -106,6 +106,21 @@
 | Supabase Auth / Data API và RLS | 🟡 | Ứng dụng dùng .NET Identity/JWT. Đã kiểm metadata RLS/grants và advisor trong phạm vi public schema; còn hai WARN cũ liên quan quyền EXECUTE hàm event trigger, chưa audit toàn bộ hạ tầng. |
 
 ## 4. Log sự kiện (mới trên cùng)
+
+### 21/10/2026 — Codex: đưa bộ thay đổi ca làm/Kế toán lên main
+
+- Chủ dự án yêu cầu push code mới lên main và xác nhận “không cần build/test”, “cứ thế push lên”. Quyền này bổ sung phạm vi xuất bản Git cho bộ thay đổi `codex/hr-workflow-improvements` hiện tại.
+- **SKIPPED theo yêu cầu:** không chạy lại build/test trong lượt xuất bản này. Các số kiểm thử ở mục triển khai bên dưới là bằng chứng của lượt trước, không phải kết quả chạy mới. Giữ thay đổi nguồn/tài liệu hiện có; không migration, ghi dữ liệu live hoặc tự thao tác deploy hosting.
+
+
+### 21/10/2026 — Codex: bổ sung ca làm và tách module Kế toán
+
+- **Quyết định:** chủ dự án yêu cầu học chức năng từ thao tác kiểm thử MARIXA, giữ giao diện intern; chọn ưu tiên ca/chấm công, đồng ý 1+ người/31 ngày/bỏ Chủ nhật và Admin/HR tạo/ngừng ca. Chọn module Kế toán cho Admin/Accountant chỉ xem/lọc/chi tiết; HR giữ lương cơ bản trong hồ sơ, nhân viên giữ mức lương cá nhân. REQ/API/TC và giới hạn tại [36](36-workflow-improvements.md).
+- **CURRENT ca làm:** danh mục tạo/ngừng/áp dụng lại trong Lịch làm; server chặn giờ trùng, mã/tên rỗng, ngày tuần và thời gian không hợp lệ. Gán hàng loạt theo ngày-người, bitmask ngày ca, bỏ Chủ nhật theo lựa chọn, không thêm lại ngày cùng ca đã có; kiểm actor và scope Manager trong transaction. Ngừng ca chặn gán mới, giữ lịch cũ đọc được. Trạng thái lịch phân biệt chưa chấm/đang trong ca/thiếu lượt/đủ cặp/vắng rõ trên dữ liệu, không suy vắng từ việc thiếu bản ghi. AttendanceRule/công thức công/OT giữ nguyên.
+- **CURRENT Kế toán:** `/accounting` và `/accounting/payroll`, dùng shell/token/ResponsiveTable của intern. Home/menu/đích phân khu/alias cũ nối đúng module; tổng quan, tìm nhân viên/lọc kỳ và trạng thái, phân trang, xem khoản/chi tiết, CSV và tải lại. Payroll GET chỉ Admin/Accountant; Accountant không có quyền ghi, không được mở HR/Admin. CRUD Admin cũ giữ nguyên; không tạo engine tính lương, duyệt/chi hoặc khóa kỳ lương. Xóa component bảng lương quản trị cũ để có một màn hình chính.
+- **Kiểm thử cô lập:** Release build 0 warning/0 error; backend **131 PASS / 0 FAIL / 3 SKIP** (ba fixture PostgreSQL local chưa cấu hình); gồm 14 ca HTTP mới cho shift/accounting. Frontend **83 PASS / 0 FAIL / 0 SKIP**; lint max-warnings0 và Vite build PASS (854 modules), vẫn còn cảnh báo bundle lớn (~1.27 MB app, ~940 KB ExcelJS trước gzip). Markdown 49 file / 422 link / 13 anchor / 0 lỗi; diff whitespace PASS. API inventory sinh lại từ runtime. TRX và ảnh ở `artifacts/hr-workflow-20261021` (Gitignored).
+- **Browser:** Vite loopback + ApiFactory SQLite in-memory, Identity/JWT thật với tài khoản giả. HR tạo ca hợp lệ, bàn phím nhập giờ trùng bị chặn, gán thành công đúng một nhân viên; ngừng nhận lịch mới không mất lịch cũ. HR mở Kế toán bị 403. Accountant mở từ Home, đọc hai phiếu giả, lọc kết hợp tên/kỳ/trạng thái còn một phiếu, mở chi tiết đúng các khoản. Khung CSS375×667: lịch làm/bảng lương không tràn toàn trang; hộp thoại bảng lương và gán ca nằm trong viewport. Không dùng bộ mô phỏng làm bằng chứng thiết bị thật.
+- **NOT VERIFIED:** production/thiết bị thật, PostgreSQL trong lượt này, mọi tổ hợp form và tải đồng thời. Không migration/ghi owner DB, bucket, Figma, push hoặc deploy. Module Kế toán hiện chỉ tra cứu Payroll đã lưu; chưa chứng minh số tiền đã được tính đúng nghiệp vụ.
 
 ### 21/10/2026 — Codex: bỏ biểu đồ tròn khỏi Danh sách nhân sự
 

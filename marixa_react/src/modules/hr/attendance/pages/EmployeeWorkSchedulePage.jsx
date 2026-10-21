@@ -7,6 +7,9 @@ import { getAuth } from "../../../../services/auth/auth";
 import "../../employee.css";
 import HrHero from "../../HrHero";
 import EmployeeShiftDetailModal from "../components/EmployeeShiftDetailModal";
+import ShiftCatalog from "../components/ShiftCatalog";
+import { assignmentEndLimit, assignmentValidation, attendanceState } from "../schedulePolicy.js";
+import "../schedule-workflow.css";
 
 const vnToday = () => new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Bangkok" }).format(new Date());
 const dayKey = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
@@ -33,6 +36,7 @@ const EmployeeWorkSchedulePage = () => {
         shiftId: "",
         effectiveFrom: vnToday(),
         effectiveTo: vnToday(),
+        skipSunday: true,
         note: "",
     }));
     const [selectedEmployeeIds, setSelectedEmployeeIds] = useState([]);
@@ -47,8 +51,8 @@ const EmployeeWorkSchedulePage = () => {
     // PUT /Shift/update đã mở cho cả 3 role này).
     const canEditShifts = ["Admin", "HR", "Manager"].some((role) => (auth?.roles || []).includes(role));
 
-    const loadScheduleData = useCallback(async () => {
-        setLoading(true);
+    const loadScheduleData = useCallback(async ({ quiet = false } = {}) => {
+        if (!quiet) setLoading(true);
         setError("");
         try {
             const [employeeResponse, assignmentResponse, shiftResponse, attendanceResponse] = await Promise.all([
@@ -79,7 +83,7 @@ const EmployeeWorkSchedulePage = () => {
         const byEmployee = new Map();
         assignments.forEach((assignment) => {
             const shift = shiftById.get(assignment.shiftId);
-            if (!shift?.isActive || !(Number(shift.workDays) & bit) || dateOnly(assignment.effectiveFrom) > dateValue || (assignment.effectiveTo && dateOnly(assignment.effectiveTo) < dateValue)) return;
+            if (!shift || !(Number(shift.workDays) & bit) || dateOnly(assignment.effectiveFrom) > dateValue || (assignment.effectiveTo && dateOnly(assignment.effectiveTo) < dateValue)) return;
             const employee = employeeById.get(assignment.employeeId);
             if (!employee) return;
             const current = byEmployee.get(employee.id) || { employee, shifts: [] };
@@ -131,7 +135,7 @@ const EmployeeWorkSchedulePage = () => {
     }, [employees, employeePickerSearch, elevatedScheduler, auth?.employeeId]);
 
     const openAssignmentModal = () => {
-        setAssignmentForm({ shiftId: "", effectiveFrom: vnToday(), effectiveTo: vnToday(), note: "" });
+        setAssignmentForm({ shiftId: "", effectiveFrom: vnToday(), effectiveTo: vnToday(), skipSunday: true, note: "" });
         setSelectedEmployeeIds([]);
         setEmployeePickerSearch("");
         setAssignmentError("");
@@ -151,18 +155,9 @@ const EmployeeWorkSchedulePage = () => {
     };
     const createAssignment = async (event) => {
         event.preventDefault();
-        if (selectedEmployeeIds.length < 2) {
-            setAssignmentError("Vui lòng chọn ít nhất 2 nhân viên.");
-            return;
-        }
-        if (!assignmentForm.shiftId) {
-            setAssignmentError("Vui lòng chọn ca làm.");
-            return;
-        }
-        if (!assignmentForm.effectiveFrom || !assignmentForm.effectiveTo || assignmentForm.effectiveTo < assignmentForm.effectiveFrom) {
-            setAssignmentError("Ngày kết thúc phải bằng hoặc sau ngày bắt đầu.");
-            return;
-        }
+        if (savingAssignment) return;
+        const validation = assignmentValidation(assignmentForm, selectedEmployeeIds);
+        if (validation) { setAssignmentError(validation); return; }
 
         setSavingAssignment(true);
         setAssignmentError("");
@@ -173,6 +168,7 @@ const EmployeeWorkSchedulePage = () => {
                 shiftId: assignmentForm.shiftId,
                 effectiveFrom: assignmentForm.effectiveFrom,
                 effectiveTo: assignmentForm.effectiveTo,
+                skipSunday: assignmentForm.skipSunday,
                 note: assignmentForm.note.trim() || null,
             });
             const result = response.data.data || {};
@@ -183,7 +179,7 @@ const EmployeeWorkSchedulePage = () => {
             const assignedEmployeeCount = result.assignedEmployeeCount || 0;
             const createdAssignmentCount = result.createdAssignmentCount || 0;
             setNotice(assignedEmployeeCount > 0
-                ? `Đã xếp lịch cho ${assignedEmployeeCount} nhân viên (${createdAssignmentCount} khoảng lịch).${alreadyText}`
+                ? `Đã xếp lịch cho ${assignedEmployeeCount} nhân viên (${createdAssignmentCount} ngày-người).${alreadyText}`
                 : `Nhân viên đã chọn đều có lịch ca này trong khoảng ngày yêu cầu.${alreadyText}`);
             chooseDate(assignmentForm.effectiveFrom);
             setShowAssignmentModal(false);
@@ -225,6 +221,7 @@ const EmployeeWorkSchedulePage = () => {
                 {notice && <div className="work-schedule-notice" role="status">{notice}<button type="button" onClick={() => setNotice("")} aria-label="Đóng thông báo">×</button></div>}
                 {loading ? <div className="att-loading">Đang tải lịch làm...</div> : (
                     <>
+                        <ShiftCatalog shifts={shifts} canManage={elevatedScheduler} onUpdated={() => loadScheduleData({ quiet: true })} />
                         <section className={`work-schedule-calendar att-card${showMobileMonth ? " is-month-open" : ""}`}>
                             <div className="mx-schedule-mobile-nav">
                                 <button type="button" className="admin-link-btn" onClick={() => { const date = new Date(`${selectedDate}T00:00:00`); date.setDate(date.getDate() - 1); chooseDate(dayKey(date)); }}>‹ Ngày trước</button>
@@ -270,11 +267,12 @@ const EmployeeWorkSchedulePage = () => {
                                     <tbody>
                                         {visibleScheduled.length === 0 ? <tr><td colSpan={6}><span className="att-muted">{scheduled.length ? "Không tìm thấy nhân viên phù hợp." : "Ngày này chưa có nhân viên được xếp lịch làm."}</span></td></tr> : visibleScheduled.map(({ employee, shifts: employeeShifts }) => {
                                             const record = attendanceByEmployee.get(employee.id);
+                                            const state = attendanceState(record, selectedDate, vnToday());
                                             return <tr key={employee.id}>
                                                 <td><span className="work-schedule-employee-code">{employee.employeeCode}</span><strong className="work-schedule-employee-name">{employee.fullName}</strong></td>
                                                 <td>{employeeShifts.map((shift) => shift.name).join(", ")}</td>
                                                 <td>{employeeShifts.map((shift) => `${String(shift.startTime).slice(0, 5)}–${String(shift.endTime).slice(0, 5)}`).join(", ")}</td>
-                                                <td><span className={`att-badge ${record ? "ok" : "warn"}`}>{record ? "Đã chấm công" : "Chưa chấm công"}</span></td>
+                                                <td><span className={`att-badge ${state.tone}`}>{state.label}</span></td>
                                                 <td><span className={`att-badge ${record ? approvalClass(Number(record.approvalStatus)) : ""}`}>{record ? approvalLabel(Number(record.approvalStatus)) : "Chưa có bản ghi"}</span></td>
                                                             <td>
                                                                 <button
@@ -297,7 +295,7 @@ const EmployeeWorkSchedulePage = () => {
                     <div className="att-guide-overlay" onMouseDown={(event) => event.target === event.currentTarget && setShowAssignmentModal(false)}>
                         <section className="att-detail-modal work-schedule-assignment-modal" role="dialog" aria-modal="true" aria-labelledby="work-schedule-assignment-title">
                             <header className="att-detail-modal-head">
-                                <div><h2 id="work-schedule-assignment-title">Thêm lịch làm</h2><p>Chọn ca, khoảng ngày và ít nhất 2 nhân viên.</p></div>
+                                <div><h2 id="work-schedule-assignment-title">Thêm lịch làm</h2><p>Chọn ca, khoảng ngày tối đa 31 ngày và ít nhất 1 nhân viên.</p></div>
                                 <button type="button" onClick={() => setShowAssignmentModal(false)} aria-label="Đóng">×</button>
                             </header>
                             <form onSubmit={createAssignment}>
@@ -316,8 +314,9 @@ const EmployeeWorkSchedulePage = () => {
                                         <input type="date" required value={assignmentForm.effectiveFrom} onChange={(event) => setAssignmentForm((current) => ({ ...current, effectiveFrom: event.target.value }))} />
                                     </label>
                                     <label>Ngày kết thúc
-                                        <input type="date" required min={assignmentForm.effectiveFrom} value={assignmentForm.effectiveTo} onChange={(event) => setAssignmentForm((current) => ({ ...current, effectiveTo: event.target.value }))} />
+                                        <input type="date" required min={assignmentForm.effectiveFrom} max={assignmentEndLimit(assignmentForm.effectiveFrom)} value={assignmentForm.effectiveTo} onChange={(event) => setAssignmentForm((current) => ({ ...current, effectiveTo: event.target.value }))} />
                                     </label>
+                                    <label className="work-schedule-skip-sunday"><input type="checkbox" checked={assignmentForm.skipSunday} onChange={(event) => setAssignmentForm((current) => ({ ...current, skipSunday: event.target.checked }))} /> Bỏ Chủ nhật</label>
                                     <label className="work-schedule-assignment-note">Ghi chú (không bắt buộc)
                                         <input type="text" maxLength={500} value={assignmentForm.note} onChange={(event) => setAssignmentForm((current) => ({ ...current, note: event.target.value }))} placeholder="Ví dụ: lịch làm tháng 10" />
                                     </label>
@@ -337,7 +336,7 @@ const EmployeeWorkSchedulePage = () => {
                                     </div>
                                 </div>
                                 {assignmentError && <div className="att-error" role="alert">{assignmentError}</div>}
-                                <p className="work-schedule-assignment-hint">Lịch chỉ áp dụng vào các thứ làm việc đã cấu hình trong ca. Nếu nhân viên đã có lịch cùng ca bao phủ toàn bộ khoảng ngày, hệ thống không tạo dòng trùng.</p>
+                                <p className="work-schedule-assignment-hint">Chọn từ 1 nhân viên, tối đa 31 ngày tính cả hai đầu. Chỉ gán các thứ làm việc của ca; không tạo lại những ngày đã có cùng ca.</p>
                                 <footer className="work-schedule-assignment-actions">
                                     <button type="button" className="admin-link-btn" onClick={() => setShowAssignmentModal(false)} disabled={savingAssignment}>Hủy</button>
                                     <button type="submit" className="work-schedule-add-btn" disabled={savingAssignment}>{savingAssignment ? "Đang lưu..." : "Lưu lịch làm"}</button>

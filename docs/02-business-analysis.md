@@ -49,7 +49,8 @@ Ngoài phạm vi V1: kho, xuất nhập khẩu, CRM, khai thuế/BHXH tự độ
 | `HR` | Nhân sự, đối soát và một số thao tác duyệt; quyền không đồng nhất với Manager ở mọi luồng. |
 | `Manager` | Các module được khai báo cho quản lý; không mặc định bằng HR hoặc Admin. |
 | `Admin` | Quản trị tài khoản/role, danh mục và các thao tác quản trị được controller cho phép. |
-| `Accountant`, `Sale`, `Marketing` | Đã seed tên role; chưa có ma trận quyền module riêng hoàn chỉnh. Không suy ra quyền nghiệp vụ từ tên role. |
+| `Accountant` | Quyết định 21/10: đọc bảng lương toàn công ty tại Kế toán, không ghi/duyệt/chi hoặc xem hồ sơ HR toàn công ty. Chi tiết [36](36-workflow-improvements.md). |
+| `Sale`, `Marketing` | Đã seed tên role; chưa có ma trận quyền module riêng hoàn chỉnh. Không suy ra quyền nghiệp vụ từ tên role. |
 
 Nguồn: [RoleSeeder.cs](../marixa_aspnet/M.API/Seed/RoleSeeder.cs), [modules.js](../marixa_react/src/constants/modules.js), [permission.js](../marixa_react/src/services/auth/permission.js). Tài khoản có thể mang nhiều role; phải kiểm tra tổ hợp role khi nghiệm thu.
 

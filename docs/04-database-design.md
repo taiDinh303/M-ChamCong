@@ -1,5 +1,7 @@
 # 04 — Thiết kế dữ liệu Marixa
 
+> Bổ sung 21/10: không đổi schema. Gán hàng loạt dùng các dòng EmployeeShift theo ngày-người; giữ dữ liệu khoảng ngày cũ và lịch sử. Quyết định và hợp đồng ở [36](36-workflow-improvements.md).
+
 > Chủ tài liệu: **Đinh Văn Tài**. Cập nhật: **17/10/2026**.
 > Trạng thái: **CURRENT** theo EF model và service trong repo; schema/dữ liệu của môi trường live **NOT VERIFIED**.
 

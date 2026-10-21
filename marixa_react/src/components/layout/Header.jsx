@@ -31,6 +31,8 @@ const Header = ({ profile, onToggleSidebar, toggleRef, sidebarExpanded, sidebarC
     const roles = auth?.roles || [];
     const roleHome = roles.includes("Admin")
         ? "/admin"
+        : roles.includes("Accountant")
+            ? "/accounting"
         : roles.some((r) => ["HR", "Manager"].includes(r))
             ? "/hr"
             : "/me";

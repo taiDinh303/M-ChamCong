@@ -8,6 +8,8 @@ M.Tests là xUnit, WebApplicationFactory/TestServer + SQLite per-host, fake HTTP
 
 ## 2. Traceability tối thiểu
 
+Bổ sung 21/10: `ShiftAndAccountingTests` kiểm HTTP quyền Admin/HR tạo/ngừng ca và giữ bản ghi gán, chặn giờ trùng, chấp nhận ca qua đêm, 3 người × 6 ngày bỏ Chủ nhật, lặp không sinh trùng, một người/31 ngày/32 ngày, phạm vi Manager và Accountant chỉ đọc Payroll. `schedule-accounting.test.js` kiểm ngày lịch/lọc tiền; `session.test.js` kiểm boundary route Kế toán. Tiêu chí tại [36](36-workflow-improvements.md), số lượng thực chạy tại worklog.
+
 Bổ sung 18/10: DemoScenarioTests và PostgresDemoScenarioTests kiểm bộ DEMO chạy lặp, giữ hồ sơ cũ, tài khoản chỉ Employee, trừ/hoàn phép và OT đúng trạng thái; reviewer bootstrap không có EmployeeId không được chọn làm người duyệt fixture. HumanResourcesTests kiểm mã report mới <=30 ký tự để tránh lỗi 500 trên provider có giới hạn cột thật. Kết quả cuối: **97 PASS / 0 FAIL / 0 SKIP** với cả SQL Server LocalDB và PostgreSQL loopback; không áp test fixture lên live. Live có bước seed được cấp quyền và kiểm API đọc/tải PDF riêng, xem worklog.
 
 Lượt tiếp theo 18/10: **101 PASS / 0 FAIL / 0 SKIP** trên fixture cô lập (SQLite, SQL Server LocalDB, PostgreSQL loopback). DemoScenarioTests đọc snapshot/XLSX từ dữ liệu vừa seed, kiểm hash mới dạng uppercase. PeriodTests thêm bốn trường hợp hash uppercase/lowercase hợp lệ, payload đã đổi và chuỗi không phải hex; kiểm endpoint snapshot/XLSX, lọc đúng chủ, giữ nguyên payload/hash trong DB. Chấp nhận khác biệt hoa/thường của cùng digest không cho phép đổi nội dung snapshot. Browser local 375×667: panel/dialog rộng 375 cao 667, cuộn nền bị khóa; chọn mục cuối đóng menu, Escape trả focus và phục hồi cuộn nền.

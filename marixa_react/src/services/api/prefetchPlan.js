@@ -35,6 +35,7 @@ export function workspacePlan(auth, today = new Date().toLocaleDateString("sv-SE
             get(`/${name}/get-all`);
         get("/WorkProject/mine"); get("/WorkProject/subordinates"); get("/WorkTask/assigned");
     }
+    if (admin || roles.includes("Accountant")) get("/Payroll/get-all", true);
     if (admin) {
         get("/Payroll/get-all", true);
         get("/Role/get-all", true);

@@ -5,6 +5,7 @@ const contracts = ["Dùng bộ lọc và tìm kiếm để kiểm tra hợp đ�
 const accounts = ["Chọn đúng nhân viên và kiểm tra thông tin liên hệ trước khi cấp tài khoản.", "Chỉ chia sẻ mã kích hoạt qua kênh riêng của người nhận; không đưa mã vào báo cáo chung."];
 
 const guides = {
+    "/accounting": ["Tra cứu lương", ["Chọn Bảng lương để tìm theo nhân viên, kỳ và trạng thái.", "Mở chi tiết để đối chiếu các khoản đã lưu. Chức năng hiện tại chỉ phục vụ xem; chưa tự tính, duyệt hoặc chi lương."]],
     "/hr": ["Làm việc với hồ sơ nhân sự", people],
     "/hr/attendance-history": ["Đối soát và duyệt công", attendance],
     "/hr/statistics": ["Đối soát kỳ công", ["Chọn đúng tháng và năm; kiểm tra công thường, tăng ca và các bản ghi chưa duyệt.", "Kiểm tra dữ liệu trước khi khóa kỳ. Dùng lịch sử và bản xuất để đối chiếu phiên bản kỳ công."]],

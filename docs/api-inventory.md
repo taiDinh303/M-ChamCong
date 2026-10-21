@@ -1,6 +1,6 @@
 # Danh mục API từ runtime
 
-> Sinh từ EndpointDataSource/TestServer; không phải bằng chứng API live. Fallback policy yêu cầu đăng nhập. Role attributes không thay owner/service guards; xem 16-security-privacy.md.
+> Sinh từ EndpointDataSource/TestServer; không phải bằng chứng API live. Fallback policy yêu cầu đăng nhập. Role attributes không thay owner/service guards; xem16-security-privacy.md.
 
 | Method | Route | Role khai báo | Anonymous |
 | --- | --- | --- | --- |
@@ -187,8 +187,8 @@
 | PUT | /api/OvertimeRequest/update | Authenticated/fallback | NO |
 | POST | /api/Payroll/create | Admin | NO |
 | DELETE | /api/Payroll/delete/{id} | Admin | NO |
-| GET | /api/Payroll/get-all | Admin | NO |
-| GET | /api/Payroll/get-by-id/{id} | Admin | NO |
+| GET | /api/Payroll/get-all | Admin,Accountant | NO |
+| GET | /api/Payroll/get-by-id/{id} | Admin,Accountant | NO |
 | DELETE | /api/Payroll/soft-delete/{id} | Admin | NO |
 | PUT | /api/Payroll/update | Admin | NO |
 | POST | /api/Position/create | Admin | NO |
@@ -209,7 +209,7 @@
 | GET | /api/SalaryGroup/get-by-id/{id} | Admin | NO |
 | DELETE | /api/SalaryGroup/soft-delete/{id} | Admin | NO |
 | PUT | /api/SalaryGroup/update | Admin | NO |
-| POST | /api/Shift/create | Admin | NO |
+| POST | /api/Shift/create | Admin,HR | NO |
 | DELETE | /api/Shift/delete/{id} | Admin | NO |
 | GET | /api/Shift/get-all | Authenticated/fallback | NO |
 | GET | /api/Shift/get-by-id/{id} | Authenticated/fallback | NO |

@@ -9,58 +9,6 @@ const fetchResignedEmployees = async () => {
     return { data: { data: { items: all.filter((employee) => [4, 5].includes(employee.status)) } } };
 };
 
-// ===== Trang Bảng lương (quản trị) =====
-const PayrollAdminPage = () => {
-    const LABELS = {
-        1: "Nháp",
-        2: "Đã tính",
-        3: "Đã duyệt",
-        4: "Đã trả",
-        5: "Hủy",
-    };
-    const TONES = { 1: "muted", 2: "info", 3: "ok", 4: "ok", 5: "bad" };
-
-    return (
-        <AdminListPage
-            title="Bảng lương"
-            subtitle="Tổng quan & theo dõi bảng lương theo kỳ"
-            fetcher={adminApi.payrolls}
-            columns={[
-                { key: "employeeName", label: "Nhân viên" },
-                { key: "payrollMonth", label: "Kỳ lương", date: true },
-                {
-                    key: "basicSalary",
-                    label: "Lương cơ bản",
-                    labelOf: (v) => Number(v || 0).toLocaleString("vi-VN") + " ₫",
-                },
-                {
-                    key: "netSalary",
-                    label: "Thực nhận",
-                    labelOf: (v) => Number(v || 0).toLocaleString("vi-VN") + " ₫",
-                },
-                {
-                    key: "status",
-                    label: "Trạng thái",
-                    badge: (v) => TONES[v] || "muted",
-                    labelOf: (v) => LABELS[v] || v,
-                },
-            ]}
-            searchKeys={["employeeName"]}
-            filter={{
-                key: "status",
-                options: [
-                    ["1", "Nháp"],
-                    ["2", "Đã tính"],
-                    ["3", "Đã duyệt"],
-                    ["4", "Đã trả"],
-                    ["5", "Hủy"],
-                ],
-            }}
-            emptyText="Chưa có bảng lương nào."
-        />
-    );
-};
-
 // ===== Trang Người đã nghỉ việc (lưu trữ + lịch sử) =====
 const ResignedPage = ({ hrMode = false }) => {
     return (
@@ -150,4 +98,4 @@ const ReportPage = ({ hrMode = false }) => {
     );
 };
 
-export { PayrollAdminPage, ResignedPage, ReportPage };
+export { ResignedPage, ReportPage };

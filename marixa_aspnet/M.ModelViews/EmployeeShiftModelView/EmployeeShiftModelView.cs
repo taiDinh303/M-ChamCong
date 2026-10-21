@@ -46,7 +46,7 @@ namespace M.ModelViews.EmployeeShiftModelView
     public class CreateEmployeeShiftBulkModelView
     {
         [Required]
-        [MinLength(2)]
+        [MinLength(1)]
         public List<Guid> EmployeeIds { get; set; } = new();
 
         [Required]
@@ -57,6 +57,8 @@ namespace M.ModelViews.EmployeeShiftModelView
 
         [Required]
         public DateTime EffectiveTo { get; set; }
+
+        public bool SkipSunday { get; set; }
 
         public string? Note { get; set; }
     }

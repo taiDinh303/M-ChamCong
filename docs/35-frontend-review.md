@@ -4,7 +4,7 @@
 
 ## 1. Phạm vi và thay đổi
 
-- URL chính: `/home`, `/me/*`, `/hr/*`, `/admin/*`; `/work` và `/profile` là trang dùng chung. Tổng cộng 33 trang chính và hai trang dùng chung trong router; không tính alias/redirect thành chức năng riêng.
+- URL chính: `/home`, `/me/*`, `/hr/*`, `/admin/*`; `/work` và `/profile` là trang dùng chung. Kiểm kê ban đầu có 33 trang chính và hai trang dùng chung; bổ sung module Kế toán 21/10 tại [36](36-workflow-improvements.md), không tính alias thành chức năng riêng.
 - `/attendance/*` → `/me/*`, `/employees/*` → `/hr/*`, giữ query/hash và quyền; các URL ngắn cũ vẫn chuyển đến trang mới. Endpoint backend không đổi.
 - Xóa app-page-heading, portal và CSS tương ứng. Giữ KPI, bộ lọc, thao tác và tiêu đề hộp thoại; tên tab trình duyệt/nhãn main nhận diện trang. Menu mobile vẫn toàn màn hình, không có thanh kéo ngang.
 - Bổ sung ba liên kết Admin và dùng chung trang Nghỉ phép với HR. Thông báo nhấn trực tiếp phần chữ theo role, bỏ “Mở →”, đóng bằng Escape, vẫn giữ trạng thái đã đọc theo tài khoản trên thiết bị.
@@ -18,7 +18,7 @@ Nguồn chính: [router](../marixa_react/src/App.jsx), [registry quyền](../mar
 
 | Trang | Chức năng cơ bản hiện có | Kết luận / giới hạn |
 | --- | --- | --- |
-| `/home` | Thẻ module lọc theo role, vào chấm công, tới Admin, thông báo/tài khoản | Thẻ Kế toán thực tế mở lương cá nhân qua `/finance`; tên/mô tả nên sửa khi chủ dự án chọn. Thẻ Kích hoạt còn hiển thị cho người đã đăng nhập. |
+| `/home` | Thẻ module lọc theo role, vào chấm công, tới Admin, thông báo/tài khoản | Kế toán mở `/accounting`, chỉ hiện cho Admin/Accountant theo quyết định 21/10; lương cá nhân giữ ở Me. Thẻ Kích hoạt còn hiển thị cho người đã đăng nhập. |
 | `/me` | Vào/ra, ảnh/GPS theo quy định, công hôm nay/lịch tuần | Camera/GPS thiết bị thật chưa được nghiệm thu trong lượt này. |
 | `/me/attendance-history` | Lịch sử, gửi/xem OT, yêu cầu sửa công | Có luồng cơ bản; chính sách tự duyệt ở API giữ nguyên. |
 | `/me/statistics` | Công thường/OT, cảnh báo, lịch/biểu đồ theo kỳ | Không suy số giờ lương từ thời gian ở văn phòng. |
@@ -34,7 +34,7 @@ Nguồn chính: [router](../marixa_react/src/App.jsx), [registry quyền](../mar
 | `/hr` | Hồ sơ, tạo/sửa, tìm/lọc/phân trang, nhập/xuất, lưu trữ/khôi phục, dữ liệu liên quan | Có nền tảng cơ bản; thiếu màn hình quản lý danh mục dùng chung, xem mục 3. |
 | `/hr/attendance-history` | Đối soát, tạo/sửa công, duyệt, OT và sửa công | Giữ ràng buộc kỳ khóa và self-review của API. |
 | `/hr/statistics` | Tổng hợp, review kỳ, Admin khóa/mở, snapshot/history và XLSX | Giữ export theo snapshot/version. |
-| `/hr/work-schedule` | Xem lịch, gán ca hàng loạt, sửa gán ca/giờ ca | Tạo danh mục ca mới chưa có trang quản lý riêng. |
+| `/hr/work-schedule` | Xem lịch, gán ca hàng loạt, sửa gán ca/giờ ca | Có danh mục tạo/ngừng ca cho Admin/HR, gán 1+ người/31 ngày/bỏ Chủ nhật theo [36](36-workflow-improvements.md). |
 | `/hr/contracts` | Danh sách/tìm/lọc, tạo và xem hợp đồng | Chưa có thao tác sửa hợp đồng ngay trong trang danh sách; API đã có update. |
 | `/hr/leaves` | Duyệt/từ chối, hủy Approved đúng quyền, PDF, cấp/điều chỉnh/sổ phép | Dùng chung với Admin; không tự duyệt đơn nghỉ của mình. |
 | `/hr/reports` | Xem/tải/review/chuyển cấp trên/yêu cầu sửa/hoàn thành báo cáo | Không thay workflow nhiều bước bằng một nút duyệt giả. |
@@ -44,7 +44,7 @@ Nguồn chính: [router](../marixa_react/src/App.jsx), [registry quyền](../mar
 | `/admin` | Shortcut nghiệp vụ, biểu đồ chấm công | Có loading/lỗi/Thử lại và số liệu dạng chữ; lỗi không bị đổi thành dãy 0. |
 | `/admin/contracts` | Cùng bảng hợp đồng như HR trong layout Admin | Không phát triển hai workflow hợp đồng khác nhau. |
 | `/admin/leaves` | Cùng component và thao tác Nghỉ phép của HR | Sidebar Admin giữ đúng phân khu; đã bỏ bản UI trùng. |
-| `/admin/payroll` | Xem/lọc trạng thái bảng lương, CSV | Chưa có UI tạo/sửa bảng lương mặc dù API có CRUD; không gọi đây là engine tính lương tự động. |
+| `/accounting`, `/accounting/payroll` | Tổng quan, lọc nhân viên/kỳ/trạng thái, chi tiết và CSV | Admin/Accountant chỉ đọc. Các URL bảng lương cũ chuyển về đây; chưa có tự tính/duyệt/chi. |
 | `/admin/resigned` | Xem/tìm/xuất hồ sơ nghỉ/chấm dứt | Đã gồm hồ sơ lưu trữ và sửa vòng lặp fetch. |
 | `/admin/reports` | Cùng workflow báo cáo, quyền Admin | Không giảm quyền kiểm tra file. |
 | `/admin/work` | Thêm/sửa/xóa quá trình công tác, tìm/lọc/xuất | Chức năng cơ bản đã có theo source. |
@@ -54,7 +54,7 @@ Nguồn chính: [router](../marixa_react/src/App.jsx), [registry quyền](../mar
 | `/work` | Dự án/task, nhận/giao việc, trạng thái, bình luận, hiệu suất | Trang dùng chung, giữ quyền API. |
 | `/profile` | Xem hồ sơ, ảnh đại diện, tài khoản | Avatar hiện lưu localStorage; chưa đồng bộ ảnh giữa thiết bị. Không tự mở sửa hồ sơ HR. |
 
-Các bản component cũ không còn được router dùng không được tính thành trang hoạt động. `/hr/payroll`, `/finance` và `/admin/employees` là redirect, không phải màn hình mới. Đăng nhập/kích hoạt/thiếu quyền là các trang phiên được kiểm tra riêng theo [06](06-testing.md).
+Các bản component cũ không còn được router dùng không được tính thành trang hoạt động. `/hr/payroll`, `/finance`, `/admin/payroll` và `/admin/employees` là redirect, không phải màn hình mới; các alias bảng lương kiểm quyền Kế toán. Đăng nhập/kích hoạt/thiếu quyền là các trang phiên được kiểm tra riêng theo [06](06-testing.md).
 
 ## 3. Chức năng thực tế còn thiếu — PROPOSED
 
@@ -63,7 +63,7 @@ Các bản component cũ không còn được router dùng không được tính
 | P1 | Admin quản lý danh mục phòng ban, chức vụ, ca, loại phép, ngày lễ, ngân hàng | Các controller có CRUD nhưng chưa có trang tương ứng. Cần chốt role và quy tắc xóa/khóa danh mục đang được sử dụng; chưa tự thêm quyền/xóa dữ liệu. |
 | P1 | Hoàn thiện thao tác bảng lương thủ công và sửa hợp đồng | API có create/update; cần xác nhận trường được sửa theo trạng thái/ai thao tác trước khi làm UI ghi. Không tự xây công thức thuế/lương. |
 | P1 vận hành | Lưu bền báo cáo/bàn giao private và backup binary | Không phải chức năng cao siêu; gate dùng hồ sơ thật còn mở ở [18](18-release-checklist.md). Không chuyển file HR sang bucket ảnh public. |
-| P2 | Home hiển thị đúng tên module thực; thông báo bổ sung OT/sửa công cần xử lý | Đổi thẻ Kế toán hoặc bỏ thẻ trùng với Me, cân nhắc bỏ Kích hoạt khi đã đăng nhập. Chưa được chọn trong yêu cầu hiện tại. |
+| P2 | Home hiển thị đúng tên module thực; thông báo bổ sung OT/sửa công cần xử lý | Thẻ Kế toán đã tách khỏi Me theo quyết định 21/10; thông báo OT/sửa công và thẻ Kích hoạt vẫn là đề xuất chưa chọn. |
 | P2 | Đồng bộ avatar giữa thiết bị | Avatar server cần storage/quyền upload phù hợp, chưa triển khai. Retry chart đã làm trong đợt UI 19/10. |
 
 Không coi xem-only dữ liệu ngân hàng/bảo hiểm/hồ sơ cá nhân là lỗi thiếu CRUD của nhân viên. Quyền chỉnh dữ liệu nhạy cảm cần đúng vai trò nghiệp vụ.

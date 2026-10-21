@@ -23,6 +23,9 @@ const employeeAttendanceApi = {
     shiftsAll() {
         return getAllPages("/Shift/get-all");
     },
+    createShift(payload) {
+        return axiosClient.post("/Shift/create", payload);
+    },
     // Sửa thông tin ca (giờ làm, tên...): payload là object Shift đầy đủ + id
     updateShift(payload) {
         return axiosClient.put("/Shift/update", payload);

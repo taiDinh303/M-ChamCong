@@ -4,6 +4,8 @@
 
 ## 1. Danh tính và quyền
 
+Bổ sung 21/10: [36](36-workflow-improvements.md) là quyết định mới cho ca làm/Kế toán. Admin/HR tạo/ngừng nhận lịch mới; Manager chỉ giữ quyền sửa ca/xếp lịch hiện hành và bị kiểm phạm vi khi gán hàng loạt. Payroll get-all/get-by-id chỉ Admin/Accountant, ghi chỉ Admin; HR/Manager/Employee không đọc bảng lương toàn công ty qua API này. Không mở Accountant sang hồ sơ HR. Nhân viên tiếp tục đọc mức lương cá nhân qua endpoint EmployeeSalary có owner guard.
+
 Identity quản lý password/hash/role/securityStamp; JWT HMAC key riêng server. Password mới tối thiểu 10, có hoa/thường/số/ký tự đặc biệt. Sai mật khẩu 5 lần kích hoạt lockout; Auth có rate limit theo peer IP. JWT bị từ chối sau lockout, xóa user, đổi stamp/role hoặc tháo liên kết Employee. RememberMe lấy thời hạn cấu hình riêng, tối đa 7 ngày; không có refresh token. React lưu JWT trong sessionStorage nếu không Ghi nhớ; localStorage nếu có, không lưu mật khẩu. Đây vẫn là browser storage có rủi ro XSS; không coi route/menu như quyền server.
 
 | Dữ liệu/thao tác | Employee | Manager | HR | Admin |

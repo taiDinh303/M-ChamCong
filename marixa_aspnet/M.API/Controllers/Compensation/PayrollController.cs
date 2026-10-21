@@ -9,7 +9,7 @@ namespace M.API.Controllers.Compensation
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class PayrollController : BaseApiController
     {
         private readonly IPayrollService _payrollService;
@@ -22,6 +22,7 @@ namespace M.API.Controllers.Compensation
         /// <summary>
         /// Retrieves all payrolls with pagination
         /// </summary>
+        [Authorize(Roles = "Admin,Accountant")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll(
             int pageNumber = 1,
@@ -40,6 +41,7 @@ namespace M.API.Controllers.Compensation
         /// <summary>
         /// Retrieves payroll by ID
         /// </summary>
+        [Authorize(Roles = "Admin,Accountant")]
         [HttpGet("get-by-id/{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -56,6 +58,7 @@ namespace M.API.Controllers.Compensation
         /// <summary>
         /// Creates a new payroll
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreatePayrollModelView model)
@@ -72,6 +75,7 @@ namespace M.API.Controllers.Compensation
         /// <summary>
         /// Updates payroll information
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpPut("update")]
         public async Task<IActionResult> Update(
             [FromBody] UpdatePayrollModelView model)
@@ -88,6 +92,7 @@ namespace M.API.Controllers.Compensation
         /// <summary>
         /// Soft deletes payroll by ID
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -103,6 +108,7 @@ namespace M.API.Controllers.Compensation
         /// <summary>
         /// Permanently deletes payroll by ID
         /// </summary>
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

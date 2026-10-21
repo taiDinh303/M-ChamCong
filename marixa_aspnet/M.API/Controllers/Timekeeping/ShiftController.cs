@@ -42,7 +42,7 @@ namespace M.API.Controllers.Timekeeping
                 data: result));
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,HR")]
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateShiftModelView model)
         {

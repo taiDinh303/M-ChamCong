@@ -31,6 +31,8 @@ Frontend dùng [`apiConfig.js`](../marixa_react/src/services/api/apiConfig.js): 
 
 ## 2. Ranh giới mã nguồn
 
+Bổ sung 21/10: Kế toán `/accounting` và `/accounting/payroll` có shell dùng chung, API vẫn `/api/Payroll`; chỉ Admin/Accountant đọc, CRUD cũ chỉ Admin. Các alias và chi tiết ca làm tại [36](36-workflow-improvements.md). Không thay AttendanceRule bằng phân ca kế hoạch, không thêm provider/dịch vụ hoặc migration cho đợt này.
+
 Quyết định URL 19/10/2026: nhóm cá nhân dùng `/me/*`, nhân sự dùng `/hr/*`; Home `/home` và Admin `/admin/*` giữ nguyên. Các URL cũ `/attendance/*` và `/employees/*` chuyển hướng bằng replace sang prefix mới, giữ query/hash. Guard chuẩn hóa alias trước khi so quyền; đổi URL không mở quyền HR cho Employee. Đây là đổi route SPA, không đổi endpoint `/api/Attendance` hoặc `/api/Employee`.
 
 | Project / thư mục | Trách nhiệm |

@@ -136,14 +136,18 @@ namespace M.Services.Services.Timekeeping
             bool canManageAllEmployees,
             Guid? managerEmployeeId)
         {
-            if (model.EmployeeIds == null || model.EmployeeIds.Count < 2 ||
+            RequireStaff();
+            currentUser = CurrentUserName;
+            canManageAllEmployees = CurrentUser.IsInRole(RoleNames.Admin) || CurrentUser.IsInRole(RoleNames.HR);
+            managerEmployeeId = CurrentUser.EmployeeId;
+            if (model.EmployeeIds == null || model.EmployeeIds.Count < 1 ||
                 model.EmployeeIds.Any(id => id == Guid.Empty) ||
                 model.EmployeeIds.Distinct().Count() != model.EmployeeIds.Count)
             {
                 throw new ErrorException(
                     StatusCodes.Status400BadRequest,
                     "INVALID_EMPLOYEES",
-                    "Chọn ít nhất 2 nhân viên khác nhau.");
+                    "Chọn ít nhất 1 nhân viên, không chọn trùng.");
             }
 
             DateTime effectiveFrom = DateTime.SpecifyKind(model.EffectiveFrom.Date, DateTimeKind.Unspecified);
@@ -155,113 +159,108 @@ namespace M.Services.Services.Timekeeping
                     "INVALID_DATE_RANGE",
                     "Ngày kết thúc phải bằng hoặc sau ngày bắt đầu.");
             }
+            if ((effectiveTo - effectiveFrom).Days >= 31)
+                throw new ErrorException(400, "DATE_RANGE_TOO_LONG", "Mỗi lượt gán tối đa 31 ngày, tính cả ngày đầu và ngày cuối.");
 
-            IGenericRepository<Employee> employeeRepo = UnitOfWork.GetRepository<Employee>();
-            List<Employee> employees = await employeeRepo.Entities
-                .Where(x => model.EmployeeIds.Contains(x.Id) &&
-                    !x.DeletedTime.HasValue &&
-                    x.Status != EmployeeStatus.Resigned &&
-                    x.Status != EmployeeStatus.Terminated)
-                .Include(x => x.Department)
-                .ToListAsync();
-            if (employees.Count != model.EmployeeIds.Count)
+            return await InTransactionAsync(async () =>
             {
-                throw new ErrorException(
-                    StatusCodes.Status400BadRequest,
-                    "INVALID_EMPLOYEES",
-                    "Một hoặc nhiều nhân viên không tồn tại hoặc đã được lưu trữ.");
-            }
-
-            if (!canManageAllEmployees)
-            {
-                if (!managerEmployeeId.HasValue || employees.Any(x =>
-                    x.ManagerId != managerEmployeeId &&
-                    x.Department?.ManagerId != managerEmployeeId))
+                IGenericRepository<Employee> employeeRepo = UnitOfWork.GetRepository<Employee>();
+                List<Employee> employees = await employeeRepo.Entities
+                    .Where(x => model.EmployeeIds.Contains(x.Id) &&
+                        !x.DeletedTime.HasValue &&
+                        x.Status != EmployeeStatus.Resigned &&
+                        x.Status != EmployeeStatus.Terminated)
+                    .Include(x => x.Department)
+                    .ToListAsync();
+                if (employees.Count != model.EmployeeIds.Count)
                 {
                     throw new ErrorException(
-                        StatusCodes.Status403Forbidden,
-                        "EMPLOYEE_OUT_OF_MANAGER_SCOPE",
-                        "Bạn chỉ được xếp lịch cho nhân viên thuộc phạm vi phụ trách.");
+                        StatusCodes.Status400BadRequest,
+                        "INVALID_EMPLOYEES",
+                        "Một hoặc nhiều nhân viên không tồn tại hoặc đã được lưu trữ.");
                 }
-            }
 
-            IGenericRepository<Shift> shiftRepo = UnitOfWork.GetRepository<Shift>();
-            Shift? shift = await shiftRepo.Entities.FirstOrDefaultAsync(x =>
-                x.Id == model.ShiftId && x.IsActive && !x.DeletedTime.HasValue);
-            if (shift == null)
-            {
-                throw new ErrorException(
-                    StatusCodes.Status400BadRequest,
-                    "INVALID_SHIFT",
-                    "Ca làm không tồn tại hoặc đang ngừng hoạt động.");
-            }
-
-            IGenericRepository<EmployeeShift> assignmentRepo = UnitOfWork.GetRepository<EmployeeShift>();
-            List<EmployeeShift> overlapping = await assignmentRepo.Entities
-                .Where(x => model.EmployeeIds.Contains(x.EmployeeId) &&
-                    x.ShiftId == model.ShiftId &&
-                    !x.DeletedTime.HasValue &&
-                    x.EffectiveFrom <= effectiveTo &&
-                    (!x.EffectiveTo.HasValue || x.EffectiveTo.Value >= effectiveFrom))
-                .ToListAsync();
-
-            List<EmployeeShift> assignments = new();
-            List<string> alreadyAssignedNames = new();
-            foreach (Employee employee in employees)
-            {
-                int assignmentsBeforeEmployee = assignments.Count;
-                DateTime cursor = effectiveFrom;
-                List<EmployeeShift> employeeAssignments = overlapping
-                    .Where(x => x.EmployeeId == employee.Id)
-                    .OrderBy(x => x.EffectiveFrom)
-                    .ToList();
-
-                foreach (EmployeeShift existing in employeeAssignments)
+                if (!canManageAllEmployees)
                 {
-                    DateTime existingFrom = existing.EffectiveFrom.Date;
-                    DateTime existingTo = existing.EffectiveTo?.Date ?? DateTime.MaxValue.Date;
-                    if (existingTo < cursor) continue;
-                    if (existingFrom > effectiveTo) break;
-
-                    if (existingFrom > cursor)
+                    if (!managerEmployeeId.HasValue || employees.Any(x =>
+                        x.ManagerId != managerEmployeeId &&
+                        x.Department?.ManagerId != managerEmployeeId))
                     {
-                        assignments.Add(CreateAssignment(employee.Id, model.ShiftId, cursor,
-                            existingFrom.AddDays(-1), model.Note, currentUser));
+                        throw new ErrorException(
+                            StatusCodes.Status403Forbidden,
+                            "EMPLOYEE_OUT_OF_MANAGER_SCOPE",
+                            "Bạn chỉ được xếp lịch cho nhân viên thuộc phạm vi phụ trách.");
                     }
+                }
 
-                    if (existingTo >= effectiveTo)
+                IGenericRepository<Shift> shiftRepo = UnitOfWork.GetRepository<Shift>();
+                Shift? shift = await shiftRepo.Entities.FirstOrDefaultAsync(x =>
+                    x.Id == model.ShiftId && x.IsActive && !x.DeletedTime.HasValue);
+                if (shift == null)
+                {
+                    throw new ErrorException(
+                        StatusCodes.Status400BadRequest,
+                        "INVALID_SHIFT",
+                        "Ca làm không tồn tại hoặc đang ngừng hoạt động.");
+                }
+
+                List<DateTime> dates = new();
+                for (int offset = 0; offset <= (effectiveTo - effectiveFrom).Days; offset++)
+                {
+                    DateTime date = effectiveFrom.AddDays(offset);
+                    int weekdayBit = 1 << (((int)date.DayOfWeek + 6) % 7);
+                    if ((shift.WorkDays & weekdayBit) != 0 && (!model.SkipSunday || date.DayOfWeek != DayOfWeek.Sunday))
+                        dates.Add(date);
+                }
+                if (dates.Count == 0)
+                    throw new ErrorException(400, "NO_WORKING_DAYS", "Khoảng ngày đã chọn không có ngày làm việc phù hợp với ca và lựa chọn bỏ Chủ nhật.");
+
+                IGenericRepository<EmployeeShift> assignmentRepo = UnitOfWork.GetRepository<EmployeeShift>();
+                List<EmployeeShift> overlapping = await assignmentRepo.Entities
+                    .Where(x => model.EmployeeIds.Contains(x.EmployeeId) &&
+                        x.ShiftId == model.ShiftId &&
+                        !x.DeletedTime.HasValue &&
+                        x.EffectiveFrom <= effectiveTo &&
+                        (!x.EffectiveTo.HasValue || x.EffectiveTo.Value >= effectiveFrom))
+                    .ToListAsync();
+
+                List<EmployeeShift> assignments = new();
+                List<string> alreadyAssignedNames = new();
+                foreach (Employee employee in employees)
+                {
+                    int assignmentsBeforeEmployee = assignments.Count;
+                    List<EmployeeShift> employeeAssignments = overlapping
+                        .Where(x => x.EmployeeId == employee.Id)
+                        .OrderBy(x => x.EffectiveFrom)
+                        .ToList();
+
+                    foreach (DateTime date in dates)
                     {
-                        cursor = effectiveTo.AddDays(1);
-                        break;
+                        if (!employeeAssignments.Any(existing => existing.EffectiveFrom.Date <= date &&
+                            (!existing.EffectiveTo.HasValue || existing.EffectiveTo.Value.Date >= date)))
+                            assignments.Add(CreateAssignment(employee.Id, model.ShiftId, date,
+                                date, model.Note, currentUser));
                     }
-
-                    cursor = existingTo.AddDays(1);
+                    if (assignments.Count == assignmentsBeforeEmployee && employeeAssignments.Count > 0)
+                    {
+                        alreadyAssignedNames.Add(employee.FullName);
+                    }
                 }
 
-                if (cursor <= effectiveTo)
+                if (assignments.Count > 0)
                 {
-                    assignments.Add(CreateAssignment(employee.Id, model.ShiftId, cursor,
-                        effectiveTo, model.Note, currentUser));
+                    assignmentRepo.InsertRange(assignments);
+                    await UnitOfWork.SaveAsync();
                 }
-                if (assignments.Count == assignmentsBeforeEmployee && employeeAssignments.Count > 0)
+
+                return new CreateEmployeeShiftBulkResultModelView
                 {
-                    alreadyAssignedNames.Add(employee.FullName);
-                }
-            }
-
-            if (assignments.Count > 0)
-            {
-                assignmentRepo.InsertRange(assignments);
-                await UnitOfWork.SaveAsync();
-            }
-
-            return new CreateEmployeeShiftBulkResultModelView
-            {
-                CreatedAssignmentCount = assignments.Count,
-                AssignedEmployeeCount = assignments.Select(x => x.EmployeeId).Distinct().Count(),
-                AlreadyAssignedCount = alreadyAssignedNames.Count,
-                AlreadyAssignedEmployeeNames = alreadyAssignedNames
-            };
+                    CreatedAssignmentCount = assignments.Count,
+                    AssignedEmployeeCount = assignments.Select(x => x.EmployeeId).Distinct().Count(),
+                    AlreadyAssignedCount = alreadyAssignedNames.Count,
+                    AlreadyAssignedEmployeeNames = alreadyAssignedNames
+                };
+            });
         }
 
         private EmployeeShift CreateAssignment(

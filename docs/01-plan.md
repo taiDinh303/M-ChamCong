@@ -7,7 +7,7 @@
 | Chủ đề | Quyết định / nguồn |
 | --- | --- |
 | Stack/danh tính | ASP.NET Core 8 + Identity JWT + React/Vite; SQL Server local/PostgreSQL cloud. Không dùng Supabase Auth/khôi phục Next.js. Quyết định 12/10. |
-| Role | Admin/Manager/HR/Employee core; Accountant/Sale/Marketing đã seed, chưa có quyền quản lý chuyên biệt. |
+| Role | Admin/Manager/HR/Employee core; Accountant đọc bảng lương toàn công ty theo quyết định 21/10; Sale/Marketing chưa có quyền module riêng. |
 | Ảnh/GPS | Bằng chứng tùy chọn theo rule, ngoài văn phòng vẫn ghi nhận. Ảnh chấm công public marixa-photos. UI đọc yêu cầu ảnh/GPS theo rule; quyết định 12/10, hoàn thiện UI 17/10. |
 | Ca chung | Một AttendanceRule active, không version/ngày hiệu lực cho rule. Snapshot lưu bản rule đã dùng khi khóa, không thêm hệ version ca. |
 | Giờ công | Công thường trong khung ca trừ phần nghỉ thực sự giao với thời gian làm; tách OT; tính theo phút, trả decimal 2 chữ số. Chủ dự án đồng ý 17/10. |
@@ -26,6 +26,8 @@
 Không suy OT ngày lễ/hệ số lương, ca biên, phép qua năm hoặc retention từ tên entity. Các chính sách đó cần tiếp tục chốt trước mở rộng; rủi ro 34 ghi phạm vi chưa hoàn tất.
 
 ## 2. Việc tiếp theo
+
+Quyết định bổ sung 21/10/2026 sau khi tham khảo kiểm thử MARIXA: ưu tiên ca/chấm công; gán từ 1 người, tối đa 31 ngày/lượt, tùy chọn bỏ Chủ nhật. Admin/HR tạo và ngừng nhận lịch mới cho ca, giữ lịch sử. Module Kế toán riêng cho Admin/Accountant chỉ xem bảng lương, tìm/lọc kỳ/trạng thái/chi tiết; HR giữ nhập lương cơ bản, nhân viên xem mức lương cá nhân. Chưa làm tự tính/duyệt/chi lương. Phạm vi, API và tiêu chí tại [36](36-workflow-improvements.md); bằng chứng tại worklog.
 
 Quyết định UI 19/10/2026: chuyển prefix `/attendance` → `/me`, `/employees` → `/hr` cùng các trang con, giữ alias cho liên kết cũ; bỏ app-page-heading toàn ứng dụng, giữ KPI/thao tác. Chủ dự án đồng ý bổ sung menu Admin Nghỉ phép/Bảng lương/Nhân sự nghỉ việc (trang dùng chung với HR giữ cùng phong cách) và liên kết mở trang xử lý trong thông báo. Rà soát chức năng cơ bản tại [35](35-frontend-review.md); đề xuất chưa được chọn không tự triển khai, bỏ qua mở rộng quá phức tạp.
 

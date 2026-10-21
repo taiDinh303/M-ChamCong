@@ -10,7 +10,7 @@ const MODULES = [
     { to: "/hr", icon: "👥", title: "Nhân sự", detail: "Hồ sơ nhân viên", color: "pink" },
     { to: "/work", icon: "📋", title: "Công việc", detail: "Việc cần xử lý", color: "amber" },
     { to: "/admin", icon: "📊", title: "Dashboard", detail: "Điều hành hệ thống", color: "teal" },
-    { to: "/finance", icon: "💰", title: "Kế toán", detail: "Tài chính · Báo cáo", color: "lime" },
+    { to: "/accounting", icon: "💰", title: "Kế toán", detail: "Bảng lương · Tra cứu", color: "lime" },
 ];
 
 const HomePage = () => {

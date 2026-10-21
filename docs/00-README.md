@@ -39,6 +39,7 @@ Tài liệu mở rộng chọn lọc từ docs_mau ngày 17/10:
 | Migration/tích hợp/dung lượng | [23](23-data-migration.md), [24](24-integrations.md), [25](25-performance-capacity.md) |
 | Job/hướng dẫn/bàn giao/rủi ro | [27](27-offline-realtime-jobs.md), [30](30-user-guide.md), [31](31-handover.md), [34](34-risks-changes.md) |
 | Rà soát các trang frontend và chức năng cơ bản | [35](35-frontend-review.md) |
+| Luồng ca làm và module Kế toán được duyệt 21/10 | [36](36-workflow-improvements.md) |
 
 Các mẫu 26/28/29/32/33 không áp dụng, lý do trong PROJECT-INTAKE. Tài liệu CURRENT/TARGET không tự chứng nhận sản phẩm đã hoàn thành.
 
@@ -83,7 +84,7 @@ Trong worklog, ✅ chỉ có nghĩa **có code**, 🟡 là **một phần/có sa
 
 - Stack trong repo: **ASP.NET Core 8 Web API** (marixa_aspnet/M.API), EF Core + Identity/JWT; **React 19 + Vite 6 + React Router 7** (marixa_react).
 - DB: SQL Server local theo mặc định; PostgreSQL cloud. Supabase dùng PostgreSQL và Storage; không dùng Supabase Auth làm nguồn danh tính ứng dụng.
-- Role seed: Admin, Manager, HR, Employee, Accountant, Sale, Marketing. Ba role cuối chưa có phân quyền module chuyên biệt; vẫn có thể dùng chức năng dành cho user theo logic hiện tại.
+- Role seed: Admin, Manager, HR, Employee, Accountant, Sale, Marketing. Accountant đọc bảng lương trong module Kế toán từ 21/10; Sale/Marketing chưa có quyền module riêng.
 - Ảnh: bucket public marixa-photos khi có cấu hình Storage hợp lệ; thiếu cấu hình thì lưu đĩa wwwroot/uploads. Tên env chuẩn là SUPABASE__SERVICEKEY; adapter còn đọc alias SUPABASE__SERVICE_KEY để tương thích cấu hình cũ. Xem [08-deploy-detail.md](08-deploy-detail.md).
 - marixa_aspnet/web (Next.js) đã xóa khỏi checkout. SQL cũ trong marixa_aspnet/supabase/ không chứng minh chức năng tương ứng đã có trong API .NET.
 - Repo: [taiDinh303/M-ChamCong](https://github.com/taiDinh303/M-ChamCong).

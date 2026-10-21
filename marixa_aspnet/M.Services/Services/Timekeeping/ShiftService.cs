@@ -65,11 +65,14 @@ namespace M.Services.Services.Timekeeping
 
         public async Task CreateAsync(CreateShiftModelView model)
         {
+            RequireShiftEditor();
+            ValidateShift(model.Code, model.Name, model.StartTime, model.EndTime,
+                model.StandardHours, model.BreakMinutes, model.WorkDays);
             IGenericRepository<Shift> repo = UnitOfWork.GetRepository<Shift>();
 
             bool codeExists = await repo.Entities
                 .AnyAsync(x =>
-                    x.Code == model.Code &&
+                    x.Code == model.Code.Trim() &&
                     !x.DeletedTime.HasValue);
 
             if (codeExists)
@@ -95,6 +98,9 @@ namespace M.Services.Services.Timekeeping
 
         public async Task UpdateAsync(UpdateShiftModelView model)
         {
+            RequireStaff();
+            ValidateShift(model.Code, model.Name, model.StartTime, model.EndTime,
+                model.StandardHours, model.BreakMinutes, model.WorkDays);
             IGenericRepository<Shift> repo = UnitOfWork.GetRepository<Shift>();
 
             Shift shift = await repo.Entities
@@ -105,10 +111,12 @@ namespace M.Services.Services.Timekeeping
                     "NOT_FOUND",
                     "Shift not found");
 
+            if (shift.IsActive != model.IsActive) RequireShiftEditor();
+
             bool codeExists = await repo.Entities
                 .AnyAsync(x =>
                     x.Id != model.Id &&
-                    x.Code == model.Code &&
+                    x.Code == model.Code.Trim() &&
                     !x.DeletedTime.HasValue);
 
             if (codeExists)
@@ -123,11 +131,33 @@ namespace M.Services.Services.Timekeeping
                 CurrentUserName;
 
             model.ToEntity(shift);
+            shift.Code = model.Code.Trim();
+            shift.Name = model.Name.Trim();
             shift.LastUpdatedBy = currentUser;
             shift.LastUpdatedTime = UtcNow;
 
             await repo.UpdateAsync(shift);
             await UnitOfWork.SaveAsync();
+        }
+
+        private void RequireShiftEditor()
+        {
+            if (!CurrentUser.IsInRole(RoleNames.Admin) && !CurrentUser.IsInRole(RoleNames.HR))
+                throw new ErrorException(403, "FORBIDDEN", "Chỉ Admin và HR được tạo hoặc ngừng áp dụng ca.");
+        }
+
+        private static void ValidateShift(string code, string name, TimeOnly start, TimeOnly end,
+            int standardHours, int breakMinutes, int workDays)
+        {
+            if (string.IsNullOrWhiteSpace(code) || string.IsNullOrWhiteSpace(name))
+                throw new ErrorException(400, "INVALID_SHIFT", "Mã và tên ca không được để trống.");
+            if (start == end)
+                throw new ErrorException(400, "INVALID_SHIFT_TIME", "Giờ vào và giờ ra ca không được trùng nhau.");
+            int duration = (int)((end.ToTimeSpan() - start.ToTimeSpan()).TotalMinutes + 1440) % 1440;
+            if (standardHours is < 1 or > 24 || breakMinutes < 0 || breakMinutes >= duration)
+                throw new ErrorException(400, "INVALID_SHIFT_DURATION", "Giờ chuẩn hoặc thời gian nghỉ của ca không hợp lệ.");
+            if (workDays is < 1 or > 127)
+                throw new ErrorException(400, "INVALID_WORK_DAYS", "Chọn ít nhất một ngày làm việc hợp lệ trong tuần.");
         }
 
         public async Task SoftDeleteAsync(Guid id)

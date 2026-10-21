@@ -49,6 +49,18 @@ test("HR can reach HR routes without gaining admin role management", () => {
     assert.equal(canAccessModule("/admin/roles"), true);
 });
 
+test("only Admin and Accountant can open accounting; Accountant does not gain HR or admin access", () => {
+    for (const role of ["Admin", "Accountant", "HR", "Manager", "Employee"]) {
+        saveAuth(fixture([role]));
+        for (const path of ["/accounting", "/accounting/payroll", "/accounting/unknown", "/finance", "/hr/payroll"])
+            assert.equal(canAccessModule(path), ["Admin", "Accountant"].includes(role), `${role}: ${path}`);
+    }
+    saveAuth(fixture(["Accountant"]));
+    assert.equal(canAccessModule("/hr"), false);
+    assert.equal(canAccessModule("/admin/roles"), false);
+    assert.equal(canAccessModule("/me/salary"), true);
+});
+
 test("legacy and canonical HR URLs keep the same role boundary", () => {
     for (const roles of [["Employee"], ["HR"], ["Manager"], ["Admin"]]) {
         saveAuth(fixture(roles));

@@ -1,4 +1,6 @@
 const titles = {
+    "/accounting": "Kế toán",
+    "/accounting/payroll": "Bảng lương",
     "/hr": "Nhân sự",
     "/hr/attendance-history": "Duyệt công",
     "/hr/statistics": "Thống kê công",

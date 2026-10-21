@@ -12,7 +12,6 @@ import AdminBlockAccountPage from "./modules/admin/block-account/AdminBlockAccou
 import AdminRolesPage from "./modules/admin/roles/AdminRolesPage";
 import AdminLeaveAdminPage from "./modules/admin/leaves/pages/LeaveAdminPage";
 import {
-    PayrollAdminPage,
     ResignedPage as AdminResignedPage,
 } from "./modules/admin/leaves/pages/PayrollResignedReport";
 import AdminAccountIssuancePage from "./modules/admin/accounts/pages/AccountIssuancePage";
@@ -30,6 +29,7 @@ import RequireSession from "./components/common/RequireSession";
 import ConnectionStatus from "./components/common/ConnectionStatus.jsx";
 import LegacyModuleRedirect from "./components/common/LegacyModuleRedirect";
 import PromotionsPage from "./modules/hr/pages/PromotionsPage";
+import PayrollPage from "./modules/accounting/PayrollPage";
 
 // ===== Module "me": các trang nhân viên xem thông tin của mình =====
 import MeClockInPage from "./modules/me/pages/ClockInPage";
@@ -73,7 +73,9 @@ function App() {
                 <Route element={<RequireSession />}>
                 <Route path="/" element={<Navigate to="/home" replace />} />
                 <Route path="/home" element={<HomePage />} />
-                <Route path="/finance" element={<Navigate to="/me/salary" replace />} />
+                <Route path="/finance" element={guarded("/accounting", <Navigate to="/accounting" replace />)} />
+                <Route path="/accounting" element={guarded("/accounting", <PayrollPage overview />)} />
+                <Route path="/accounting/payroll" element={guarded("/accounting/payroll", <PayrollPage />)} />
 
                 {/* Khu quản trị */}
                 <Route
@@ -99,7 +101,7 @@ function App() {
                     )}
                 />
                 <Route path="/hr/contracts" element={guarded("/hr/contracts", <EmployeeContractPage />)} />
-                <Route path="/hr/payroll" element={<Navigate to="/hr" replace />} />
+                <Route path="/hr/payroll" element={guarded("/accounting/payroll", <Navigate to="/accounting/payroll" replace />)} />
                 <Route
                     path="/hr/leaves"
                     element={guarded(
@@ -139,7 +141,7 @@ function App() {
                     path="/admin/payroll"
                     element={guarded(
                         "/admin/payroll",
-                        <PayrollAdminPage />
+                        <Navigate to="/accounting/payroll" replace />
                     )}
                 />
                 <Route

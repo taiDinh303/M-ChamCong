@@ -24,7 +24,7 @@ namespace M.Services.Services.Compensation
         public async Task<BasePaginatedList<PayrollResponseModelView>> GetAllAsync(int pageNumber, int pageSize)
         {
             (pageNumber, pageSize) = Pagination.Normalize(pageNumber, pageSize);
-            RequireStaff();
+            RequirePayrollReader();
 
             IGenericRepository<Payroll> repo = UnitOfWork.GetRepository<Payroll>();
 
@@ -53,6 +53,7 @@ namespace M.Services.Services.Compensation
 
         public async Task<PayrollResponseModelView> GetByIdAsync(Guid id)
         {
+            RequirePayrollReader();
             IGenericRepository<Payroll> repo = UnitOfWork.GetRepository<Payroll>();
 
             Payroll entity = await repo.Entities
@@ -63,13 +64,13 @@ namespace M.Services.Services.Compensation
                     StatusCodes.Status404NotFound,
                     "NOT_FOUND",
                     "Payroll not found");
-            RequireEmployeeAccess(entity.EmployeeId);
 
             return entity.ToViewModel();
         }
 
         public async Task CreateAsync(CreatePayrollModelView model)
         {
+            RequireAdmin();
             RequireEmployeeAccess(model.EmployeeId);
 
             IGenericRepository<Payroll> repo = UnitOfWork.GetRepository<Payroll>();
@@ -118,6 +119,7 @@ namespace M.Services.Services.Compensation
 
         public async Task UpdateAsync(UpdatePayrollModelView model)
         {
+            RequireAdmin();
             IGenericRepository<Payroll> repo = UnitOfWork.GetRepository<Payroll>();
 
             Payroll entity = await repo.Entities
@@ -172,6 +174,7 @@ namespace M.Services.Services.Compensation
 
         public async Task SoftDeleteAsync(Guid id)
         {
+            RequireAdmin();
             IGenericRepository<Payroll> repo = UnitOfWork.GetRepository<Payroll>();
 
             Payroll entity = await repo.Entities
@@ -191,6 +194,7 @@ namespace M.Services.Services.Compensation
 
         public async Task DeleteAsync(Guid id)
         {
+            RequireAdmin();
             IGenericRepository<Payroll> repo = UnitOfWork.GetRepository<Payroll>();
 
             Payroll entity = await repo.Entities
@@ -202,6 +206,13 @@ namespace M.Services.Services.Compensation
 
             await repo.DeleteAsync(entity);
             await UnitOfWork.SaveAsync();
+        }
+
+        private void RequirePayrollReader()
+        {
+            if (!CurrentUser.IsAuthenticated ||
+                (!CurrentUser.IsInRole(RoleNames.Admin) && !CurrentUser.IsInRole(RoleNames.Accountant)))
+                throw new ErrorException(403, "FORBIDDEN", "Chỉ Admin và Kế toán được xem bảng lương toàn công ty.");
         }
     }
 }

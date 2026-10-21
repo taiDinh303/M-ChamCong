@@ -12,6 +12,8 @@ Bổ sung 18/10/2026: sau khi chẩn đoán thiếu schema, chủ dự án xác 
 
 ## 2. Áp dụng bộ mẫu
 
+Nhiệm vụ bổ sung 21/10/2026: học chức năng từ thao tác kiểm thử MARIXA, giữ giao diện project intern. Chủ dự án chọn ca/chấm công: gán 1+ người/31 ngày/bỏ Chủ nhật, Admin/HR tạo/ngừng ca. Đồng ý module Kế toán riêng với quyền Admin/Accountant chỉ đọc bảng lương, tìm/lọc/chi tiết; HR giữ lương cơ bản, nhân viên xem dữ liệu của mình. Không bao gồm engine tính lương, ký số, đa công ty, MFA, push/deploy hoặc ghi DB live. [36](36-workflow-improvements.md) ghi REQ/API/TC.
+
 Nhiệm vụ tiếp 18/10: chủ dự án yêu cầu dữ liệu giả thực tế để test, xác nhận **“Thêm vào Supabase hiện tại để test trên web”**. Phạm vi: thêm bộ DEMO có nhãn, giữ hồ sơ cũ; không tạo giả token/claim/đăng nhập ngoài/lịch sử migration chỉ để lấp bảng. Cho phép bổ sung tài khoản nhân viên DEMO; không mở thêm quyền HR/Admin. Đồng thời bỏ ngày Home, đưa tiêu đề lên header desktop/xuống dưới hàng logo mobile và thay sidebar ngang bằng nút mở menu. Không suy quyền đổi gói/volume hoặc tự merge/deploy từ quyền thêm dữ liệu.
 
 | File/nhóm mẫu | Áp dụng | Phạm vi/lý do |

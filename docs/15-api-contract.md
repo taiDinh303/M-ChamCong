@@ -1,5 +1,7 @@
 # 15 — Hợp đồng API Marixa
 
+> Bổ sung 21/10: quyền đọc Payroll, tạo/ngừng ca và payload skipSunday của EmployeeShift/create-bulk theo [36](36-workflow-improvements.md). Các route cũ được giữ; inventory runtime được sinh lại từ test.
+
 > Cập nhật 2026-10-17. CURRENT theo controllers, service guards và TestServer. API production: NOT VERIFIED.
 
 Nguồn route đầy đủ: [api-inventory](api-inventory.md), sinh từ EndpointDataSource trong ContractInventoryTests. Swagger của đúng phiên bản bổ sung DTO; danh mục role attributes phải đọc cùng [ma trận dữ liệu](16-security-privacy.md). Base của nghiệp vụ là /api; GUID trong URL/body không cấp quyền truy cập.
