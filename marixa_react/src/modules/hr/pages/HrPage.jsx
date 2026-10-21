@@ -1,6 +1,6 @@
 import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import useMobile from "../../../components/common/useMobile";
-import { Fragment, useState, useMemo, useEffect } from "react";
+import { Fragment, useState, useEffect } from "react";
 
 import HrAppLayout from "../layout/HrAppLayout";
 import employeeApi from "../api/employeeApi";
@@ -9,8 +9,6 @@ import useHrVerification from "../hooks/useHrVerification";
 import { HR_QUICK_FILTERS, useHrFilters } from "../hooks/useHrFilters";
 import HrFilterBar from "../components/HrFilterBar";
 import HrHero from "../HrHero";
-import { ChartCard, DonutChart } from "../../../components/charts/charts";
-import "../../../components/charts/charts.css";
 import HrEmployeeTable from "../components/HrEmployeeTable";
 import HrPagination from "../components/HrPagination";
 import HrAddForm from "../components/HrAddForm";
@@ -76,18 +74,6 @@ const HrPage = () => {
     };
 
     const list = filtered;
-
-    // Trạng thái nhân viên (cho biểu đồ donut)
-    const statusCounts = useMemo(() => {
-      const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-      data.employees.forEach((e) => { if (counts[e.status] != null) counts[e.status]++; });
-      data.archivedEmployees.forEach((e) => { if (counts[e.status] != null) counts[e.status]++; });
-      const labels = { 1: "Thử việc", 2: "Đang làm", 3: "Tạm nghỉ", 4: "Đã nghỉ việc", 5: "Chấm dứt HĐ" };
-      const colors = { 1: "#F3B928", 2: "#16a34a", 3: "#00BFD0", 4: "#8A99AB", 5: "#B42318" };
-      return Object.entries(counts)
-        .filter(([, v]) => v > 0)
-        .map(([k, v]) => ({ name: labels[k] || k, value: v, color: colors[k] }));
-    }, [data.employees, data.archivedEmployees]);
 
     const pageCount = Math.ceil(list.length / PAGE_SIZE);
     const safePage = Math.min(page, Math.max(1, pageCount));
@@ -429,12 +415,6 @@ const HrPage = () => {
                                 })(), tone: "warn" },
                             ]}
                         />
-                        <ChartCard
-                            title="Thành phần nhân viên theo trạng thái"
-                            empty={statusCounts.length === 0}
-                        >
-                            <DonutChart data={statusCounts} centerValue={data.employees.length + data.archivedEmployees.length} centerLabel="Tổng" />
-                        </ChartCard>
                         <HrFilterBar
                             departments={data.departments}
                             positions={data.positions}

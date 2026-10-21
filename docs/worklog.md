@@ -107,6 +107,13 @@
 
 ## 4. Log sự kiện (mới trên cùng)
 
+### 21/10/2026 — Codex: bỏ biểu đồ tròn khỏi Danh sách nhân sự
+
+- Theo yêu cầu tiếp của chủ dự án trong REQ-UI-09, `/hr` bỏ biểu đồ “Thành phần nhân viên theo trạng thái” vì trùng KPI và chiếm diện tích. Giữ bốn card thống kê, đặt tiếp ngay bộ lọc/bảng; xóa import biểu đồ/CSS và useMemo statusCounts không còn dùng. Các biểu đồ khác, dữ liệu, bộ lọc và quyền không đổi; cập nhật UI09 cùng source.
+- Kiểm chứng: **79 PASS / 0 FAIL / 0 SKIP**, lint max-warnings0 và Vite build **847 modules PASS**; cảnh báo chunk lớn cũ còn. Markdown48file/408link/13anchor và git diff --check PASS. Không thêm test mô phỏng việc xóa JSX, không chạy lại backend/provider suite cho thay đổi trình bày.
+- Browser bản dist với API/SQLite và tài khoản giả riêng: desktop1440 và mobile375 có đủ4KPI, không còn tiêu đề/khối biểu đồ, không tràn ngang; bộ lọc/bảng nằm ngay dưới KPI. Ảnh tại artifacts/palette-20261021/hr-list-without-chart.png (Gitignored). Không gọi owner DB/bucket; thiết bị thật và hosting sau push chưa xác minh.
+
+
 ### 21/10/2026 — Codex: bảng màu và thẻ thống kê dùng chung Me/HR/Admin
 
 - **Yêu cầu / CURRENT:** REQ-UI-09 / TC-UI-14; chủ dự án yêu cầu thêm màu và căn icon/chữ gọn trên mọi trang ba module. Thêm MetricCard thuần trình bày cho HrHero, PageBanner, Thống kê Me và KPI tài khoản/phân quyền; giữ giá trị, nhãn và luồng dữ liệu. Tám tone xanh dương/lá/đỏ/vàng/tím/hồng/ngọc/xám có nền nhạt, viền trái và icon tương ứng; chữ số tối, trạng thái có nhãn. Shell phân biệt Me xanh, HR tím, Admin xanh ngọc; áp điểm nhấn vào điều hướng, đầu bảng, biểu đồ và hướng dẫn cuối trang. Hồ sơ Me theo loại, mốc vào/ra ca và lối tắt Admin căn ngang icon/nội dung. Mobile icon34px, gap9px; desktop40px/10px. Thống kê Me một cột <=480px; bỏ các rule !important trùng của lưới Admin mobile để lối tắt có chiều rộng đọc được. Không thêm dependency hoặc sửa API/quyền/nghiệp vụ/cache.
