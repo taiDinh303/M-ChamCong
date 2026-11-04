@@ -525,3 +525,8 @@ Câu trả lời của chủ dự án → cập nhật tài liệu (chỉ sửa 
 ## 7. Quy tắc cập nhật worklog
 
 Theo [00-README.md §4](00-README.md#4-quy-tắc-cập-nhật-cho-codex-agnes-và-developer). Mỗi entry ghi ngày, thay đổi thật, phạm vi kiểm tra và bằng chứng. Sự kiện cũ giữ để truy vết; trạng thái hiện hành phải có ngày và căn cứ riêng. Đóng lỗi tài liệu không đồng nghĩa đóng lỗi ứng dụng hoặc nghiệm thu cloud.
+
+
+### 04/11/2026 — README portfolio và ảnh demo
+
+Theo yêu cầu chủ dự án, thêm README gốc theo cấu trúc WebAttendance, link demo, tám tài khoản mẫu được cho phép công khai, kịch bản trải nghiệm và thư viện ảnh desktop/mobile. Đối chiếu README với main `ad2a72a`; giữ module Kế toán chỉ đọc và các giới hạn hiện hành. UI login thành công cho 0900000001/3/5/6; API login HTTP 200 cho 0900000002/4/8; 0900000007 bị từ chối mật khẩu seed. Chỉ xem màn hình, không thử ghi nghiệp vụ, camera/GPS hoặc migration; không chạy lại build/test. Kiểm tra các đích liên kết nội bộ và ảnh tồn tại. Không đưa tệp phiên/token vào Git.
