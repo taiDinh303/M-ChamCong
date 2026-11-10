@@ -1,5 +1,21 @@
 # WORKLOG — Hệ thống chấm công Marixa
 
+## Rà soát bổ sung 10/11/2026 — pull và khoảng trống sản phẩm
+
+### Tiếp nhiệm vụ — ưu tiên, phỏng vấn và xuất bản docs
+
+- Chủ dự án yêu cầu cập nhật/push docs và phỏng vấn đủ để chuẩn bị code. Thêm [38](38-priorities-interview.md): sáu gói ưu tiên, năm danh mục, một workflow hợp đồng dùng chung; baseline API/entity, REQ/TC và phụ thuộc rõ. Cập nhật index, plan, intake và liên kết thứ tự mới từ 37.
+- Quyết định sau các vòng làm rõ: danh mục/hợp đồng trước; Admin/Manager ngang nhau chỉ trong hai phạm vi. HR mặc định CRU toàn phạm vi nhân sự/danh mục/hợp đồng, delete là lưu trữ/xóa mềm, không duyệt từng lần; không xóa vĩnh viễn/ngừng tài khoản. Bỏ đề xuất approval engine không còn phù hợp. Hợp đồng không đổi EmployeeId, sửa hồi tố có lý do/lịch sử, chồng lấn cảnh báo, không tái tính lương/công.
+- Cấp riêng hai scope, xin ngoài app và grant không expiry được đồng ý như cơ chế mở rộng; target/grant so với quyền role mặc định còn chốt trước module grant, không chặn PRI-01/02. Backup free tại D:\backup, máy thường online sau 19h; chưa lập lịch, chưa backup thật.
+- Validation của nhiệm vụ docs: kiểm bảy Markdown thay đổi bằng Node (H1, ký tự lỗi/control, số cột bảng, 122 đích link file) PASS, không kiểm URL ngoài/anchor; `git diff --check` PASS. Không chạy lại app tests vì không đổi code; evidence frontend 83/83, lint/build của cùng baseline ở mục dưới. Full Python verifier/backend/browser/live vẫn NOT RUN như đã ghi.
+- Phạm vi commit/push được chủ dự án cho phép: chỉ bảy docs của lượt rà soát/phỏng vấn, nhánh main, commit message `docs: prioritize catalog and contract work after owner interview`. Không gồm source/config/credential/NoteTatCa; không deploy/migrate. Kiểm remote HEAD bằng `git ls-remote origin refs/heads/main` sau push; kết quả publication được báo trong phản hồi nhiệm vụ.
+
+- Theo yêu cầu chủ dự án, `git pull --ff-only` trên main từ `614afdd` lên `0fb89ab`; working tree sạch trước pull. Rà source/docs và tham khảo NoteTatCa local HEAD `18d8708` có thay đổi chưa commit; không sửa repo tham khảo.
+- Thêm [37-gap-review](37-gap-review.md), nối từ index/kế hoạch; phân biệt gate vận hành với ý tưởng PROPOSED (inbox server, console job, concurrency, demo biệt lập, offline/nhắc việc). Sửa dòng danh mục ở 35: ca đã có tạo/ngừng ca theo 36. Không thay chính sách tính công/quyền hoặc triển khai tính năng mới.
+- Kiểm tra từ PowerShell tại repo/frontend: lần `npm test` đầu thiếu dependencies (69 pass, 2 file test không tải được module); sau `npm ci --no-audit --no-fund`, chạy lại **83/83 pass**, không skip; `npm run lint` PASS; `npm run build` PASS. Build cảnh báo bundle lớn: index khoảng 1.27 MB, exceljs khoảng 940 KB trước gzip; không tăng ngưỡng để che cảnh báo.
+- Kiểm UTF-8/ký tự điều khiển và đích file của 81 link trên bốn docs index/plan/35/37 bằng Node: PASS; không kiểm URL ngoài hoặc anchor bằng công cụ này. `git diff --check` PASS. Python không có trong PATH nên `scripts/verify_docs.py` NOT RUN; .NET SDK không có trong PATH nên backend build/test NOT RUN. Kiểm docs có phạm vi riêng, không thay full verifier.
+- Không chạy browser E2E, camera/GPS, test provider/live, deploy, migration hoặc ghi dữ liệu thật. Docs được sửa local; chưa commit/push trong nhiệm vụ này. Những thiếu sót ứng dụng và tiêu chí đóng ở 37 vẫn mở.
+
 > **Tác giả & chủ tài liệu: Đinh Văn Tài.** (File này được Tài tổ chức lại 12/10/2026 thành "bản đồ chức năng" theo trang & module để AI/Agnes và dev đọc nhanh.)
 
 Điểm vào tài liệu là [00-README.md](00-README.md). File này quản lý ma trận chức năng, bằng chứng thực hiện và lịch sử. Cập nhật hiện trạng: **21/10/2026** theo source và kiểm thử cô lập; nâng schema/đọc các trang cá nhân/HR live có mốc bằng chứng riêng bên dưới, production chưa nghiệm thu toàn bộ.

@@ -60,7 +60,7 @@ Các bản component cũ không còn được router dùng không được tính
 
 | Ưu tiên | Đề xuất | Giới hạn / trạng thái |
 | --- | --- | --- |
-| P1 | Admin quản lý danh mục phòng ban, chức vụ, ca, loại phép, ngày lễ, ngân hàng | Các controller có CRUD nhưng chưa có trang tương ứng. Cần chốt role và quy tắc xóa/khóa danh mục đang được sử dụng; chưa tự thêm quyền/xóa dữ liệu. |
+| P1 | Admin quản lý danh mục phòng ban, chức vụ, loại phép, ngày lễ, ngân hàng | Các controller có CRUD nhưng chưa có trang tương ứng. Ca đã có tạo/ngừng nhận lịch mới theo [36](36-workflow-improvements.md), không còn là khoảng trống toàn bộ. Cần chốt role và quy tắc xóa/khóa danh mục đang được sử dụng; chưa tự thêm quyền/xóa dữ liệu. |
 | P1 | Hoàn thiện thao tác bảng lương thủ công và sửa hợp đồng | API có create/update; cần xác nhận trường được sửa theo trạng thái/ai thao tác trước khi làm UI ghi. Không tự xây công thức thuế/lương. |
 | P1 vận hành | Lưu bền báo cáo/bàn giao private và backup binary | Không phải chức năng cao siêu; gate dùng hồ sơ thật còn mở ở [18](18-release-checklist.md). Không chuyển file HR sang bucket ảnh public. |
 | P2 | Home hiển thị đúng tên module thực; thông báo bổ sung OT/sửa công cần xử lý | Thẻ Kế toán đã tách khỏi Me theo quyết định 21/10; thông báo OT/sửa công và thẻ Kích hoạt vẫn là đề xuất chưa chọn. |

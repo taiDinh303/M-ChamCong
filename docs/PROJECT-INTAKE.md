@@ -58,6 +58,8 @@ YES là áp dụng tài liệu, không xác nhận chức năng đã hoàn thàn
 
 ## 4. Điều còn thiếu thông tin
 
+Nhiệm vụ 10/11/2026: pull, rà phần còn thiếu, tham khảo NoteTatCa, cập nhật và push docs; phỏng vấn để chuẩn bị code. Chủ dự án ưu tiên danh mục + hợp đồng, Manager ngang Admin chỉ trong hai phạm vi này. Vòng cuối cho HR mặc định CRU nhân sự/danh mục/hợp đồng không duyệt; delete là lưu trữ/xóa mềm, không gồm xóa vĩnh viễn/ngừng tài khoản. Sửa hợp đồng trực tiếp/hồi tố có lịch sử/lý do, giữ EmployeeId, chồng lấn cảnh báo không chặn; không tự tính lại lương/công. Grant riêng hai scope, xin ngoài app, không expiry là hướng mở rộng, không chặn quyền HR mặc định. Backup miễn phí ở `D:\backup`, máy thường online sau 19h. Quyết định/REQ/TC và câu hỏi cần chốt tại [38](38-priorities-interview.md). Đây là nhiệm vụ docs, chưa thực thi thay đổi quyền/schema, backup thật hay deployment.
+
 Nhiệm vụ 19/10/2026: đổi prefix URL cá nhân/HR thành `/me` và `/hr`, bỏ khối app-page-heading trên mọi trang, rà soát Home/HR/Me/Admin. Chủ dự án đồng ý thêm ba mục Admin đang thiếu trong sidebar và liên kết mở trang xử lý trong thông báo; trang Nghỉ phép Admin dùng cùng component HR với layout tương ứng. Đây là thay đổi frontend/tài liệu, không cấp quyền migrate/seed hoặc ghi dữ liệu thật để kiểm thử. Báo cáo hiện trạng và đề xuất cơ bản tại [35](35-frontend-review.md).
 
 Nhiệm vụ tiếp 19–20/10: chủ dự án đồng ý áp dụng bảng/thẻ phù hợp mobile, tự quyết định trang trí và thống nhất giao diện, hướng dẫn cuối HR/Admin; tham khảo cách tổ chức MISA AMIS có chọn lọc. Phạm vi giữ API, nghiệp vụ và dữ liệu thật; kiểm thử bằng fixture riêng, không tự thêm quyền ghi production hoặc rollout. Quy tắc hiện hành tại [09 §6](09-ui-design.md#6-responsive-tiếp-cận-và-nghiệm-thu).

@@ -22,10 +22,14 @@
 | Bố trí UI 17/10 | Chủ dự án đồng ý: kỳ/XLSX trong Thống kê; tab OT và sửa công trong Lịch sử; Admin sửa rule bằng hộp thoại; HR/Admin cấp/điều chỉnh phép thủ công trong Nghỉ phép. Giữ layout chính, chưa cấp phép tự động. |
 | Điều hướng và dữ liệu test 18/10 | Bỏ ngày Home; tiêu đề ở header desktop/dưới hàng logo mobile, menu module trên điện thoại mở toàn màn hình từ nút cạnh logo, không dùng sidebar ngang. Quyết định 19/10 bên dưới thay phần đưa tiêu đề lên header: bỏ app-page-heading. Home bỏ thanh phân mục và nút mục lục theo yêu cầu tiếp, dùng các thẻ module làm điều hướng chính. Thêm DEMO vào Supabase hiện tại theo xác nhận trực tiếp, giữ dữ liệu cũ; tài khoản DEMO chỉ Employee, không fake token/claim/migration history. |
 | Hạ tầng/Figma | Snapshot chỉ tại 00, một Supabase project; staging riêng chưa xác nhận. Figma Dev Mode copy, UI Kit trước, frames 375/1440. |
+| Danh mục/hợp đồng 10/11 | Chủ dự án ưu tiên danh mục + hợp đồng; Manager ngang Admin chỉ trong hai phạm vi này. Vòng phỏng vấn cuối: HR mặc định CRU toàn phạm vi nhân sự/danh mục/hợp đồng, delete là lưu trữ/xóa mềm, không duyệt từng lần; không xóa vĩnh viễn/ngừng tài khoản. Hợp đồng sửa trực tiếp/hồi tố có lịch sử/lý do, khóa EmployeeId, chồng lấn chỉ cảnh báo, không tái tính lương/công cũ. Grant riêng hai scope, xin ngoài app, không expiry là hướng mở rộng; không bắt HR xin grant cho quyền mặc định. Chi tiết [38](38-priorities-interview.md); chưa triển khai, không mở quản trị hệ thống cho Manager. |
+| Backup 10/11 | Dùng miễn phí, đích `D:\backup`, máy thường online từ 19h. Chưa chốt lịch/retention/key recovery/bản ngoài máy; không thay gate restore đầy đủ trước dùng hồ sơ thật. |
 
 Không suy OT ngày lễ/hệ số lương, ca biên, phép qua năm hoặc retention từ tên entity. Các chính sách đó cần tiếp tục chốt trước mở rộng; rủi ro 34 ghi phạm vi chưa hoàn tất.
 
 ## 2. Việc tiếp theo
+
+**Ưu tiên chủ dự án chốt ngày 10/11/2026: danh mục + hợp đồng trước.** Bảng điều phối/REQ/TC và phỏng vấn chuẩn bị code ở [38](38-priorities-interview.md), thay thứ tự đề xuất ban đầu trong [37](37-gap-review.md). Backup và nghiệm thu vẫn là gate trước dùng thật, có thể chuẩn bị song hành; tiếp đến mới xem xét inbox/console job. Demo/offline/nhắc việc còn PROPOSED. Các quyết định nghiệp vụ cũ giữ nguyên ngoài phạm vi thay đổi đã ghi ở §1.
 
 Quyết định bổ sung 21/10/2026 sau khi tham khảo kiểm thử MARIXA: ưu tiên ca/chấm công; gán từ 1 người, tối đa 31 ngày/lượt, tùy chọn bỏ Chủ nhật. Admin/HR tạo và ngừng nhận lịch mới cho ca, giữ lịch sử. Module Kế toán riêng cho Admin/Accountant chỉ xem bảng lương, tìm/lọc kỳ/trạng thái/chi tiết; HR giữ nhập lương cơ bản, nhân viên xem mức lương cá nhân. Chưa làm tự tính/duyệt/chi lương. Phạm vi, API và tiêu chí tại [36](36-workflow-improvements.md); bằng chứng tại worklog.
 

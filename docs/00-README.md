@@ -40,6 +40,8 @@ Tài liệu mở rộng chọn lọc từ docs_mau ngày 17/10:
 | Job/hướng dẫn/bàn giao/rủi ro | [27](27-offline-realtime-jobs.md), [30](30-user-guide.md), [31](31-handover.md), [34](34-risks-changes.md) |
 | Rà soát các trang frontend và chức năng cơ bản | [35](35-frontend-review.md) |
 | Luồng ca làm và module Kế toán được duyệt 21/10 | [36](36-workflow-improvements.md) |
+| Rà soát phần còn thiếu ngày 10/11 và ý tưởng chọn lọc từ NoteTatCa | [37](37-gap-review.md) |
+| Ưu tiên mới, REQ/TC danh mục–hợp đồng và phỏng vấn chuẩn bị code 10/11 | [38](38-priorities-interview.md) |
 
 Các mẫu 26/28/29/32/33 không áp dụng, lý do trong PROJECT-INTAKE. Tài liệu CURRENT/TARGET không tự chứng nhận sản phẩm đã hoàn thành.
 
