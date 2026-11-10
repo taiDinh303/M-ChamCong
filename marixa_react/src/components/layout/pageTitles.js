@@ -6,6 +6,7 @@ const titles = {
     "/hr/statistics": "Thống kê công",
     "/hr/work-schedule": "Lịch làm",
     "/hr/contracts": "Hợp đồng",
+    "/hr/catalogs": "Danh mục",
     "/hr/leaves": "Duyệt nghỉ phép",
     "/hr/handover": "Bàn giao nghỉ việc",
     "/hr/reports": "Báo cáo",

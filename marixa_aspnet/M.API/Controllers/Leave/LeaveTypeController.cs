@@ -10,6 +10,7 @@ namespace M.API.Controllers.Leave
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [M.API.Filters.WorkforceEdit]
     public class LeaveTypeController : BaseApiController
     {
         private readonly ILeaveTypeService _leaveTypeService;
@@ -45,7 +46,7 @@ namespace M.API.Controllers.Leave
             ));
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateLeaveTypeModelView model)
         {
@@ -58,7 +59,7 @@ namespace M.API.Controllers.Leave
             ));
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpPut("update")]
         public async Task<IActionResult> Update([FromBody] UpdateLeaveTypeModelView model)
         {
@@ -71,7 +72,7 @@ namespace M.API.Controllers.Leave
             ));
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -84,7 +85,7 @@ namespace M.API.Controllers.Leave
             ));
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -96,5 +97,8 @@ namespace M.API.Controllers.Leave
                 data: "Leave type permanently deleted successfully!"
             ));
         }
+        [Authorize(Roles = "Admin,Manager,HR")]
+        [HttpGet("get-archived")]
+        public async Task<IActionResult> GetArchived() => Success(await _leaveTypeService.GetArchivedAsync());
     }
 }

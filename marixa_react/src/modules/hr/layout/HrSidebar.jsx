@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 
 const HR_NAV_ITEMS = [
+    { to: "/hr/catalogs", label: "Danh mục" },
     { to: "/hr", label: "Danh sách" },
     { to: "/hr/attendance-history", label: "Duyệt công" },
     { to: "/hr/statistics", label: "Thống kê công" },

@@ -157,7 +157,7 @@ namespace M.API.Controllers.HumanResources
         /// <summary>
         /// Permanently deletes employee by ID
         /// </summary>
-        [Authorize(Roles = "Admin,Manager,HR")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

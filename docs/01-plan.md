@@ -29,6 +29,8 @@ Không suy OT ngày lễ/hệ số lương, ca biên, phép qua năm hoặc rete
 
 ## 2. Việc tiếp theo
 
+Tiến độ code local 10/11: danh mục/hợp đồng và Home/theme sáng–tối đã có cài đặt, test cô lập; phạm vi thực tế và phần còn mở ở [39](39-catalog-ui-implementation.md). Chưa đóng gate provider/mobile/browser E2E/production, chưa áp dụng grant động hoặc backup thật.
+
 **Ưu tiên chủ dự án chốt ngày 10/11/2026: danh mục + hợp đồng trước.** Bảng điều phối/REQ/TC và phỏng vấn chuẩn bị code ở [38](38-priorities-interview.md), thay thứ tự đề xuất ban đầu trong [37](37-gap-review.md). Backup và nghiệm thu vẫn là gate trước dùng thật, có thể chuẩn bị song hành; tiếp đến mới xem xét inbox/console job. Demo/offline/nhắc việc còn PROPOSED. Các quyết định nghiệp vụ cũ giữ nguyên ngoài phạm vi thay đổi đã ghi ở §1.
 
 Quyết định bổ sung 21/10/2026 sau khi tham khảo kiểm thử MARIXA: ưu tiên ca/chấm công; gán từ 1 người, tối đa 31 ngày/lượt, tùy chọn bỏ Chủ nhật. Admin/HR tạo và ngừng nhận lịch mới cho ca, giữ lịch sử. Module Kế toán riêng cho Admin/Accountant chỉ xem bảng lương, tìm/lọc kỳ/trạng thái/chi tiết; HR giữ nhập lương cơ bản, nhân viên xem mức lương cá nhân. Chưa làm tự tính/duyệt/chi lương. Phạm vi, API và tiêu chí tại [36](36-workflow-improvements.md); bằng chứng tại worklog.

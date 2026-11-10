@@ -200,5 +200,12 @@ namespace M.Services.Services.Compensation
             await repo.DeleteAsync(bank);
             await UnitOfWork.SaveAsync();
         }
+        public async Task<List<BankResponseModelView>> GetArchivedAsync()
+        {
+            RequireStaff();
+            var rows = await UnitOfWork.GetRepository<Bank>().Entities
+                .Where(x => x.DeletedTime.HasValue).OrderByDescending(x => x.DeletedTime).ToListAsync();
+            return rows.Select(x => x.ToViewModel()).ToList();
+        }
     }
 }

@@ -1,5 +1,19 @@
 # WORKLOG — Hệ thống chấm công Marixa
 
+## 10/11/2026 — Xuất bản thay đổi của phiên chat
+
+Chủ dự án yêu cầu push toàn bộ thay đổi của phiên này lên main. Phạm vi: năm danh mục, hợp đồng/history/concurrency/quyền, Home và theme sáng/tối, regression tests và docs/API inventory liên quan. Không gồm credential, fixture UI tạm, dữ liệu nhân viên hoặc cấu hình live. Evidence giữ nguyên: frontend 85 pass, lint/build đạt; backend portable 140 pass/2 skip, SQL Server/PostgreSQL và mobile/full browser E2E chưa nghiệm thu. Trước commit git diff --check đạt, remote main vẫn tại 380a1e2. Quyền push không bao gồm deploy hoặc migration live; xác minh remote HEAD sau push và báo commit trong phản hồi.
+
+## 10/11/2026 — Triển khai local danh mục/hợp đồng và UI hai theme
+
+Chủ dự án giao code chức năng đã chốt và tham khảo ERP/HR để thiết kế Home/các trang; chọn sáng+tối, nút mặt trời/mặt trăng và header/footer có màu. Cài đặt/contract/giới hạn tại [39](39-catalog-ui-implementation.md). Năm danh mục, bảng hợp đồng dùng chung, archive/history, server role, lý do/version, khóa EmployeeId, cảnh báo overlap; giữ công/lương/Identity. Dùng AuditLog và cột timestamp sẵn có, không áp migration live. Cập nhật API inventory từ runtime TestServer. Nguồn tham khảo Personio/BambooHR ghi ở 39.
+
+Tìm thấy SDK tại C:/Users/ADMIN/.dotnet/dotnet.exe, ngoài PATH (sửa giới hạn của lần rà docs trước). Build Release warnings-as-errors PASS. Fullsuite đầu: 126 pass, 5 fail, 3 skip/134; 4 fail do Windows EventLog/RPC, 1 fail SQL Server LocalDB thiếu runtime. Không giấu lần fail này. Chạy portable với env Logging__EventLog__LogLevel__Default=None, filter loại ProviderDatabaseTests do thiếu runtime/provider: lần cuối **140 pass, 0 fail, 2 PostgreSQL skip/142**. Có **10 test mới** cho role, create/read bốn danh mục còn lại, version cũ/history/archive và đổi chủ hợp đồng. Hai skip do chưa có fixture PostgreSQL; SQL Server/PG integration không được coi là đã pass.
+
+Frontend **85/85 pass**, lint PASS, build PASS; bundle index khoảng 1.27 MB, exceljs 940 KB trước gzip, cảnh báo vẫn giữ. Browser desktop đã quan sát Home tối, nút chuyển sáng, danh mục sáng và modal tối với adapter dữ liệu giả local; không test DB/live. Fixture review.html/review.jsx đã gỡ. Sau quan sát sửa token nền legacy và checkbox. Chưa kiểm viewport mobile, toàn bộ trang legacy hai theme hoặc browser→API end-to-end; chưa deploy/push code. Backup/grant/inbox/offline còn theo 38/39. Không có dữ liệu thật/credential trong fixture hoặc Git.
+
+Rà docs: Node kiểm 97 đích file của link local trong index/15/38/39/worklog PASS, không kiểm URL ngoài/anchor; git diff --check PASS. Full Python verifier chưa chạy. Dev server fixture đã dừng sau QA.
+
 ## Rà soát bổ sung 10/11/2026 — pull và khoảng trống sản phẩm
 
 ### Tiếp nhiệm vụ — ưu tiên, phỏng vấn và xuất bản docs

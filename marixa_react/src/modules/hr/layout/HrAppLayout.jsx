@@ -1,3 +1,4 @@
+import '../../me/attendance.css';
 import AuthenticatedShell from "../../../components/layout/AuthenticatedShell";
 import HrSidebar from "./HrSidebar";
 import "../employee.css";

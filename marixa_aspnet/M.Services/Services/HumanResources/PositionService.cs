@@ -182,5 +182,12 @@ namespace M.Services.Services.HumanResources
             await repo.DeleteAsync(position);
             await UnitOfWork.SaveAsync();
         }
+        public async Task<List<PositionResponseModelView>> GetArchivedAsync()
+        {
+            RequireStaff();
+            var rows = await UnitOfWork.GetRepository<Position>().Entities
+                .Where(x => x.DeletedTime.HasValue).OrderByDescending(x => x.DeletedTime).ToListAsync();
+            return rows.Select(x => x.ToViewModel()).ToList();
+        }
     }
 }

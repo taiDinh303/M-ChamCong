@@ -122,7 +122,7 @@ namespace M.Services.Services.HumanResources
             // Kiểm tra ContractNumber trùng
             bool contractNumberExists = await repo.Entities
                 .AnyAsync(x =>
-                    x.ContractNumber == model.ContractNumber &&
+                    x.ContractNumber == model.ContractNumber.Trim() &&
                     !x.DeletedTime.HasValue);
 
             if (contractNumberExists)
@@ -184,6 +184,8 @@ namespace M.Services.Services.HumanResources
                     "NOT_FOUND",
                     "Employee contract not found");
             RequireEmployeeAccess(contract.EmployeeId);
+            if (model.EmployeeId != contract.EmployeeId)
+                throw new ErrorException(400, "IMMUTABLE_EMPLOYEE", "Contract ownership cannot be changed.");
 
             // Kiểm tra Employee
             IGenericRepository<Employee> employeeRepo =
@@ -290,6 +292,13 @@ namespace M.Services.Services.HumanResources
 
             await repo.DeleteAsync(contract);
             await UnitOfWork.SaveAsync();
+        }
+        public async Task<List<EmployeeContractResponseModelView>> GetArchivedAsync()
+        {
+            RequireStaff();
+            var rows = await UnitOfWork.GetRepository<EmployeeContract>().Entities
+                .Where(x => x.DeletedTime.HasValue).Include(x => x.Employee).OrderByDescending(x => x.DeletedTime).ToListAsync();
+            return rows.Select(x => x.ToViewModel()).ToList();
         }
     }
 }

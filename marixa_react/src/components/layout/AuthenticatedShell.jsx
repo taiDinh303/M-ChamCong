@@ -68,5 +68,6 @@ export default function AuthenticatedShell({ storageKey, sidebar, children, prof
                     <div onClick={closeAfterNavigation}>{sidebar(false)}</div>
                 </div>
             </dialog>}
+            <footer className="erp-footer"><strong>MARIXA</strong><span>Không gian nhân sự · Kết nối con người</span></footer>
         </div>;
 }

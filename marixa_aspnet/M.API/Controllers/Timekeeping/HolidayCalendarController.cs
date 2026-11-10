@@ -10,6 +10,7 @@ namespace M.API.Controllers.Timekeeping
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [M.API.Filters.WorkforceEdit]
     public class HolidayCalendarController : BaseApiController
     {
         private readonly IHolidayCalendarService _holidayCalendarService;
@@ -44,7 +45,7 @@ namespace M.API.Controllers.Timekeeping
                 data: result));
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateHolidayCalendarModelView model)
@@ -57,7 +58,7 @@ namespace M.API.Controllers.Timekeeping
                 data: "Holiday created successfully!"));
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpPut("update")]
         public async Task<IActionResult> Update(
             [FromBody] UpdateHolidayCalendarModelView model)
@@ -70,7 +71,7 @@ namespace M.API.Controllers.Timekeeping
                 data: "Holiday updated successfully!"));
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -82,7 +83,7 @@ namespace M.API.Controllers.Timekeeping
                 data: "Holiday deleted successfully!"));
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -93,5 +94,8 @@ namespace M.API.Controllers.Timekeeping
                 code: ResponseCodeConstants.SUCCESS,
                 data: "Holiday permanently deleted successfully!"));
         }
+        [Authorize(Roles = "Admin,Manager,HR")]
+        [HttpGet("get-archived")]
+        public async Task<IActionResult> GetArchived() => Success(await _holidayCalendarService.GetArchivedAsync());
     }
 }

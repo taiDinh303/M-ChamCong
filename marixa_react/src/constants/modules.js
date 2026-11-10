@@ -46,6 +46,7 @@ export const MODULES = [
         ["work-schedule", "Lịch làm"],
         ["statistics", "Thống kê công"],
         ["contracts", "Hợp đồng"],
+        ["catalogs", "Danh mục"],
         ["leaves", "Duyệt nghỉ phép"],
         ["handover", "Bàn giao"],
         ["reports", "Báo cáo"],

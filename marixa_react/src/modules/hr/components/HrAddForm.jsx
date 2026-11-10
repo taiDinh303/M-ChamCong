@@ -163,7 +163,7 @@ const HR_ADDForm = ({
             const hasContract = Boolean(form.contractNumber || form.contractStart || form.contractEnd || related.contract);
             if (hasContract && form.contractNumber && form.contractStart) {
                 const payload = { employeeId, contractNumber: form.contractNumber, contractType: Number(form.contractType), startDate: form.contractStart, endDate: form.contractEnd || null, note: form.contractNote || null };
-                await (related.contract ? d.updateContract({ ...payload, id: related.contract.id }) : d.createContract(payload));
+                await (related.contract ? d.updateContract({ ...payload, id: related.contract.id, lastUpdatedTime: related.contract.lastUpdatedTime }) : d.createContract(payload));
             }
 
             const hasSalary = [form.basicSalary, form.dailyRate, form.positionAllowance, form.otherAllowance, form.bonus, form.salaryInsuranceBase].some((value) => value !== "") || related.salary;

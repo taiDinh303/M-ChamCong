@@ -178,7 +178,7 @@ namespace M.Services.Services.HumanResources
 
                 bool departmentExists = await departmentRepo.Entities
                     .AnyAsync(x =>
-                        x.Id == model.DepartmentId.Value &&
+                        x.Id == model.DepartmentId.Value && x.IsActive &&
                         !x.DeletedTime.HasValue);
 
                 if (!departmentExists)
@@ -198,7 +198,7 @@ namespace M.Services.Services.HumanResources
 
                 bool positionExists = await positionRepo.Entities
                     .AnyAsync(x =>
-                        x.Id == model.PositionId.Value &&
+                        x.Id == model.PositionId.Value && x.IsActive &&
                         !x.DeletedTime.HasValue);
 
                 if (!positionExists)
@@ -313,14 +313,14 @@ namespace M.Services.Services.HumanResources
             }
 
             // Kiểm tra Department
-            if (model.DepartmentId.HasValue)
+            if (model.DepartmentId.HasValue && model.DepartmentId != employee.DepartmentId)
             {
                 IGenericRepository<Department> departmentRepo =
                     UnitOfWork.GetRepository<Department>();
 
                 bool departmentExists = await departmentRepo.Entities
                     .AnyAsync(x =>
-                        x.Id == model.DepartmentId.Value &&
+                        x.Id == model.DepartmentId.Value && x.IsActive &&
                         !x.DeletedTime.HasValue);
 
                 if (!departmentExists)
@@ -333,14 +333,14 @@ namespace M.Services.Services.HumanResources
             }
 
             // Kiểm tra Position
-            if (model.PositionId.HasValue)
+            if (model.PositionId.HasValue && model.PositionId != employee.PositionId)
             {
                 IGenericRepository<Position> positionRepo =
                     UnitOfWork.GetRepository<Position>();
 
                 bool positionExists = await positionRepo.Entities
                     .AnyAsync(x =>
-                        x.Id == model.PositionId.Value &&
+                        x.Id == model.PositionId.Value && x.IsActive &&
                         !x.DeletedTime.HasValue);
 
                 if (!positionExists)

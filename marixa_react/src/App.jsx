@@ -1,3 +1,4 @@
+import CatalogPage from './modules/catalog/CatalogPage';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./modules/login/pages/LoginPage";
 import ActivatePage from "./modules/activate/pages/ActivatePage";
@@ -101,6 +102,7 @@ function App() {
                     )}
                 />
                 <Route path="/hr/contracts" element={guarded("/hr/contracts", <EmployeeContractPage />)} />
+                <Route path="/hr/catalogs" element={guarded("/hr/catalogs", <CatalogPage />)} />
                 <Route path="/hr/payroll" element={guarded("/accounting/payroll", <Navigate to="/accounting/payroll" replace />)} />
                 <Route
                     path="/hr/leaves"

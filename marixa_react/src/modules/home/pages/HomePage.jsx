@@ -6,7 +6,7 @@ import "../home.css";
 
 const MODULES = [
     { to: "/me", icon: "🕗", title: "Chấm công", detail: "Vào ca · Ra ca", color: "blue" },
-    { to: "/kich-hoat", icon: "🔑", title: "Kích hoạt", detail: "Đặt mật khẩu", color: "purple" },
+    { to: "/hr/catalogs", icon: "▦", title: "Danh mục", detail: "Dữ liệu nền tảng", color: "purple" },
     { to: "/hr", icon: "👥", title: "Nhân sự", detail: "Hồ sơ nhân viên", color: "pink" },
     { to: "/work", icon: "📋", title: "Công việc", detail: "Việc cần xử lý", color: "amber" },
     { to: "/admin", icon: "📊", title: "Dashboard", detail: "Điều hành hệ thống", color: "teal" },
@@ -29,7 +29,7 @@ const HomePage = () => {
                 <section className="home-hero">
                     <div className="home-hero__copy">
                         <span className="home-eyebrow">MARIXA · PEOPLE OPERATIONS</span>
-                        <h1>Mọi công việc<br />trong một không gian.</h1>
+                        <h1>Con người là trung tâm.<br />Công việc thật rõ ràng.</h1>
                         <p>Chọn module để chấm công, quản lý hồ sơ và theo dõi các nghiệp vụ nhân sự hằng ngày.</p>
                         <div className="home-hero__actions">
                             <Link className="home-cta" to="/me">
@@ -48,7 +48,7 @@ const HomePage = () => {
                 <section className="home-launcher" aria-labelledby="home-title">
                     <div className="home-heading">
                         <div>
-                            <span className="home-eyebrow">BUSINESS LAUNCHER</span>
+                            <span className="home-eyebrow">WORKSPACE</span>
                             <h2 id="home-title">Không gian làm việc</h2>
                         </div>
                         <p>{visible.length} module khả dụng</p>

@@ -296,6 +296,12 @@ public DbSet<AuditLog> AuditLogs { get; set; }
             // =========================================================
             // AUDIT LOG (append-only trail)
             // =========================================================
+            builder.Entity<Department>().Property(x => x.LastUpdatedTime).IsConcurrencyToken();
+            builder.Entity<Position>().Property(x => x.LastUpdatedTime).IsConcurrencyToken();
+            builder.Entity<LeaveType>().Property(x => x.LastUpdatedTime).IsConcurrencyToken();
+            builder.Entity<HolidayCalendar>().Property(x => x.LastUpdatedTime).IsConcurrencyToken();
+            builder.Entity<Bank>().Property(x => x.LastUpdatedTime).IsConcurrencyToken();
+            builder.Entity<EmployeeContract>().Property(x => x.LastUpdatedTime).IsConcurrencyToken();
             builder.Entity<AuditLog>()
                 .HasOne(x => x.ActorEmployee)
                 .WithMany()

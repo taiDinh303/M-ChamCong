@@ -4,6 +4,8 @@
 
 ## 1. Quyết định đã xác nhận
 
+Tiếp nhiệm vụ cùng ngày: chủ dự án giao code/thiết kế Home và các trang, chọn cả sáng/tối, nút mặt trời/mặt trăng và header/footer có màu. Hiện trạng local/giới hạn tại [39](39-catalog-ui-implementation.md); nhãn chưa triển khai trong phỏng vấn ban đầu không thay evidence mới theo từng phần ở 39.
+
 | ID | Quyết định của chủ dự án ngày 10/11 | Giới hạn |
 | --- | --- | --- |
 | DEC-1110-01 | Ưu tiên danh mục + hợp đồng | Thay thứ tự đề xuất ở 37; backup vẫn là gate trước dùng hồ sơ thật, không phải điều kiện chặn viết code UI trên fixture |

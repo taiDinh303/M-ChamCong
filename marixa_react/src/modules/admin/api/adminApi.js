@@ -94,7 +94,7 @@ const adminApi = {
         return axiosClient.post("/Attendance/approve", payload);
     },
     createContract(payload) {
-        return axiosClient.post("/EmployeeContract/create", payload);
+        return axiosClient.post("/EmployeeContract/create", payload, {headers: {"X-Change-Reason": encodeURIComponent(payload.changeReason || "Tạo hợp đồng từ hồ sơ nhân sự")}});
     },
     updateLeave(payload) {
         return axiosClient.put("/LeaveRequest/update", payload);

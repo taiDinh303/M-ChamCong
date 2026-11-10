@@ -5,6 +5,8 @@ namespace M.Contract.Services.Interface
 {
     public interface ILeaveTypeService
     {
+        Task<List<LeaveTypeResponseModelView>> GetArchivedAsync();
+
         Task<BasePaginatedList<LeaveTypeResponseModelView>> GetAllAsync(
             int pageNumber,
             int pageSize);

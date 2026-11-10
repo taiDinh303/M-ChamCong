@@ -97,10 +97,10 @@ const employeeApi = {
         return axiosClient.post("/Attendance/approve", payload);
     },
     createContract(payload) {
-        return axiosClient.post("/EmployeeContract/create", payload);
+        return axiosClient.post("/EmployeeContract/create", payload, {headers: {"X-Change-Reason": encodeURIComponent(payload.changeReason || "Tạo hợp đồng từ hồ sơ nhân sự")}});
     },
     updateContract(payload) {
-        return axiosClient.put("/EmployeeContract/update", payload);
+        return axiosClient.put("/EmployeeContract/update", payload, {headers: {"X-Change-Reason": encodeURIComponent(payload.changeReason || "Cập nhật hợp đồng từ hồ sơ nhân sự"), "X-Record-Version": payload.lastUpdatedTime || ""}});
     },
     updateLeave(payload) {
         return axiosClient.put("/LeaveRequest/update", payload);

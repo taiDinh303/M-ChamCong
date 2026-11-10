@@ -5,6 +5,8 @@ namespace M.Contract.Services.Interface
 {
     public interface IPositionService
     {
+        Task<List<PositionResponseModelView>> GetArchivedAsync();
+
         Task<BasePaginatedList<PositionResponseModelView>> GetAllAsync(
             int pageNumber,
             int pageSize);

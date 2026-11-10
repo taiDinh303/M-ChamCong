@@ -10,6 +10,7 @@ namespace M.API.Controllers.HumanResources
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [M.API.Filters.WorkforceEdit]
     public class EmployeeContractController : BaseApiController
     {
         private readonly IEmployeeContractService _employeeContractService;
@@ -77,7 +78,7 @@ namespace M.API.Controllers.HumanResources
         }
 
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateEmployeeContractModelView model)
@@ -94,7 +95,7 @@ namespace M.API.Controllers.HumanResources
         /// <summary>
         /// Updates employee contract information
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpPut("update")]
         public async Task<IActionResult> Update(
             [FromBody] UpdateEmployeeContractModelView model)
@@ -111,7 +112,7 @@ namespace M.API.Controllers.HumanResources
         /// <summary>
         /// Soft deletes employee contract by ID
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -127,7 +128,7 @@ namespace M.API.Controllers.HumanResources
         /// <summary>
         /// Permanently deletes employee contract by ID
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -139,5 +140,8 @@ namespace M.API.Controllers.HumanResources
                 data: "Employee contract permanently deleted successfully!"
             ));
         }
+        [Authorize(Roles = "Admin,Manager,HR")]
+        [HttpGet("get-archived")]
+        public async Task<IActionResult> GetArchived() => Success(await _employeeContractService.GetArchivedAsync());
     }
 }

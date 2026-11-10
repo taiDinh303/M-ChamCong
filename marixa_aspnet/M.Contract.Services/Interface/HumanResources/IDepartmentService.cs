@@ -5,6 +5,8 @@ namespace M.Contract.Services.Interface
 {
     public interface IDepartmentService
     {
+        Task<List<DepartmentResponseModelView>> GetArchivedAsync();
+
         Task<BasePaginatedList<DepartmentResponseModelView>> GetAllAsync(
             int pageNumber,
             int pageSize);

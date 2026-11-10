@@ -11,6 +11,7 @@ public partial class DatabaseContext
     {
         if (Database.IsNpgsql()) NormalizeDateTimePropertiesToUtc();
         EnsureHistoryIsAppendOnly();
+        CaptureWorkforceHistory();
         var keys = AffectedMonths();
         if (keys.Count == 0) return base.SaveChanges(accept);
         using var transaction = Database.CurrentTransaction == null
@@ -33,6 +34,7 @@ public partial class DatabaseContext
     {
         if (Database.IsNpgsql()) NormalizeDateTimePropertiesToUtc();
         EnsureHistoryIsAppendOnly();
+        CaptureWorkforceHistory();
         var keys = AffectedMonths();
         if (keys.Count == 0) return await base.SaveChangesAsync(accept, cancellationToken);
         await using var transaction = Database.CurrentTransaction == null

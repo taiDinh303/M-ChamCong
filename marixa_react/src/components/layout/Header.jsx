@@ -1,3 +1,4 @@
+import ThemeToggle from './ThemeToggle';
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { clearAuth, getAuth } from "../../services/auth/auth";
@@ -120,6 +121,7 @@ const Header = ({ profile, onToggleSidebar, toggleRef, sidebarExpanded, sidebarC
             </div>
 
             <div className="app-header-user" ref={userRef}>
+                <ThemeToggle />
                 <NotificationBell />
                 {minimal && <LanguagePicker flagOnly />}
                 <button

@@ -182,5 +182,12 @@ namespace M.Services.Services.Leave
             await repo.DeleteAsync(leaveType);
             await UnitOfWork.SaveAsync();
         }
+        public async Task<List<LeaveTypeResponseModelView>> GetArchivedAsync()
+        {
+            RequireStaff();
+            var rows = await UnitOfWork.GetRepository<LeaveType>().Entities
+                .Where(x => x.DeletedTime.HasValue).OrderByDescending(x => x.DeletedTime).ToListAsync();
+            return rows.Select(x => x.ToViewModel()).ToList();
+        }
     }
 }

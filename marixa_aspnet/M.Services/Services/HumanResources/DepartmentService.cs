@@ -323,5 +323,12 @@ namespace M.Services.Services.HumanResources
 
             await UnitOfWork.SaveAsync();
         }
+        public async Task<List<DepartmentResponseModelView>> GetArchivedAsync()
+        {
+            RequireStaff();
+            var rows = await UnitOfWork.GetRepository<Department>().Entities
+                .Where(x => x.DeletedTime.HasValue).OrderByDescending(x => x.DeletedTime).ToListAsync();
+            return rows.Select(x => x.ToViewModel()).ToList();
+        }
     }
 }

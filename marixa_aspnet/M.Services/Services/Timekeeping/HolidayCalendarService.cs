@@ -152,5 +152,12 @@ namespace M.Services.Services.Timekeeping
             await repo.DeleteAsync(entity);
             await UnitOfWork.SaveAsync();
         }
+        public async Task<List<HolidayCalendarResponseModelView>> GetArchivedAsync()
+        {
+            RequireStaff();
+            var rows = await UnitOfWork.GetRepository<HolidayCalendar>().Entities
+                .Where(x => x.DeletedTime.HasValue).OrderByDescending(x => x.DeletedTime).ToListAsync();
+            return rows.Select(x => x.ToViewModel()).ToList();
+        }
     }
 }

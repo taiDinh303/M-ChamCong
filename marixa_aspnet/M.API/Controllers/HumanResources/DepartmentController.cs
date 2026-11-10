@@ -10,6 +10,7 @@ namespace M.API.Controllers.HumanResources
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [M.API.Filters.WorkforceEdit]
     public class DepartmentController : BaseApiController
     {
         private readonly IDepartmentService _departmentService;
@@ -58,7 +59,7 @@ namespace M.API.Controllers.HumanResources
         /// <summary>
         /// Creates a new department
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateDepartmentModelView model)
@@ -75,7 +76,7 @@ namespace M.API.Controllers.HumanResources
         /// <summary>
         /// Updates department information
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpPut("update")]
         public async Task<IActionResult> Update(
             [FromBody] UpdateDepartmentModelView model)
@@ -92,7 +93,7 @@ namespace M.API.Controllers.HumanResources
         /// <summary>
         /// Soft deletes department by ID
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -108,7 +109,7 @@ namespace M.API.Controllers.HumanResources
         /// <summary>
         /// Permanently deletes department by ID
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -120,5 +121,8 @@ namespace M.API.Controllers.HumanResources
                 data: "Department permanently deleted successfully!"
             ));
         }
+        [Authorize(Roles = "Admin,Manager,HR")]
+        [HttpGet("get-archived")]
+        public async Task<IActionResult> GetArchived() => Success(await _departmentService.GetArchivedAsync());
     }
 }

@@ -10,6 +10,7 @@ namespace M.API.Controllers.Compensation
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [M.API.Filters.WorkforceEdit]
     public class BankController : BaseApiController
     {
         private readonly IBankService _bankService;
@@ -56,7 +57,7 @@ namespace M.API.Controllers.Compensation
         /// <summary>
         /// Creates a new bank
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             [FromBody] CreateBankModelView model)
@@ -73,7 +74,7 @@ namespace M.API.Controllers.Compensation
         /// <summary>
         /// Updates bank information
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpPut("update")]
         public async Task<IActionResult> Update(
             [FromBody] UpdateBankModelView model)
@@ -90,7 +91,7 @@ namespace M.API.Controllers.Compensation
         /// <summary>
         /// Soft deletes bank by ID
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
@@ -106,7 +107,7 @@ namespace M.API.Controllers.Compensation
         /// <summary>
         /// Permanently deletes bank by ID
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager,HR")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -118,5 +119,8 @@ namespace M.API.Controllers.Compensation
                 data: "Bank permanently deleted successfully!"
             ));
         }
+        [Authorize(Roles = "Admin,Manager,HR")]
+        [HttpGet("get-archived")]
+        public async Task<IActionResult> GetArchived() => Success(await _bankService.GetArchivedAsync());
     }
 }

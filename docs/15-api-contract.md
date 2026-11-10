@@ -1,5 +1,7 @@
 # 15 — Hợp đồng API Marixa
 
+> 10/11 local: sáu nhóm danh mục/hợp đồng thêm header lý do/version, quyền Admin/Manager/HR và get-archived; chi tiết mã lỗi/transaction tại [39](39-catalog-ui-implementation.md). Inventory TestServer đã sinh lại; chưa chứng minh production có các thay đổi này.
+
 > Bổ sung 21/10: quyền đọc Payroll, tạo/ngừng ca và payload skipSunday của EmployeeShift/create-bulk theo [36](36-workflow-improvements.md). Các route cũ được giữ; inventory runtime được sinh lại từ test.
 
 > Cập nhật 2026-10-17. CURRENT theo controllers, service guards và TestServer. API production: NOT VERIFIED.

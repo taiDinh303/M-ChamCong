@@ -126,7 +126,7 @@ namespace M.Services.Services.HumanResources
 
             bool bankExists = await bankRepo.Entities
                 .AnyAsync(x =>
-                    x.Id == model.BankId &&
+                    x.Id == model.BankId && x.IsActive &&
                     !x.DeletedTime.HasValue);
 
             if (!bankExists)
@@ -225,9 +225,9 @@ namespace M.Services.Services.HumanResources
             IGenericRepository<Bank> bankRepo =
                 UnitOfWork.GetRepository<Bank>();
 
-            bool bankExists = await bankRepo.Entities
+            bool bankExists = model.BankId == account.BankId || await bankRepo.Entities
                 .AnyAsync(x =>
-                    x.Id == model.BankId &&
+                    x.Id == model.BankId && x.IsActive &&
                     !x.DeletedTime.HasValue);
 
             if (!bankExists)

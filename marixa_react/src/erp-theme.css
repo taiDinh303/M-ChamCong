@@ -1,0 +1,207 @@
+:root {
+  --th-header-from: #123e43;
+  --th-header-mid: #123e43;
+  --th-header-to: #123e43;
+  --th-header-text: #fff;
+  --th-header-sub: #cee3df;
+  --th-header-border: #28565b;
+  --th-header-surface: #28565b;
+  --th-header-surface-hover: #38666b;
+  --th-bg: #f4f5f2;
+  --th-surface: #fff;
+  --th-surface-alt: #f5f7f4;
+  --th-text: #1b3034;
+  --th-text-secondary: #57696d;
+}
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  background: #ffffff12;
+  border: 1px solid #ffffff35;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.erp-footer,
+.home-footer {
+  background: #123e43 !important;
+  color: #d5e9e5 !important;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 28px;
+}
+.erp-footer {
+  margin-top: auto;
+  font-size: 12px;
+}
+.erp-footer strong,
+.home-footer strong {
+  color: #fff !important;
+}
+.home-shell {
+  --home-bg: #f4f5f2;
+  --home-accent: #155b52;
+  --home-accent-ink: #155b52;
+  --home-ink: #173d40;
+  background: var(--home-bg);
+}
+.home-shell::before {
+  display: none;
+}
+.home-hero {
+  border-radius: 24px !important;
+  background: #e8eee4 !important;
+  box-shadow: none !important;
+}
+.home-card {
+  box-shadow: none !important;
+  border: 1px solid #d9e1da !important;
+}
+.home-card:hover {
+  box-shadow: 0 12px 28px #153d4014 !important;
+  transform: translateY(-3px);
+}
+.home-card__index {
+  color: #61746a;
+}
+.home-hero__art {
+  background: #d4e1c9 !important;
+}
+.home-hero__art span {
+  color: #155b52 !important;
+}
+html[data-theme="dark"] {
+  --th-bg: #101b22;
+  --th-surface: #192831;
+  --th-surface-alt: #21343e;
+  --th-border: #354954;
+  --th-divider: #30434e;
+  --th-text: #e4edf1;
+  --th-text-secondary: #b1c3cb;
+  --th-text-muted: #a1b5be;
+  --th-side-bg: #14252e;
+  --th-side-border: #354954;
+  --th-side-text: #b8cbd2;
+  --th-side-text-strong: #f0f5f7;
+  --th-side-hover: #243e49;
+  --th-side-active-bg: #284c51;
+  --th-side-active-text: #bce6d6;
+  --th-header-from: #0a3037;
+  --th-header-mid: #0a3037;
+  --th-header-to: #0a3037;
+  color-scheme: dark;
+  background: #101b22;
+}
+html[data-theme="dark"] body {
+  background: #101b22;
+  color: #e4edf1;
+}
+html[data-theme="dark"] .home-shell {
+  --home-bg: #101b22;
+  --home-ink: #e4edf1;
+  --home-ink-soft: #b1c3cb;
+  --home-card: #192831;
+  --home-line: #354954;
+  --home-accent: #99d8ba;
+  --home-accent-ink: #b9e6cf;
+  --home-accent-soft: #21423e;
+}
+html[data-theme="dark"] .home-hero {
+  background: #203c3d !important;
+}
+html[data-theme="dark"] .home-card {
+  background: #192831 !important;
+  border-color: #354954 !important;
+}
+html[data-theme="dark"] .home-hero__art {
+  background: #31534a !important;
+}
+html[data-theme="dark"] .home-hero__art span {
+  color: #b9e6cf !important;
+}
+html[data-theme="dark"] .erp-error {
+  color: #ffc5b8;
+  background: #4a292c;
+}
+html[data-theme="dark"]
+  :is(
+    .admin-card,
+    .att-card,
+    .hr-hero,
+    .metric-card,
+    .work-card,
+    .admin-toolbar,
+    .admin-table-wrapper,
+    .att-table-wrap
+  ) {
+  background: var(--th-surface);
+  color: var(--th-text);
+  border-color: var(--th-border);
+}
+html[data-theme="dark"] :is(input, select, textarea) {
+  background: #192831;
+  color: #e4edf1;
+  border-color: #354954;
+}
+html[data-theme="dark"] :is(th, td) {
+  border-color: #354954;
+}
+html[data-theme="dark"] .erp-banner {
+  background: #1c4648;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+@media (max-width: 640px) {
+  .erp-footer {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+
+html[data-theme="dark"] {
+  --mx-page: #101b22;
+  --mx-card: #192831;
+  --mx-border: #354954;
+  --mx-text: #e4edf1;
+  --mx-text-2: #b1c3cb;
+  --mx-primary-soft: #253f4c;
+  --th-card-bg: #192831;
+  --th-card-border: #354954;
+  --th-slot-bg: #21343e;
+  --th-slot-border: #354954;
+  --th-blue-ink: #a7caff;
+  --th-blue-soft: #20354c;
+  --th-purple-ink: #d2b8ff;
+  --th-purple-soft: #322d49;
+  --th-teal-ink: #a1e2d5;
+  --th-teal-soft: #203c3d;
+  --th-green-ink: #a8deb9;
+  --th-green-soft: #253d32;
+  --th-gray-ink: #c8d4db;
+  --th-gray-soft: #293b45;
+}
+html[data-theme="dark"] :is(.att-main, .admin-main, .work-main) {
+  background: var(--th-bg);
+  color: var(--th-text);
+}
+.erp-form-grid label:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.erp-form-grid input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}

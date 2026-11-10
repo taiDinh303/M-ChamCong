@@ -5,6 +5,8 @@ namespace M.Contract.Services.Interface
 {
     public interface IBankService
     {
+        Task<List<BankResponseModelView>> GetArchivedAsync();
+
         Task<BasePaginatedList<BankResponseModelView>> GetAllAsync(
             int pageNumber,
             int pageSize);

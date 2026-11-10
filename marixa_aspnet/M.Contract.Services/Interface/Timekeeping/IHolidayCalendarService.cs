@@ -5,6 +5,8 @@ namespace M.Contract.Services.Interface
 {
     public interface IHolidayCalendarService
     {
+        Task<List<HolidayCalendarResponseModelView>> GetArchivedAsync();
+
         Task<BasePaginatedList<HolidayCalendarResponseModelView>> GetAllAsync(
             int pageNumber,
             int pageSize);
