@@ -26,7 +26,6 @@
   cursor: pointer;
   flex-shrink: 0;
 }
-.erp-footer,
 .home-footer {
   background: #123e43 !important;
   color: #d5e9e5 !important;
@@ -35,11 +34,6 @@
   gap: 16px;
   padding: 20px 28px;
 }
-.erp-footer {
-  margin-top: auto;
-  font-size: 12px;
-}
-.erp-footer strong,
 .home-footer strong {
   color: #fff !important;
 }
@@ -161,12 +155,6 @@ html[data-theme="dark"] .erp-banner {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-}
-@media (max-width: 640px) {
-  .erp-footer {
-    flex-direction: column;
-    gap: 6px;
   }
 }
 

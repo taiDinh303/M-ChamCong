@@ -30,6 +30,8 @@ Tham khảo công khai 10/11: [Personio](https://www.personio.com/) về nhóm w
 
 ## 4. Còn mở
 
+Quyết định UI tiếp ngày 14/11: chỉ Home có footer trang. Đã gỡ footer khỏi AuthenticatedShell dùng chung cho Admin/HR/Chấm công/Công việc/Kế toán và xóa CSS erp-footer không còn dùng. Footer trong dialog/form là vùng nút thao tác, không phải footer trang và được giữ nguyên.
+
 Bổ sung theo yêu cầu tiếp 14/11: Home thêm hướng dẫn ba việc hằng ngày, FAQ mở/đóng và khối CTA Công việc để tạo khoảng cuộn có nội dung trước footer. Footer Home ba cột (giới thiệu, module theo quyền, hướng dẫn/tài khoản) cùng dòng năm/UTC+7; liên kết tới route thật và anchor FAQ, không tạo mục hỗ trợ/chính sách giả. Tham khảo ảnh NoteTatCa/PublicPages.tsx và cách chia nhóm nội dung tại [BambooHR](https://www.bamboohr.com/). Footer shell trong các module nghiệp vụ không bị kéo dài theo Home.
 
 Cập nhật UI 14/11/2026 theo ảnh chủ dự án: login chuyển sang token canvas/surface/ink/input riêng và màu autofill; footer Home nằm ngoài main để phủ ngang/sát đáy; avatar fallback nền trong suốt và nút padding 0; hoàn thiện text-2/text-3 và màu trạng thái dark, bỏ gradient sáng trên metric, sửa nhãn/bảng/bộ lọc Nghỉ phép và nút phụ Home. Hình tròn Home cùng phần tử con tắt animation/transition hoàn toàn, không phụ thuộc reduced-motion. Tham khảo source token sáng/tối NoteTatCa local, không sửa repo tham khảo.

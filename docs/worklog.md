@@ -1,5 +1,9 @@
 # WORKLOG — Hệ thống chấm công Marixa
 
+## 14/11/2026 — Chỉ giữ footer trang trên Home
+
+Theo yêu cầu chủ dự án, gỡ footer MARIXA khỏi AuthenticatedShell dùng chung cho các trang nội bộ; Home giữ footer đầy đủ. Xóa selector erp-footer không dùng, giữ vùng nút cuối dialog/form. Working tree sạch trước sửa. Kiểm nguồn không còn erp-footer và layout Admin/HR/Work/Accounting dùng shell chung; lint và production build PASS, bundle warning baseline còn. Không đổi nghiệp vụ/backend; không thêm test cho thay đổi trình bày nhỏ, không chạy browser hoặc backend suite. Push phạm vi shell/CSS/docs trong phiên được cho phép, không deploy/migrate.
+
 ## 14/11/2026 — Rà tương phản toàn frontend và bỏ link Kế toán sidebar Admin
 
 Yêu cầu tiếp của chủ dự án: rà cả project sau khi còn lỗi menu tài khoản/dashboard/bảng cấp tài khoản, đồng thời bỏ link Kế toán · Bảng lương riêng trong sidebar Admin. Working tree sạch trước sửa. Thay đổi/REQ/coverage tại [40](40-contrast-audit.md): 33 stylesheet chuyển màu cố định sang 626 token ink/surface/line hai theme, sửa ngữ nghĩa/inline/chart/dynamic foreground; sidebar bỏ đúng link, giữ module Kế toán ở Home và route/quyền.
