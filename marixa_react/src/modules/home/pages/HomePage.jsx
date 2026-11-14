@@ -131,11 +131,144 @@ const HomePage = () => {
             ))}
           </div>
         </section>
+        <section className="home-daily" aria-labelledby="home-daily-title">
+          <div className="home-heading">
+            <div>
+              <span className="home-eyebrow">MỖI NGÀY RÕ RÀNG HƠN</span>
+              <h2 id="home-daily-title">Bắt đầu từ những việc quen thuộc</h2>
+            </div>
+          </div>
+          <div className="home-daily-grid">
+            {[
+              {
+                step: "01",
+                title: "Ghi nhận ngày làm việc",
+                text: "Vào ca, ra ca và xem quy định ảnh, vị trí đang áp dụng trước khi chấm công.",
+                to: "/me",
+                label: "Mở chấm công",
+              },
+              {
+                step: "02",
+                title: "Đối chiếu thông tin của bạn",
+                text: "Xem lại lịch sử chấm công, kiểm tra giờ vào ra và gửi yêu cầu sửa công khi cần.",
+                to: "/me/attendance-history",
+                label: "Xem lịch sử công",
+              },
+              {
+                step: "03",
+                title: "Chủ động kế hoạch nghỉ",
+                text: "Theo dõi số dư phép, gửi đơn và xem kết quả xử lý trong không gian cá nhân.",
+                to: "/me/leave",
+                label: "Quản lý nghỉ phép",
+              },
+            ]
+              .filter((item) => canAccessModule(item.to))
+              .map((item) => (
+                <article className="home-daily-card" key={item.to}>
+                  <span className="home-step" aria-hidden="true">
+                    {item.step}
+                  </span>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                  <Link to={item.to}>
+                    {item.label} <span aria-hidden="true">↗</span>
+                  </Link>
+                </article>
+              ))}
+          </div>
+        </section>
+        <section
+          className="home-help"
+          id="home-help"
+          aria-labelledby="home-help-title"
+        >
+          <div>
+            <span className="home-eyebrow">HƯỚNG DẪN NHANH</span>
+            <h2 id="home-help-title">Một vài điều cần biết</h2>
+            <p>Thông tin cần thiết để sử dụng Marixa mỗi ngày.</p>
+          </div>
+          <div className="home-help-list">
+            <details>
+              <summary>Tôi nên làm gì khi thiếu giờ vào hoặc giờ ra?</summary>
+              <p>
+                Mở Lịch sử chấm công để kiểm tra ngày cần đối chiếu và gửi yêu
+                cầu sửa công. Ghi rõ thời gian, lý do để người phụ trách xử lý.
+              </p>
+              <Link to="/me/attendance-history">Mở lịch sử chấm công ↗</Link>
+            </details>
+            <details>
+              <summary>Vì sao mỗi tài khoản thấy các module khác nhau?</summary>
+              <p>
+                Các lối tắt được hiển thị theo vai trò tài khoản. Nếu thiếu
+                quyền cần cho công việc, hãy trao đổi với người quản lý hoặc bộ
+                phận nhân sự.
+              </p>
+            </details>
+            <details>
+              <summary>Tôi muốn thay đổi thông tin trong hồ sơ?</summary>
+              <p>
+                Xem thông tin cá nhân tại Hồ sơ. Với dữ liệu nhân sự, hợp đồng
+                hoặc thông tin chi trả cần chỉnh sửa, liên hệ người phụ trách
+                nhân sự để kiểm tra và cập nhật.
+              </p>
+              <Link to="/profile">Xem hồ sơ của tôi ↗</Link>
+            </details>
+          </div>
+        </section>
+        <section className="home-closing" aria-labelledby="home-closing-title">
+          <span className="home-eyebrow">SẴN SÀNG CHO NGÀY LÀM VIỆC</span>
+          <h2 id="home-closing-title">
+            Ít tìm kiếm hơn.
+            <br />
+            Tập trung vào công việc hơn.
+          </h2>
+          <p>
+            Từ chấm công đến hồ sơ cá nhân, mọi lối tắt cần thiết đều ở đây.
+          </p>
+          <Link className="home-cta" to="/work">
+            Mở không gian công việc <span aria-hidden="true">↗</span>
+          </Link>
+        </section>
       </main>
       <footer className="home-footer">
         <div className="home-footer-inner">
-          <strong>MARIXA</strong>
-          <span>Chấm công &amp; quản lý nhân sự</span>
+          <div className="home-footer-grid">
+            <div className="home-footer-brand">
+              <strong>
+                MARIXA<span aria-hidden="true">.</span>
+              </strong>
+              <p>
+                Không gian chung cho chấm công, hồ sơ và công việc hằng ngày của
+                đội ngũ.
+              </p>
+              <span className="home-footer-note">
+                Thông tin hiển thị theo vai trò tài khoản.
+              </span>
+            </div>
+            <nav aria-label="Không gian làm việc ở chân trang">
+              <h2>Không gian làm việc</h2>
+              {visible.map((item) => (
+                <Link key={item.to} to={item.to}>
+                  {item.title}
+                </Link>
+              ))}
+            </nav>
+            <nav aria-label="Hướng dẫn và tài khoản">
+              <h2>Hướng dẫn & tài khoản</h2>
+              <a href="#home-help">Câu hỏi thường gặp</a>
+              <Link to="/me/attendance-rules">Quy định chấm công</Link>
+              <Link to="/profile">Hồ sơ của tôi</Link>
+              <p className="home-footer-support">
+                Cần điều chỉnh thông tin hoặc quyền truy cập? Liên hệ người quản
+                lý hoặc bộ phận nhân sự của bạn.
+              </p>
+            </nav>
+          </div>
+          <div className="home-footer-bottom">
+            <span>© {new Date().getFullYear()} MARIXA</span>
+            <span>Chấm công & quản lý nhân sự</span>
+            <span>Giờ Việt Nam · UTC+7</span>
+          </div>
         </div>
       </footer>
     </div>

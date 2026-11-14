@@ -1,5 +1,11 @@
 # WORKLOG — Hệ thống chấm công Marixa
 
+## 14/11/2026 — Home có nội dung bổ sung và footer nhiều cột
+
+Chủ dự án muốn chủ động cuộn mới tới footer, tăng khoảng cách và nội dung, tham khảo NoteTatCa ảnh 2/3. REQ/TC-HOME-FOOTER: giữ hero/module đầu trang, bổ sung hướng dẫn hằng ngày/FAQ/CTA có ích thay vì spacer rỗng; footer ba cột và dòng thông tin cuối, chỉ route đang có, module lọc theo quyền. Cài đặt HomePage.jsx và erp-theme.css; tham khảo read-only NoteTatCa PublicPages.tsx cùng website BambooHR, không sao chép thương hiệu hoặc thêm nghiệp vụ mới.
+
+QA browser fixture local với adapter giả: footer top 2239px ở viewport cao720px, footer cao446px, không overflow ngang ở desktop; xem footer cả dark/light, anchor FAQ và mở câu trả lời hoạt động. Fixture tạm gỡ, server dừng sau QA; không kết nối API/database thật. Chưa kiểm browser viewport mobile; CSS có breakpoint một cột. Frontend 85/85 PASS, lint/build PASS; bundle warning vẫn giữ. Không thay backend, không chạy lại backend tests. Push phạm vi Home/CSS/docs theo quyền xuất bản trong phiên; không deploy/migrate.
+
 ## 14/11/2026 — Sửa tương phản login/dark, footer, avatar và chuyển động Home
 
 Chủ dự án cung cấp 7 ảnh, yêu cầu sửa màu login, footer hở dưới, avatar lệch nền, chữ dark khó đọc và bỏ hoạt ảnh hình tròn Home; yêu cầu push sau sửa. Working tree sạch trước sửa. Tham khảo read-only tokens canvas/surface/text/muted và avatar của NoteTatCa local, không đổi repo tham khảo. REQ/TC-UI-1114: input/nhãn/nút phụ rõ hai theme, footer hết chiều ngang/sát đáy, avatar một nền, art không animation ở cả chế độ chuyển động thường. Cài đặt tại erp-theme.css, HomePage.jsx và home.css; chi tiết/bằng chứng có phạm vi tại [39](39-catalog-ui-implementation.md).
