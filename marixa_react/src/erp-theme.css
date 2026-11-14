@@ -205,3 +205,250 @@ html[data-theme="dark"] :is(.att-main, .admin-main, .work-main) {
   width: 18px;
   height: 18px;
 }
+/* Readability pass: surface, ink and muted ink stay paired in both themes. */
+:root {
+  --auth-canvas: #f4f6f7;
+  --auth-surface: #ffffff;
+  --auth-ink: #172b35;
+  --auth-muted: #526573;
+  --auth-input: #ffffff;
+  --auth-border: #a8b8c5;
+  --auth-link: #075f86;
+}
+html[data-theme="dark"] {
+  --auth-canvas: #151f28;
+  --auth-surface: #202d38;
+  --auth-ink: #edf3f8;
+  --auth-muted: #bdcbd7;
+  --auth-input: #14222e;
+  --auth-border: #71869a;
+  --auth-link: #9bd8ff;
+  --th-text-2: #bdcbd7;
+  --th-text-3: #a9bdcc;
+  --th-gold-ink: #f8d58b;
+  --th-gold-soft: #3b3220;
+  --th-gold-line: #806a3d;
+  --th-gold-icon: #514325;
+  --th-red-ink: #ffb5b6;
+  --th-red-soft: #412c34;
+  --th-red-line: #88515e;
+  --th-red-icon: #57323e;
+  --th-pink-ink: #ffc0de;
+  --th-pink-soft: #3c2b40;
+  --th-pink-line: #805370;
+  --th-pink-icon: #50364d;
+  --th-blue-icon: #294663;
+  --th-green-icon: #2d503f;
+  --th-purple-icon: #473b60;
+  --th-teal-icon: #294d4b;
+  --th-gray-icon: #374a55;
+}
+.login-page {
+  background: var(--auth-canvas);
+  color: var(--auth-ink);
+}
+.login-card {
+  background: var(--auth-surface);
+  border-color: var(--th-border);
+  color: var(--auth-ink);
+}
+.login-card h1,
+.login-form label {
+  color: var(--auth-ink);
+}
+.login-card :is(.login-subtitle, .remember-me, .activate-link, .activate-hint) {
+  color: var(--auth-muted);
+}
+.login-brand p {
+  color: #c1d3df;
+  font-weight: 400;
+}
+.login-form :is(input[type="text"], input[type="password"]) {
+  background: var(--auth-input);
+  color: var(--auth-ink);
+  border-color: var(--auth-border);
+  caret-color: var(--auth-ink);
+}
+.login-form input::placeholder {
+  color: var(--auth-muted);
+  opacity: 1;
+}
+.login-form input:-webkit-autofill,
+.login-form input:-webkit-autofill:hover,
+.login-form input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--auth-ink);
+  -webkit-box-shadow: 0 0 0 1000px var(--auth-input) inset;
+  caret-color: var(--auth-ink);
+}
+.login-card .password-toggle,
+.login-card .activate-link a {
+  color: var(--auth-link);
+}
+.login-card .password-toggle:hover {
+  color: var(--auth-ink);
+}
+.login-card .activate-rules {
+  background: var(--auth-input);
+  border-color: var(--auth-border);
+}
+.login-card .activate-rules li {
+  color: var(--auth-muted);
+}
+.login-card .activate-rules li.done {
+  color: var(--th-ok);
+}
+
+/* Footer is a full-width shell region, outside the constrained main content. */
+.home-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+.home-main {
+  flex: 1;
+}
+.home-shell > .home-footer {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+}
+.home-footer-inner {
+  width: min(1320px, 100%);
+  margin: 0 auto;
+  padding: 20px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.app-shell {
+  min-height: 100dvh;
+}
+
+/* A single background fills the avatar button; no pale rectangle inside it. */
+.app-header .app-header-avatar-btn {
+  padding: 0;
+  color: var(--th-header-text);
+}
+.app-header .app-header-avatar-fallback,
+.app-header .app-header-avatar-btn:hover .app-header-avatar-fallback {
+  background: transparent;
+  color: inherit;
+}
+.app-header .app-header-avatar-btn img {
+  display: block;
+}
+
+/* This illustration is deliberately static, independent of motion preferences. */
+.home-hero__art,
+.home-hero__art *,
+.home-hero__art::before,
+.home-hero__art::after {
+  animation: none !important;
+  transition: none !important;
+}
+html[data-theme="dark"] .home-cta {
+  background: #126b7b;
+  color: #fff;
+}
+html[data-theme="dark"] .home-cta--ghost {
+  background: #263e4c;
+  color: #e4f4ff;
+  border-color: #7894a5;
+}
+html[data-theme="dark"] .home-cta--ghost:hover {
+  background: #355464;
+  color: #fff;
+}
+html[data-theme="dark"] .home-card__index {
+  color: #b3c6d1;
+}
+
+html[data-theme="dark"] .app-shell[data-workspace] .mx-metric {
+  background: var(--th-surface);
+}
+html[data-theme="dark"]
+  .app-shell
+  :is(h1, h2, h3, h4, .leave-section-head h2, .leave-calendar-head h2) {
+  color: var(--th-text);
+}
+html[data-theme="dark"]
+  .app-shell
+  :is(.mx-table, .leave-table, .admin-table)
+  th {
+  background: #233b4c;
+  color: #d2e3ee;
+}
+html[data-theme="dark"]
+  .app-shell
+  :is(.mx-table, .leave-table, .admin-table)
+  td {
+  color: var(--th-text);
+}
+html[data-theme="dark"]
+  .app-shell
+  :is(
+    .mx-table-empty,
+    .leave-empty,
+    .leave-pagination,
+    .leave-filters label,
+    .leave-stat-card span,
+    .mx-metric-label,
+    .mx-metric-hint
+  ) {
+  color: var(--th-text-2);
+}
+html[data-theme="dark"] .app-shell input::placeholder {
+  color: #a9bdcc;
+  opacity: 1;
+}
+html[data-theme="dark"]
+  .app-shell
+  :is(
+    .leave-view-switch,
+    .leave-stat-card,
+    .leave-calendar,
+    .leave-day,
+    .leave-table-card
+  ) {
+  background: var(--th-surface);
+  border-color: var(--th-border);
+  color: var(--th-text);
+}
+html[data-theme="dark"] .app-shell .leave-view-switch button {
+  color: #bdcbd7;
+}
+html[data-theme="dark"] .app-shell .leave-view-switch button.active {
+  background: #315669;
+  color: #fff;
+}
+html[data-theme="dark"] .app-shell .leave-stat-card strong {
+  color: var(--th-text);
+}
+html[data-theme="dark"]
+  .app-shell[data-workspace]
+  :is(
+    .hr-btn--primary,
+    .ai-btn--primary,
+    .wf-btn-primary,
+    .hr-filter.active,
+    .ai-filter.active,
+    .blk-filter.active,
+    .lp-filter.active
+  ):not(:disabled) {
+  color: #11232b;
+}
+html[data-theme="dark"] .login-error {
+  background: #472a32;
+  border-color: #aa6471;
+  color: #ffd0d0;
+}
+@media (max-width: 640px) {
+  .home-footer-inner {
+    padding: 20px 18px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}

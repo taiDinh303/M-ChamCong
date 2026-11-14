@@ -5,85 +5,141 @@ import { canAccessModule } from "../../../services/auth/permission";
 import "../home.css";
 
 const MODULES = [
-    { to: "/me", icon: "🕗", title: "Chấm công", detail: "Vào ca · Ra ca", color: "blue" },
-    { to: "/hr/catalogs", icon: "▦", title: "Danh mục", detail: "Dữ liệu nền tảng", color: "purple" },
-    { to: "/hr", icon: "👥", title: "Nhân sự", detail: "Hồ sơ nhân viên", color: "pink" },
-    { to: "/work", icon: "📋", title: "Công việc", detail: "Việc cần xử lý", color: "amber" },
-    { to: "/admin", icon: "📊", title: "Dashboard", detail: "Điều hành hệ thống", color: "teal" },
-    { to: "/accounting", icon: "💰", title: "Kế toán", detail: "Bảng lương · Tra cứu", color: "lime" },
+  {
+    to: "/me",
+    icon: "🕗",
+    title: "Chấm công",
+    detail: "Vào ca · Ra ca",
+    color: "blue",
+  },
+  {
+    to: "/hr/catalogs",
+    icon: "▦",
+    title: "Danh mục",
+    detail: "Dữ liệu nền tảng",
+    color: "purple",
+  },
+  {
+    to: "/hr",
+    icon: "👥",
+    title: "Nhân sự",
+    detail: "Hồ sơ nhân viên",
+    color: "pink",
+  },
+  {
+    to: "/work",
+    icon: "📋",
+    title: "Công việc",
+    detail: "Việc cần xử lý",
+    color: "amber",
+  },
+  {
+    to: "/admin",
+    icon: "📊",
+    title: "Dashboard",
+    detail: "Điều hành hệ thống",
+    color: "teal",
+  },
+  {
+    to: "/accounting",
+    icon: "💰",
+    title: "Kế toán",
+    detail: "Bảng lương · Tra cứu",
+    color: "lime",
+  },
 ];
 
 const HomePage = () => {
-    useEffect(() => { document.title = "Trang chủ · MARIXA"; }, []);
-    const visible = useMemo(
-        () => MODULES.filter((m) => canAccessModule(m.to)),
-        []
-    );
+  useEffect(() => {
+    document.title = "Trang chủ · MARIXA";
+  }, []);
+  const visible = useMemo(
+    () => MODULES.filter((m) => canAccessModule(m.to)),
+    [],
+  );
 
-    return (
-        <div className="home-shell">
-            <Header minimal />
+  return (
+    <div className="home-shell">
+      <Header minimal />
 
-            <main className="home-main">
-                {/* ===== HERO (greeting ở góc dưới phải) ===== */}
-                <section className="home-hero">
-                    <div className="home-hero__copy">
-                        <span className="home-eyebrow">MARIXA · PEOPLE OPERATIONS</span>
-                        <h1>Con người là trung tâm.<br />Công việc thật rõ ràng.</h1>
-                        <p>Chọn module để chấm công, quản lý hồ sơ và theo dõi các nghiệp vụ nhân sự hằng ngày.</p>
-                        <div className="home-hero__actions">
-                            <Link className="home-cta" to="/me">
-                                Bắt đầu chấm công <span aria-hidden="true">↗</span>
-                            </Link>
-                            {canAccessModule("/admin") && <Link className="home-cta--ghost" to="/admin">Xem dashboard</Link>}
-                        </div>
-                    </div>
+      <main className="home-main">
+        {/* ===== HERO (greeting ở góc dưới phải) ===== */}
+        <section className="home-hero">
+          <div className="home-hero__copy">
+            <span className="home-eyebrow">MARIXA · PEOPLE OPERATIONS</span>
+            <h1>
+              Con người là trung tâm.
+              <br />
+              Công việc thật rõ ràng.
+            </h1>
+            <p>
+              Chọn module để chấm công, quản lý hồ sơ và theo dõi các nghiệp vụ
+              nhân sự hằng ngày.
+            </p>
+            <div className="home-hero__actions">
+              <Link className="home-cta" to="/me">
+                Bắt đầu chấm công <span aria-hidden="true">↗</span>
+              </Link>
+              {canAccessModule("/admin") && (
+                <Link className="home-cta--ghost" to="/admin">
+                  Xem dashboard
+                </Link>
+              )}
+            </div>
+          </div>
 
-                    <div className="home-hero__art" aria-hidden="true">
-                        <span>M</span><i /><i /><i />
-                    </div>
-                </section>
+          <div className="home-hero__art" aria-hidden="true">
+            <span>M</span>
+            <i />
+            <i />
+            <i />
+          </div>
+        </section>
 
-                {/* ===== LAUNCHER ===== */}
-                <section className="home-launcher" aria-labelledby="home-title">
-                    <div className="home-heading">
-                        <div>
-                            <span className="home-eyebrow">WORKSPACE</span>
-                            <h2 id="home-title">Không gian làm việc</h2>
-                        </div>
-                        <p>{visible.length} module khả dụng</p>
-                    </div>
+        {/* ===== LAUNCHER ===== */}
+        <section className="home-launcher" aria-labelledby="home-title">
+          <div className="home-heading">
+            <div>
+              <span className="home-eyebrow">WORKSPACE</span>
+              <h2 id="home-title">Không gian làm việc</h2>
+            </div>
+            <p>{visible.length} module khả dụng</p>
+          </div>
 
-                    <div className="home-grid">
-                        {visible.map((m, i) => (
-                            <Link
-                                className={`home-card home-card--${m.color}`}
-                                to={m.to}
-                                key={m.to}
-                                style={{ "--i": i }}
-                            >
-                                <span className="home-card__index">
-                                    {String(i + 1).padStart(2, "0")}
-                                </span>
-                                <span className={`home-icon home-icon--${m.color}`} aria-hidden="true">
-                                    {m.icon}
-                                </span>
-                                <span className="home-card__meta">
-                                    <strong>{m.title}</strong>
-                                    <span className="home-card__detail">{m.detail}</span>
-                                </span>
-                            </Link>
-                        ))}
-                    </div>
-                </section>
-
-                <footer className="home-footer">
-                    <strong>MARIXA</strong>
-                    <span>Chấm công &amp; quản lý nhân sự</span>
-                </footer>
-            </main>
+          <div className="home-grid">
+            {visible.map((m, i) => (
+              <Link
+                className={`home-card home-card--${m.color}`}
+                to={m.to}
+                key={m.to}
+                style={{ "--i": i }}
+              >
+                <span className="home-card__index">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span
+                  className={`home-icon home-icon--${m.color}`}
+                  aria-hidden="true"
+                >
+                  {m.icon}
+                </span>
+                <span className="home-card__meta">
+                  <strong>{m.title}</strong>
+                  <span className="home-card__detail">{m.detail}</span>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      </main>
+      <footer className="home-footer">
+        <div className="home-footer-inner">
+          <strong>MARIXA</strong>
+          <span>Chấm công &amp; quản lý nhân sự</span>
         </div>
-    );
+      </footer>
+    </div>
+  );
 };
 
 export default HomePage;

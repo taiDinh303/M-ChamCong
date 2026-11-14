@@ -1,5 +1,13 @@
 # WORKLOG — Hệ thống chấm công Marixa
 
+## 14/11/2026 — Sửa tương phản login/dark, footer, avatar và chuyển động Home
+
+Chủ dự án cung cấp 7 ảnh, yêu cầu sửa màu login, footer hở dưới, avatar lệch nền, chữ dark khó đọc và bỏ hoạt ảnh hình tròn Home; yêu cầu push sau sửa. Working tree sạch trước sửa. Tham khảo read-only tokens canvas/surface/text/muted và avatar của NoteTatCa local, không đổi repo tham khảo. REQ/TC-UI-1114: input/nhãn/nút phụ rõ hai theme, footer hết chiều ngang/sát đáy, avatar một nền, art không animation ở cả chế độ chuyển động thường. Cài đặt tại erp-theme.css, HomePage.jsx và home.css; chi tiết/bằng chứng có phạm vi tại [39](39-catalog-ui-implementation.md).
+
+Browser fixture local có adapter dữ liệu giả: login dark và light kiểm màu computed, quan sát login dark; Home đo footer width bằng vùng trang (1265px ở viewport 1280 có scrollbar), bottom khớp scrollHeight với sai số làm tròn; năm phần tử art có animationName=none; avatar padding0/fallback transparent. Trang Nghỉ phép dark quan sát screenshot và computed nhãn/heading/table/empty. Fixture ban đầu trả sai shape gây requests.filter, đã sửa fixture thành array; không sửa nghiệp vụ để khớp fixture. Fixture review.html/review.jsx đã gỡ. Không đọc/ghi database, thử login thật hay lưu credential. Không kiểm mobile/autofill thực tế hoặc mọi trang legacy.
+
+Validation: frontend tests 85/85 PASS; lint/build PASS sau sửa JSX footer (lần đầu đóng tag sai bị lint/build phát hiện, đã sửa và chạy lại). Build vẫn cảnh báo bundle lớn như baseline. Đo 5 cặp contrast đạt 8.86–14.65:1, không tuyên bố toàn app đạt accessibility. Backend không thay đổi, không chạy lại backend suite. Publication scope chỉ CSS/Home và docs của việc này; push main được chủ dự án yêu cầu, không deploy/migration live.
+
 ## 10/11/2026 — Xuất bản thay đổi của phiên chat
 
 Chủ dự án yêu cầu push toàn bộ thay đổi của phiên này lên main. Phạm vi: năm danh mục, hợp đồng/history/concurrency/quyền, Home và theme sáng/tối, regression tests và docs/API inventory liên quan. Không gồm credential, fixture UI tạm, dữ liệu nhân viên hoặc cấu hình live. Evidence giữ nguyên: frontend 85 pass, lint/build đạt; backend portable 140 pass/2 skip, SQL Server/PostgreSQL và mobile/full browser E2E chưa nghiệm thu. Trước commit git diff --check đạt, remote main vẫn tại 380a1e2. Quyền push không bao gồm deploy hoặc migration live; xác minh remote HEAD sau push và báo commit trong phản hồi.

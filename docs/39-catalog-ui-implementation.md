@@ -30,6 +30,10 @@ Tham khảo công khai 10/11: [Personio](https://www.personio.com/) về nhóm w
 
 ## 4. Còn mở
 
+Cập nhật UI 14/11/2026 theo ảnh chủ dự án: login chuyển sang token canvas/surface/ink/input riêng và màu autofill; footer Home nằm ngoài main để phủ ngang/sát đáy; avatar fallback nền trong suốt và nút padding 0; hoàn thiện text-2/text-3 và màu trạng thái dark, bỏ gradient sáng trên metric, sửa nhãn/bảng/bộ lọc Nghỉ phép và nút phụ Home. Hình tròn Home cùng phần tử con tắt animation/transition hoàn toàn, không phụ thuộc reduced-motion. Tham khảo source token sáng/tối NoteTatCa local, không sửa repo tham khảo.
+
+QA local với adapter giả: login sáng/tối, Home/footer/avatar/hình tĩnh, Nghỉ phép dark. Các cặp màu được đo gồm login sáng 14.65:1, login tối 14.47:1, chữ phụ tối 9.13:1, tiêu đề bảng 8.86:1, nút phụ Home 9.96:1; chỉ là các cặp đã kiểm, không phải chứng nhận toàn bộ app. Không đăng nhập hoặc ghi API/live; mobile và browser autofill thực tế vẫn chưa nghiệm thu.
+
 - Bản lưu trữ xem được/history; chưa có restore UI hoặc tự active lại. Chốt restore/re-enable trước khi bổ sung.
 - Grant động, inbox/job console, backup D:\backup và offline giữ phụ thuộc 38; chưa thực thi.
 - Provider concurrency/race tests, mobile và browser/API E2E; private storage/backup vẫn là gate release.

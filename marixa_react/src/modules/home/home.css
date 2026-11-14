@@ -192,12 +192,12 @@
     box-shadow: 0 12px 26px rgba(10, 95, 151, .35);
     color: #fff;
     font: 800 30px var(--home-display);
-    animation: home-float 5s ease-in-out infinite;
+    animation: none;
 }
 .home-hero__art i { position: absolute; z-index: 1; width: 10px; height: 10px; border: 2px solid #f4fbff; border-radius: 50%; }
-.home-hero__art i:nth-of-type(1) { top: 22px; right: 40px; background: #e85e9c; animation: home-orbit 6s ease-in-out infinite; }
-.home-hero__art i:nth-of-type(2) { bottom: 28px; left: 14px; background: #ffc445; animation: home-orbit 7s ease-in-out infinite reverse; }
-.home-hero__art i:nth-of-type(3) { right: 8px; bottom: 48px; background: #8bc34a; animation: home-orbit 8s ease-in-out infinite; }
+.home-hero__art i:nth-of-type(1) { top: 22px; right: 40px; background: #e85e9c; animation: none; }
+.home-hero__art i:nth-of-type(2) { bottom: 28px; left: 14px; background: #ffc445; animation: none; }
+.home-hero__art i:nth-of-type(3) { right: 8px; bottom: 48px; background: #8bc34a; animation: none; }
 
 /* ===== LAUNCHER ===== */
 .home-launcher { padding-top: 38px; }
