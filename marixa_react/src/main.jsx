@@ -10,6 +10,7 @@ import './modules/me/me-workspace.css'
 import './components/common/workspace-colors.css'
 import { LanguageProvider } from "./services/i18n/LanguageProvider.jsx";
 
+import './contrast-palette.css';
 import './erp-theme.css';
 
 applyTheme(initialTheme(localStorage, matchMedia('(prefers-color-scheme: dark)').matches));

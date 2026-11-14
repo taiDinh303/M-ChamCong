@@ -1,3 +1,4 @@
+import {readableInk} from '../../../utils/readableInk';
 import MetricCard from "../../../components/common/MetricCard";
 import ResponsiveTable from "../../../components/common/ResponsiveTable.jsx";
 import { useState, useEffect, useCallback, useMemo } from "react";
@@ -313,14 +314,14 @@ const AdminRolesPage = () => {
                                                 return (
                                                 <tr key={role.id}>
                                                     <td>
-                                                        <span className="roles-role-ava roles-role-ava--sm" style={{ background: avaColor(role.name) }}>
+                                                        <span className="roles-role-ava roles-role-ava--sm" style={{ background: avaColor(role.name), color: readableInk(avaColor(role.name)) }}>
                                                             {(role.name || "?").slice(0, 1).toUpperCase()}
                                                         </span>
                                                         <strong>{role.name}</strong>
                                                     </td>
                                                     <td>{role.description || <span className="att-muted">—</span>}</td>
                                                     <td className="roles-th-center">
-                                                        <span className="roles-member-count" style={{ background: avaColor(role.name) + "1a", color: avaColor(role.name) }}>
+                                                        <span className="roles-member-count" style={{ background: "var(--th-purple-soft)", color: "var(--th-text)" }}>
                                                             {roleCount[role.name] || 0} {L("người")}
                                                         </span>
                                                     </td>
@@ -394,7 +395,7 @@ const AdminRolesPage = () => {
                                                         <tr key={u.id} className={hasAny ? "roles-mx-hasrole" : ""}>
                                                             <td className="roles-mx-user">
                                                                 <button type="button" className="roles-member-open" onClick={() => setViewUser(u)} aria-label={`${L("Xem thông tin")} ${u.fullName}`}>
-                                                                <span className="roles-member-ava roles-member-ava--sm" style={{ background: avaColor(u.fullName || u.userName) }}>
+                                                                <span className="roles-member-ava roles-member-ava--sm" style={{ background: avaColor(u.fullName || u.userName), color: readableInk(avaColor(u.fullName || u.userName)) }}>
                                                                     {(u.fullName || u.userName || "?").slice(0, 1).toUpperCase()}
                                                                 </span>
                                                                 <span className="roles-mx-user-text">
@@ -440,7 +441,7 @@ const AdminRolesPage = () => {
                                 <div className="roles-orphan-list">
                                     {orphans.map((u) => (
                                         <span key={u.id} className="roles-orphan-chip">
-                                            <span className="roles-member-ava roles-member-ava--xs" style={{ background: avaColor(u.fullName || u.userName) }}>
+                                            <span className="roles-member-ava roles-member-ava--xs" style={{ background: avaColor(u.fullName || u.userName), color: readableInk(avaColor(u.fullName || u.userName)) }}>
                                                 {(u.fullName || "?").slice(0, 1).toUpperCase()}
                                             </span>
                                             {u.employeeCode || "—"} · {u.fullName}

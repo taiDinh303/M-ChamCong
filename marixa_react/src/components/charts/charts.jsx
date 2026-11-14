@@ -120,11 +120,11 @@ export const ColumnChart = ({ data, xKey = "name", yKey = "value", height = 220,
   <>
   <ResponsiveContainer width="100%" height={height}>
     <BarChart data={data} margin={{ top: 8, right: 8, left: -12, bottom: 0 }} barSize={22}>
-      <CartesianGrid vertical={false} stroke="#EEF2F6" />
+      <CartesianGrid vertical={false} stroke="var(--th-chart-grid)" />
       <XAxis dataKey={xKey} tick={{ fontSize: 11, fill: "var(--th-text-2, #526174)" }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
       <YAxis tick={{ fontSize: 11, fill: "var(--th-text-2, #526174)" }} tickLine={false} axisLine={false} tickFormatter={yTickFormatter} width={40} />
       <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(22,71,200,0.06)" }} />
-      <Bar dataKey={yKey} fill="#1647C8" radius={[4, 4, 0, 0]} isAnimationActive={false} />
+      <Bar dataKey={yKey} fill="var(--th-chart-series)" radius={[4, 4, 0, 0]} isAnimationActive={false} />
     </BarChart>
   </ResponsiveContainer>
   <ChartValues data={data} nameKey={xKey} valueKey={yKey} />
@@ -136,7 +136,7 @@ export const HBarChart = ({ data, xKey = "value", yKey = "name", height = 300, u
   <>
   <ResponsiveContainer width="100%" height={height}>
     <BarChart data={data} layout="vertical" margin={{ top: 4, right: 16, left: 8, bottom: 0 }}>
-      <CartesianGrid horizontal={false} stroke="#EEF2F6" />
+      <CartesianGrid horizontal={false} stroke="var(--th-chart-grid)" />
       <XAxis type="number" tick={{ fontSize: 11, fill: "var(--th-text-2, #526174)" }} tickLine={false} axisLine={false} tickFormatter={(v) => (unit ? `${v}${unit}` : v)} />
       <YAxis
         type="category"
@@ -159,11 +159,11 @@ export const TrendLine = ({ data, xKey = "name", yKey = "value", height = 220, y
   <>
   <ResponsiveContainer width="100%" height={height}>
     <LineChart data={data} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
-      <CartesianGrid vertical={false} stroke="#EEF2F6" />
+      <CartesianGrid vertical={false} stroke="var(--th-chart-grid)" />
       <XAxis dataKey={xKey} tick={{ fontSize: 11, fill: "var(--th-text-2, #526174)" }} tickLine={false} axisLine={false} />
       <YAxis tick={{ fontSize: 11, fill: "var(--th-text-2, #526174)" }} tickLine={false} axisLine={false} tickFormatter={yTickFormatter} width={40} allowDecimals={false} />
       <Tooltip contentStyle={tooltipStyle} />
-      <Line type="monotone" dataKey={yKey} stroke="#1647C8" strokeWidth={2.5} dot={{ r: 4, fill: "#1647C8", strokeWidth: 0 }} activeDot={{ r: 5 }} isAnimationActive={false} />
+      <Line type="monotone" dataKey={yKey} stroke="var(--th-chart-series)" strokeWidth={2.5} dot={{ r: 4, fill: "var(--th-chart-series)", strokeWidth: 0 }} activeDot={{ r: 5 }} isAnimationActive={false} />
     </LineChart>
   </ResponsiveContainer>
   <ChartValues data={data} nameKey={xKey} valueKey={yKey} />

@@ -20,9 +20,9 @@
     gap: 8px;
 }
 .lp-err {
-    color: #c62828;
-    background: #fdecec;
-    border: 1px solid #f3b4b4;
+    color: var(--ui-ink-c62828);
+    background: var(--ui-surface-fdecec);
+    border: 1px solid var(--ui-line-f3b4b4);
     justify-content: space-between;
 }
 .lp-err button {
@@ -34,17 +34,17 @@
     line-height: 1;
 }
 .lp-notice {
-    color: #176b43;
-    background: #eaf7ef;
-    border: 1px solid #cdebd7;
+    color: var(--ui-ink-176b43);
+    background: var(--ui-surface-eaf7ef);
+    border: 1px solid var(--ui-line-cdebd7);
 }
 
 /* ===== Card ===== */
 .lp-card {
     padding: 18px 20px;
-    border: 1px solid #e6edf5;
+    border: 1px solid var(--ui-line-e6edf5);
     border-radius: 14px;
-    background: #fff;
+    background: var(--ui-surface-ffffff);
     box-shadow: 0 2px 10px rgba(14, 26, 38, 0.04);
 }
 
@@ -67,10 +67,10 @@
     align-items: center;
     gap: 7px;
     padding: 7px 13px;
-    border: 1px solid #dbe4ee;
+    border: 1px solid var(--ui-line-dbe4ee);
     border-radius: 999px;
-    background: #fff;
-    color: #38506a;
+    background: var(--ui-surface-ffffff);
+    color: var(--ui-ink-38506a);
     font: inherit;
     font-size: 12px;
     font-weight: 600;
@@ -81,25 +81,25 @@
     font-style: normal;
     font-size: 11px;
     font-weight: 700;
-    background: #eef2f6;
-    color: #5a6b7b;
+    background: var(--ui-surface-eef2f6);
+    color: var(--ui-ink-5a6b7b);
     border-radius: 999px;
     padding: 0 7px;
     min-width: 20px;
     text-align: center;
 }
 .lp-filter:hover {
-    border-color: #8bbcf1;
-    background: #f5f9ff;
+    border-color: var(--ui-line-8bbcf1);
+    background: var(--ui-surface-f5f9ff);
 }
 .lp-filter.active {
-    border-color: #005b94;
-    background: #005b94;
-    color: #fff;
+    border-color: var(--ui-line-005b94);
+    background: var(--ui-surface-005b94);
+    color: var(--ui-ink-ffffff);
 }
 .lp-filter.active i {
     background: rgba(255, 255, 255, 0.22);
-    color: #fff;
+    color: var(--ui-ink-ffffff);
 }
 
 .lp-search {
@@ -110,10 +110,10 @@
     min-width: 240px;
     height: 42px;
     padding: 0 12px;
-    border: 1px solid #d7e2ef;
+    border: 1px solid var(--ui-line-d7e2ef);
     border-radius: 10px;
-    background: #fff;
-    color: #8290a2;
+    background: var(--ui-surface-ffffff);
+    color: var(--ui-ink-8290a2);
 }
 .lp-search span { font-size: 18px; line-height: 1; }
 .lp-search input {
@@ -122,13 +122,13 @@
     border: 0;
     outline: 0;
     background: transparent;
-    color: #263b54;
+    color: var(--ui-ink-263b54);
     font: inherit;
     font-size: 13px;
 }
-.lp-search input::placeholder { color: #94a0af; }
+.lp-search input::placeholder { color: var(--ui-ink-94a0af); }
 .lp-search:focus-within {
-    border-color: #005b94;
+    border-color: var(--ui-line-005b94);
     box-shadow: 0 0 0 3px rgba(0, 91, 148, 0.1);
 }
 
@@ -136,7 +136,7 @@
 .lp-table-wrap {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    border: 1px solid #eef2f6;
+    border: 1px solid var(--ui-line-eef2f6);
     border-radius: 12px;
 }
 .lp-table {
@@ -149,12 +149,12 @@
 .lp-table td {
     text-align: left;
     padding: 12px;
-    border-bottom: 1px solid #eef2f6;
+    border-bottom: 1px solid var(--ui-line-eef2f6);
     vertical-align: middle;
 }
 .lp-table thead th {
-    background: #fbfcfe;
-    color: #5a6b7b;
+    background: var(--ui-surface-fbfcfe);
+    color: var(--ui-ink-5a6b7b);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -168,13 +168,13 @@
     transition: background 0.1s;
 }
 .lp-table tbody tr:hover {
-    background: #f5f9ff;
+    background: var(--ui-surface-f5f9ff);
 }
 .lp-table tbody tr.lp-row--ok {
-    background: #f7fcf8;
+    background: var(--ui-surface-f7fcf8);
 }
 .lp-table tbody tr.lp-row--bad {
-    background: #fff7f7;
+    background: var(--ui-surface-fff7f7);
 }
 .lp-table tbody tr:last-child td {
     border-bottom: 0;
@@ -191,7 +191,7 @@
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    color: #fff;
+    color: var(--ui-ink-ffffff);
     font-weight: 800;
     font-size: 13px;
     display: flex;
@@ -206,7 +206,7 @@
     min-width: 0;
 }
 .lp-user-meta strong {
-    color: #172b42;
+    color: var(--ui-ink-172b42);
     font-size: 13px;
     font-weight: 600;
     white-space: nowrap;
@@ -214,7 +214,7 @@
     text-overflow: ellipsis;
 }
 .lp-user-meta small {
-    color: #8a99ab;
+    color: var(--ui-ink-8a99ab);
     font-size: 11px;
 }
 
@@ -225,12 +225,12 @@
     gap: 6px;
 }
 .lp-date strong {
-    color: #172b42;
+    color: var(--ui-ink-172b42);
     font-size: 13px;
     font-weight: 700;
 }
 .lp-date span {
-    color: #9aa9b8;
+    color: var(--ui-ink-9aa9b8);
     font-size: 11px;
 }
 
@@ -244,25 +244,25 @@
     white-space: nowrap;
 }
 .lp-badge--warn {
-    color: #95600c;
-    background: #fef3d7;
+    color: var(--ui-ink-95600c);
+    background: var(--ui-surface-fef3d7);
 }
 .lp-badge--ok {
-    color: #15803d;
-    background: #dcfce7;
+    color: var(--ui-ink-15803d);
+    background: var(--ui-surface-dcfce7);
 }
 .lp-badge--bad {
-    color: #b42323;
-    background: #fee2e2;
+    color: var(--ui-ink-b42323);
+    background: var(--ui-surface-fee2e2);
 }
 .lp-badge--muted {
-    color: #748397;
-    background: #eef2f6;
+    color: var(--ui-ink-748397);
+    background: var(--ui-surface-eef2f6);
 }
 .lp-approver {
     display: block;
     margin-top: 4px;
-    color: #8a99ab;
+    color: var(--ui-ink-8a99ab);
     font-size: 11px;
 }
 
@@ -294,21 +294,21 @@
     white-space: nowrap;
 }
 .lp-btn--ok {
-    color: #15803d;
-    background: #dcfce7;
+    color: var(--ui-ink-15803d);
+    background: var(--ui-surface-dcfce7);
 }
 .lp-btn--ok:hover {
-    background: #15803d;
-    color: #fff;
+    background: var(--ui-surface-15803d);
+    color: var(--ui-ink-ffffff);
     box-shadow: 0 3px 8px rgba(21, 128, 61, 0.25);
 }
 .lp-btn--bad {
-    color: #b42323;
-    background: #fee2e2;
+    color: var(--ui-ink-b42323);
+    background: var(--ui-surface-fee2e2);
 }
 .lp-btn--bad:hover {
-    background: #b42323;
-    color: #fff;
+    background: var(--ui-surface-b42323);
+    color: var(--ui-ink-ffffff);
     box-shadow: 0 3px 8px rgba(180, 35, 35, 0.25);
 }
 .lp-btn:disabled {
@@ -316,12 +316,12 @@
     cursor: not-allowed;
 }
 .lp-muted {
-    color: #c4cdd6;
+    color: var(--ui-ink-c4cdd6);
 }
 .lp-empty {
     text-align: center;
     padding: 28px 12px;
-    color: #7b8798;
+    color: var(--ui-ink-7b8798);
     font-size: 13px;
 }
 

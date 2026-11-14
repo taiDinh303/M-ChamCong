@@ -6,10 +6,10 @@
     gap: 9px;
     height: 40px;
     padding: 0 12px;
-    border: 1px solid #d9e5ef;
+    border: 1px solid var(--ui-line-d9e5ef);
     border-radius: 999px;
-    background: #f8fbfe;
-    color: #1d4f73;
+    background: var(--ui-surface-f8fbfe);
+    color: var(--ui-ink-1d4f73);
     font-size: 12px;
     box-shadow: 0 1px 2px rgba(14, 42, 65, 0.04);
     transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
@@ -17,8 +17,8 @@
 
 .lang-picker:hover,
 .lang-picker:focus-within {
-    border-color: #8eb8d5;
-    background: #fff;
+    border-color: var(--ui-line-8eb8d5);
+    background: var(--ui-surface-ffffff);
     box-shadow: 0 0 0 3px rgba(22, 115, 173, 0.09);
 }
 
@@ -29,7 +29,7 @@
     border: 0;
     outline: 0;
     background: transparent;
-    color: #18384f;
+    color: var(--ui-ink-18384f);
     font: inherit;
     font-size: 12px;
     font-weight: 600;
@@ -55,7 +55,7 @@
 .lang-toggle .caret {
     margin-left: 2px;
     font-size: 9px;
-    color: #8aa0b0;
+    color: var(--ui-ink-8aa0b0);
 }
 
 .lang-picker--flag-only .lang-toggle .caret {
@@ -68,8 +68,8 @@
     right: 0;
     min-width: 172px;
     z-index: 50;
-    background: #fff;
-    border: 1px solid #e8edf2;
+    background: var(--ui-surface-ffffff);
+    border: 1px solid var(--ui-line-e8edf2);
     border-radius: 10px;
     box-shadow: 0 14px 34px rgba(14, 26, 38, 0.14);
     padding: 5px;
@@ -87,19 +87,19 @@
     font: inherit;
     font-size: 13px;
     font-weight: 600;
-    color: #182a3a;
+    color: var(--ui-ink-182a3a);
     cursor: pointer;
     text-align: left;
     transition: background 0.15s;
 }
 
 .lang-menu button:hover {
-    background: #f1f5f9;
+    background: var(--ui-surface-f1f5f9);
 }
 
 .lang-menu button.active {
-    background: #e7f2fa;
-    color: #075b91;
+    background: var(--ui-surface-e7f2fa);
+    color: var(--ui-ink-075b91);
 }
 
 .lang-menu button .flag {

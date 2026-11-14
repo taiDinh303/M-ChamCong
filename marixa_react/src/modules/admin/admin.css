@@ -24,7 +24,7 @@
 .admin-today-head strong {
     font-family: "Montserrat", "Be Vietnam Pro", sans-serif;
     font-size: 18px;
-    color: #0e1a26;
+    color: var(--ui-ink-0e1a26);
 }
 
 .admin-kpi-row {
@@ -36,21 +36,21 @@
 .admin-kpi {
     padding: 14px 16px;
     border-radius: 10px;
-    background: #fbfcfe;
-    border: 1px solid #eef2f6;
+    background: var(--ui-surface-fbfcfe);
+    border: 1px solid var(--ui-line-eef2f6);
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
 .admin-kpi--ok {
-    background: #f0faf4;
-    border-color: #d6efe0;
+    background: var(--ui-surface-f0faf4);
+    border-color: var(--ui-line-d6efe0);
 }
 
 .admin-kpi--bad {
-    background: #fff5f5;
-    border-color: #f5dada;
+    background: var(--ui-surface-fff5f5);
+    border-color: var(--ui-line-f5dada);
 }
 
 .admin-kpi-label {
@@ -58,28 +58,28 @@
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: #5a6b7b;
+    color: var(--ui-ink-5a6b7b);
 }
 
 .admin-kpi strong {
     font-family: "Montserrat", "Be Vietnam Pro", sans-serif;
     font-size: 30px;
     font-weight: 800;
-    color: #0e1a26;
+    color: var(--ui-ink-0e1a26);
     line-height: 1.1;
 }
 
 .admin-kpi--bad strong {
-    color: #b42323;
+    color: var(--ui-ink-b42323);
 }
 
 .admin-kpi--ok strong {
-    color: #15803d;
+    color: var(--ui-ink-15803d);
 }
 
 .admin-kpi-sub {
     font-size: 13px;
-    color: #5a6b7b;
+    color: var(--ui-ink-5a6b7b);
 }
 
 /* Trung tâm việc */
@@ -98,24 +98,24 @@
     font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.06em;
-    color: #182a3a;
+    color: var(--ui-ink-182a3a);
 }
 
 .admin-toggle {
     padding: 8px 16px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--ui-line-d1d5db);
     border-radius: 8px;
-    background: #fff;
+    background: var(--ui-surface-ffffff);
     font-size: 13px;
     font-weight: 600;
-    color: #182a3a;
+    color: var(--ui-ink-182a3a);
     cursor: pointer;
     transition: border-color 0.15s, color 0.15s;
 }
 
 .admin-toggle:hover {
-    border-color: #005b94;
-    color: #005b94;
+    border-color: var(--ui-line-005b94);
+    color: var(--ui-ink-005b94);
 }
 
 .admin-tasks-body {
@@ -129,20 +129,20 @@
     align-self: flex-start;
     padding: 5px 12px;
     border-radius: 999px;
-    background: #eef4fb;
-    border: 1px solid #d7e5f5;
+    background: var(--ui-surface-eef4fb);
+    border: 1px solid var(--ui-line-d7e5f5);
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.04em;
-    color: #1d4ed8;
+    color: var(--ui-ink-1d4ed8);
 }
 
 /* Alert kích hoạt */
 .admin-alert {
     padding: 16px 18px;
     border-radius: 10px;
-    background: #eef4fb;
-    border: 1px solid #d7e5f5;
+    background: var(--ui-surface-eef4fb);
+    border: 1px solid var(--ui-line-d7e5f5);
 }
 
 .admin-alert-head {
@@ -154,13 +154,13 @@
 
 .admin-alert-head strong {
     font-size: 15px;
-    color: #1d4ed8;
+    color: var(--ui-ink-1d4ed8);
 }
 
 .admin-alert p {
     margin: 6px 0 12px;
     font-size: 14px;
-    color: #38506a;
+    color: var(--ui-ink-38506a);
 }
 
 .admin-alert-close {
@@ -171,12 +171,12 @@
     background: transparent;
     font-size: 18px;
     line-height: 1;
-    color: #5a6b7b;
+    color: var(--ui-ink-5a6b7b);
     cursor: pointer;
 }
 
 .admin-alert-close:hover {
-    color: #182a3a;
+    color: var(--ui-ink-182a3a);
 }
 
 /* Bảng việc cần làm */
@@ -188,18 +188,18 @@
     margin: 0 0 14px;
     font-size: 15px;
     font-weight: 700;
-    color: #182a3a;
+    color: var(--ui-ink-182a3a);
 }
 
 .admin-table .admin-sub {
     display: block;
     margin-top: 4px;
     font-size: 13px;
-    color: #5a6b7b;
+    color: var(--ui-ink-5a6b7b);
 }
 
 .admin-table .admin-risk {
-    color: #5a6b7b;
+    color: var(--ui-ink-5a6b7b);
     font-size: 13px;
     max-width: 280px;
 }
@@ -209,8 +209,8 @@
     padding: 8px 14px;
     border: none;
     border-radius: 8px;
-    background: #0e1a26;
-    color: #fff;
+    background: var(--ui-surface-0e1a26);
+    color: var(--ui-ink-ffffff);
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
@@ -219,7 +219,7 @@
 }
 
 .admin-link-btn:hover {
-    background: #005b94;
+    background: var(--ui-surface-005b94);
 }
 
 /* ===== TRANG QL CHẤM CÔNG: thanh điều khiển + hành động hàng + modal ===== */
@@ -234,11 +234,11 @@
 .admin-toolbar select,
 .admin-toolbar input[type="month"] {
     padding: 9px 12px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--ui-line-d1d5db);
     border-radius: 8px;
-    background: #fff;
+    background: var(--ui-surface-ffffff);
     font-size: 14px;
-    color: #182a3a;
+    color: var(--ui-ink-182a3a);
 }
 
 .admin-search {
@@ -249,15 +249,15 @@
     min-width: 220px;
     min-height: 40px;
     padding: 0 12px;
-    border: 1px solid #d1dbe5;
+    border: 1px solid var(--ui-line-d1dbe5);
     border-radius: 9px;
-    background: #fff;
-    color: #718397;
+    background: var(--ui-surface-ffffff);
+    color: var(--ui-ink-718397);
     transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .admin-search:focus-within {
-    border-color: #1673ad;
+    border-color: var(--ui-line-1673ad);
     box-shadow: 0 0 0 3px rgba(22, 115, 173, 0.12);
 }
 
@@ -274,7 +274,7 @@
     border: 0;
     outline: 0;
     background: transparent;
-    color: #182a3a;
+    color: var(--ui-ink-182a3a);
     font: inherit;
     font-size: 13px;
 }
@@ -292,7 +292,7 @@
     align-items: center;
     gap: 6px;
     font-size: 13px;
-    color: #5a6b7b;
+    color: var(--ui-ink-5a6b7b);
 }
 
 .admin-check input {
@@ -309,19 +309,19 @@
 }
 
 .admin-link-btn--danger {
-    background: #b42323;
+    background: var(--ui-surface-b42323);
 }
 
 .admin-link-btn--danger:hover {
-    background: #8f1c1c;
+    background: var(--ui-surface-8f1c1c);
 }
 
 .admin-view-link {
     padding: 8px 14px;
-    border: 1px solid #005b94;
+    border: 1px solid var(--ui-line-005b94);
     border-radius: 8px;
-    background: #fff;
-    color: #005b94;
+    background: var(--ui-surface-ffffff);
+    color: var(--ui-ink-005b94);
     font-size: 13px;
     font-weight: 600;
     text-decoration: none;
@@ -330,14 +330,14 @@
 }
 
 .admin-view-link:hover {
-    background: #e3f0ff;
+    background: var(--ui-surface-e3f0ff);
 }
 
 /* Modal form thêm / sửa */
 .att-form-modal {
     width: 100%;
     max-width: 480px;
-    background: #fff;
+    background: var(--ui-surface-ffffff);
     border-radius: 16px;
     padding: 24px 26px;
     box-shadow: 0 20px 60px rgba(14, 26, 38, 0.2);
@@ -347,7 +347,7 @@
     margin: 0 0 16px;
     font-family: "Montserrat", "Be Vietnam Pro", sans-serif;
     font-size: 18px;
-    color: #0e1a26;
+    color: var(--ui-ink-0e1a26);
 }
 
 .att-form {
@@ -362,17 +362,17 @@
     gap: 5px;
     font-size: 13px;
     font-weight: 600;
-    color: #5a6b7b;
+    color: var(--ui-ink-5a6b7b);
 }
 
 .att-form select,
 .att-form input,
 .att-form textarea {
     padding: 9px 12px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--ui-line-d1d5db);
     border-radius: 8px;
     font-size: 14px;
-    color: #0e1a26;
+    color: var(--ui-ink-0e1a26);
     font-family: inherit;
     resize: vertical;
 }
@@ -388,9 +388,9 @@
     left: 0;
     overflow: auto;
     max-height: 220px;
-    border: 1px solid #d1dbe5;
+    border: 1px solid var(--ui-line-d1dbe5);
     border-radius: 8px;
-    background: #fff;
+    background: var(--ui-surface-ffffff);
     box-shadow: 0 8px 22px rgba(14, 26, 38, 0.14);
 }
 .att-employee-options button {
@@ -401,18 +401,18 @@
     width: 100%;
     padding: 10px 12px;
     border: 0;
-    border-bottom: 1px solid #eef2f6;
-    background: #fff;
-    color: #0e1a26;
+    border-bottom: 1px solid var(--ui-line-eef2f6);
+    background: var(--ui-surface-ffffff);
+    color: var(--ui-ink-0e1a26);
     font: inherit;
     text-align: left;
     cursor: pointer;
 }
 .att-employee-options button:last-child { border-bottom: 0; }
 .att-employee-options button:hover,
-.att-employee-options button[aria-selected="true"] { background: #f0f7fc; }
-.att-employee-options button span { color: #66788a; font-size: 12px; white-space: nowrap; }
-.att-employee-empty { padding: 11px 12px; color: #66788a; font-size: 13px; font-weight: 400; }
+.att-employee-options button[aria-selected="true"] { background: var(--ui-surface-f0f7fc); }
+.att-employee-options button span { color: var(--ui-ink-66788a); font-size: 12px; white-space: nowrap; }
+.att-employee-empty { padding: 11px 12px; color: var(--ui-ink-66788a); font-size: 13px; font-weight: 400; }
 
 .att-form-actions {
     display: flex;
@@ -461,7 +461,7 @@
     max-width: 520px;
     padding: 26px 30px;
     border-radius: 16px;
-    background: #f7c644;
+    background: var(--ui-surface-f7c644);
     box-shadow: 0 10px 30px rgba(247, 198, 68, 0.35);
 }
 
@@ -471,7 +471,7 @@
     width: 92px;
     height: 92px;
     border-radius: 50%;
-    background: #fff;
+    background: var(--ui-surface-ffffff);
     box-shadow: inset 0 2px 6px rgba(14, 26, 38, 0.08);
 }
 
@@ -483,7 +483,7 @@
     height: 4px;
     margin: -2px;
     border-radius: 50%;
-    background: #f7c644;
+    background: var(--ui-surface-f7c644);
 }
 
 .admhome-clock-hand {
@@ -492,14 +492,14 @@
     bottom: 50%;
     transform-origin: 50% 100%;
     border-radius: 4px;
-    background: #182a3a;
+    background: var(--ui-surface-182a3a);
 }
 
 .admhome-clock-hand--hour {
     width: 5px;
     height: 24px;
     margin-left: -2.5px;
-    background: #0e1a26;
+    background: var(--ui-surface-0e1a26);
 }
 
 .admhome-clock-hand--minute {
@@ -516,14 +516,14 @@
     height: 10px;
     margin: -5px;
     border-radius: 50%;
-    background: #0e1a26;
+    background: var(--ui-surface-0e1a26);
 }
 
 .admhome-clock-meta {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    color: #182a3a;
+    color: var(--ui-ink-182a3a);
 }
 
 .admhome-clock-meta strong {
@@ -536,7 +536,7 @@
 
 .admhome-clock-meta span {
     font-size: 13px;
-    color: #3d3418;
+    color: var(--ui-ink-3d3418);
 }
 
 .admhome-clock-tz {
@@ -559,16 +559,16 @@
     align-items: center;
     gap: 4px;
     padding: 22px 14px 18px;
-    border: 1px solid #eef2f6;
+    border: 1px solid var(--ui-line-eef2f6);
     border-radius: 12px;
-    background: #fff;
+    background: var(--ui-surface-ffffff);
     cursor: pointer;
     transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
     font-family: inherit;
 }
 
 .admhome-tile:hover {
-    border-color: #f7c644;
+    border-color: var(--ui-line-f7c644);
     box-shadow: 0 8px 22px rgba(247, 198, 68, 0.22);
     transform: translateY(-2px);
 }
@@ -582,12 +582,12 @@
     margin-top: 6px;
     font-size: 15px;
     font-weight: 700;
-    color: #0e1a26;
+    color: var(--ui-ink-0e1a26);
 }
 
 .admhome-tile-sub {
     font-size: 12px;
-    color: #5a6b7b;
+    color: var(--ui-ink-5a6b7b);
 }
 
 @media (max-width: 720px) {
@@ -619,10 +619,10 @@
     width: 32px;
     height: 32px;
     flex-shrink: 0;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--ui-line-e2e8f0);
     border-radius: 8px;
-    background: #fff;
-    color: #5a6b7b;
+    background: var(--ui-surface-ffffff);
+    color: var(--ui-ink-5a6b7b);
     font-size: 20px;
     line-height: 1;
     cursor: pointer;
@@ -630,20 +630,20 @@
 }
 
 .att-form-close:hover {
-    border-color: #005b94;
-    color: #005b94;
+    border-color: var(--ui-line-005b94);
+    color: var(--ui-ink-005b94);
 }
 /* Back-to-dashboard link at the bottom of the HR admin sidebar */
 .att-nav-back {
     margin-top: auto;
-    border-top: 1px solid #e8edf2;
+    border-top: 1px solid var(--ui-line-e8edf2);
     padding-top: 10px;
-    color: #5a6b7b;
+    color: var(--ui-ink-5a6b7b);
 }
 
 .att-nav-back:hover {
-    color: #005b94;
-    background: #f0f7fc;
+    color: var(--ui-ink-005b94);
+    background: var(--ui-surface-f0f7fc);
 }
 /* Make the HR admin sidebar nav fill the full height so the back link sits at the bottom */
 .att-sidebar .att-sidebar-nav {
@@ -651,138 +651,138 @@
 }
 
 /* ===== PHÂN QUYỀN (ROLES) ===== */
-.roles-card-title { font-size: 15px; font-weight: 600; color: #172b42; margin: 0; }
+.roles-card-title { font-size: 15px; font-weight: 600; color: var(--ui-ink-172b42); margin: 0; }
 .roles-new-form { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 14px; }
-.roles-new-form input { flex: 1; min-width: 160px; padding: 9px 12px; border: 1px solid #d5dee8; border-radius: 8px; font-size: 13px; }
-.roles-new-form input:focus { outline: none; border-color: #2f6df6; }
+.roles-new-form input { flex: 1; min-width: 160px; padding: 9px 12px; border: 1px solid var(--ui-line-d5dee8); border-radius: 8px; font-size: 13px; }
+.roles-new-form input:focus { outline: none; border-color: var(--ui-line-2f6df6); }
 .roles-roles-cell { display: flex; gap: 6px; flex-wrap: wrap; }
 .roles-role-badge { display: inline-flex; align-items: center; gap: 5px; }
-.roles-role-badge button { border: 0; background: transparent; cursor: pointer; font-size: 13px; color: #63758a; padding: 0; }
-.roles-role-badge button:hover { color: #c62828; }
+.roles-role-badge button { border: 0; background: transparent; cursor: pointer; font-size: 13px; color: var(--ui-ink-63758a); padding: 0; }
+.roles-role-badge button:hover { color: var(--ui-ink-c62828); }
 .roles-overlay { z-index: 100; }
 .roles-modal { max-width: 520px; width: 92%; max-height: 80vh; overflow: auto; }
 .roles-pick-list { display: flex; flex-direction: column; gap: 8px; }
-.roles-pick { text-align: left; border: 1px solid #d5dee8; background: #fff; border-radius: 8px; padding: 9px 12px; font-size: 13px; }
-.roles-pick:hover { border-color: #2f6df6; background: #f5f8ff; }
+.roles-pick { text-align: left; border: 1px solid var(--ui-line-d5dee8); background: var(--ui-surface-ffffff); border-radius: 8px; padding: 9px 12px; font-size: 13px; }
+.roles-pick:hover { border-color: var(--ui-line-2f6df6); background: var(--ui-surface-f5f8ff); }
 
 /* ===== LỊCH TRÌNH CÔNG TÁC ===== */
 .work-note { font-size: 12px; margin-top: 3px; }
-.work-status-select { padding: 6px 8px; border: 1px solid #d5dee8; border-radius: 8px; font-size: 13px; background: #fff; }
+.work-status-select { padding: 6px 8px; border: 1px solid var(--ui-line-d5dee8); border-radius: 8px; font-size: 13px; background: var(--ui-surface-ffffff); }
 .work-overlay { z-index: 100; }
 .work-modal { max-width: 560px; width: 94%; max-height: 88vh; overflow: auto; }
 .work-form { display: flex; flex-direction: column; gap: 12px; }
-.work-form label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: #63758a; font-weight: 600; }
-.work-form input, .work-form select, .work-form textarea { padding: 9px 11px; border: 1px solid #d5dee8; border-radius: 8px; font-size: 13px; color: #172b42; font-family: inherit; }
-.work-form input:focus, .work-form select:focus, .work-form textarea:focus { outline: none; border-color: #2f6df6; }
+.work-form label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: var(--ui-ink-63758a); font-weight: 600; }
+.work-form input, .work-form select, .work-form textarea { padding: 9px 11px; border: 1px solid var(--ui-line-d5dee8); border-radius: 8px; font-size: 13px; color: var(--ui-ink-172b42); font-family: inherit; }
+.work-form input:focus, .work-form select:focus, .work-form textarea:focus { outline: none; border-color: var(--ui-line-2f6df6); }
 .work-form-row { display: flex; gap: 12px; }
 .work-form-row label { flex: 1; }
 .work-form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
-.work-save { background: #2f6df6; color: #fff; border-color: #2f6df6; }
-.work-save:hover { background: #1f5ae0; }
+.work-save { background: var(--ui-surface-2f6df6); color: var(--ui-ink-ffffff); border-color: var(--ui-line-2f6df6); }
+.work-save:hover { background: var(--ui-surface-1f5ae0); }
 
 /* ===== PHÂN QUYỀN (ROLES) - GHI LẠI THEO VAI TRÒ ===== */
 .roles-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
 .roles-add-btn { white-space: nowrap; }
 .roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
-.roles-role-card { border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(15, 30, 50, .04); }
-.roles-role-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 16px 18px; border-bottom: 1px solid #eef2f7; background: #f8fafc; }
-.roles-role-head h3 { margin: 0; font-size: 16px; color: #172b42; }
-.roles-role-head p { margin: 4px 0 0; font-size: 12px; color: #63758a; max-width: 200px; }
-.roles-member-count { font-size: 12px; color: #2f6df6; font-weight: 600; background: #eef4ff; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+.roles-role-card { border: 1px solid var(--ui-line-e2e8f0); border-radius: 12px; background: var(--ui-surface-ffffff); overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(15, 30, 50, .04); }
+.roles-role-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--ui-line-eef2f7); background: var(--ui-surface-f8fafc); }
+.roles-role-head h3 { margin: 0; font-size: 16px; color: var(--ui-ink-172b42); }
+.roles-role-head p { margin: 4px 0 0; font-size: 12px; color: var(--ui-ink-63758a); max-width: 200px; }
+.roles-member-count { font-size: 12px; color: var(--ui-ink-2f6df6); font-weight: 600; background: var(--ui-surface-eef4ff); padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
 .roles-member-list { padding: 8px 12px 12px; display: flex; flex-direction: column; gap: 4px; }
 .roles-member-empty { padding: 6px 4px; }
 .roles-member { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 8px; }
-.roles-member:hover { background: #f7fafc; }
-.roles-member-ava { width: 34px; height: 34px; border-radius: 50%; background: #2f6df6; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex: 0 0 auto; }
+.roles-member:hover { background: var(--ui-surface-f7fafc); }
+.roles-member-ava { width: 34px; height: 34px; border-radius: 50%; background: var(--ui-surface-2f6df6); color: var(--ui-ink-ffffff); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex: 0 0 auto; }
 .roles-member-info { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
-.roles-member-info strong { font-size: 13px; color: #172b42; }
-.roles-member-info small { font-size: 11px; color: #8a99ab; }
-.roles-member-remove { width: 26px; height: 26px; border: 1px solid #f0d0d0; background: #fff; color: #c62828; border-radius: 50%; cursor: pointer; font-size: 15px; line-height: 1; flex: 0 0 auto; }
-.roles-member-remove:hover { background: #fdecec; }
-.roles-role-select { margin: 0 12px 14px; padding: 8px 10px; border: 1px dashed #b9c6d6; border-radius: 8px; font-size: 13px; color: #172b42; background: #fff; }
+.roles-member-info strong { font-size: 13px; color: var(--ui-ink-172b42); }
+.roles-member-info small { font-size: 11px; color: var(--ui-ink-8a99ab); }
+.roles-member-remove { width: 26px; height: 26px; border: 1px solid var(--ui-line-f0d0d0); background: var(--ui-surface-ffffff); color: var(--ui-ink-c62828); border-radius: 50%; cursor: pointer; font-size: 15px; line-height: 1; flex: 0 0 auto; }
+.roles-member-remove:hover { background: var(--ui-surface-fdecec); }
+.roles-role-select { margin: 0 12px 14px; padding: 8px 10px; border: 1px dashed var(--ui-line-b9c6d6); border-radius: 8px; font-size: 13px; color: var(--ui-ink-172b42); background: var(--ui-surface-ffffff); }
 .roles-orphan-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 6px 2px; }
-.roles-orphan-chip { background: #f4f6f9; border: 1px solid #e2e8f0; border-radius: 20px; padding: 5px 12px; font-size: 12px; color: #4a5a6d; }
+.roles-orphan-chip { background: var(--ui-surface-f4f6f9); border: 1px solid var(--ui-line-e2e8f0); border-radius: 20px; padding: 5px 12px; font-size: 12px; color: var(--ui-ink-4a5a6d); }
 
 /* ===== PHÂN QUYỀN - BẢNG THEO PHÒNG BAN / CHỨC VỤ + KÉO THẢ CỘT ===== */
 .roles-role-table { padding: 0; }
 .roles-role-table .att-table { margin: 0; }
 .roles-drag-col { cursor: grab; user-select: none; }
 .roles-drag-col:active { cursor: grabbing; }
-.roles-drag-ico { color: #b6c2d1; font-size: 11px; letter-spacing: -1px; margin-right: 3px; }
+.roles-drag-ico { color: var(--ui-ink-b6c2d1); font-size: 11px; letter-spacing: -1px; margin-right: 3px; }
 .roles-th-act, .roles-td-act { text-align: right; white-space: nowrap; }
 .roles-td-act { padding-right: 14px; }
-.roles-eye-btn { width: 28px; height: 28px; border: 1px solid #d5dee8; background: #fff; border-radius: 50%; cursor: pointer; font-size: 13px; margin-right: 6px; vertical-align: middle; }
-.roles-eye-btn:hover { border-color: #2f6df6; background: #f5f8ff; }
-.roles-dept-row td { background: #f1f5fa; border-top: 1px solid #e6edf5; border-bottom: 1px solid #e6edf5; padding: 9px 14px; font-weight: 600; color: #172b42; font-size: 13px; }
-.roles-dept-row small { font-weight: 400; color: #8a99ab; font-size: 11px; margin-left: 4px; }
+.roles-eye-btn { width: 28px; height: 28px; border: 1px solid var(--ui-line-d5dee8); background: var(--ui-surface-ffffff); border-radius: 50%; cursor: pointer; font-size: 13px; margin-right: 6px; vertical-align: middle; }
+.roles-eye-btn:hover { border-color: var(--ui-line-2f6df6); background: var(--ui-surface-f5f8ff); }
+.roles-dept-row td { background: var(--ui-surface-f1f5fa); border-top: 1px solid var(--ui-line-e6edf5); border-bottom: 1px solid var(--ui-line-e6edf5); padding: 9px 14px; font-weight: 600; color: var(--ui-ink-172b42); font-size: 13px; }
+.roles-dept-row small { font-weight: 400; color: var(--ui-ink-8a99ab); font-size: 11px; margin-left: 4px; }
 .roles-dept-ico { margin-right: 5px; }
-.roles-role-select { margin: 12px; padding: 8px 10px; border: 1px dashed #b9c6d6; border-radius: 8px; font-size: 13px; color: #172b42; background: #fff; }
-.roles-role-card { border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; overflow: hidden; box-shadow: 0 1px 2px rgba(15, 30, 50, .04); }
+.roles-role-select { margin: 12px; padding: 8px 10px; border: 1px dashed var(--ui-line-b9c6d6); border-radius: 8px; font-size: 13px; color: var(--ui-ink-172b42); background: var(--ui-surface-ffffff); }
+.roles-role-card { border: 1px solid var(--ui-line-e2e8f0); border-radius: 12px; background: var(--ui-surface-ffffff); overflow: hidden; box-shadow: 0 1px 2px rgba(15, 30, 50, .04); }
 .roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 16px; }
 .roles-profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 18px; }
-.roles-profile-grid > span { display: flex; flex-direction: column; gap: 3px; font-size: 11px; color: #8a99ab; }
-.roles-profile-grid > span strong { font-size: 13px; color: #172b42; }
+.roles-profile-grid > span { display: flex; flex-direction: column; gap: 3px; font-size: 11px; color: var(--ui-ink-8a99ab); }
+.roles-profile-grid > span strong { font-size: 13px; color: var(--ui-ink-172b42); }
 .roles-modal { max-width: 460px; width: 94%; }
 /* orphan chips */
 .roles-orphan-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 6px 2px; }
-.roles-orphan-chip { background: #f4f6f9; border: 1px solid #e2e8f0; border-radius: 20px; padding: 5px 12px; font-size: 12px; color: #4a5a6d; }
+.roles-orphan-chip { background: var(--ui-surface-f4f6f9); border: 1px solid var(--ui-line-e2e8f0); border-radius: 20px; padding: 5px 12px; font-size: 12px; color: var(--ui-ink-4a5a6d); }
 
 /* ===== PHÂN QUYỀN - POLISH ===== */
 .roles-kpi-row { gap: 12px; }
-.roles-kpi { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 14px; border: 1px solid #e6edf5; background: #fff; min-width: 168px; }
+.roles-kpi { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 14px; border: 1px solid var(--ui-line-e6edf5); background: var(--ui-surface-ffffff); min-width: 168px; }
 .roles-kpi .admin-kpi-label, .roles-kpi .admin-kpi strong { margin: 0; }
 .roles-kpi > div { display: flex; flex-direction: column; gap: 2px; }
-.roles-kpi .admin-kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: .3px; color: #8a99ab; }
+.roles-kpi .admin-kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: .3px; color: var(--ui-ink-8a99ab); }
 .roles-kpi .admin-kpi strong { font-size: 22px; }
 .roles-kpi-ico { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex: 0 0 auto; }
-.roles-kpi--blue { border-left: 3px solid #2f6df6; } .roles-kpi--blue .roles-kpi-ico { background: #eef4ff; }
-.roles-kpi--teal { border-left: 3px solid #16a085; } .roles-kpi--teal .roles-kpi-ico { background: #e8f6f3; }
-.roles-kpi--green { border-left: 3px solid #2e7d32; } .roles-kpi--green .roles-kpi-ico { background: #eaf5ea; }
-.roles-add-btn { padding: 9px 16px; background: #2f6df6; color: #fff; border: 0; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 6px rgba(47,109,246,.25); }
-.roles-add-btn:hover { background: #1f5ae0; }
-.roles-role-card { border: 1px solid #e6edf5; border-top: 3px solid var(--role-accent, #2f6df6); border-radius: 14px; background: #fff; overflow: hidden; box-shadow: 0 4px 14px rgba(15,30,50,.06); }
-.roles-role-head { padding: 15px 18px; border-bottom: 1px solid #eef2f7; background: #fbfcfe; }
+.roles-kpi--blue { border-left: 3px solid var(--ui-line-2f6df6); } .roles-kpi--blue .roles-kpi-ico { background: var(--ui-surface-eef4ff); }
+.roles-kpi--teal { border-left: 3px solid var(--ui-line-16a085); } .roles-kpi--teal .roles-kpi-ico { background: var(--ui-surface-e8f6f3); }
+.roles-kpi--green { border-left: 3px solid var(--ui-line-2e7d32); } .roles-kpi--green .roles-kpi-ico { background: var(--ui-surface-eaf5ea); }
+.roles-add-btn { padding: 9px 16px; background: var(--ui-surface-2f6df6); color: var(--ui-ink-ffffff); border: 0; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 6px rgba(47,109,246,.25); }
+.roles-add-btn:hover { background: var(--ui-surface-1f5ae0); }
+.roles-role-card { border: 1px solid var(--ui-line-e6edf5); border-top: 3px solid var(--role-accent, var(--ui-line-2f6df6)); border-radius: 14px; background: var(--ui-surface-ffffff); overflow: hidden; box-shadow: 0 4px 14px rgba(15,30,50,.06); }
+.roles-role-head { padding: 15px 18px; border-bottom: 1px solid var(--ui-line-eef2f7); background: var(--ui-surface-fbfcfe); }
 .roles-role-head-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
-.roles-role-ava { width: 40px; height: 40px; border-radius: 12px; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; flex: 0 0 auto; }
-.roles-role-head h3 { margin: 0; font-size: 16px; color: #172b42; }
-.roles-role-head p { margin: 3px 0 0; font-size: 12px; color: #63758a; }
+.roles-role-ava { width: 40px; height: 40px; border-radius: 12px; color: var(--ui-ink-ffffff); display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; flex: 0 0 auto; }
+.roles-role-head h3 { margin: 0; font-size: 16px; color: var(--ui-ink-172b42); }
+.roles-role-head p { margin: 3px 0 0; font-size: 12px; color: var(--ui-ink-63758a); }
 .roles-member-count { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
 /* Cells */
-.roles-code-chip { font-family: "Consolas","SF Mono",monospace; font-size: 11px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #4a5a6d; padding: 2px 7px; border-radius: 6px; }
-.roles-position-chip { font-size: 11px; background: #eef4ff; color: #2f6df6; padding: 2px 8px; border-radius: 20px; }
+.roles-code-chip { font-family: "Consolas","SF Mono",monospace; font-size: 11px; background: var(--ui-surface-f1f5f9); border: 1px solid var(--ui-line-e2e8f0); color: var(--ui-ink-4a5a6d); padding: 2px 7px; border-radius: 6px; }
+.roles-position-chip { font-size: 11px; background: var(--ui-surface-eef4ff); color: var(--ui-ink-2f6df6); padding: 2px 8px; border-radius: 20px; }
 .roles-name-cell { display: inline-flex; align-items: center; gap: 8px; }
-.roles-member-ava--sm { width: 28px; height: 28px; border-radius: 50%; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex: 0 0 auto; }
-.roles-name-text { font-weight: 600; color: #172b42; font-size: 13px; }
+.roles-member-ava--sm { width: 28px; height: 28px; border-radius: 50%; color: var(--ui-ink-ffffff); display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex: 0 0 auto; }
+.roles-name-text { font-weight: 600; color: var(--ui-ink-172b42); font-size: 13px; }
 /* Modal profile header polish */
 .roles-profile-grid { grid-template-columns: 1fr 1fr; }
 
 /* ===== PHÂN QUYỀN - PANEL THÊM NGƯỜI DÙNG ===== */
 .roles-add-panel { padding: 18px 20px; margin-bottom: 16px; }
 .roles-add-panel-head { margin-bottom: 14px; }
-.roles-add-panel-head h3 { margin: 0; font-size: 15px; font-weight: 600; color: #172b42; }
+.roles-add-panel-head h3 { margin: 0; font-size: 15px; font-weight: 600; color: var(--ui-ink-172b42); }
 .roles-add-panel-head p { margin: 4px 0 0; font-size: 12px; }
 .roles-add-form { display: flex; gap: 10px; flex-wrap: wrap; }
-.roles-add-form select { flex: 1; min-width: 200px; padding: 9px 12px; border: 1px solid #d5dee8; border-radius: 8px; font-size: 13px; color: #172b42; background: #fff; }
-.roles-add-form input { flex: 1.5; min-width: 200px; padding: 9px 12px; border: 1px solid #d5dee8; border-radius: 8px; font-size: 13px; color: #172b42; font-family: "Consolas","SF Mono",monospace; }
-.roles-add-form select:focus, .roles-add-form input:focus { outline: none; border-color: #2f6df6; }
+.roles-add-form select { flex: 1; min-width: 200px; padding: 9px 12px; border: 1px solid var(--ui-line-d5dee8); border-radius: 8px; font-size: 13px; color: var(--ui-ink-172b42); background: var(--ui-surface-ffffff); }
+.roles-add-form input { flex: 1.5; min-width: 200px; padding: 9px 12px; border: 1px solid var(--ui-line-d5dee8); border-radius: 8px; font-size: 13px; color: var(--ui-ink-172b42); font-family: "Consolas","SF Mono",monospace; }
+.roles-add-form select:focus, .roles-add-form input:focus { outline: none; border-color: var(--ui-line-2f6df6); }
 .roles-add-form .roles-add-btn { margin-left: auto; }
 
 /* ===== QUÁ TRÌNH CÔNG TÁC - nút + bảng ===== */
-.work-add-btn { padding: 9px 16px; background: #2f6df6; color: #fff; border: 0; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 6px rgba(47,109,246,.25); }
-.work-add-btn:hover { background: #1f5ae0; }
+.work-add-btn { padding: 9px 16px; background: var(--ui-surface-2f6df6); color: var(--ui-ink-ffffff); border: 0; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 6px rgba(47,109,246,.25); }
+.work-add-btn:hover { background: var(--ui-surface-1f5ae0); }
 .work-emp-cell { display: flex; flex-direction: column; gap: 1px; }
-.work-emp-cell strong { font-size: 13px; color: #172b42; font-family: "Consolas","SF Mono",monospace; }
-.work-emp-cell small { font-size: 11px; color: #8a99ab; }
+.work-emp-cell strong { font-size: 13px; color: var(--ui-ink-172b42); font-family: "Consolas","SF Mono",monospace; }
+.work-emp-cell small { font-size: 11px; color: var(--ui-ink-8a99ab); }
 .work-note-preview { margin: 0; font-size: 12px; }
 
 /* ===== PHÂN QUYỀN - nút thêm user thành modal ===== */
 .roles-add-card { padding: 18px 20px; margin-bottom: 16px; }
 .roles-add-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.roles-add-card-head h3 { margin: 0; font-size: 15px; font-weight: 600; color: #172b42; }
+.roles-add-card-head h3 { margin: 0; font-size: 15px; font-weight: 600; color: var(--ui-ink-172b42); }
 .roles-add-form { display: flex; flex-direction: column; gap: 12px; }
-.roles-add-form select { padding: 9px 12px; border: 1px solid #d5dee8; border-radius: 8px; font-size: 13px; color: #172b42; background: #fff; }
-.roles-add-form input { padding: 9px 12px; border: 1px solid #d5dee8; border-radius: 8px; font-size: 13px; color: #172b42; font-family: "Consolas","SF Mono",monospace; }
-.roles-add-form select:focus, .roles-add-form input:focus { outline: none; border-color: #2f6df6; }
+.roles-add-form select { padding: 9px 12px; border: 1px solid var(--ui-line-d5dee8); border-radius: 8px; font-size: 13px; color: var(--ui-ink-172b42); background: var(--ui-surface-ffffff); }
+.roles-add-form input { padding: 9px 12px; border: 1px solid var(--ui-line-d5dee8); border-radius: 8px; font-size: 13px; color: var(--ui-ink-172b42); font-family: "Consolas","SF Mono",monospace; }
+.roles-add-form select:focus, .roles-add-form input:focus { outline: none; border-color: var(--ui-line-2f6df6); }
 .roles-add-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
 
 /* ===== PHÂN QUYỀN v2: HERO + SEARCH (nâng cấp UI) ===== */
@@ -794,8 +794,8 @@
     flex-wrap: wrap;
     padding: 22px 24px;
     border-radius: 18px;
-    background: linear-gradient(135deg, #0f1b33 0%, #1e3a6e 55%, #2f6df6 100%);
-    color: #fff;
+    background: linear-gradient(135deg, var(--ui-surface-0f1b33) 0%, var(--ui-surface-1e3a6e) 55%, var(--ui-surface-2f6df6) 100%);
+    color: var(--ui-ink-ffffff);
     box-shadow: 0 14px 40px rgba(15,27,51,.28);
 }
 .roles-hero-left { display: flex; align-items: center; gap: 14px; }
@@ -805,12 +805,12 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 24px;
 }
-.roles-hero-left h2 { margin: 0; font-size: 20px; color: #fff; font-weight: 800; }
-.roles-hero-left p { margin: 4px 0 0; font-size: 12px; color: #c9d4e8; max-width: 46ch; line-height: 1.5; }
+.roles-hero-left h2 { margin: 0; font-size: 20px; color: var(--ui-ink-ffffff); font-weight: 800; }
+.roles-hero-left p { margin: 4px 0 0; font-size: 12px; color: var(--ui-ink-c9d4e8); max-width: 46ch; line-height: 1.5; }
 .roles-hero .roles-kpi-row { flex-wrap: nowrap; }
 .roles-hero .roles-kpi { background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.16); padding: 10px 14px; }
-.roles-hero .roles-kpi .admin-kpi-label { color: #c9d4e8; }
-.roles-hero .roles-kpi strong { color: #fff; font-size: 20px; }
+.roles-hero .roles-kpi .admin-kpi-label { color: var(--ui-ink-c9d4e8); }
+.roles-hero .roles-kpi strong { color: var(--ui-ink-ffffff); font-size: 20px; }
 .roles-hero .roles-kpi-ico { background: rgba(255,255,255,.12); }
 .roles-hero .roles-kpi--blue, .roles-hero .roles-kpi--teal, .roles-hero .roles-kpi--green { border-left: 3px solid rgba(255,255,255,.35); }
 
@@ -825,7 +825,7 @@
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    color: #94a3b5;
+    color: var(--ui-ink-94a3b5);
     font-size: 15px;
     pointer-events: none;
 }
@@ -834,21 +834,21 @@
     box-sizing: border-box;
     min-height: 42px;
     padding: 10px 12px 10px 34px;
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid var(--ui-line-e2e8f0);
     border-radius: 12px;
-    background: #f6f9fc;
+    background: var(--ui-surface-f6f9fc);
     font-size: 13px;
-    color: #172b42;
+    color: var(--ui-ink-172b42);
     font-family: inherit;
     outline: none;
     transition: border-color .15s, background .15s, box-shadow .15s;
 }
 .roles-search input:focus {
-    background: #fff;
-    border-color: #2f6df6;
+    background: var(--ui-surface-ffffff);
+    border-color: var(--ui-line-2f6df6);
     box-shadow: 0 0 0 3px rgba(47,109,246,.14);
 }
-.roles-search input:focus ~ span { color: #2f6df6; }
+.roles-search input:focus ~ span { color: var(--ui-ink-2f6df6); }
 
 /* ============================================================
    PREMIUM POLISH v3 â€” /admin/attendance-history (hero + KPI + table)
@@ -863,8 +863,8 @@
     gap: 16px;
     padding: 20px 24px;
     border-radius: 16px;
-    background: linear-gradient(120deg, #16324f 0%, #0e2138 100%);
-    border: 1px solid #24405f;
+    background: linear-gradient(120deg, var(--ui-surface-16324f) 0%, var(--ui-surface-0e2138) 100%);
+    border: 1px solid var(--ui-line-24405f);
     box-shadow: 0 8px 22px rgba(14, 33, 56, 0.18);
     overflow: hidden;
     margin-bottom: 4px;
@@ -899,11 +899,11 @@
 .attd-hero-left h2 {
     margin: 0;
     font: 800 18px "Montserrat", "Be Vietnam Pro", sans-serif;
-    color: #fff;
+    color: var(--ui-ink-ffffff);
 }
 .attd-hero-left p {
     margin: 4px 0 0;
-    color: #c3d2e4;
+    color: var(--ui-ink-c3d2e4);
     font-size: 12px;
     max-width: 48ch;
 }
@@ -911,8 +911,8 @@
 /* KPI premium (gradient accent bar) */
 .admin-kpi {
     position: relative;
-    background: #fff;
-    border: 1px solid #eef2f6;
+    background: var(--ui-surface-ffffff);
+    border: 1px solid var(--ui-line-eef2f6);
     border-radius: 14px;
     padding: 15px 18px;
     box-shadow: 0 2px 8px rgba(14, 26, 38, 0.04);
@@ -925,19 +925,19 @@
     top: 0;
     bottom: 0;
     width: 4px;
-    background: linear-gradient(180deg, #3fb0ff, #0a84d6);
+    background: linear-gradient(180deg, var(--ui-surface-3fb0ff), var(--ui-surface-0a84d6));
 }
-.admin-kpi--ok::before { background: linear-gradient(180deg, #2fd88f, #0f9d58); }
-.admin-kpi--bad::before { background: linear-gradient(180deg, #ff8a8a, #e53935); }
+.admin-kpi--ok::before { background: linear-gradient(180deg, var(--ui-surface-2fd88f), var(--ui-surface-0f9d58)); }
+.admin-kpi--bad::before { background: linear-gradient(180deg, var(--ui-surface-ff8a8a), var(--ui-surface-e53935)); }
 .admin-kpi-label {
     font-size: 11px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: #788895;
+    color: var(--ui-ink-788895);
     font-weight: 700;
 }
 .admin-kpi strong { font-size: 26px; letter-spacing: -0.01em; }
-.admin-kpi-sub { font-size: 12px; color: #8a99ab; }
+.admin-kpi-sub { font-size: 12px; color: var(--ui-ink-8a99ab); }
 
 /* Toolbar: taller, softer selects/search */
 .attendance-history-toolbar select,
@@ -954,16 +954,16 @@
 /* Refined table: rounded wrapper + zebra */
 .att-table-wrap {
     overflow: auto;
-    border: 1px solid #eef2f6;
+    border: 1px solid var(--ui-line-eef2f6);
     border-radius: 12px;
-    background: #fff;
+    background: var(--ui-surface-ffffff);
 }
 .att-table thead th {
     position: sticky;
     top: 0;
     z-index: 1;
 }
-.att-table tbody tr:nth-child(even) { background: #fbfcfe; }
+.att-table tbody tr:nth-child(even) { background: var(--ui-surface-fbfcfe); }
 
 /* Mobile */
 @media (max-width: 768px) {

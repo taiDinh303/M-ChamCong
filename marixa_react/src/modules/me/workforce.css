@@ -4,7 +4,7 @@
 .wf-heading h2 { margin: 0; font-size: 18px; }
 .wf-actions { margin: 12px 0; }
 .wf-btn { border: 1px solid var(--th-border); border-radius: 9px; background: var(--th-surface); color: var(--th-text); padding: 9px 14px; cursor: pointer; font: inherit; }
-.wf-btn-primary, .wf-tabs [aria-selected="true"] { background: var(--th-primary); border-color: var(--th-primary); color: #fff; }
+.wf-btn-primary, .wf-tabs [aria-selected="true"] { background: var(--th-primary); border-color: var(--th-link, #075a91); color: var(--ui-ink-ffffff); }
 .wf-btn:focus-visible { outline: 2px solid var(--th-primary); outline-offset: 3px; }
 .wf-btn:disabled { opacity: .55; cursor: not-allowed; }
 .wf-tabs { margin: 12px 0 18px; }

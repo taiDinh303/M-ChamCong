@@ -64,9 +64,9 @@
 .app-shell[data-workspace] .mx-chart-card-head h3 { border-inline-start: 3px solid var(--workspace-ink); padding-inline-start: 10px; }
 .app-shell[data-workspace] .mx-page-guide { background: var(--workspace-soft); border-color: var(--workspace-line); }
 .app-shell[data-workspace] .mx-page-guide-icon { color: var(--workspace-ink); background: var(--workspace-line); }
-.app-shell[data-workspace] :is(.hr-btn--primary, .ai-btn--primary, .wf-btn-primary):not(:disabled) { background: var(--workspace-ink); border-color: var(--workspace-ink); color: #fff; }
+.app-shell[data-workspace] :is(.hr-btn--primary, .ai-btn--primary, .wf-btn-primary):not(:disabled) { background: var(--workspace-ink); border-color: var(--workspace-ink); color: var(--ui-ink-ffffff); }
 .app-shell[data-workspace] :is(.hr-btn--primary, .ai-btn--primary, .wf-btn-primary):not(:disabled):hover { filter: brightness(.94); }
-.app-shell[data-workspace] :is(.hr-filter, .ai-filter, .blk-filter, .lp-filter).active { color: #fff; background: var(--workspace-ink); border-color: var(--workspace-ink); }
+.app-shell[data-workspace] :is(.hr-filter, .ai-filter, .blk-filter, .lp-filter).active { color: var(--ui-ink-ffffff); background: var(--workspace-ink); border-color: var(--workspace-ink); }
 
 /* Personal records and check-in/out use the same icon/text alignment. */
 .app-shell--me .me-record-summary { gap: 12px; padding: 18px; border-color: var(--tone-line); background: var(--tone-soft); }

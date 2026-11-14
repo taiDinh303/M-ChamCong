@@ -56,25 +56,25 @@
 .mx-schedule-mobile-nav { display: none; }
 .mx-mobile-filter { display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 600; color: var(--th-text-2); margin: 10px 0 16px; }
 .mx-mobile-filter select { flex: 1; min-width: 0; min-height: 44px; border: 1px solid var(--th-border); border-radius: 9px; padding: 8px 10px; background: var(--th-surface); color: var(--th-text); }
-.app-shell .hr-filter.active, .app-shell .hr-act--primary { background: var(--th-primary); border-color: var(--th-primary); }
-.app-shell .ai-filter.active, .app-shell .blk-filter.active { background: var(--th-primary); border-color: var(--th-primary); }
-.app-shell .hr-filter.active { color: #fff; }
+.app-shell .hr-filter.active, .app-shell .hr-act--primary { background: var(--th-primary); border-color: var(--th-link, #075a91); }
+.app-shell .ai-filter.active, .app-shell .blk-filter.active { background: var(--th-primary); border-color: var(--th-link, #075a91); }
+.app-shell .hr-filter.active { color: var(--ui-ink-ffffff); }
 .app-shell .hr-filter:hover:not(.active) { background: var(--th-side-hover); }
 .app-shell :where(.hr-row-actions, .admin-row-actions, .roles-role-actions) { flex-wrap: wrap; gap: 6px; }
 .app-shell :where(.hr-mini-btn, .admin-view-link, .admin-link-btn, .hr-act, .hr-filter) { min-height: 36px; }
-.app-shell :is(.hr-btn--primary, .ai-btn--primary, .wf-btn-primary):not(:disabled) { background: var(--th-primary); border-color: var(--th-primary); color: #fff; }
+.app-shell :is(.hr-btn--primary, .ai-btn--primary, .wf-btn-primary):not(:disabled) { background: var(--th-primary); border-color: var(--th-link, #075a91); color: var(--ui-ink-ffffff); }
 .app-shell :is(.hr-btn--primary, .ai-btn--primary, .wf-btn-primary):not(:disabled):hover { background: var(--th-primary-strong); }
 .app-shell .hr-missing-legend { font-size: 12px; color: var(--th-text-2); line-height: 1.7; }
 .app-shell .mx-chart-card-head { align-items: flex-start; gap: 6px; margin-bottom: 18px; }
 .app-shell .mx-chart-card-head h3 { width: 100%; font-size: 16px; }
 .mx-chart-disclosure { display: none; }
 .mx-chart-values { margin-top: 12px; border-top: 1px solid var(--th-divider); padding-top: 10px; }
-.mx-chart-values summary { color: var(--th-primary); cursor: pointer; font-size: 13px; padding: 8px 0; }
+.mx-chart-values summary { color: var(--th-link, #075a91); cursor: pointer; font-size: 13px; padding: 8px 0; }
 .mx-chart-values dl { display: grid; grid-template-columns: minmax(0, 1fr) auto; margin: 8px 0; gap: 8px 16px; font-size: 13px; }
 .mx-chart-values dt { color: var(--th-text-2); overflow-wrap: anywhere; }
 .mx-chart-values dd { margin: 0; font-weight: 650; font-variant-numeric: tabular-nums; }
 .mx-chart-error { padding: 16px; border-radius: 10px; background: var(--th-err-bg); color: var(--th-err); }
-.mx-chart-error button { margin-left: 10px; padding: 8px 12px; background: #fff; border: 1px solid var(--th-err-border); border-radius: 8px; color: inherit; cursor: pointer; }
+.mx-chart-error button { margin-left: 10px; padding: 8px 12px; background: var(--ui-surface-ffffff); border: 1px solid var(--th-err-border); border-radius: 8px; color: inherit; cursor: pointer; }
 .mx-table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 13px; }
 .app-shell .mx-table thead th {
     background: var(--th-surface-alt); color: var(--th-text-2); font-size: 12px; font-weight: 650;
@@ -82,8 +82,8 @@
     border-bottom: 1px solid var(--th-border);
 }
 .app-shell .mx-table tbody td { padding: 13px 14px; border-bottom: 1px solid var(--th-divider); line-height: 1.6; vertical-align: middle; }
-.app-shell .mx-table tbody tr:hover { background: #f5f8ff; }
-.app-shell .mx-table input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--th-primary); }
+.app-shell .mx-table tbody tr:hover { background: var(--ui-surface-f5f8ff); }
+.app-shell .mx-table input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--th-link, #075a91); }
 .mx-table-selection { display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
 .mx-table-toggle { display: none; }
 .mx-record-legend summary { min-height: 44px; padding: 12px; font-size: 12px; color: var(--th-text-2); cursor: pointer; }
@@ -96,10 +96,10 @@
 .roles-member-open { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
 .mx-page-guide {
     display: flex; gap: 12px; max-width: 1400px; margin: 28px auto 4px; padding: 18px 20px;
-    border: 1px solid var(--th-border); border-radius: 12px; background: #eef4ff; color: #334965;
+    border: 1px solid var(--th-border); border-radius: 12px; background: var(--ui-surface-eef4ff); color: var(--ui-ink-334965);
 }
-.mx-page-guide-icon { display: grid; place-items: center; flex: 0 0 24px; height: 24px; border-radius: 50%; background: #dce7ff; color: var(--th-primary); font-size: 14px; font-weight: 700; }
-.mx-page-guide h2 { font-size: 13px; line-height: 1.8; margin: 0 0 6px; color: #233b5b; }
+.mx-page-guide-icon { display: grid; place-items: center; flex: 0 0 24px; height: 24px; border-radius: 50%; background: var(--ui-surface-dce7ff); color: var(--th-link, #075a91); font-size: 14px; font-weight: 700; }
+.mx-page-guide h2 { font-size: 13px; line-height: 1.8; margin: 0 0 6px; color: var(--ui-ink-233b5b); }
 .mx-page-guide ul { margin: 0; padding-left: 18px; font-size: 12px; line-height: 1.9; }
 
 @media (max-width: 768px) {
@@ -174,7 +174,7 @@
     .app-shell .mx-table--cards > tbody > tr > td[data-card-wide]::before { display: none; }
     .app-shell .mx-table--cards > tbody > tr > td.mx-table-toggle { display: block; text-align: left; border: 0; padding: 0; }
     .app-shell .mx-table--cards > tbody > tr > td.mx-table-toggle::before { display: none; }
-    .mx-table-toggle button { display: block; min-height: 44px; width: 100%; text-align: left; padding: 8px 0; background: transparent; color: var(--th-primary); font-size: 12px; font-weight: 650; border: 0; cursor: pointer; }
+    .mx-table-toggle button { display: block; min-height: 44px; width: 100%; text-align: left; padding: 8px 0; background: transparent; color: var(--th-link, #075a91); font-size: 12px; font-weight: 650; border: 0; cursor: pointer; }
     .app-shell .mx-table--cards :where(.att-emp-cell, .hr-user) { align-items: flex-start; text-align: left; }
     .app-shell .mx-table--cards :where(.att-emp-name, .hr-user strong) { white-space: normal; overflow: visible; }
     .app-shell .mx-table--cards td[data-card-primary] > .roles-role-ava { margin-right: 8px; vertical-align: middle; }
@@ -189,7 +189,7 @@
     .mx-page-guide { padding: 16px 14px; margin-top: 24px; gap: 10px; }
     .app-shell .mx-chart-card { padding: 16px 12px; }
     .app-shell .mx-chart-card[data-chart-expanded="false"] .mx-chart-card-head { margin-bottom: 0; }
-    .mx-chart-disclosure { display: block; min-height: 44px; border: 0; padding: 8px 0; background: transparent; color: var(--th-primary); font-size: 12px; font-weight: 650; cursor: pointer; }
+    .mx-chart-disclosure { display: block; min-height: 44px; border: 0; padding: 8px 0; background: transparent; color: var(--th-link, #075a91); font-size: 12px; font-weight: 650; cursor: pointer; }
     .mx-chart-body[hidden] { display: none; }
     .app-shell .work-schedule-days { gap: 3px; }
     .app-shell .work-schedule-day { min-height: 44px; padding: 5px 2px; }

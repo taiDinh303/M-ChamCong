@@ -12,8 +12,8 @@
     flex-wrap: wrap;
     padding: 22px 24px;
     border-radius: 16px;
-    background: linear-gradient(120deg, #1a2332 0%, #0e1a26 100%);
-    border: 1px solid #26364a;
+    background: linear-gradient(120deg, var(--ui-surface-1a2332) 0%, var(--ui-surface-0e1a26) 100%);
+    border: 1px solid var(--ui-line-26364a);
     margin-bottom: 16px;
     box-shadow: 0 6px 18px rgba(14, 26, 38, 0.15);
 }
@@ -37,13 +37,13 @@
 .hr-hero-left h2 {
     margin: 0;
     font: 800 18px "Montserrat", "Be Vietnam Pro", sans-serif;
-    color: #fff;
+    color: var(--ui-ink-ffffff);
     line-height: 1.2;
 }
 .hr-hero-left p {
     margin: 4px 0 0;
     font-size: 12px;
-    color: #b9c7d6;
+    color: var(--ui-ink-b9c7d6);
     line-height: 1.5;
     max-width: 52ch;
 }
@@ -76,17 +76,17 @@
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #b9c7d6;
+    color: var(--ui-ink-b9c7d6);
     font-weight: 600;
 }
 .hr-kpi strong {
     font: 800 22px "Montserrat", "Be Vietnam Pro", sans-serif;
-    color: #fff;
+    color: var(--ui-ink-ffffff);
     line-height: 1;
 }
 .hr-kpi-sub {
     font-size: 11px;
-    color: #9fb0c4;
+    color: var(--ui-ink-9fb0c4);
 }
 .hr-kpi-ico {
     width: 36px;
@@ -108,9 +108,9 @@
 /* ===== Thẻ (card) gọn ===== */
 .hr-card {
     padding: 18px 20px;
-    border: 1px solid #e6edf5;
+    border: 1px solid var(--ui-line-e6edf5);
     border-radius: 14px;
-    background: #fff;
+    background: var(--ui-surface-ffffff);
     box-shadow: 0 2px 10px rgba(14, 26, 38, 0.04);
     margin-bottom: 16px;
 }
@@ -147,10 +147,10 @@
 }
 .hr-filter {
     padding: 7px 14px;
-    border: 1px solid #dbe4ee;
+    border: 1px solid var(--ui-line-dbe4ee);
     border-radius: 999px;
-    background: #fff;
-    color: #38506a;
+    background: var(--ui-surface-ffffff);
+    color: var(--ui-ink-38506a);
     font: inherit;
     font-size: 12px;
     font-weight: 600;
@@ -159,13 +159,13 @@
     white-space: nowrap;
 }
 .hr-filter:hover {
-    border-color: #8bbcf1;
-    background: #f5f9ff;
+    border-color: var(--ui-line-8bbcf1);
+    background: var(--ui-surface-f5f9ff);
 }
 .hr-filter.active {
-    border-color: #005b94;
-    background: #005b94;
-    color: #fff;
+    border-color: var(--ui-line-005b94);
+    background: var(--ui-surface-005b94);
+    color: var(--ui-ink-ffffff);
 }
 .hr-filter strong {
     font-weight: 700;
@@ -176,10 +176,10 @@
 /* ===== Nút hành động trong toolbar ===== */
 .hr-act {
     padding: 8px 14px;
-    border: 1px solid #dbe4ee;
+    border: 1px solid var(--ui-line-dbe4ee);
     border-radius: 8px;
-    background: #fff;
-    color: #2c4258;
+    background: var(--ui-surface-ffffff);
+    color: var(--ui-ink-2c4258);
     font: inherit;
     font-size: 12.5px;
     font-weight: 600;
@@ -188,16 +188,16 @@
     white-space: nowrap;
 }
 .hr-act:hover {
-    border-color: #8bbcf1;
-    background: #f5f9ff;
+    border-color: var(--ui-line-8bbcf1);
+    background: var(--ui-surface-f5f9ff);
 }
 .hr-act--primary {
-    background: #005b94;
-    border-color: #005b94;
-    color: #fff;
+    background: var(--ui-surface-005b94);
+    border-color: var(--ui-line-005b94);
+    color: var(--ui-ink-ffffff);
 }
 .hr-act--primary:hover {
-    background: #004a7a;
+    background: var(--ui-surface-004a7a);
 }
 
 /* ===== Bảng ===== */
@@ -205,22 +205,22 @@
 .hr-table td {
     padding: 11px 12px;
     vertical-align: middle;
-    border-bottom: 1px solid #f2f5f8;
+    border-bottom: 1px solid var(--ui-line-f2f5f8);
 }
 .hr-table thead th {
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #71859a;
+    color: var(--ui-ink-71859a);
     font-weight: 700;
-    background: #f7fafc;
+    background: var(--ui-surface-f7fafc);
     text-align: left;
 }
 .hr-table tbody tr {
     transition: background 0.1s;
 }
 .hr-table tbody tr:hover {
-    background: #f8fbfd;
+    background: var(--ui-surface-f8fbfd);
 }
 
 /* ===== Ô nhân viên (avatar) ===== */
@@ -231,7 +231,7 @@
     min-width: 0;
 }
 .hr-user strong {
-    color: #172b42;
+    color: var(--ui-ink-172b42);
     font-size: 14px;
     font-weight: 700;
     white-space: nowrap;
@@ -240,7 +240,7 @@
     display: block;
 }
 .hr-user small {
-    color: #71859a;
+    color: var(--ui-ink-71859a);
     font-size: 11px;
     font-family: "Consolas", "SF Mono", monospace;
 }
@@ -248,7 +248,7 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    color: #fff;
+    color: var(--ui-ink-ffffff);
     font-size: 13px;
     font-weight: 800;
     display: flex;

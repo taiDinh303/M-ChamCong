@@ -772,10 +772,10 @@
         gap: 5px;
         font-size: 11px;
         font-weight: 600;
-        color: #5a6b7b;
+        color: var(--ui-ink-5a6b7b);
         padding: 8px 10px;
-        background: #fbfcfe;
-        border: 1px solid #eef2f6;
+        background: var(--ui-surface-fbfcfe);
+        border: 1px solid var(--ui-line-eef2f6);
         border-radius: 10px;
     }
     .leave-filters label input {
@@ -786,7 +786,7 @@
         min-height: 0;
         box-sizing: border-box;
         font-size: 14px;
-        color: #182a3a;
+        color: var(--ui-ink-182a3a);
     }
     /* Leave calendar: fit 7 columns, no horizontal scroll */
     .leave-calendar-grid {
@@ -804,7 +804,7 @@
     /* view switch: nice segmented control */
     .leave-view-switch {
         display: inline-flex;
-        background: #eef2f6;
+        background: var(--ui-surface-eef2f6);
         border-radius: 10px;
         padding: 3px;
     }
@@ -814,14 +814,14 @@
         border: none;
         border-radius: 8px;
         background: transparent;
-        color: #5a6b7b;
+        color: var(--ui-ink-5a6b7b);
         font-size: 13px;
         font-weight: 600;
         cursor: pointer;
     }
     .leave-view-switch button.active {
-        background: #fff;
-        color: #005b94;
+        background: var(--ui-surface-ffffff);
+        color: var(--ui-ink-005b94);
         box-shadow: 0 1px 3px rgba(14, 26, 38, 0.12);
     }
 }
@@ -849,8 +849,8 @@
     }
     .att-table--stack tbody tr {
         display: block;
-        background: #fff;
-        border: 1px solid #e8edf2;
+        background: var(--ui-surface-ffffff);
+        border: 1px solid var(--ui-line-e8edf2);
         border-radius: 12px;
         margin: 10px;
         padding: 12px 14px;
@@ -863,9 +863,9 @@
         gap: 14px;
         padding: 7px 0;
         border: 0;
-        border-bottom: 1px dashed #eef2f6;
+        border-bottom: 1px dashed var(--ui-line-eef2f6);
         font-size: 13px;
-        color: #182a3a;
+        color: var(--ui-ink-182a3a);
         text-align: right;
     }
     .att-table--stack tbody tr td:last-child {
@@ -877,8 +877,8 @@
         display: inline-block;
         padding: 2px 10px;
         border-radius: 999px;
-        background: #eef4fb;
-        color: #1d4f73;
+        background: var(--ui-surface-eef4fb);
+        color: var(--ui-ink-1d4f73);
         font-size: 10.5px;
         font-weight: 700;
         letter-spacing: .04em;
@@ -911,8 +911,8 @@
         gap: 2px;
         text-align: right;
     }
-    .att-table--stack td .att-emp-code { font-size: 11px; color: #788895; }
-    .att-table--stack td .att-emp-name { font-size: 14px; font-weight: 700; color: #152d40; }
+    .att-table--stack td .att-emp-code { font-size: 11px; color: var(--ui-ink-788895); }
+    .att-table--stack td .att-emp-name { font-size: 14px; font-weight: 700; color: var(--ui-ink-152d40); }
 
     /* Leave table (leave-history) as stacked cards */
     .leave-table-card { overflow: visible; }
@@ -922,8 +922,8 @@
     .leave-table thead { display: none; }
     .leave-table tbody tr {
         display: block;
-        background: #fff;
-        border: 1px solid #e8edf2;
+        background: var(--ui-surface-ffffff);
+        border: 1px solid var(--ui-line-e8edf2);
         border-radius: 12px;
         margin: 10px;
         padding: 12px 14px;
@@ -935,7 +935,7 @@
         justify-content: space-between;
         gap: 10px;
         padding: 6px 0;
-        border-bottom: 1px dashed #eef2f6;
+        border-bottom: 1px dashed var(--ui-line-eef2f6);
         font-size: 13px;
         text-align: right;
     }
@@ -944,8 +944,8 @@
         content: attr(data-label);
         padding: 2px 10px;
         border-radius: 999px;
-        background: #eef4fb;
-        color: #1d4f73;
+        background: var(--ui-surface-eef4fb);
+        color: var(--ui-ink-1d4f73);
         font-size: 10.5px;
         font-weight: 700;
         letter-spacing: .04em;
@@ -954,13 +954,13 @@
     }
     .leave-table td.leave-empty { display: block; text-align: center; padding: 20px 0; }
     .leave-table td.leave-empty::before { display: none; }
-    .leave-date-end { display: block; font-size: 11px; color: #788895; margin-top: 2px; }
+    .leave-date-end { display: block; font-size: 11px; color: var(--ui-ink-788895); margin-top: 2px; }
     .leave-view-btn {
         padding: 6px 14px;
-        border: 1px solid #005b94;
+        border: 1px solid var(--ui-line-005b94);
         border-radius: 8px;
-        background: #fff;
-        color: #005b94;
+        background: var(--ui-surface-ffffff);
+        color: var(--ui-ink-005b94);
         font-size: 12px;
         font-weight: 600;
         cursor: pointer;
@@ -1016,9 +1016,9 @@
     .admin-toolbar input[type="checkbox"] {
         width: 100%;
         padding: 10px 12px;
-        border: 1px solid #d1d5db;
+        border: 1px solid var(--ui-line-d1d5db);
         border-radius: 8px;
-        background: #fff;
+        background: var(--ui-surface-ffffff);
         font-size: 14px;
     }
     .admin-toolbar.stats-toolbar {
@@ -1097,8 +1097,8 @@
     .admin-kpi strong { font-size: 24px; }
     .admin-kpi-label { font-size: 11px; }
     .att-emp-cell { display: flex; flex-direction: column; gap: 2px; }
-    .att-emp-code { font-size: 11px; color: #788895; }
-    .att-emp-name { font-size: 14px; font-weight: 700; color: #152d40; }
+    .att-emp-code { font-size: 11px; color: var(--ui-ink-788895); }
+    .att-emp-name { font-size: 14px; font-weight: 700; color: var(--ui-ink-152d40); }
 
     /* /statistics: calendar + kpi + detail table all compact */
     .att-stat-kpi { padding: 12px 14px; }

@@ -2,9 +2,9 @@
 .unauth-page {
     display: flex;
     min-height: 100vh;
-    background: #f6f7f9;
+    background: var(--ui-surface-f6f7f9);
     font-family: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
-    color: #1c2530;
+    color: var(--ui-ink-1c2530);
 }
 
 /* ===== Cột thương hiệu bên trái ===== */
@@ -18,8 +18,8 @@
     overflow: hidden;
     background: radial-gradient(1200px 600px at 15% 20%, rgba(88, 195, 231, 0.18), transparent 60%),
         radial-gradient(800px 500px at 90% 85%, rgba(0, 114, 185, 0.25), transparent 60%),
-        #0e1a26;
-    color: #fff;
+        var(--ui-surface-0e1a26);
+    color: var(--ui-ink-ffffff);
 }
 
 .unauth-brand-logo {
@@ -68,7 +68,7 @@
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.04em;
-    color: #9fdcf5;
+    color: var(--ui-ink-9fdcf5);
     width: fit-content;
 }
 
@@ -76,7 +76,7 @@
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: #58c3e7;
+    background: var(--ui-surface-58c3e7);
 }
 
 /* ===== Cột thông báo 403 bên phải ===== */
@@ -91,8 +91,8 @@
 .unauth-card {
     width: 100%;
     max-width: 460px;
-    background: #fff;
-    border: 1px solid #e6e9ee;
+    background: var(--ui-surface-ffffff);
+    border: 1px solid var(--ui-line-e6e9ee);
     border-radius: 14px;
     box-shadow: 0 10px 30px rgba(16, 34, 51, 0.08);
     padding: 44px 40px;
@@ -105,9 +105,9 @@
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background: #fef3f2;
-    border: 1px solid #f5d5d0;
-    color: #c0392b;
+    background: var(--ui-surface-fef3f2);
+    border: 1px solid var(--ui-line-f5d5d0);
+    color: var(--ui-ink-c0392b);
     font-size: 24px;
     font-weight: 800;
     margin-bottom: 18px;
@@ -118,14 +118,14 @@
     font-size: 22px;
     font-weight: 700;
     letter-spacing: -0.01em;
-    color: #14212e;
+    color: var(--ui-ink-14212e);
 }
 
 .unauth-desc {
     margin: 0 0 26px;
     font-size: 14.5px;
     line-height: 1.65;
-    color: #5a6675;
+    color: var(--ui-ink-5a6675);
 }
 
 .unauth-actions {
@@ -150,35 +150,35 @@
 
 /* Nút liên hệ (ghost - viền nhạt) */
 .unauth-btn--ghost {
-    background: #fff;
-    border-color: #d7dde5;
-    color: #445060;
+    background: var(--ui-surface-ffffff);
+    border-color: var(--ui-line-d7dde5);
+    color: var(--ui-ink-445060);
 }
 
 .unauth-btn--ghost:hover {
-    background: #f5f7fa;
-    border-color: #b9c2ce;
+    background: var(--ui-surface-f5f7fa);
+    border-color: var(--ui-line-b9c2ce);
 }
 
 /* Nút chính (accent xanh MARIXA) */
 .unauth-btn--primary {
-    background: #005b94;
-    color: #fff;
+    background: var(--ui-surface-005b94);
+    color: var(--ui-ink-ffffff);
 }
 
 .unauth-btn--primary:hover {
-    background: #004c7d;
+    background: var(--ui-surface-004c7d);
 }
 
 /* Nút phụ (đỏ nhạt cho Đăng xuất) */
 .unauth-btn--danger {
-    background: #fff;
-    border-color: #f0c9c4;
-    color: #c0392b;
+    background: var(--ui-surface-ffffff);
+    border-color: var(--ui-line-f0c9c4);
+    color: var(--ui-ink-c0392b);
 }
 
 .unauth-btn--danger:hover {
-    background: #fef3f2;
+    background: var(--ui-surface-fef3f2);
 }
 
 /* ===== Responsive: màn nhỏ xếp chồng ===== */

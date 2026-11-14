@@ -89,7 +89,7 @@
     height: 34px;
     border-radius: 10px;
     background: var(--th-primary);
-    color: #fff;
+    color: var(--ui-ink-ffffff);
     font-family: "Montserrat", sans-serif;
     font-size: 16px;
     font-weight: 800;
@@ -118,17 +118,17 @@
     height: 42px;
     display: grid;
     place-items: center;
-    border: 1px solid #cfe0ee;
+    border: 1px solid var(--ui-line-cfe0ee);
     border-radius: 12px;
-    background: #eaf4fc;
-    color: var(--th-primary);
+    background: var(--ui-surface-eaf4fc);
+    color: var(--th-link, #075a91);
     cursor: pointer;
     transition: background .15s, border-color .15s, transform .15s;
 }
 .app-header-home-btn:hover {
     background: var(--th-primary);
-    border-color: var(--th-primary);
-    color: #fff;
+    border-color: var(--th-link, #075a91);
+    color: var(--ui-ink-ffffff);
     transform: translateY(-1px);
 }
 .app-header-home-icon {
@@ -180,11 +180,11 @@
     height: 100%;
     display: grid;
     place-items: center;
-    background: #eaf4fc;
-    color: var(--th-primary);
+    background: var(--ui-surface-eaf4fc);
+    color: var(--th-link, #075a91);
 }
 .app-header-avatar-btn:hover .app-header-avatar-fallback {
-    background: #dceaf7;
+    background: var(--ui-surface-dceaf7);
 }
 
 @media (max-width: 520px) {
@@ -261,7 +261,7 @@
     font-size: 14px;
     font-weight: 500;
     font-family: inherit;
-    color: #182a3a;
+    color: var(--ui-ink-182a3a);
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
 }
@@ -269,8 +269,8 @@
     background: var(--th-surface-alt);
     color: var(--th-text);
 }
-.app-header-menu button.danger { color: #b42323; }
-.app-header-menu button.danger:hover { background: #fde8e8; color: #b42323; }
+.app-header-menu button.danger { color: var(--ui-ink-b42323); }
+.app-header-menu button.danger:hover { background: var(--ui-surface-fde8e8); color: var(--ui-ink-b42323); }
 .app-header-menu button:disabled { opacity: 0.55; cursor: not-allowed; }
 .app-header-menu-sep {
     height: 1px;
@@ -303,7 +303,7 @@
     height: 30px;
     display: grid;
     place-items: center;
-    border: 1px solid #d5dee8;
+    border: 1px solid var(--ui-line-d5dee8);
     border-radius: 7px;
     background: var(--th-surface);
     cursor: pointer;
@@ -314,9 +314,9 @@
     transform: translateY(-1px);
 }
 .lang-inline__opt.active {
-    border-color: var(--th-primary);
+    border-color: var(--th-link, #075a91);
     box-shadow: 0 0 0 2px rgba(22, 115, 173, .2);
-    background: #eef4ff;
+    background: var(--ui-surface-eef4ff);
 }
 .lang-inline__opt .flag {
     width: 22px;
@@ -336,7 +336,7 @@
     top: 52px;
     right: 56px;
     background: var(--th-dark-hero-2);
-    color: #fff;
+    color: var(--ui-ink-ffffff);
     padding: 8px 14px;
     border-radius: 8px;
     font-size: 13px;
@@ -355,11 +355,11 @@
     gap: 6px;
     font-size: 13px;
     font-weight: 600;
-    color: #182a3a;
+    color: var(--ui-ink-182a3a);
 }
 .att-cpw-form input {
     padding: 11px 14px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--ui-line-cbd5e1);
     border-radius: 8px;
     font-size: 14px;
     font-family: inherit;
@@ -367,7 +367,7 @@
 }
 .att-cpw-form input:focus {
     outline: none;
-    border-color: #0072b9;
+    border-color: var(--ui-line-0072b9);
     box-shadow: 0 0 0 3px rgba(0, 114, 185, 0.15);
 }
 .att-cpw-hint {
@@ -411,8 +411,8 @@
     height: 18px;
     padding: 0 5px;
     border-radius: 10px;
-    background: #e65100;
-    color: #fff;
+    background: var(--ui-surface-e65100);
+    color: var(--ui-ink-ffffff);
     font-size: 11px;
     font-weight: 700;
     display: inline-flex;
@@ -446,15 +446,15 @@
 .app-header-bell-head strong { font-size: 14px; color: var(--th-text); }
 .app-header-bell-readall {
     border: 0;
-    background: #eef4ff;
-    color: var(--th-primary-light);
+    background: var(--ui-surface-eef4ff);
+    color: var(--th-link, #075a91);
     font-size: 11px;
     font-weight: 600;
     padding: 5px 10px;
     border-radius: 20px;
     cursor: pointer;
 }
-.app-header-bell-readall:hover { background: #dbe8ff; }
+.app-header-bell-readall:hover { background: var(--ui-surface-dbe8ff); }
 .app-header-bell-list { padding: 8px; }
 .app-header-bell-empty { padding: 24px 16px; text-align: center; color: var(--th-text-3); font-size: 13px; }
 .app-header-bell-item {
@@ -466,25 +466,25 @@
     border-left: 3px solid transparent;
 }
 .app-header-bell-item:hover { background: var(--th-surface-alt); }
-.app-header-bell-item:not(.is-read) { border-left-color: var(--th-primary-light); }
+.app-header-bell-item:not(.is-read) { border-left-color: var(--th-link, #075a91); }
 .app-header-bell-item-main { flex: 1; min-width: 0; min-height: 44px; display: flex; flex-direction: column; gap: 2px; text-decoration: none; cursor: pointer; }
 .app-header-bell-item-main strong { font-size: 13px; color: var(--th-text); }
 .app-header-bell-item:not(.is-read) .app-header-bell-item-main strong { font-weight: 700; }
 .app-header-bell-item-main span { font-size: 12px; color: var(--th-text-3); }
-.app-header-bell-item-main:hover strong, .app-header-bell-item-main:focus-visible strong { color: var(--th-primary); text-decoration: underline; text-underline-offset: 3px; }
+.app-header-bell-item-main:hover strong, .app-header-bell-item-main:focus-visible strong { color: var(--th-link, #075a91); text-decoration: underline; text-underline-offset: 3px; }
 .app-header-bell-item-read {
     width: 26px;
     height: 26px;
     flex: 0 0 auto;
-    border: 1px solid #d5dee8;
+    border: 1px solid var(--ui-line-d5dee8);
     background: var(--th-surface);
-    color: var(--th-primary-light);
+    color: var(--th-link, #075a91);
     border-radius: 50%;
     cursor: pointer;
     font-size: 13px;
 }
-.app-header-bell-item-read:hover { background: #eef4ff; border-color: var(--th-primary-light); }
-.app-header-bell-item-done { color: #9aa8b8; font-size: 14px; }
+.app-header-bell-item-read:hover { background: var(--ui-surface-eef4ff); border-color: var(--th-link, #075a91); }
+.app-header-bell-item-done { color: var(--ui-ink-9aa8b8); font-size: 14px; }
 
 /* ===== Nút đổi ngôn ngữ trên header (nền sáng) ===== */
 .app-header .lang-picker {

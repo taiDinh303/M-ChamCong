@@ -1,5 +1,15 @@
 # WORKLOG — Hệ thống chấm công Marixa
 
+## 14/11/2026 — Rà tương phản toàn frontend và bỏ link Kế toán sidebar Admin
+
+Yêu cầu tiếp của chủ dự án: rà cả project sau khi còn lỗi menu tài khoản/dashboard/bảng cấp tài khoản, đồng thời bỏ link Kế toán · Bảng lương riêng trong sidebar Admin. Working tree sạch trước sửa. Thay đổi/REQ/coverage tại [40](40-contrast-audit.md): 33 stylesheet chuyển màu cố định sang 626 token ink/surface/line hai theme, sửa ngữ nghĩa/inline/chart/dynamic foreground; sidebar bỏ đúng link, giữ module Kế toán ở Home và route/quyền.
+
+Browser fixture App/router thật + adapter giả: 32 route/theme, dark cuối 1.633 text elements không còn lỗi trong phép đo; light rà 32 route và kiểm lại bốn route lỗi sau sửa đều không còn lỗi đo. Kiểm menu tài khoản và modal đổi mật khẩu; xác nhận sidebar link count=0. Các lỗi trung gian gồm count trắng trên badge sáng, biểu đồ link, guide icon, lịch/status, avatar HSL, profile inline và nút modal; đã xử lý. Fixture reports ban đầu shape sai, đã sửa adapter. Phạm vi scanner/ngoại lệ ở 40; không tuyên bố mọi popup/hover/mobile/dữ liệu thật đã nghiệm thu.
+
+Frontend cuối 87/87 PASS, lint/build PASS. Test mới ban đầu lỗi dùng URL với path.join trên Windows, đã sửa fileURLToPath rồi chạy lại đạt. Regression gồm 4.096 màu dynamic và mọi reference palette. Không thay backend/DB/config; không test live/deploy/migrate. Fixture review.html/review.jsx đã xóa, dev server dừng. Push code/docs trong phạm vi phiên được cho phép; xác minh remote sau push và báo commit trong phản hồi.
+
+Rà cuối inline màu: mở rộng readableInk cho avatar role/thành viên/nghỉ phép và icon quy định; badge count role/nền header dự án dùng surface theo theme. Lint, 87 tests và build được chạy lại đạt sau các sửa này; git diff --check đạt. Bundle CSS khoảng 386KB/68KB gzip (palette hai mode), JavaScript vẫn có cảnh báo kích thước baseline.
+
 ## 14/11/2026 — Home có nội dung bổ sung và footer nhiều cột
 
 Chủ dự án muốn chủ động cuộn mới tới footer, tăng khoảng cách và nội dung, tham khảo NoteTatCa ảnh 2/3. REQ/TC-HOME-FOOTER: giữ hero/module đầu trang, bổ sung hướng dẫn hằng ngày/FAQ/CTA có ích thay vì spacer rỗng; footer ba cột và dòng thông tin cuối, chỉ route đang có, module lọc theo quyền. Cài đặt HomePage.jsx và erp-theme.css; tham khảo read-only NoteTatCa PublicPages.tsx cùng website BambooHR, không sao chép thương hiệu hoặc thêm nghiệp vụ mới.

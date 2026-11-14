@@ -3,7 +3,6 @@ const ADMIN_NAV_ITEMS = [
     { to: "/admin", label: "Dashboard" },
     { to: "/admin/contracts", label: "Hợp đồng" },
     { to: "/admin/leaves", label: "Nghỉ phép" },
-    { to: "/accounting/payroll", label: "Kế toán · Bảng lương" },
     { to: "/admin/resigned", label: "Nhân sự nghỉ việc" },
     { to: "/admin/reports", label: "Báo cáo" },
     { to: "/admin/work", label: "Công tác" },

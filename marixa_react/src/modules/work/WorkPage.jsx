@@ -1,3 +1,4 @@
+import {readableInk} from '../../utils/readableInk';
 import ResponsiveTable from "../../components/common/ResponsiveTable.jsx";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -475,8 +476,8 @@ const WorkPage = () => {
                                     : <div className="work-project-list">
                                         {projects.map((p) => (
                                             <article key={p.id} className="work-project-card" style={{ borderTop: `5px solid ${p.color || "#2f6df6"}` }}>
-                                                <div className="work-project-card-head" style={{ background: p.color ? `${p.color}18` : "#f6f9fc" }}>
-                                                    <div className="work-project-card-icon" style={{ background: p.color || "#2f6df6" }}>◈</div>
+                                                <div className="work-project-card-head" style={{ background: "var(--th-surface-alt)" }}>
+                                                    <div className="work-project-card-icon" style={{ background: p.color || "#2f6df6", color: readableInk(p.color || "#2f6df6") }}>◈</div>
                                                     <div className="work-project-card-title">
                                                         <strong>{p.name}</strong>
                                                         <small>{L("Từ")}: {fmtDate(p.startDate)} · {L("Đến")}: {fmtDate(p.endDate)} · {L("Chủ")}: {p.ownerName}</small>
@@ -492,7 +493,7 @@ const WorkPage = () => {
                                                         )}
                                                     </div>
                                                     <div className="work-project-card-members">
-                                                        <small style={{ color: "#8a99ab" }}>{L("Người nhận")}: </small>
+                                                        <small style={{ color: "var(--th-text-2)" }}>{L("Người nhận")}: </small>
                                                         {p.members?.length ? p.members.map((m) => <i key={m.id} className="work-member-chip">{m.name}</i>) : <span className="att-muted">{L("Chưa gán")}</span>}
                                                     </div>
                                                 </div>
@@ -597,7 +598,7 @@ const WorkPage = () => {
 
                             {/* PREVIEW: trên = màu chọn, dưới = trắng (bắt buộc) */}
                             <div className="work-pj-preview">
-                                <div className="work-pj-preview-top" style={{ background: projectForm.color }}>
+                                <div className="work-pj-preview-top" style={{ background: projectForm.color, color: readableInk(projectForm.color) }}>
                                     <span aria-hidden="true">◈</span> {projectForm.name || L("Tên dự án")}
                                 </div>
                                 <div className="work-pj-preview-bottom">

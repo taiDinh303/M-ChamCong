@@ -43,6 +43,7 @@ Tài liệu mở rộng chọn lọc từ docs_mau ngày 17/10:
 | Rà soát phần còn thiếu ngày 10/11 và ý tưởng chọn lọc từ NoteTatCa | [37](37-gap-review.md) |
 | Ưu tiên mới, REQ/TC danh mục–hợp đồng và phỏng vấn chuẩn bị code 10/11 | [38](38-priorities-interview.md) |
 | Cài đặt local danh mục, hợp đồng và UI sáng/tối 10/11 | [39](39-catalog-ui-implementation.md) |
+| Rà soát palette và tương phản toàn frontend 14/11 | [40](40-contrast-audit.md) |
 
 Các mẫu 26/28/29/32/33 không áp dụng, lý do trong PROJECT-INTAKE. Tài liệu CURRENT/TARGET không tự chứng nhận sản phẩm đã hoàn thành.
 

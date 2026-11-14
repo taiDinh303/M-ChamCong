@@ -1,3 +1,4 @@
+import {readableInk} from '../../../utils/readableInk';
 import { useState, useEffect } from "react";
 import { getAuth } from "../../../services/auth/auth";
 import AppLayout from "../../../components/layout/AppLayout";
@@ -63,7 +64,7 @@ const AttendanceRulesPage = () => {
             >
                 <header className="rule-head">
                     <div className="rule-head-left">
-                        <span className="rule-ava" style={{ background: accent }}>
+                        <span className="rule-ava" style={{ background: accent, color: readableInk(accent) }}>
                             {(r.code || "?").slice(0, 2).toUpperCase()}
                         </span>
                         <div>

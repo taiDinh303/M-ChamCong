@@ -5,9 +5,9 @@
 /* ===== Section (card wrapper cho từng bảng) ===== */
 .roles-section {
     padding: 18px 20px;
-    border: 1px solid #e6edf5;
+    border: 1px solid var(--ui-line-e6edf5);
     border-radius: 14px;
-    background: #fff;
+    background: var(--ui-surface-ffffff);
     box-shadow: 0 2px 10px rgba(14, 26, 38, 0.04);
 }
 .roles-section + .roles-section {
@@ -24,16 +24,16 @@
 .roles-section-head h3 {
     margin: 0;
     font: 700 15px "Montserrat", "Be Vietnam Pro", sans-serif;
-    color: #172b42;
+    color: var(--ui-ink-172b42);
 }
 
 /* ===== Nút thêm vai trò (đầu section) ===== */
 .roles-add-btn {
     padding: 8px 14px;
-    border: 1px solid #d7e2ef;
+    border: 1px solid var(--ui-line-d7e2ef);
     border-radius: 9px;
-    background: #fff;
-    color: #315f9b;
+    background: var(--ui-surface-ffffff);
+    color: var(--ui-ink-315f9b);
     font: inherit;
     font-size: 13px;
     font-weight: 600;
@@ -41,8 +41,8 @@
     transition: all 0.14s;
 }
 .roles-add-btn:hover {
-    background: #f3f7fc;
-    border-color: #b8cbe1;
+    background: var(--ui-surface-f3f7fc);
+    border-color: var(--ui-line-b8cbe1);
 }
 
 /* ===== Form thêm role mới ===== */
@@ -52,23 +52,23 @@
     flex-wrap: wrap;
     margin: 0 0 14px;
     padding: 12px;
-    background: #f7faff;
-    border: 1px dashed #b9cfe8;
+    background: var(--ui-surface-f7faff);
+    border: 1px dashed var(--ui-line-b9cfe8);
     border-radius: 10px;
 }
 .roles-new-form input {
     flex: 1;
     min-width: 160px;
     padding: 9px 12px;
-    border: 1px solid #d5dee8;
+    border: 1px solid var(--ui-line-d5dee8);
     border-radius: 8px;
-    background: #fff;
+    background: var(--ui-surface-ffffff);
     font: inherit;
     font-size: 13px;
 }
 .roles-new-form input:focus {
     outline: none;
-    border-color: #2f6df6;
+    border-color: var(--ui-line-2f6df6);
     box-shadow: 0 0 0 3px rgba(47, 109, 246, 0.12);
 }
 .roles-new-form .admin-link-btn {
@@ -80,11 +80,11 @@
 .roles-empty {
     padding: 18px;
     text-align: center;
-    color: #8a99ab;
+    color: var(--ui-ink-8a99ab);
     font-size: 13px;
-    background: #fbfcfe;
+    background: var(--ui-surface-fbfcfe);
     border-radius: 10px;
-    border: 1px dashed #d5dee8;
+    border: 1px dashed var(--ui-line-d5dee8);
 }
 .roles-role-ava {
     display: inline-flex;
@@ -93,7 +93,7 @@
     width: 34px;
     height: 34px;
     border-radius: 9px;
-    color: #fff;
+    color: var(--ui-ink-ffffff);
     font-weight: 800;
     font-size: 15px;
     flex: 0 0 auto;
@@ -109,7 +109,7 @@
     gap: 10px;
 }
 .roles-roles-table td:first-child strong {
-    color: #172b42;
+    color: var(--ui-ink-172b42);
     font-size: 14px;
 }
 .roles-th-center {
@@ -140,9 +140,9 @@
     align-items: center;
     gap: 6px;
     padding: 6px 12px;
-    border: 1px solid #cfe0f7;
-    background: #fff;
-    color: #315f9b;
+    border: 1px solid var(--ui-line-cfe0f7);
+    background: var(--ui-surface-ffffff);
+    color: var(--ui-ink-315f9b);
     font: inherit;
     font-size: 12px;
     font-weight: 600;
@@ -152,9 +152,9 @@
     transition: all 0.14s;
 }
 .roles-role-edit:hover {
-    background: #f3f7fc;
-    border-color: #2f6df6;
-    color: #16324f;
+    background: var(--ui-surface-f3f7fc);
+    border-color: var(--ui-line-2f6df6);
+    color: var(--ui-ink-16324f);
 }
 /* Nút Xóa (red outline) */
 .roles-role-delete {
@@ -162,9 +162,9 @@
     align-items: center;
     gap: 6px;
     padding: 6px 12px;
-    border: 1px solid #f0d0d0;
-    background: #fff;
-    color: #c62828;
+    border: 1px solid var(--ui-line-f0d0d0);
+    background: var(--ui-surface-ffffff);
+    color: var(--ui-ink-c62828);
     font: inherit;
     font-size: 12px;
     font-weight: 600;
@@ -174,8 +174,8 @@
     transition: all 0.14s;
 }
 .roles-role-delete:hover {
-    background: #fdecec;
-    border-color: #e79c9c;
+    background: var(--ui-surface-fdecec);
+    border-color: var(--ui-line-e79c9c);
 }
 
 /* ===== Bảng ma trận Người dùng × Vai trò ===== */
@@ -185,7 +185,7 @@
 }
 .roles-matrix-wrap {
     overflow-x: auto;
-    border: 1px solid #eef2f6;
+    border: 1px solid var(--ui-line-eef2f6);
     border-radius: 10px;
 }
 .roles-matrix {
@@ -197,13 +197,13 @@
 .roles-matrix td {
     padding: 10px 12px;
     text-align: left;
-    border-bottom: 1px solid #eef2f6;
+    border-bottom: 1px solid var(--ui-line-eef2f6);
     vertical-align: middle;
 }
 .roles-matrix thead th {
-    background: #fbfcfe;
+    background: var(--ui-surface-fbfcfe);
     font-size: 12px;
-    color: #5a6b7b;
+    color: var(--ui-ink-5a6b7b);
     position: sticky;
     top: 0;
     z-index: 1;
@@ -217,17 +217,17 @@
 .roles-matrix thead th.roles-mx-user {
     position: sticky;
     left: 0;
-    background: #fbfcfe;
+    background: var(--ui-surface-fbfcfe);
     z-index: 2;
 }
 .roles-matrix tbody td.roles-mx-user {
     position: sticky;
     left: 0;
-    background: #fff;
+    background: var(--ui-surface-ffffff);
     z-index: 1;
 }
 .roles-matrix tbody tr.roles-mx-hasrole td.roles-mx-user {
-    background: #f5f9ff;
+    background: var(--ui-surface-f5f9ff);
 }
 .roles-mx-user {
     display: flex;
@@ -239,7 +239,7 @@
     cursor: pointer;
 }
 .roles-matrix td.roles-mx-user:hover {
-    background: #eef5ff;
+    background: var(--ui-surface-eef5ff);
 }
 .roles-mx-user-text {
     display: flex;
@@ -248,7 +248,7 @@
     min-width: 0;
 }
 .roles-mx-user-text strong {
-    color: #172b42;
+    color: var(--ui-ink-172b42);
     font-size: 13px;
     font-weight: 700;
     white-space: nowrap;
@@ -256,7 +256,7 @@
     text-overflow: ellipsis;
 }
 .roles-mx-user-text small {
-    color: #8a99ab;
+    color: var(--ui-ink-8a99ab);
     font-size: 11px;
     white-space: nowrap;
     overflow: hidden;
@@ -271,13 +271,13 @@
 .roles-mx-role-name {
     display: block;
     font-weight: 700;
-    color: #38506a;
+    color: var(--ui-ink-38506a);
     font-size: 12px;
 }
 .roles-matrix thead th.roles-mx-role small {
     display: block;
     font-size: 10px;
-    color: #9aa9b8;
+    color: var(--ui-ink-9aa9b8);
     font-weight: 500;
     margin-top: 2px;
 }
@@ -285,9 +285,9 @@
 .roles-mx-toggle {
     width: 34px;
     height: 34px;
-    border: 1.5px solid #d5dee8;
-    background: #fff;
-    color: #8a99ab;
+    border: 1.5px solid var(--ui-line-d5dee8);
+    background: var(--ui-surface-ffffff);
+    color: var(--ui-ink-8a99ab);
     border-radius: 9px;
     font: inherit;
     font-size: 15px;
@@ -299,18 +299,18 @@
     transition: all 0.14s ease;
 }
 .roles-mx-toggle:hover {
-    border-color: #2f6df6;
-    background: #f5f9ff;
-    color: #2f6df6;
+    border-color: var(--ui-line-2f6df6);
+    background: var(--ui-surface-f5f9ff);
+    color: var(--ui-ink-2f6df6);
 }
 .roles-mx-toggle.on {
-    border-color: #2f6df6;
-    background: #2f6df6;
-    color: #fff;
+    border-color: var(--ui-line-2f6df6);
+    background: var(--ui-surface-2f6df6);
+    color: var(--ui-ink-ffffff);
     box-shadow: 0 2px 6px rgba(47, 109, 246, 0.3);
 }
 .roles-mx-toggle.on:hover {
-    background: #1f5ae0;
+    background: var(--ui-surface-1f5ae0);
 }
 
 /* ===== Avatar size ===== */
@@ -318,7 +318,7 @@
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    color: #fff;
+    color: var(--ui-ink-ffffff);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -330,9 +330,9 @@
 .roles-orphan-count {
     font-size: 12px;
     font-weight: 700;
-    color: #d3a021;
-    background: #fef6e0;
-    border: 1px solid #f5e3ac;
+    color: var(--ui-ink-d3a021);
+    background: var(--ui-surface-fef6e0);
+    border: 1px solid var(--ui-line-f5e3ac);
     padding: 3px 12px;
     border-radius: 999px;
 }
@@ -345,12 +345,12 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    background: #fff;
-    border: 1px solid #e2e8f0;
+    background: var(--ui-surface-ffffff);
+    border: 1px solid var(--ui-line-e2e8f0);
     border-radius: 999px;
     padding: 4px 12px 4px 4px;
     font-size: 12px;
-    color: #38506a;
+    color: var(--ui-ink-38506a);
     box-shadow: 0 1px 3px rgba(14, 26, 38, 0.05);
 }
 
@@ -363,9 +363,9 @@
     border-radius: 8px;
     font-size: 12px;
     font-weight: 600;
-    color: #5a4b1a;
-    background: #fdf3d7;
-    border: 1px solid #f0d58a;
+    color: var(--ui-ink-5a4b1a);
+    background: var(--ui-surface-fdf3d7);
+    border: 1px solid var(--ui-line-f0d58a);
     white-space: nowrap;
     cursor: default;
 }
@@ -401,7 +401,7 @@
 .roles-edit-field > span {
     font-size: 11px;
     font-weight: 700;
-    color: #78889b;
+    color: var(--ui-ink-78889b);
     text-transform: uppercase;
     letter-spacing: 0.03em;
 }
@@ -410,23 +410,23 @@
     width: 100%;
     box-sizing: border-box;
     padding: 10px 12px;
-    border: 1px solid #d5dee8;
+    border: 1px solid var(--ui-line-d5dee8);
     border-radius: 9px;
-    background: #fff;
+    background: var(--ui-surface-ffffff);
     font: inherit;
     font-size: 13px;
-    color: #172b42;
+    color: var(--ui-ink-172b42);
     resize: vertical;
 }
 .roles-edit-field input:focus,
 .roles-edit-field textarea:focus {
     outline: none;
-    border-color: #2f6df6;
+    border-color: var(--ui-line-2f6df6);
     box-shadow: 0 0 0 3px rgba(47, 109, 246, 0.12);
 }
 .roles-edit-field input:disabled {
-    background: #f4f6f9;
-    color: #9aa9b8;
+    background: var(--ui-surface-f4f6f9);
+    color: var(--ui-ink-9aa9b8);
     cursor: not-allowed;
 }
 .roles-edit-locknote {
@@ -434,15 +434,15 @@
     align-items: center;
     gap: 6px;
     font-size: 11px;
-    color: #8a6d1a;
-    background: #fdf6e0;
-    border: 1px solid #f0d58a;
+    color: var(--ui-ink-8a6d1a);
+    background: var(--ui-surface-fdf6e0);
+    border: 1px solid var(--ui-line-f0d58a);
     border-radius: 7px;
     padding: 6px 9px;
 }
 .roles-confirm-body {
     padding: 16px 0;
-    color: #435873;
+    color: var(--ui-ink-435873);
     font-size: 13px;
     line-height: 1.55;
 }
@@ -450,27 +450,27 @@
     margin: 0 0 10px;
 }
 .roles-confirm-body strong {
-    color: #c62828;
+    color: var(--ui-ink-c62828);
     font-weight: 800;
 }
 .roles-confirm-body .roles-confirm-desc {
-    color: #78889b;
+    color: var(--ui-ink-78889b);
     font-weight: 500;
 }
 .roles-confirm-body .roles-confirm-q {
     margin-top: 4px;
     font-size: 12px;
     font-weight: 700;
-    color: #c62828;
+    color: var(--ui-ink-c62828);
 }
 .roles-confirm-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     padding: 9px 16px;
-    border: 1px solid #c62828;
-    background: #c62828;
-    color: #fff;
+    border: 1px solid var(--ui-line-c62828);
+    background: var(--ui-surface-c62828);
+    color: var(--ui-ink-ffffff);
     font: inherit;
     font-size: 13px;
     font-weight: 700;
@@ -478,8 +478,8 @@
     cursor: pointer;
 }
 .roles-confirm-btn:hover {
-    background: #a51e1e;
-    border-color: #a51e1e;
+    background: var(--ui-surface-a51e1e);
+    border-color: var(--ui-line-a51e1e);
 }
 .roles-confirm-btn:disabled {
     opacity: 0.6;

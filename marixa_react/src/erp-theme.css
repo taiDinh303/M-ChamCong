@@ -701,3 +701,187 @@ html[data-theme="dark"] .home-closing {
     min-height: 36px;
   }
 }
+/* Contrast roles shared by charts, actions and status feedback. */
+:root {
+  --th-link: #075a91;
+  --th-danger-ink: #a51f32;
+  --th-chart-series: #1647c8;
+  --th-chart-grid: #dce3ec;
+}
+html[data-theme="dark"] {
+  --th-link: #9bd8ff;
+  --th-danger-ink: #ffb6c2;
+  --th-chart-series: #86b9ff;
+  --th-chart-grid: #526876;
+}
+.app-header-menu button {
+  color: var(--th-text);
+}
+.app-header-menu button.danger {
+  color: var(--th-danger-ink);
+}
+html[data-theme="dark"] .app-header-menu button.danger:hover {
+  background: #412c34;
+  color: #ffd5dc;
+}
+html[data-theme="dark"] .admhome-clock-face {
+  background: #fff;
+}
+html[data-theme="dark"] :is(.admhome-clock-hand, .admhome-clock-pin) {
+  background: #172033;
+}
+html[data-theme="dark"]
+  .app-shell
+  :is(.admhome-tile-label, .admhome-clock-meta strong) {
+  color: var(--th-text);
+}
+html[data-theme="dark"]
+  .app-shell
+  :is(.admhome-tile-sub, .admhome-clock-meta span) {
+  color: var(--th-text-2);
+}
+html[data-theme="dark"]
+  .app-shell
+  :is(.ai-card, .ai-table-wrap, .ai-toolbar, .ai-filterbar) {
+  background: var(--th-surface);
+  color: var(--th-text);
+}
+html[data-theme="dark"] .app-shell :is(.ai-search input, .ai-search) {
+  background: var(--th-surface);
+  color: var(--th-text);
+}
+html[data-theme="dark"]
+  .app-shell
+  :is(.ai-name, .ai-email, .ai-table td, .ai-code, .ai-table th) {
+  color: var(--th-text);
+}
+html[data-theme="dark"] .app-shell :is(.ai-filter, .ai-tab) {
+  color: var(--th-text);
+}
+html[data-theme="dark"] .app-shell :is(.ai-filter.active, .ai-tab.active) {
+  background: #a1e2d5;
+  color: #11232b;
+}
+html[data-theme="dark"]
+  .app-shell
+  :is(.ai-filter.active, .ai-tab.active)
+  :is(span, small) {
+  color: #11232b;
+}
+.app-shell .mx-chart-data summary {
+  color: var(--th-link);
+}
+html[data-theme="dark"] .recharts-text {
+  fill: var(--th-text-2);
+}
+html[data-theme="dark"] .recharts-default-tooltip {
+  background: var(--th-surface) !important;
+  border-color: var(--th-border) !important;
+  color: var(--th-text) !important;
+}
+html[data-theme="dark"] .recharts-tooltip-label {
+  color: var(--th-text);
+}
+html[data-theme="dark"] {
+  --th-blue-line: #47668b;
+  --th-purple-line: #685681;
+  --th-green-line: #4d785e;
+  --th-teal-line: #497973;
+  --th-gray-line: #5b6d7a;
+}
+html[data-theme="dark"] .app-shell .mx-page-guide-icon {
+  background: #294d4b;
+  color: #c2eee4;
+}
+html[data-theme="dark"] .app-shell .ai-filter.active :is(i, b, span, small) {
+  color: #11232b;
+}
+html[data-theme="dark"]
+  .app-shell
+  :is(.mx-chart-data, .mx-chart-table, .mx-chart-card)
+  summary {
+  color: var(--th-link);
+}
+html[data-theme="dark"]
+  .app-shell[data-workspace]
+  :is(.hr-filter, .ai-filter, .blk-filter, .lp-filter).active
+  :is(i, b, span, small) {
+  color: #11232b;
+}
+html[data-theme="dark"] {
+  --mx-warn-bg: #3b3220;
+  --mx-warn: #f8d58b;
+  --mx-ok-bg: #253d32;
+  --mx-ok: #b7e6c8;
+  --mx-err-bg: #412c34;
+  --mx-err: #ffb5b6;
+  --mx-info-bg: #20354c;
+  --mx-info: #acd4ff;
+  --th-warn-bg: #3b3220;
+  --th-warn: #f8d58b;
+  --th-ok-bg: #253d32;
+  --th-ok: #b7e6c8;
+  --th-err-bg: #412c34;
+  --th-err: #ffb5b6;
+  --th-info-bg: #20354c;
+  --th-info: #acd4ff;
+}
+html[data-theme="dark"] .work-nav-item {
+  background: transparent;
+  color: var(--th-side-text);
+}
+html[data-theme="dark"] .work-nav-item.active {
+  background: var(--th-side-active-bg);
+  color: var(--th-side-active-text);
+}
+html[data-theme="dark"] .att-badge {
+  background: #20354c;
+  color: #acd4ff;
+}
+html[data-theme="dark"] .blk-ava {
+  color: #101b22;
+}
+:root {
+  --th-text-3: #526174;
+}
+html:not([data-theme="dark"]) .home-shell {
+  --home-ink-soft: #526573;
+  --home-ink-mute: #526573;
+}
+html:not([data-theme="dark"]) .app-shell .mx-page-guide-icon {
+  color: #164f4b;
+}
+html:not([data-theme="dark"])
+  .app-shell
+  :is(.att-cal-dot.nodata, .att-cal-dot.rest) {
+  color: #725013;
+}
+html:not([data-theme="dark"]) .work-quick-ico {
+  color: #1647c8;
+}
+.att-clock-tz {
+  color: #c6d6e4;
+  opacity: 1;
+}
+html:not([data-theme="dark"]) :is(.ai-hero-head p, .ai-kpi-label) {
+  color: #c3d2e4;
+}
+html[data-theme="dark"] .att-guide-close {
+  background: #315669;
+  color: #fff;
+}
+.work-pj-preview-top :is(h3, p, strong, span) {
+  color: inherit;
+}
+html[data-theme="dark"] .recharts-tooltip-item {
+  color: var(--th-text) !important;
+}
+/* Disabled controls remain legible; the state is also expressed by cursor/border. */
+.app-shell
+  :is(button:disabled, input:disabled, select:disabled, textarea:disabled) {
+  opacity: 1;
+  color: var(--th-text-2);
+  background: var(--th-surface-alt);
+  border-color: var(--th-border);
+  cursor: not-allowed;
+}

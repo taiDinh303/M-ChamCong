@@ -1,3 +1,4 @@
+import {readableInk} from '../../../../utils/readableInk';
 import MetricCard from "../../../../components/common/MetricCard";
 import ResponsiveTable from "../../../../components/common/ResponsiveTable.jsx";
 import { useState, useEffect, useMemo, useCallback } from "react";
@@ -367,7 +368,7 @@ const AccountIssuancePage = ({ layout = "admin", api = adminApi }) => {
                                                 <div className="ai-user">
                                                     <span
                                                         className="ai-ava"
-                                                        style={{ background: avaColor(employee.employeeCode || employee.fullName) }}
+                                                        style={{ background: avaColor(employee.employeeCode || employee.fullName), color: readableInk(avaColor(employee.employeeCode || employee.fullName)) }}
                                                     >
                                                         {initials(employee) || "?"}
                                                     </span>

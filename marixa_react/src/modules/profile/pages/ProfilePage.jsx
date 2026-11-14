@@ -99,7 +99,7 @@ const ProfilePage = () => {
                             </div>
                             <div className="profile-hero-meta">
                                 <span className="att-badge info">{profile?.positionName || "Chưa có chức vụ"}</span>
-                                <span className="att-badge" style={{ background: "#eef4ff", color: "#2f6df6" }}>{profile?.departmentName || "Chưa có phòng ban"}</span>
+                                <span className="att-badge info">{profile?.departmentName || "Chưa có phòng ban"}</span>
                                 <span className={`att-badge ${statusTone(profile?.status)}`}>{statusLabel(profile?.status)}</span>
                             </div>
                         </div>

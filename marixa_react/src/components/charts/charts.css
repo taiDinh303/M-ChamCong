@@ -4,8 +4,8 @@
    ============================================================ */
 
 .mx-chart-card {
-  background: var(--th-surface, #fff);
-  border: 1px solid var(--th-border, #DCE3EC);
+  background: var(--th-surface, var(--ui-surface-ffffff));
+  border: 1px solid var(--th-border, var(--ui-line-dce3ec));
   border-radius: 16px;
   box-shadow: var(--th-shadow-card, 0 2px 8px rgba(23,32,51,.06));
   padding: 18px;
@@ -22,14 +22,14 @@
   margin: 0;
   font-size: 15px;
   font-weight: 700;
-  color: var(--th-text, #172033);
+  color: var(--th-text, var(--ui-ink-172033));
 }
 .mx-chart-body {
   width: 100%;
   min-height: 180px;
 }
 .mx-chart-empty {
-  color: var(--th-text-3, #8A99AB);
+  color: var(--th-text-3, var(--ui-ink-8a99ab));
   font-size: 14px;
   padding: 30px 0;
   text-align: center;
@@ -56,12 +56,12 @@
 .mx-chart-center strong {
   font-size: 28px;
   font-weight: 800;
-  color: var(--th-text, #172033);
+  color: var(--th-text, var(--ui-ink-172033));
   line-height: 1;
 }
 .mx-chart-center span {
   font-size: 12px;
-  color: var(--th-text-2, #526174);
+  color: var(--th-text-2, var(--ui-ink-526174));
   margin-top: 4px;
 }
 
@@ -79,7 +79,7 @@
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: var(--th-text, #172033);
+  color: var(--th-text, var(--ui-ink-172033));
 }
 .mx-chart-legend li .dot {
   width: 10px;
@@ -89,11 +89,11 @@
 }
 .mx-chart-legend li span {
   flex: 1 1 auto;
-  color: var(--th-text-2, #526174);
+  color: var(--th-text-2, var(--ui-ink-526174));
 }
 .mx-chart-legend li b {
   font-weight: 700;
-  color: var(--th-text, #172033);
+  color: var(--th-text, var(--ui-ink-172033));
 }
 
 /* Responsive: trên mobile, cho cột H nằm ngang cuộn được */

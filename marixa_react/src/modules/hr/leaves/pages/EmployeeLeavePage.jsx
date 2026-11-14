@@ -1,3 +1,4 @@
+import {readableInk} from '../../../../utils/readableInk';
 import ResponsiveTable from "../../../../components/common/ResponsiveTable.jsx";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import HrAppLayout from "../../layout/HrAppLayout";
@@ -185,7 +186,7 @@ const EmployeeLeavePage = ({ layout = "hr" }) => {
                                             <tr key={r.id} className={r.status === 3 ? "lp-row--bad" : r.status === 2 ? "lp-row--ok" : ""}>
                                                 <td>
                                                     <div className="lp-user">
-                                                        <span className="lp-ava" style={{ background: avaColor(r.employeeCode || r.employeeName) }}>
+                                                        <span className="lp-ava" style={{ background: avaColor(r.employeeCode || r.employeeName), color: readableInk(avaColor(r.employeeCode || r.employeeName)) }}>
                                                             {(r.employeeName || "?").slice(0, 1).toUpperCase()}
                                                         </span>
                                                         <div className="lp-user-meta">

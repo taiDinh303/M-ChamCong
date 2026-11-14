@@ -178,7 +178,7 @@ const AdminBlockAccountPage = () => {
                                                 <td className="blk-code">{u.employeeCode}</td>
                                                 <td>
                                                     <div className="blk-user">
-                                                        <span className="blk-ava" style={{ background: "hsl(" + Math.abs([...String(u.employeeCode || u.fullName)].reduce((a, c) => (a * 31 + c.charCodeAt(0)) | 0, 0)) % 360 + " 55% 45%)" }}>
+                                                        <span className="blk-ava" style={{ background: "var(--th-purple-soft)", color: "var(--th-text)" }}>
                                                             {(u.fullName || "?").slice(0, 1).toUpperCase()}
                                                         </span>
                                                         <strong>{u.fullName}{isSelf(u) ? " (tôi)" : ""}</strong>
